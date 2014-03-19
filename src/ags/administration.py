@@ -1,12 +1,11 @@
+"""
+   Python tools for access ArcGIS Servers' REST API.
+   Use at you own risk.  This tools can be dangerous.
+"""
+
 from base import BaseAGSServer
 from datetime import datetime
-import httplib
-import urlparse
-import urllib
-import urllib2
-import json
 import csv
-import os
 ########################################################################
 class ArcGISServer(BaseAGSServer):
     """ instance of arcgis server admin pages """
@@ -42,37 +41,39 @@ class ArcGISServer(BaseAGSServer):
             "token" : self._token
         }
         json_dict = self._do_get(url=self._url, param_dict=params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."  
+                print k, " - attribute not implmented."
+            del k
+            del v
     #----------------------------------------------------------------------
     @property
     def log(self):
         """ returns the log object for server """
-        return Log(url=self._url + "/logs", 
-                   token_url=self._token_url, 
-                   username=self._username, 
-                   password=self._password) 
+        return Log(url=self._url + "/logs",
+                   token_url=self._token_url,
+                   username=self._username,
+                   password=self._password)
     #----------------------------------------------------------------------
     @property
     def services(self):
         """ gets the object that works on services """
-        return Services(url=self._url + "/services", 
-                        token_url=self._token_url, 
-                        username=self._username, 
-                        password=self._password) 
+        return Services(url=self._url + "/services",
+                        token_url=self._token_url,
+                        username=self._username,
+                        password=self._password)
     #----------------------------------------------------------------------
     @property
     def security(self):
         """ returns the class that works on the site security """
-        return Security(url=self._url + "/security", 
-                        token_url=self._token_url, 
-                        username=self._username, 
+        return Security(url=self._url + "/security",
+                        token_url=self._token_url,
+                        username=self._username,
                         password=self._password)
     #----------------------------------------------------------------------
     @property
@@ -118,7 +119,7 @@ class ArcGISServer(BaseAGSServer):
             "token" : self._token
         }
         cURL = self._url + "/clusters"
-        return self._do_get(url=cURL, param_dict=params)        
+        return self._do_get(url=cURL, param_dict=params)
     @property
     def folders(self):
         """ returns a list of folders on AGS """
@@ -127,16 +128,16 @@ class ArcGISServer(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
-        return self._do_get(url=cURL, param_dict=params)['folders']  
+        return self._do_get(url=cURL, param_dict=params)['folders']
 ########################################################################
 class Security(BaseAGSServer):
-    """ The security resource is a container for all resources and 
-        operations that deal with security for your site. Under this 
-        resource, you will find resources that represent the users and 
+    """ The security resource is a container for all resources and
+        operations that deal with security for your site. Under this
+        resource, you will find resources that represent the users and
         roles in your current security configuration.
-        Since the content sent to and from this resource (and operations 
-        within it) could contain confidential data like passwords, it is 
-        recommended that this resource be accessed over HTTPS protocol. 
+        Since the content sent to and from this resource (and operations
+        within it) could contain confidential data like passwords, it is
+        recommended that this resource be accessed over HTTPS protocol.
     """
     _url = None
     _token = None
@@ -167,14 +168,16 @@ class Security(BaseAGSServer):
             "token" : self._token
         }
         json_dict = self._do_get(url=self._url, param_dict=params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."  
+                print k, " - attribute not implmented."
+            del k
+            del v
     #----------------------------------------------------------------------
     @property
     def resources(self):
@@ -185,31 +188,33 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def addRole(self, name, description=""):
         """ Adds a role to the role store. This operation is available only
-            when the role store is a read-write store such as the default 
-            ArcGIS Server store. 
+            when the role store is a read-write store such as the default
+            ArcGIS Server store.
             If the name of the role exists in the role store, an error will
-            be returned. 
+            be returned.
             Input:
-               name - The name of the role. The name must be unique in the 
+               name - The name of the role. The name must be unique in the
                       role store.
-               description - An optional field to add comments or a 
+               description - An optional field to add comments or a
                              description for the role.
             Output:
                JSON message as dictionary
         """
         params = {
             "f" : "json",
-            "token" : self._token
+            "token" : self._token,
+            "name" : name,
+            "description" : description
         }
         aURL = self._url + "/roles/add"
         return self._do_post(url=aURL, param_dict=params)
     #----------------------------------------------------------------------
     def addUser(self, username, password,
                 fullname=None, description=None, email=None):
-        """ Add a user account to the user store 
+        """ Add a user account to the user store
            Input:
-              username - The name of the user. The name must be unique in 
-                         the user store. 
+              username - The name of the user. The name must be unique in
+                         the user store.
               password - The password for this user
               fullname - an optional full name for the user
               description - an option field to add comments or description
@@ -246,10 +251,10 @@ class Security(BaseAGSServer):
         """
            Administrative access to ArcGIS Server is modeled as three broad
            tiers of privileges:
-               ADMINISTER - A role that possesses this privilege has 
-                           unrestricted administrative access to ArcGIS 
+               ADMINISTER - A role that possesses this privilege has
+                           unrestricted administrative access to ArcGIS
                           Server.
-               PUBLISH - A role with PUBLISH privilege can only publish GIS 
+               PUBLISH - A role with PUBLISH privilege can only publish GIS
                        services to ArcGIS Server.
                ACCESS-No administrative access. A role with this privilege
                       can only be granted permission to access one or more
@@ -280,14 +285,14 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def assignRoles(self, username, roles):
         """
-           You must use this operation to assign roles to a user account 
+           You must use this operation to assign roles to a user account
            when working with an user and role store that supports reads and
-           writes. 
-           By assigning a role to a user, the user account automatically 
+           writes.
+           By assigning a role to a user, the user account automatically
            inherits all the permissions that have been assigned to the role
            Inputs:
               username - The name of the user.
-              roles - A comma-separated list of role names. Each of role 
+              roles - A comma-separated list of role names. Each of role
                       names must exist in the role store.
            Output:
               returns JSON messages
@@ -303,9 +308,9 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def disablePrimarySiteAdministrator(self):
         """
-           You can use this operation to disable log in privileges for the 
-           primary site administrator account. This operation can only be 
-           invoked by an administrator in the system. To re-enable this 
+           You can use this operation to disable log in privileges for the
+           primary site administrator account. This operation can only be
+           invoked by an administrator in the system. To re-enable this
            account, use the Enable Primary Site Administrator operation.
         """
         dURL = self._url + "/psa/disable"
@@ -317,14 +322,14 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def enablePrimarySiteAdministrator(self):
         """
-           You can use this operation to enable log in privileges for the 
-           primary site administrator account. This operation can only be 
+           You can use this operation to enable log in privileges for the
+           primary site administrator account. This operation can only be
            invoked by an another administrator in the system.
-           However, if you did not have any other administrators in the 
-           system and accidentally disabled the primary site administrator 
-           account, you can re-enable the account by running the password 
-           reset utility. This utility is shipped in <ArcGIS Server 
-           installation directory>\Server\tools\passwordreset. Use the -e 
+           However, if you did not have any other administrators in the
+           system and accidentally disabled the primary site administrator
+           account, you can re-enable the account by running the password
+           reset utility. This utility is shipped in <ArcGIS Server
+           installation directory>\Server\tools\passwordreset. Use the -e
            option to re-enable the primary site administrator. This utility
            is described in more detail in the ArcGIS Server Help.
         """
@@ -338,7 +343,7 @@ class Security(BaseAGSServer):
     def getPrivilegeForRole(self, rolename):
         """
            Returns the privilege associated with a role.
-           Input: 
+           Input:
               rolename - name of the role
            Output:
               JSON Messages
@@ -369,15 +374,15 @@ class Security(BaseAGSServer):
         return self._do_post(url=url, param_dict=params)
     #----------------------------------------------------------------------
     def getRoles(self, startIndex=0, pageSize=10):
-        """ This operation gives you a pageable view of roles in the role 
-            store. It is intended for iterating through all available role 
+        """ This operation gives you a pageable view of roles in the role
+            store. It is intended for iterating through all available role
             accounts. To search for specific role accounts instead, use the
-            Search Roles operation. 
+            Search Roles operation.
             Inputs:
-               startIndex - The starting index (zero-based) from the roles 
-                            list that must be returned in the result page. 
+               startIndex - The starting index (zero-based) from the roles
+                            list that must be returned in the result page.
                             The default is 0.
-               pageSize - The maximum number of roles to return in the 
+               pageSize - The maximum number of roles to return in the
                           result page. The default size is 10.
             Output:
                returns JSON messages as dictionary
@@ -385,7 +390,9 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getRoles"
         params = {
             "f" : "json",
-            "token" : self._token
+            "token" : self._token,
+            "startIndex" : startIndex,
+            "pageSize" : pageSize
         }
         return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
@@ -400,13 +407,14 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getRolesByPrivilege"
         params = {
             "f" : "json",
-            "token" : self._token
+            "token" : self._token,
+            "privilege" : privilege
         }
         return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def getRolesForUser(self, username, filter=None, maxCount=None):
         """
-           This operation returns a list of role names that have been 
+           This operation returns a list of role names that have been
            assigned to a particular user account.
            Inputs:
               username - name of the user for whom the returned roles
@@ -421,22 +429,22 @@ class Security(BaseAGSServer):
         }
         if filter is not None:
             params['filter'] = filter
-            
+
         if maxCount is not None:
             params['maxCount'] = maxCount
         return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def getUsers(self, startIndex=0, pageSize=10):
         """
-           This operation gives you a pageable view of users in the user 
-           store. It is intended for iterating over all available user 
-           accounts. To search for specific user accounts instead, use the 
+           This operation gives you a pageable view of users in the user
+           store. It is intended for iterating over all available user
+           accounts. To search for specific user accounts instead, use the
            Search Users operation.
            Inputs:
-              startIndex - The starting index (zero-based) from the users 
-                           list that must be returned in the result page. 
+              startIndex - The starting index (zero-based) from the users
+                           list that must be returned in the result page.
                            The default is 0.
-              pageSize - The maximum number of user accounts to return in 
+              pageSize - The maximum number of user accounts to return in
                          the result page.
            Output:
               JSON response message as dictionary
@@ -448,12 +456,12 @@ class Security(BaseAGSServer):
             "startIndex" : startIndex,
             "pageSize" : pageSize
         }
-        return self._do_post(url=uURL, 
+        return self._do_post(url=uURL,
                              param_dict=params)
     #----------------------------------------------------------------------
     def getUsersWithinRole(self, rolename, filter=None, maxCount=20):
-        """ 
-           You can use this operation to conveniently see all the user 
+        """
+           You can use this operation to conveniently see all the user
            accounts to whom this role has been assigned.
            Inputs:
               rolename - name of the role
@@ -485,8 +493,8 @@ class Security(BaseAGSServer):
         return self._do_get(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def removeRole(self, rolename):
-        """ 
-           Removes an existing role from the role store. This operation is 
+        """
+           Removes an existing role from the role store. This operation is
            available only when the role store is a read-write store such as
            the default ArcGIS Server store.
            Input:
@@ -500,13 +508,13 @@ class Security(BaseAGSServer):
             "rolename" : rolename
         }
         uURL = self._url + "/roles/remove"
-        return self._do_post(url=uURL, 
+        return self._do_post(url=uURL,
                              param_dict=params)
     #----------------------------------------------------------------------
     def removeRoles(self, username, roles):
         """
-           This operation removes roles that have been previously assigned 
-           to a user account. This operation is supported only when the 
+           This operation removes roles that have been previously assigned
+           to a user account. This operation is supported only when the
            user and role store supports reads and writes.
            Inputs:
               username - name of the user
@@ -524,24 +532,24 @@ class Security(BaseAGSServer):
         return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def removeUser(self, username):
-        """ 
-           returns a username from the user store 
+        """
+           returns a username from the user store
            Inputs:
               username - name of the user to remove
-           Output: 
+           Output:
               JSON message as dictionary
         """
         params = {
             "f" : 'json',
             "token" : self._token,
-            "username" : username        
+            "username" : username
         }
         uURL = self._url + "/users/remove"
         return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def removeUsersFromRole(self, rolename, users):
         """
-           Removes a role assignment from multiple users. 
+           Removes a role assignment from multiple users.
            Inputs:
               rolename - name of the rolename
               users - comma seperated list of usernames.  They must exist
@@ -555,12 +563,12 @@ class Security(BaseAGSServer):
             "users" : users
         }
         uURL = self._url + "/roles/removeUsersFromRole"
-        return self._do_post(url=uURL, param_dict=params)        
+        return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     @property
     def roles(self):
-        """ 
-           returns the number of roles for AGS 
+        """
+           returns the number of roles for AGS
         """
         params = {
         "f" : "json",
@@ -571,7 +579,7 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def searchRoles(self, filter="", maxCount=""):
         """
-           You can use this operation to search a specific role or a group 
+           You can use this operation to search a specific role or a group
            of roles from the role store. The size of the search results can
            be controlled with the maxCount parameter.
            Inputs:
@@ -591,8 +599,8 @@ class Security(BaseAGSServer):
     #----------------------------------------------------------------------
     def searchUsers(self, filter="", maxCount=""):
         """
-           You can use this operation to search a specific user or a group 
-           of users from the user store. The size of the search result can 
+           You can use this operation to search a specific user or a group
+           of users from the user store. The size of the search result can
            be controlled with the maxCount parameter.
            Inputs:
               filter - a filter string to search for the users
@@ -619,6 +627,7 @@ class Services(BaseAGSServer):
     _token_url = None
     _folderName = None
     _folders = None
+    _foldersDetail = None
     _folderDetail = None
     _webEncrypted = None
     _description = None
@@ -647,16 +656,18 @@ class Services(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
-        json_dict = self._do_get(url=self._currentURL, 
+        json_dict = self._do_get(url=self._currentURL,
                                  param_dict=params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."  
+                print k, " - attribute not implmented."
+            del k
+            del v
     #----------------------------------------------------------------------
     @property
     def webEncrypted(self):
@@ -677,7 +688,7 @@ class Services(BaseAGSServer):
             self._services = None
             self._description = None
             self._folderName = None
-            self._webEncrypted = None            
+            self._webEncrypted = None
             self.__init()
             self._folderName = folder
         elif folder == "" or\
@@ -721,24 +732,40 @@ class Services(BaseAGSServer):
     @property
     def services(self):
         """ returns the services in the current folder """
-        self.__init()
+        self._services = []
+        params = {
+                    "f" : "json",
+                    "token" : self._token
+                }
+        json_dict = self._do_get(url=self._currentURL,
+                                 param_dict=params)
+        if "services" in json_dict.keys():
+            for s in json_dict['services']:
+                uURL = self._currentURL
+                self._services.append(
+                    AGSService(url=uURL +"/%s.%s" % (s['serviceName'],
+                                                                 s['type']),
+                               token_url=self._token_url,
+                               username=self._username,
+                               password=self._password)
+                )
         return self._services
     #----------------------------------------------------------------------
     def find_services(self, service_type="*"):
         """
             returns a list of a particular service type on AGS
             Input:
-              service_type - Type of service to find.  The allowed types 
-                             are: ("GPSERVER", "GLOBESERVER", "MAPSERVER", 
-                             "GEOMETRYSERVER", "IMAGESERVER", 
+              service_type - Type of service to find.  The allowed types
+                             are: ("GPSERVER", "GLOBESERVER", "MAPSERVER",
+                             "GEOMETRYSERVER", "IMAGESERVER",
                              "SEARCHSERVER", "GEODATASERVER",
-                             "GEOCODESERVER", "*").  The default is * 
+                             "GEOCODESERVER", "*").  The default is *
                              meaning find all service names.
             Output:
               returns a list of service names as <folder>/<name>.<type>
         """
-        allowed_service_types = ("GPSERVER", "GLOBESERVER", "MAPSERVER", 
-                                 "GEOMETRYSERVER", "IMAGESERVER", 
+        allowed_service_types = ("GPSERVER", "GLOBESERVER", "MAPSERVER",
+                                 "GEOMETRYSERVER", "IMAGESERVER",
                                  "SEARCHSERVER", "GEODATASERVER",
                                  "GEOCODESERVER", "*")
         lower_types = [l.lower() for l in service_type.split(',')]
@@ -748,7 +775,7 @@ class Services(BaseAGSServer):
         params = {
             "f" : "json",
             "token" : self._token
-        }        
+        }
         type_services = []
         folders = self.folders
         folders.append("")
@@ -764,7 +791,7 @@ class Services(BaseAGSServer):
                     #if service_type == "*":
                         #service['URL'] = url + "/%s.%s" % (service['serviceName'],
                                                            #service_type)
-                        #type_services.append(service)                        
+                        #type_services.append(service)
                     if service['type'].lower() in lower_types:
                         service['URL'] = url + "/%s.%s" % (service['serviceName'],
                                                            service_type)
@@ -772,7 +799,165 @@ class Services(BaseAGSServer):
                     del service
             del res
             del folder
-        return type_services            
+        return type_services
+    #----------------------------------------------------------------------
+    def addFolderPermission(self, principal, isAllowed=True, folder=None):
+        """
+           Assigns a new permission to a role (principal). The permission
+           on a parent resource is automatically inherited by all child
+           resources
+           Input:
+              principal - name of role to assign/disassign accesss
+              isAllowed -  boolean which allows access
+           Output:
+              JSON message as dictionary
+        """
+        if folder is not None:
+            uURL = self._url + "/%s/%s" % (folder, "/permissions/add")
+        else:
+            uURL = self._url + "/permissions/add"
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "principal" : principal,
+            "isAllowed" : isAllowed
+        }
+        return self._do_post(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    def cleanPermsissions(self, principal):
+        """
+           Cleans all permissions that have been assigned to a role
+           (principal). This is typically used when a role is deleted.
+           Input:
+              principal - name of the role to clean
+           Output:
+              JSON Message as Dictionary
+        """
+        uURL = self._url + "/permissions/clean"
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "principal" : principal
+        }
+        return self._do_post(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    def createFolder(self, folderName, description=""):
+        """
+           Creates a unique folder name on AGS
+           Inputs:
+              folderName - name of folder on AGS
+              description - describes the folder
+           Output:
+              JSON message as dictionary
+        """
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "folderName" : folderName,
+            "description" : description
+        }
+        uURL = self._url + "/createFolder"
+        return self._do_post(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    def deleteFolder(self, folderName):
+        """
+           deletes a folder on AGS
+           Inputs:
+              folderName - name of folder to remove
+           Output:
+              JSON message as dictionary
+        """
+        params = {
+            "f" : "json",
+            "token" : self._token,
+        }
+        if folderName in self.folders:
+            uURL = self._url + "/%s/delete" % folderName
+            return self._do_post(url=uURL, param_dict=params)
+        else:
+            return {"error" : "folder does not exist"}
+    #----------------------------------------------------------------------
+    def deleteService(self, serviceName, serviceType, folder=None):
+        """
+           deletes a service from AGS
+           Inputs:
+              serviceName - name of the service
+              serviceType - type of the service
+              folder - name of the folder the service resides, leave None
+                       for root.
+           Output:
+              JSON message as dictionary
+        """
+        if folder is None:
+            uURL = self._url + "/%s.%s/delete" % (serviceName,
+                                                  serviceType)
+        else:
+            uURL = self._url + "/%s/%s.%s/delete" % (folder,
+                                                     serviceName,
+                                                     serviceType)
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        return self._do_post(url=uURL, param_dict=params)
+    def service_report(self, folder=None):
+        """
+           provides a report on all items in a given folder
+           Inputs:
+              folder - folder to report on given services. None means root
+        """
+        items = ["description", "status",
+                 "instances", "iteminfo",
+                 "properties"]
+        if folder is None:
+            uURL = self._url + "/report"
+        else:
+            uURL = self._url + "/%s/report" % folder
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "parameters" : items
+        }
+        return self._do_get(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def types(self):
+        """ returns the allowed services types """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/types"
+        return self._do_get(url=uURL,
+                            param_dict=params)
+    #----------------------------------------------------------------------
+    def rename_service(self, serviceName, serviceType,
+                       serviceNewName, folder=None):
+        """
+           Renames a published AGS Service
+           Inputs:
+              serviceName - old service name
+              serviceType - type of service
+              serviceNewName - new service name
+              folder - location of where the service lives, none means
+                       root folder.
+           Output:
+              JSON message as dictionary
+        """
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "serviceName" : serviceName,
+            "serviceType" : serviceType,
+            "serviceNewName" : serviceNewName
+        }
+        if folder is None:
+            uURL = self._url + "/renameService"
+        else:
+            uURL = self._url + "/%s/renameService" % folder
+        return self._do_post(url=uURL, param_dict=params)
+
+
 ########################################################################
 class Log(BaseAGSServer):
     """ Log of a server """
@@ -806,14 +991,16 @@ class Log(BaseAGSServer):
             "token" : self._token
         }
         json_dict = self._do_get(url=self._url, param_dict=params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."  
+                print k, " - attribute not implmented."
+            del k
+            del v
     #----------------------------------------------------------------------
     @property
     def operations(self):
@@ -830,8 +1017,8 @@ class Log(BaseAGSServer):
         return self._resources
     #----------------------------------------------------------------------
     def countErrorReports(self, machine="*"):
-        """ This operation counts the number of error reports (crash 
-            reports) that have been generated on each machine. 
+        """ This operation counts the number of error reports (crash
+            reports) that have been generated on each machine.
             Input:
                machine - name of the machine in the cluster.  * means all
                          machines.  This is default
@@ -843,8 +1030,8 @@ class Log(BaseAGSServer):
             "token" : self._token,
             "machine" : machine
         }
-        return self._do_post(url=self._url + "/countErrorReports", 
-                            param_dict=params) 
+        return self._do_post(url=self._url + "/countErrorReports",
+                            param_dict=params)
     #----------------------------------------------------------------------
     def clean(self):
         """ Deletes all the log files on all server machines in the site.  """
@@ -852,7 +1039,7 @@ class Log(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
-        return self._do_post(url=self._url + "/clean", 
+        return self._do_post(url=self._url + "/clean",
                              param_dict=params)
     #----------------------------------------------------------------------
     @property
@@ -870,15 +1057,15 @@ class Log(BaseAGSServer):
                         logDir=None,
                         maxLogFileAge=90,
                         maxErrorReportsCount=10):
-        """ 
-           The log settings are for the entire site.  
+        """
+           The log settings are for the entire site.
            Inputs:
-             logLevel -  Can be one of [OFF, SEVERE, WARNING, INFO, FINE, 
+             logLevel -  Can be one of [OFF, SEVERE, WARNING, INFO, FINE,
                          VERBOSE, DEBUG].
              logDir - File path to the root of the log directory
              maxLogFileAge - number of days that a server should save a log
                              file.
-             maxErrorReportsCount - maximum number of error report files 
+             maxErrorReportsCount - maximum number of error report files
                                     per machine
         """
         lURL = self._url + "/settings/edit"
@@ -886,7 +1073,7 @@ class Log(BaseAGSServer):
         currentSettings= self.logSettings
         currentSettings["f"] ="json"
         currentSettings["token"] = self._token
-        
+
         if logLevel.upper() in allowed_levels:
             currentSettings['logLevel'] = logLevel.upper()
         if logDir is not None:
@@ -913,15 +1100,15 @@ class Log(BaseAGSServer):
               out_path=None
               ):
         """
-           The query operation on the logs resource provides a way to 
+           The query operation on the logs resource provides a way to
            aggregate, filter, and page through logs across the entire site.
            Inputs:
-              
+
         """
-        allowed_levels = ("SEVERE", "WARNING", "INFO", 
+        allowed_levels = ("SEVERE", "WARNING", "INFO",
                           "FINE", "VERBOSE", "DEBUG")
         qFilter = {
-            "services": "*", 
+            "services": "*",
             "machines": "*",
             "server" : "*"
         }
@@ -936,7 +1123,7 @@ class Log(BaseAGSServer):
             params['startTime'] = startTime.strftime("%Y-%m-%dT%H:%M:%S")
         if endTime is not None and \
            isinstance(endTime, datetime):
-            params['startTime'] = endTime.strftime("%Y-%m-%dT%H:%M:%S")      
+            params['startTime'] = endTime.strftime("%Y-%m-%dT%H:%M:%S")
         if level.upper() in allowed_levels:
             params['level'] = level
         if server != "*":
@@ -949,7 +1136,7 @@ class Log(BaseAGSServer):
         if export == True and \
            out_path is not None:
             messages = self._do_post(self._url + "/query", params)
-            
+
             with open(name=out_path, mode='wb') as f:
                 hasKeys = False
                 if exportType == "TAB":
@@ -966,15 +1153,14 @@ class Log(BaseAGSServer):
             return out_path
         else:
             return self._do_post(self._url + "/query", params)
-   
+
 ########################################################################
-class GPServer(BaseAGSServer):
-    """ Instance of GPServer Object """
-    _token = None
-    _token_url = None
+class AGSService(BaseAGSServer):
+    """ Defines a AGS Admin Service """
     _username = None
     _password = None
-    _url = None
+    _token = None
+    _token_url = None
     _recycleInterval = None
     _instancesPerContainer = None
     _maxWaitTime = None
@@ -993,8 +1179,8 @@ class GPServer(BaseAGSServer):
     _serviceName = None
     _isolationLevel = None
     _capabilities = None
-    _configuredState = None
     _loadBalancing = None
+    _configuredState = None
     _maxStartupTime = None
     _private = None
     _maxUploadFileSize = None
@@ -1010,6 +1196,7 @@ class GPServer(BaseAGSServer):
                password - admin password
         """
         self._url = url
+        self._currentURL = url
         self._token_url = token_url
         self._username = username
         self._password = password
@@ -1022,68 +1209,220 @@ class GPServer(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
-        json_dict = self._do_get(url=self._url, param_dict=params)
-        attributes = [attr for attr in dir(self) 
+        json_dict = self._do_get(url=self._currentURL,
+                                 param_dict=params)
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k#, " - attribute not implmented."  
+                print k, " - attribute not implmented."
+            del k
+            del v
+    @property
+    def recycleInterval(self):
+        if self._recycleInterval is None:
+            self.__init()
+        return self._recycleInterval
+    @property
+    def instancesPerContainer(self):
+        if self._instancesPerContainer is None:
+            self.__init()
+        return self._instancesPerContainer
+    @property
+    def maxWaitTime(self):
+        if self._maxWaitTime is None:
+            self.__init()
+        return self._maxWaitTime
+    @property
+    def extensions(self):
+        if self._extensions is None:
+            self.__init()
+        return self._extensions
+    @property
+    def minInstancesPerNode(self):
+        if self._minInstancesPerNode is None:
+            self.__init()
+        return self._minInstancesPerNode
+    @property
+    def maxIdleTime(self):
+        if self._maxIdleTime is None:
+            self.__init()
+        return self._maxIdleTime
+    @property
+    def maxUsageTime(self):
+        if self._maxUsageTime is None:
+            self.__init()
+        return self._maxUsageTime
+    @property
+    def allowedUploadFileTypes(self):
+        if self._allowedUploadFileTypes is None:
+            self.__init()
+        return self._allowedUploadFileTypes
+    @property
+    def datasets(self):
+        if self._datasets is None:
+            self.__init()
+        return self._datasets
+    @property
+    def properties(self):
+        if self._properties is None:
+            self.__init()
+        return self._properties
+    @property
+    def recycleStartTime(self):
+        if self._recycleStartTime is None:
+            self.__init()
+        return self._recycleStartTime
+    @property
+    def clusterName(self):
+        if self._clusterName is None:
+            self.__init()
+        return self._clusterName
+    @property
+    def description(self):
+        if self._description is None:
+            self.__init()
+        return self._description
+    @property
+    def isDefault(self):
+        if self._isDefault is None:
+            self.__init()
+        return self._isDefault
+    @property
+    def type(self):
+        if self._type is None:
+            self.__init()
+        return self._type
+    @property
+    def maxUploadFileSize(self):
+        if self._maxUploadFileSize is None:
+            self.__init()
+        return self._maxUploadFileSize
+    @property
+    def keepAliveInterval(self):
+        if self._keepAliveInterval is None:
+            self.__init()
+        return self._keepAliveInterval
+    @property
+    def maxInstancesPerNode(self):
+        if self._maxInstancesPerNode is None:
+            self.__init()
+        return self._maxInstancesPerNode
+    @property
+    def private(self):
+        if self._private is None:
+            self.__init()
+        return self._private
+    @property
+    def maxStartupTime(self):
+        if self._maxStartupTime is None:
+            self.__init()
+        return self._maxStartupTime
+    @property
+    def loadBalancing(self):
+        if self._loadBalancing is None:
+            self.__init()
+        return self._loadBalancing
+    @property
+    def configuredState(self):
+        if self._configuredState is None:
+            self.__init()
+        return self._configuredState
+    @property
+    def capabilities(self):
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    @property
+    def isolationLevel(self):
+        if self._isolationLevel is None:
+            self.__init()
+        return self._isolationLevel
+    @property
+    def serviceName(self):
+        if self._serviceName is None:
+            self.__init()
+        return self._serviceName
     #----------------------------------------------------------------------
     def start_service(self):
-        """ starts the service """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/start"
-        return self._do_post(url, params)
+        """ starts the specific service """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/start"
+        return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def stop_service(self):
-        """stops a service"""
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/stop"
-        return self._do_post(url, params)        
+        """ stops the current service """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/stop"
+        return self._do_post(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
-    def delete_service(self):
-        """ deletes the service """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/delete"
-        return self._do_post(url, params)     
+    def restart_services(self):
+        """ restarts the current service """
+        self.stop_service()
+        self.start_service()
+        return {'status': 'success'}
     @property
     def status(self):
-        """ returns the service status """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/status"
-        return self._do_get(url, params)     
-    @property 
-    def statistics(self):
-        """ returns the service statistics """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/statistics"
-        return self._do_get(url, params)             
-    @property 
-    def permissions(self):
-        """ returns the service permissions """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/permissions"
-        return self._do_get(url, params)             
+        """ returns the status of the service """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/status"
+        return self._do_get(url=uURL, param_dict=params)
     @property
-    def itemInfo(self):
-        """ returns the service permissions """
-        params = {"f":"json", "token": self._token}
-        url = self._url + "/iteminfo"
-        return self._do_get(url, params)             
-
-
-if __name__ == "__main__":
-    ags = ArcGISServer(url="http://chronus:6080/arcgis/admin", 
-                       token_url="http://chronus:6080/arcgis/admin/generateToken", 
-                       username="andrew", 
-                       password="andrew")
-    security = ags.security
-    if isinstance(security, Security):
-        print security.getUsers()
-        print security.getRoles(0,10)
-        print security.removeRoles(username="john", roles="publisher")
-    else:
-        print type(security)
+    def statistics(self):
+        """ returns the stats for the service """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/statistics"
+        return self._do_get(url=uURL, param_dict=params)
+    @property
+    def permissions(self):
+        """ returns the permissions for the service """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url + "/permissions"
+        return self._do_get(url=uURL, param_dict=params)
+    @property
+    def iteminfo(self):
+        """ returns the item information """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        uURL = self._url = "/iteminfo"
+        return self._do_get(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    def addPermission(self, principal, isAllowed=True):
+        """
+           Assigns a new permission to a role (principal). The permission
+           on a parent resource is automatically inherited by all child
+           resources.
+           Inputs:
+              principal - role to be assigned
+              isAllowed - access of resource by boolean
+           Output:
+              JSON message as dictionary
+        """
+        uURL = self._url + "/permissions/add"
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "principal" : principal,
+            "isAllowed" : isAllowed
+        }
+        return self._do_post(url=uURL, param_dict=params)
