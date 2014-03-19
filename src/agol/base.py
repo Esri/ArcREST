@@ -112,7 +112,9 @@ class BaseAGOLClass(object):
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector, 
                         filename, filetype, 
-                        content, fields):
+                        content, fields,
+                        port=None,
+                        https=False):
         """ performs a multi-post to AGOL or AGS 
             Inputs:
                host - string - root url (no http:// or https://)
@@ -123,6 +125,7 @@ class BaseAGOLClass(object):
                filetype - string - mimetype of data uploading
                content - binary data - derived from open(<file>, 'rb').read()
                fields - dictionary - additional parameters like token and format information
+               port - interger - port value if not on port 80
             Output:
                JSON response as dictionary
             Useage:
@@ -144,14 +147,17 @@ class BaseAGOLClass(object):
         body += filename + '"\r\nContent-Type: ' + filetype + '\r\n\r\n'
         body = body.encode('utf-8')
         body += content + '\r\n------------ThIs_Is_tHe_bouNdaRY_$--\r\n'
-        h = httplib.HTTP(host)
+        if https:
+            h = httplib.HTTPSConnection(host, port=port)
+        else:
+            h = httplib.HTTPConnection(host, port=port)
         h.putrequest('POST', selector)
         h.putheader('content-type', 'multipart/form-data; boundary=----------ThIs_Is_tHe_bouNdaRY_$')
         h.putheader('content-length', str(len(body)))
         h.endheaders()
         h.send(body)
-        errcode, errmsg, headers = h.getreply()
-        return h.file.read()
+        res = h.getresponse()
+        return res.read()        
     #----------------------------------------------------------------------    
     def _unicode_convert(self, obj):
         """ converts unicode to anscii """

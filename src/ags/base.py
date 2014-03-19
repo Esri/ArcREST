@@ -18,7 +18,7 @@ class Geometry(object):
     ''' base geometry class'''
     pass
 ########################################################################
-class BaseAGSService(object):
+class BaseAGSServer(object):
     """ base class from which all service inherit """
     _username = None
     _password = None
@@ -85,8 +85,10 @@ class BaseAGSService(object):
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector, 
-                       filename, filetype, 
-                       content, fields):
+                        filename, filetype, 
+                        content, fields,
+                        port=None,
+                        https=False):
         """ performs a multi-post to AGOL or AGS 
             Inputs:
                host - string - root url (no http:// or https://)
@@ -97,8 +99,20 @@ class BaseAGSService(object):
                filetype - string - mimetype of data uploading
                content - binary data - derived from open(<file>, 'rb').read()
                fields - dictionary - additional parameters like token and format information
+               port - interger - port value if not on port 80
             Output:
-               response as string
+               JSON response as dictionary
+            Useage:
+               import urlparse
+               url = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0/10261291"
+               parsed_url = urlparse.urlparse(url)
+               params = {"f":"json"}
+               print _post_multipart(host=parsed_url.hostname,
+                               selector=parsed_url.path,
+                               filename="Jellyfish.jpg",
+                               content=open(r"c:\temp\Jellyfish.jpg, 'rb').read(),
+                               fields=params
+                               )
         """
         body = ''
         for field in fields.keys():
@@ -107,17 +121,21 @@ class BaseAGSService(object):
         body += filename + '"\r\nContent-Type: ' + filetype + '\r\n\r\n'
         body = body.encode('utf-8')
         body += content + '\r\n------------ThIs_Is_tHe_bouNdaRY_$--\r\n'
-        h = httplib.HTTP(host)
+        if https:
+            h = httplib.HTTPSConnection(host, port=port)
+        else:
+            h = httplib.HTTPConnection(host, port=port)
         h.putrequest('POST', selector)
         h.putheader('content-type', 'multipart/form-data; boundary=----------ThIs_Is_tHe_bouNdaRY_$')
         h.putheader('content-length', str(len(body)))
         h.endheaders()
         h.send(body)
-        errcode, errmsg, headers = h.getreply()
-        return h.file.read()
+        res = h.getresponse()
+        return res.read() 
     #----------------------------------------------------------------------
     def generate_token(self):#, username, password, tokenURL
         """ generates a token for AGS """
+        #params = urllib.urlencode({'username': username, 'password': password, 'client': 'requestip', 'f': 'json'})
         params = urllib.urlencode({'username': self._username,
                                    'password': self._password,
                                    'client': 'requestip',

@@ -390,13 +390,15 @@ class FeatureLayer(BaseAGOLClass):
                 params['token'] = self._token            
             content = open(file_path, 'rb').read()
             parsed = urlparse.urlparse(attachURL)
-            
+            port = parsed.port
             res = self._post_multipart(host=parsed.hostname, 
                                        selector=parsed.path, 
                                        filename=os.path.basename(file_path), 
                                        filetype=mimetypes.guess_type(file_path)[0], 
                                        content=content, 
-                                       fields=params)
+                                       fields=params,
+                                       port=port,
+                                       https=parsed.scheme.lower() == 'https')
             return self._unicode_convert(json.loads(res))
         else:
             return "Attachments are not supported for this feature service."   
@@ -917,3 +919,10 @@ class FeatureLayer(BaseAGOLClass):
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""
     pass
+
+if __name__ == "__main__":
+    url = "https://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0"
+    file_path = r"c:\temp\copy.jpg"
+    oid = 4200
+    fsl = FeatureLayer(url, username="AndrewSolutions", password="#234sprinter")
+    print fsl.addAttachment(oid, file_path)
