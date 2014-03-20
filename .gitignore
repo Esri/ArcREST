@@ -230,3 +230,4 @@ src/service_monitor
 service_monitor
 service_checker
 service_reporter
+*.pyc

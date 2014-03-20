@@ -1,8 +1,8 @@
-from base import BaseAGSService
+from base import BaseAGSServer
 import json
 import base
 ########################################################################
-class FeatureLayer(BaseAGSService):
+class FeatureLayer(BaseAGSServer):
     """
        This contains information about a feature service's layer.
     """
@@ -45,7 +45,7 @@ class FeatureLayer(BaseAGSService):
     _ownershipBasedAccessControlForFeatures = None
     _useStandardizedQueries = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None, 
+    def __init__(self, url, token_url=None,
                  username=None, password=None):
         """Constructor"""
         self._url = url
@@ -65,21 +65,21 @@ class FeatureLayer(BaseAGSService):
         if self._token is not None:
             params['token'] = self._token
         json_dict = self._do_get(self._url, params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
-                      not attr.startswith('_')]          
+                      not attr.startswith('_')]
         for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented."        
+                print k, " - attribute not implmented."
     #----------------------------------------------------------------------
-    @property   
+    @property
     def currentVersion(self):
         """ returns the current version """
         if self._currentVersion is None:
             self.__init()
-        return self._currentVersion    
+        return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def id(self):
@@ -135,7 +135,7 @@ class FeatureLayer(BaseAGSService):
         """ returns if it has a m value or not """
         if self._hasM is None:
             self.__init()
-        return self._hasM 
+        return self._hasM
     #----------------------------------------------------------------------
     @property
     def copyrightText(self):
@@ -272,7 +272,7 @@ class FeatureLayer(BaseAGSService):
     def canScaleSymbols(self):
         if self._canScaleSymbols is None:
             self.__init()
-        return self._canScaleSymbols 
+        return self._canScaleSymbols
     @property
     def capabilities(self):
         if self._capabilities is None:
@@ -308,9 +308,9 @@ class RasterLayer(FeatureLayer):
     pass
 ########################################################################
 class DynamicMapLayer(base.DynamicData):
-    """ creates a dynamic map layer object 
-        A dynamic map layer refers to a layer in the current map service. 
-        If supported, use gdbVersion to specify an alternate geodatabase 
+    """ creates a dynamic map layer object
+        A dynamic map layer refers to a layer in the current map service.
+        If supported, use gdbVersion to specify an alternate geodatabase
         version.
     """
     _type = "mapLayer"
@@ -340,7 +340,7 @@ class DynamicMapLayer(base.DynamicData):
 #http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Layer_source_object/02r30000019v000000/
 class DynamicDataLayer(base.DynamicData):
     """
-    
+
     """
     _type = "dataLayer"
     _dataSource = None
@@ -367,13 +367,13 @@ class DynamicDataLayer(base.DynamicData):
     def asDictionary(self):
         """ returns the value as a dictionary """
         template =  {
-            "type": "dataLayer", 
+            "type": "dataLayer",
             "dataSource": self._dataSource
         }
         if not self._fields is None:
             template['fields'] = self._fields
         return template
-            
+
     #----------------------------------------------------------------------
     @property
     def dataSource(self):
@@ -402,10 +402,10 @@ class DynamicDataLayer(base.DynamicData):
             raise TypeError("Input must be a list")
 ########################################################################
 class TableDataSource(base.DataSource):
-    """Table data source is a table, feature class, or raster that 
+    """Table data source is a table, feature class, or raster that
        resides in a registered workspace (either a folder or geodatabase).
-       In the case of a geodatabase, if versioned, use version to switch 
-       to an alternate geodatabase version. If version is empty or 
+       In the case of a geodatabase, if versioned, use version to switch
+       to an alternate geodatabase version. If version is empty or
        missing, the registered geodatabase version will be used.
     """
     _type = "table"
@@ -471,11 +471,11 @@ class TableDataSource(base.DataSource):
             "dataSourceName": self._dataSourceName,
             "gdbVersion" : self._gdbVersion
         }
-        return self._dict    
+        return self._dict
 ########################################################################
 class RasterDataSource(base.DataSource):
     """
-       Raster data source is a file-based raster that resides in a 
+       Raster data source is a file-based raster that resides in a
        registered raster workspace.
     """
     _type = "raster"
@@ -529,7 +529,7 @@ class RasterDataSource(base.DataSource):
             "workspaceId" : self._workspaceId,
             "dataSourceName": self._dataSourceName
         }
-        return self._dict    
+        return self._dict
 ########################################################################
 class QueryTableDataSource(base.DataSource):
     """"""
@@ -539,7 +539,7 @@ class QueryTableDataSource(base.DataSource):
     _oidFields = None
     _geometryType = None
     _wkid = None
-    _allowedTypes = ["esriGeometryPoint", "esriGeometryMultipoint", 
+    _allowedTypes = ["esriGeometryPoint", "esriGeometryMultipoint",
                      'esriGeometryPolyline', 'esriGeometryPolygon']
     _spatialReference = None
     _dict = None
@@ -571,7 +571,7 @@ class QueryTableDataSource(base.DataSource):
     @workspaceId.setter
     def workspaceId(self, value):
         """sets the workspace Id"""
-        self._workspaceId = value    
+        self._workspaceId = value
     #----------------------------------------------------------------------
     @property
     def geometryType(self):
@@ -582,7 +582,7 @@ class QueryTableDataSource(base.DataSource):
     def geometryType(self, value):
         """ sets the geometry type """
         if value in self._allowedTypes:
-            self._geometryType = value     
+            self._geometryType = value
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
@@ -602,13 +602,13 @@ class QueryTableDataSource(base.DataSource):
         }
         if self._geometryType != "":
             self._dict["geometryType"] = self._geometryType
-        return self._dict        
+        return self._dict
 ########################################################################
 class JoinTableDataSource(base.DataSource):
-    """ 
-        joinTable data source is the result of a join operation. Nested 
-        joins are supported. To use nested joins, set either 
-        leftTableSource or rightTableSource to be a joinTable. 
+    """
+        joinTable data source is the result of a join operation. Nested
+        joins are supported. To use nested joins, set either
+        leftTableSource or rightTableSource to be a joinTable.
     """
     _type = "joinTable"
     _leftTableSource = None
@@ -619,7 +619,7 @@ class JoinTableDataSource(base.DataSource):
     _json = None
     joinTypes = ["esriLeftOuterJoin", "esriLeftInnerJoin"]
     #----------------------------------------------------------------------
-    def __init__(self, leftTableSource, rightTableSource, leftTableKey, 
+    def __init__(self, leftTableSource, rightTableSource, leftTableKey,
                  rightTableKey, joinType):
         """Constructor"""
         if joinType in self.joinTypes:
@@ -653,10 +653,5 @@ class JoinTableDataSource(base.DataSource):
             "leftTableKey": self._leftTableKey,
             "rightTableKey": self._rightTableKey,
             "joinType": self._joinType
-        }   
+        }
 
-
-#if __name__ == "__main__":
-    #fl = FeatureLayer(url="http://chronus:6080/arcgis/rest/services/MapServiveDemoData/MapServer/0", token_url=None, username=None, password=None) 
-    #print fl.canModifyLayer
-    

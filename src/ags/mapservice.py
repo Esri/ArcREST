@@ -1,11 +1,11 @@
-import base
+from base import BaseAGSServer
 from layer import FeatureLayer, TableLayer
 import filters
 import geometry
 import common
 import layer
 ########################################################################
-class MapService(base.BaseAGSService):
+class MapService(BaseAGSServer):
     """ contains information about a map service """
     _tileInfo = None
     _url = None
@@ -58,12 +58,12 @@ class MapService(base.BaseAGSService):
         else:
             param_dict = {"f": "json",
                           "token" : self._token
-                          }            
+                          }
         json_dict = self._do_get(self._url, param_dict)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
-                      not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k == "tables":
                 self._tables = []
                 for tbl in v:
@@ -95,8 +95,8 @@ class MapService(base.BaseAGSService):
                     else:
                         print 'Type %s is not implemented' % layer_type
             elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])  
-            
+                setattr(self, "_"+ k, json_dict[k])
+
             else:
                 print k, " this is missing "
     #----------------------------------------------------------------------
@@ -313,13 +313,13 @@ class MapService(base.BaseAGSService):
                                            token_url=self._token_url,
                                            username=self._username,
                                            password=self._password)
-                    )                
+                    )
             del k,v
-        return return_dict   
+        return return_dict
     #----------------------------------------------------------------------
     def find(self, searchText, layers,
-             contains=True, searchFields="", 
-             sr="", layerDefs="", 
+             contains=True, searchFields="",
+             sr="", layerDefs="",
              returnGeometry=True, maxAllowableOffset="",
              geometryPrecision="", dynamicLayers="",
              returnZ=False, returnM=False, gdbVersion=""):
@@ -339,7 +339,7 @@ class MapService(base.BaseAGSService):
             "dynamicLayers" : dynamicLayers,
             "returnZ" : self._convert_boolean(returnZ),
             "returnM" : self._convert_boolean(returnM),
-            "gdbVersion" : gdbVersion, 
+            "gdbVersion" : gdbVersion,
             "layers" : layers
         }
         if not self._token is None and \
@@ -362,10 +362,10 @@ class MapService(base.BaseAGSService):
         res = self._do_get(url=url, param_dict=params)
         return res['type']
     #----------------------------------------------------------------------
-    def getFeatureDynamicLayer(self, oid, dynamicLayer, 
+    def getFeatureDynamicLayer(self, oid, dynamicLayer,
                                returnZ=False, returnM=False):
-        """ The feature resource represents a single feature in a dynamic 
-            layer in a map service 
+        """ The feature resource represents a single feature in a dynamic
+            layer in a map service
         """
         url = self._url + "/dynamicLayer/%s" % oid
         params = {
@@ -373,16 +373,32 @@ class MapService(base.BaseAGSService):
             "returnZ": returnZ,
             "returnM" : returnM,
             "layer": {
-                "id": 101, 
+                "id": 101,
                 "source" : dynamicLayer.asDictionary
             }
         }
         return common.Feature(
-            json_string=self._do_get(url=url, 
+            json_string=self._do_get(url=url,
                                      param_dict=params)
         )
     #----------------------------------------------------------------------
-    def identify(self):
+    def identify(self,
+                 geometryFilter,
+                 mapExtent,
+                 imageDisplay,
+                 layerDefs=None,
+                 timeFilter=None,
+                 layerTimeOptions=None,
+                 layers="top",
+                 tolerance=None,
+                 returnGeometry=True,
+                 maxAllowableOffset=None,
+                 geometryPrecision=None,
+                 dynamicLayers=None,
+                 returnZ=False,
+                 returnM=False,
+                 gdbVersion=None
+                 ):
         """ performs the map service's identify operation """
         pass
     #----------------------------------------------------------------------
@@ -394,28 +410,28 @@ class MapService(base.BaseAGSService):
             return 'false'
     #----------------------------------------------------------------------
     def generateKML(self, save_location, docName, layers, layerOptions="composite"):
-        """  
-           The generateKml operation is performed on a map service resource. 
-           The result of this operation is a KML document wrapped in a KMZ 
-           file. The document contains a network link to the KML Service 
+        """
+           The generateKml operation is performed on a map service resource.
+           The result of this operation is a KML document wrapped in a KMZ
+           file. The document contains a network link to the KML Service
            endpoint with properties and parameters you specify.
            Inputs:
-              docName - The name of the resulting KML document. This is the 
-                        name that appears in the Places panel of Google 
+              docName - The name of the resulting KML document. This is the
+                        name that appears in the Places panel of Google
                         Earth.
-              layers - the layers to perform the generateKML operation on. 
-                       The layers are specified as a comma-separated list 
-                       of layer ids. 
-              layerOptions - The layer drawing options. Based on the option 
-                             chosen, the layers are drawn as one composite 
-                             image, as separate images, or as vectors. When 
-                             the KML capability is enabled, the ArcGIS 
-                             Server administrator has the option of setting 
-                             the layer operations allowed. If vectors are 
-                             not allowed, then the caller will not be able 
-                             to get vectors. Instead, the caller receives a 
+              layers - the layers to perform the generateKML operation on.
+                       The layers are specified as a comma-separated list
+                       of layer ids.
+              layerOptions - The layer drawing options. Based on the option
+                             chosen, the layers are drawn as one composite
+                             image, as separate images, or as vectors. When
+                             the KML capability is enabled, the ArcGIS
+                             Server administrator has the option of setting
+                             the layer operations allowed. If vectors are
+                             not allowed, then the caller will not be able
+                             to get vectors. Instead, the caller receives a
                              single composite image.
-                             values: composite | separateImage | 
+                             values: composite | separateImage |
                                      nonComposite
         """
         kmlURL = self._url + "/generateKml"
@@ -431,10 +447,10 @@ class MapService(base.BaseAGSService):
         return self._download_file(url, save_location, docName + ".kmz")
         #return self._do_get(url, param_dict)
     #----------------------------------------------------------------------
-    def exportMap(self, 
-                  bbox, 
+    def exportMap(self,
+                  bbox,
                   size="600,550",
-                  dpi=200, 
+                  dpi=200,
                   imageSR=None,
                   image_format="png",
                   layerDefFilter=None,
@@ -446,60 +462,60 @@ class MapService(base.BaseAGSService):
                   mapScale=None
                   ):
         """
-           The export operation is performed on a map service resource. 
-           The result of this operation is a map image resource. This 
-           resource provides information about the exported map image such 
+           The export operation is performed on a map service resource.
+           The result of this operation is a map image resource. This
+           resource provides information about the exported map image such
            as its URL, its width and height, extent and scale.
            Inputs:
             bbox - envelope geometry object
             size - size of image in pixels
             dpi - dots per inch
             imageSR - spatial reference of the output image
-            image_format - Description: The format of the exported image. 
+            image_format - Description: The format of the exported image.
                              The default format is .png.
-                             Values: png | png8 | png24 | jpg | pdf | bmp | gif 
+                             Values: png | png8 | png24 | jpg | pdf | bmp | gif
                                      | svg | svgz | emf | ps | png32
-            layerDefFilter - Description: Allows you to filter the 
-                             features of individual layers in the exported 
-                             map by specifying definition expressions for 
-                             those layers. Definition expression for a 
+            layerDefFilter - Description: Allows you to filter the
+                             features of individual layers in the exported
+                             map by specifying definition expressions for
+                             those layers. Definition expression for a
                              layer that is published with the service will
                              be always honored.
             layers - Determines which layers appear on the exported map.
                      There are four ways to specify which layers are shown:
-                        show: Only the layers specified in this list will 
+                        show: Only the layers specified in this list will
                               be exported.
-                        hide: All layers except those specified in this 
+                        hide: All layers except those specified in this
                               list will be exported.
-                        include: In addition to the layers exported by 
-                                 default, the layers specified in this list 
+                        include: In addition to the layers exported by
+                                 default, the layers specified in this list
                                  will be exported.
-                        exclude: The layers exported by default excluding 
-                                 those specified in this list will be 
+                        exclude: The layers exported by default excluding
+                                 those specified in this list will be
                                  exported.
-            transparent - If true, the image will be exported with the 
-                          background color of the map set as its 
-                          transparent color. The default is false. Only 
-                          the .png and .gif formats support transparency. 
-                          Internet Explorer 6 does not display transparency 
+            transparent - If true, the image will be exported with the
+                          background color of the map set as its
+                          transparent color. The default is false. Only
+                          the .png and .gif formats support transparency.
+                          Internet Explorer 6 does not display transparency
                           correctly for png24 image formats.
-            timeFilter - The time instant or time extent of the exported 
+            timeFilter - The time instant or time extent of the exported
                          map image.
-            layerTimeOptions - The time options per layer. Users can 
-                               indicate whether or not the layer should use 
-                               the time extent specified by the time 
-                               parameter or not, whether to draw the layer 
-                               features cumulatively or not and the time 
+            layerTimeOptions - The time options per layer. Users can
+                               indicate whether or not the layer should use
+                               the time extent specified by the time
+                               parameter or not, whether to draw the layer
+                               features cumulatively or not and the time
                                offsets for the layer.
                                see: http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Export_Map/02r3000000v7000000/
-            dynamicLayers - Use dynamicLayers parameter to modify the layer 
-                            drawing order, change layer drawing info, and 
-                            change layer data source version for this request. 
-                            New layers (dataLayer) can also be added to the 
-                            dynamicLayers based on the map service registered 
+            dynamicLayers - Use dynamicLayers parameter to modify the layer
+                            drawing order, change layer drawing info, and
+                            change layer data source version for this request.
+                            New layers (dataLayer) can also be added to the
+                            dynamicLayers based on the map service registered
                             workspaces.
-            mapScale - Use this parameter to export a map image at a specific 
-                       scale, with the map centered around the center of the 
+            mapScale - Use this parameter to export a map image at a specific
+                       scale, with the map centered around the center of the
                        specified bounding box (bbox).
 
         """
@@ -523,7 +539,7 @@ class MapService(base.BaseAGSService):
             if image_format is not None:
                 params['format'] = image_format
             if layerDefFilter is not None and \
-               isinstance(layerDefFilter, 
+               isinstance(layerDefFilter,
                           filters.LayerDefinitionFilter):
                 params['layerDefs'] = layerDefFilter.filter
             if layers is not None:
@@ -541,26 +557,7 @@ class MapService(base.BaseAGSService):
             if mapScale is not None:
                 params['mapScale'] = mapScale
             exportURL = self._url + "/export"
-            return self._do_get(url=exportURL, 
+            return self._do_get(url=exportURL,
                                 param_dict=params)
         else:
             return None
-
-
-
-if __name__ == "__main__":
-    url = "http://chronus:6080/arcgis/rest/services/MapServiveDemoData/MapServer"
-    ms = MapService(url)
-    print ms.allLayers
-    #bbox = geometry.Envelope(-9543554.207205787,8307102.507213226,-1542538.2051737802,1.113285815872453E7,3857)
-    #print bbox.asDictionary    
-    #url = r"http://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer"
-    #ms = MapService(url=url)
-    #print ms.find(searchText="01", layers="0,1,2")
-    #print ms.generateKML(save_location=r"c:\temp", docName='print', layers="0,1")
-    #print ms.exportMap(bbox=bbox)
-    #cache_url = "http://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer"
-    #ms_cache = MapService(url=cache_url)
-    #print ms_cache.tileInfo
-    #print 'fin'
-    
