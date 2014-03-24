@@ -10,6 +10,10 @@ import zipfile
 import glob
 import calendar
 import datetime
+import mimetypes
+import mimetools
+from cStringIO import StringIO
+
 ########################################################################
 class Geometry(object):
     """ Base Geometry Class """
@@ -19,7 +23,7 @@ class BaseAGOLClass(object):
     _token_url = None
     _token = None
     _username = None
-    _password = None    
+    _password = None
     #----------------------------------------------------------------------
     def _unzip_file(self, zip_file, out_folder):
         """ unzips a file to a given folder """
@@ -27,7 +31,7 @@ class BaseAGOLClass(object):
             zf = zipfile.ZipFile(zip_file, 'r')
             zf.extractall(path=out_folder)
             zf.close()
-            del zf        
+            del zf
             return True
         except:
             return False
@@ -36,7 +40,7 @@ class BaseAGOLClass(object):
         if isinstance(obj, datetime.datetime):
             return calendar.timegm(obj.utctimetuple()) * 1000
         else:
-            return obj    
+            return obj
     #----------------------------------------------------------------------
     def _list_files(self, path):
         """lists files in a given directory"""
@@ -73,7 +77,7 @@ class BaseAGOLClass(object):
             if token['ssl'] == True:
                 httpPrefix = "https://www.arcgis.com/sharing/rest"
             self._token = token['token']
-            return token['token'], httpPrefix        
+            return token['token'], httpPrefix
     #----------------------------------------------------------------------
     @property
     def username(self):
@@ -100,7 +104,7 @@ class BaseAGOLClass(object):
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
-        return self._unicode_convert(jres) 
+        return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _do_get(self, url, param_dict, header={}):
         """ performs a get operation """
@@ -110,21 +114,16 @@ class BaseAGOLClass(object):
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector, 
-                        filename, filetype, 
-                        content, fields,
-                        port=None,
-                        https=False):
-        """ performs a multi-post to AGOL or AGS 
+    def _post_multipart(self, host, selector, fields, files, ssl=False,port=None):
+        """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
                    ex: www.arcgis.com
                selector - string - everything after the host
                    ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
-               filename - string - name file will be called on server
-               filetype - string - mimetype of data uploading
-               content - binary data - derived from open(<file>, 'rb').read()
                fields - dictionary - additional parameters like token and format information
+               files - tuple array- tuple with the file name type, filename, full path
+               ssl - option to use SSL
                port - interger - port value if not on port 80
             Output:
                JSON response as dictionary
@@ -135,30 +134,68 @@ class BaseAGOLClass(object):
                params = {"f":"json"}
                print _post_multipart(host=parsed_url.hostname,
                                selector=parsed_url.path,
-                               filename="Jellyfish.jpg",
-                               content=open(r"c:\temp\Jellyfish.jpg, 'rb').read(),
+                               files=files,
                                fields=params
                                )
         """
-        body = ''
-        for field in fields.keys():
-            body += '------------ThIs_Is_tHe_bouNdaRY_$\r\nContent-Disposition: form-data; name="' + field + '"\r\n\r\n' + fields[field] + '\r\n'
-        body += '------------ThIs_Is_tHe_bouNdaRY_$\r\nContent-Disposition: form-data; name="file"; filename="'
-        body += filename + '"\r\nContent-Type: ' + filetype + '\r\n\r\n'
-        body = body.encode('utf-8')
-        body += content + '\r\n------------ThIs_Is_tHe_bouNdaRY_$--\r\n'
-        if https:
+        boundary, body = self._encode_multipart_formdata(fields, files)
+        headers = {
+        'User-Agent': "ArcREST",
+        'Content-Type': 'multipart/form-data; boundary=%s' % boundary
+        }
+        if ssl:
             h = httplib.HTTPSConnection(host, port=port)
+            h.request('POST', selector, body, headers)
         else:
             h = httplib.HTTPConnection(host, port=port)
-        h.putrequest('POST', selector)
-        h.putheader('content-type', 'multipart/form-data; boundary=----------ThIs_Is_tHe_bouNdaRY_$')
-        h.putheader('content-length', str(len(body)))
-        h.endheaders()
-        h.send(body)
-        res = h.getresponse()
-        return res.read()        
-    #----------------------------------------------------------------------    
+            h.request('POST', selector, body, headers)
+        return h.getresponse().read()
+    #----------------------------------------------------------------------
+    def _encode_multipart_formdata(self, fields, files):
+        boundary = mimetools.choose_boundary()
+        buf = StringIO()
+        for (key, value) in fields.iteritems():
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"' % key)
+            buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
+        for (key, filepath, filename) in files:
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
+            buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
+            file = open(filepath, "rb")
+            try:
+                buf.write('\r\n' + file.read() + '\r\n')
+            finally:
+                file.close()
+        buf.write('--' + boundary + '--\r\n\r\n')
+        buf = buf.getvalue()
+        return boundary, buf
+    #----------------------------------------------------------------------
+    def _get_content_type(self, filename):
+        """ gets the content type of a file """
+        mntype = mimetypes.guess_type(filename)[0]
+        filename, fileExtension = os.path.splitext(filename)
+        if mntype is None and\
+            fileExtension.lower() == ".csv":
+            mntype = "text/csv"
+        elif mntype is None and \
+            fileExtension.lower() == ".sd":
+            mntype = "File/sd"
+        elif mntype is None:
+            #mntype = 'application/octet-stream'
+            mntype= "File/%s" % fileExtension.replace('.', '')
+        return mntype
+    #----------------------------------------------------------------------
+    def _tostr(self,obj):
+        """ converts a object to list, if object is a list, it creates a 
+            comma seperated string.
+        """
+        if not obj:
+            return ''
+        if isinstance(obj, list):
+            return ', '.join(map(_tostr, obj))
+        return str(obj)
+    #----------------------------------------------------------------------
     def _unicode_convert(self, obj):
         """ converts unicode to anscii """
         if isinstance(obj, dict):
@@ -168,5 +205,4 @@ class BaseAGOLClass(object):
         elif isinstance(obj, unicode):
             return obj.encode('utf-8')
         else:
-            return obj        
-        
+            return obj

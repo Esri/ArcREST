@@ -2,7 +2,7 @@ import os
 import copy
 import json
 import arcpy
-from base import Geometry 
+from base import Geometry
 import datetime
 import calendar
 
@@ -11,7 +11,14 @@ def _date_handler(obj):
     if isinstance(obj, datetime.datetime):
         return calendar.timegm(obj.utctimetuple()) * 1000
     else:
-        return obj    
+        return obj
+def relative_path_to_absolute(path):
+    if not os.path.isabs(path):
+        sciptPath = os.getcwd()
+        return os.path.join(sciptPath,path)
+    else:
+        return path
+
 #----------------------------------------------------------------------
 def get_attachment_data(attachmentTable, sql,
                         nameField="ATT_NAME", blobField="DATA",
@@ -19,7 +26,7 @@ def get_attachment_data(attachmentTable, sql,
                         rel_object_field="REL_OBJECTID"):
     """ gets all the data to pass to a feature service """
     ret_rows = []
-    with arcpy.da.SearchCursor(attachmentTable, 
+    with arcpy.da.SearchCursor(attachmentTable,
                                [nameField,
                                 blobField,
                                 contentTypeField,
@@ -31,7 +38,7 @@ def get_attachment_data(attachmentTable, sql,
             writer.write(row[1])
             writer.flush()
             writer.close()
-            del writer            
+            del writer
             ret_rows.append({
                 "name" : row[0],
                 "blob" : temp_f,
@@ -39,25 +46,25 @@ def get_attachment_data(attachmentTable, sql,
                 "rel_oid" : row[3]
             })
             del row
-    return ret_rows 
+    return ret_rows
 #----------------------------------------------------------------------
 def create_feature_layer(ds, sql, name="layer"):
     """ creates a feature layer object """
-    result = arcpy.MakeFeatureLayer_management(in_features=ds, 
-                                               out_layer=name, 
+    result = arcpy.MakeFeatureLayer_management(in_features=ds,
+                                               out_layer=name,
                                                where_clause=sql)
     return result[0]
 #----------------------------------------------------------------------
 def get_records_with_attachments(attachment_table, rel_object_field="REL_OBJECTID"):
     """"""
     OIDs = []
-    with arcpy.da.SearchCursor(attachment_table, 
+    with arcpy.da.SearchCursor(attachment_table,
                                [rel_object_field]) as rows:
         for row in rows:
             if not row[0] in OIDs:
                 OIDs.append("%s" % row[0])
             del row
-    return OIDs  
+    return OIDs
 #----------------------------------------------------------------------
 def get_OID_field(fs):
     """returns a featureset's object id field"""
@@ -70,7 +77,7 @@ def featureclass_to_json(fc):
     """ converts a feature class to a json dictionary representation """
     featureSet = arcpy.FeatureSet(fc)# Load the feature layer into a feature set
     desc = arcpy.Describe(featureSet)# this will allow us to use the json property of the feature set
-    return json.loads(desc.json)   
+    return json.loads(desc.json)
 #----------------------------------------------------------------------
 def json_to_featureclass(json_file, out_fc):
     """ converts a json file (.json) to a feature class """
@@ -113,18 +120,18 @@ def toDateTime(unix_timestamp):
     unix_timestamp = unix_timestamp/1000
     return datetime.datetime.fromtimestamp(unix_timestamp)
 #----------------------------------------------------------------------
-def insert_rows(fc, 
-                features, 
-                fields, 
-                includeOIDField=False, 
+def insert_rows(fc,
+                features,
+                fields,
+                includeOIDField=False,
                 oidField=None):
     """ inserts rows based on a list features object """
     icur = None
     if includeOIDField:
         arcpy.AddField_management(fc, "FSL_OID", "LONG")
-        fields.append("FSL_OID")     
+        fields.append("FSL_OID")
     if len(features) > 0:
-        fields.append("SHAPE@")         
+        fields.append("SHAPE@")
         workspace = _unicode_convert(os.path.dirname(fc))
         with arcpy.da.Editor(workspace) as edit:
             date_fields = getDateFields(fc)
@@ -157,11 +164,11 @@ def insert_rows(fc,
     else:
         return fc
 #----------------------------------------------------------------------
-def create_feature_class(out_path, 
+def create_feature_class(out_path,
                          out_name,
-                         geom_type, 
-                         wkid, 
-                         fields, 
+                         geom_type,
+                         wkid,
+                         fields,
                          objectIdField):
     """ creates a feature class in a given gdb or folder """
     arcpy.env.overwriteOutput = True
@@ -247,8 +254,8 @@ class SpatialReference:
         return {"wkid": self._wkid}
 ########################################################################
 class Point(Geometry):
-    """ Point Geometry 
-        
+    """ Point Geometry
+
     """
     _x = None
     _y = None
@@ -280,7 +287,7 @@ class Point(Geometry):
     def type(self):
         """ returns the geometry type """
         return "esriGeometryPoint"
-    #----------------------------------------------------------------------    
+    #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """
@@ -302,8 +309,8 @@ class Point(Geometry):
         #
         value = self._dict
         if value is None:
-            template = {"x" : self._x, 
-                        "y" : self._y, 
+            template = {"x" : self._x,
+                        "y" : self._y,
                         "spatialReference" : {"wkid" : self._wkid}
                         }
             if not self._z is None:
@@ -349,7 +356,7 @@ class MultiPoint(Geometry):
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryMultipoint"    
+        return "esriGeometryMultipoint"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
@@ -375,21 +382,21 @@ class MultiPoint(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "points" : [], 
+                "points" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for pt in self._points:
                 template['points'].append(pt.asList)
             self._dict = template
-        return self._dict  
+        return self._dict
 ########################################################################
 class Polyline(Geometry):
-    """ Implements the ArcGIS REST API Polyline Object 
+    """ Implements the ArcGIS REST API Polyline Object
         Inputs:
            paths - list - list of lists of Point objects
            wkid - integer - well know spatial reference id
-           hasZ - boolean - 
-           hasM - boolean - 
+           hasZ - boolean -
+           hasM - boolean -
     """
     _paths = None
     _wkid = None
@@ -409,12 +416,12 @@ class Polyline(Geometry):
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryPolyline"    
+        return "esriGeometryPolyline"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
@@ -439,7 +446,7 @@ class Polyline(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "paths" : [], 
+                "paths" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for part in self._paths:
@@ -449,7 +456,7 @@ class Polyline(Geometry):
                 template['paths'].append(lpart)
                 del lpart
             self._dict = template
-        return self._dict        
+        return self._dict
 ########################################################################
 class Polygon(Geometry):
     """ Implements the ArcGIS REST JSON for Polygon Object """
@@ -459,7 +466,7 @@ class Polygon(Geometry):
     _dict = None
     _geom = None
     _hasZ = None
-    _hasM = None    
+    _hasM = None
     #----------------------------------------------------------------------
     def __init__(self, rings, wkid, hasZ=False, hasM=False):
         """Constructor"""
@@ -471,12 +478,12 @@ class Polygon(Geometry):
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryPolygon"           
+        return "esriGeometryPolygon"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
@@ -501,7 +508,7 @@ class Polygon(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "rings" : [], 
+                "rings" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for part in self._rings:
@@ -511,13 +518,13 @@ class Polygon(Geometry):
                 template['rings'].append(lpart)
                 del lpart
             self._dict = template
-        return self._dict         
+        return self._dict
 ########################################################################
 class Envelope(Geometry):
     """
-       An envelope is a rectangle defined by a range of values for each 
-       coordinate and attribute. It also has a spatialReference field. 
-       The fields for the z and m ranges are optional. 
+       An envelope is a rectangle defined by a range of values for each
+       coordinate and attribute. It also has a spatialReference field.
+       The fields for the z and m ranges are optional.
     """
     _json = None
     _dict = None
@@ -532,7 +539,7 @@ class Envelope(Geometry):
     _mmax = None
     _wkid = None
     #----------------------------------------------------------------------
-    def __init__(self, xmin, ymin, xmax, ymax, wkid, 
+    def __init__(self, xmin, ymin, xmax, ymax, wkid,
                  zmin=None, zmax=None, mmin=None, mmax=None):
         """Constructor"""
         self._xmin = xmin
@@ -542,26 +549,26 @@ class Envelope(Geometry):
         self._xmax = xmax
         self._ymax = ymax
         self._zmax = zmax
-        self._mmax = mmax        
+        self._mmax = mmax
         self._wkid = wkid
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryEnvelope"    
+        return "esriGeometryEnvelope"
     #----------------------------------------------------------------------
     @property
     def asDictionary(self):
         """ returns the envelope as a dictionary """
         template = {
-            "xmin" : self._xmin, 
-            "ymin" : self._ymin, 
-            "xmax" : self._xmax, 
+            "xmin" : self._xmin,
+            "ymin" : self._ymin,
+            "xmax" : self._xmax,
             "ymax" : self._ymax,
             "spatialReference" : {"wkid" : self._wkid}
         }
@@ -569,12 +576,12 @@ class Envelope(Geometry):
            self._zmin is not None:
             template['zmin'] = self._zmin
             template['zmax'] = self._zmax
-        
+
         if self._mmin is not None and \
            self._mmax is not None:
             template['mmax'] = self._mmax
             template['mmin'] = self._mmin
-            
+
         return template
     #----------------------------------------------------------------------
     @property
@@ -585,14 +592,14 @@ class Envelope(Geometry):
             value = json.dumps(self.asDictionary,
                                default=_date_handler)
             self._json = value
-        return self._json    
+        return self._json
     #----------------------------------------------------------------------
     @property
     def asArcPyObject(self):
         """ returns the Envelope as an ESRI arcpy.Polygon object """
         env = self.asDictionary
         ring = [[
-            Point(env['xmin'], env['ymin'], self._wkid), 
+            Point(env['xmin'], env['ymin'], self._wkid),
             Point(env['xmax'], env['ymin'], self._wkid),
             Point(env['xmax'], env['ymax'], self._wkid),
             Point(env['xmin'], env['ymax'], self._wkid)
@@ -628,12 +635,12 @@ class Feature(object):
         elif field_name.upper() in ['SHAPE', 'SHAPE@', "GEOMETRY"]:
             if isinstance(value, Geometry):
                 if isinstance(value, Point):
-                    self._dict['geometry'] = {                    
+                    self._dict['geometry'] = {
                     "x" : value.asDictionary['x'],
                     "y" : value.asDictionary['y']
                     }
                 elif isinstance(value, MultiPoint):
-                    self._dict['geometry'] = {                    
+                    self._dict['geometry'] = {
                         "points" : value.asDictionary['points']
                     }
                 elif isinstance(value, Polyline):
@@ -643,7 +650,7 @@ class Feature(object):
                 elif isinstance(value, Polygon):
                     self._dict['geometry'] = {
                         "rings" : value.asDictionary['rings']
-                    }                    
+                    }
                 else:
                     return False
                 self._json = json.dumps(self._dict, default=_date_handler)
@@ -666,17 +673,17 @@ class Feature(object):
         if self._geom is not None:
             if self._dict.has_key('feature'):
                 feat_dict['geometry'] =  self._dict['feature']['geometry']
-            elif self._dict.has_key('geometry'):        
+            elif self._dict.has_key('geometry'):
                 feat_dict['geometry'] =  self._dict['geometry']
         if self._dict.has_key("feature"):
             feat_dict['attributes'] = self._dict['feature']['attributes']
         else:
-            feat_dict['attributes'] = self._dict['attributes']        
+            feat_dict['attributes'] = self._dict['attributes']
         return self._dict
     #----------------------------------------------------------------------
     @property
     def asRow(self):
-        """ converts a feature to a list for insertion into an insert cursor 
+        """ converts a feature to a list for insertion into an insert cursor
             Output:
                [row items], [field names]
                returns a list of fields and the row object
@@ -722,8 +729,8 @@ class Feature(object):
         return self._geomType
     @staticmethod
     def fc_to_features(dataset):
-        """ 
-           converts a dataset to a list of feature objects 
+        """
+           converts a dataset to a list of feature objects
            Input:
               dataset - path to table or feature class
            Output:
@@ -744,12 +751,12 @@ class Feature(object):
                 if "SHAPE@JSON" in fields:
                     template['geometry'] = \
                         json.loads(row[fields.index("SHAPE@JSON")])
-                    
+
                 features.append(
                     Feature(json_string=_unicode_convert(template))
                 )
                 del row
-        return features    
+        return features
 #----------------------------------------------------------------------
 def _unicode_convert(obj):
     """ converts unicode to anscii """
@@ -762,4 +769,4 @@ def _unicode_convert(obj):
     elif isinstance(obj, unicode):
         return obj.encode('utf-8')
     else:
-        return obj     
+        return obj

@@ -61,9 +61,9 @@ class FeatureLayer(BaseAGOLClass):
     _supportsRollbackOnFailureParameter = None
     _advancedQueryCapabilities = None
     #----------------------------------------------------------------------
-    def __init__(self, url,  
-                 username=None, 
-                 password=None, 
+    def __init__(self, url,
+                 username=None,
+                 password=None,
                  token_url=None):
         """Constructor"""
         self._url = url
@@ -75,7 +75,12 @@ class FeatureLayer(BaseAGOLClass):
             if not token_url is None:
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
-                self._token = self.generate_token()[0]
+                 res = self.generate_token()
+                 if res == None:
+                    raise ValueError("Unable to get token")
+                 else:
+                    self._token =res[0]
+
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -86,18 +91,18 @@ class FeatureLayer(BaseAGOLClass):
         if self._token is not None:
             params['token'] = self._token
         json_dict = self._do_get(self._url, params)
-        attributes = [attr for attr in dir(self) 
+        attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
-                      not attr.startswith('_')]          
+                      not attr.startswith('_')]
         for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented."
         self._parentLayer = featureservice.FeatureService(
-            url=os.path.dirname(self._url), 
-            token_url=self._token_url, 
-            username=self._username, 
+            url=os.path.dirname(self._url),
+            token_url=self._token_url,
+            username=self._username,
             password=self._password)
     #----------------------------------------------------------------------
     @property
@@ -105,7 +110,7 @@ class FeatureLayer(BaseAGOLClass):
         """ returns the advanced query capabilities """
         if self._advancedQueryCapabilities is None:
             self.__init()
-        return self._advancedQueryCapabilities    
+        return self._advancedQueryCapabilities
     #----------------------------------------------------------------------
     @property
     def supportsRollbackOnFailureParameter(self):
@@ -148,15 +153,15 @@ class FeatureLayer(BaseAGOLClass):
         if self._globalIdField is None:
             self.__init()
         return self._globalIdField
-        
+
     #----------------------------------------------------------------------
-    @property       
+    @property
     def objectIdField(self):
         if self._objectIdField is None:
             self.__init()
-        return self._objectIdField   
+        return self._objectIdField
     #----------------------------------------------------------------------
-    @property   
+    @property
     def currentVersion(self):
         """ returns the current version """
         if self._currentVersion is None:
@@ -217,7 +222,7 @@ class FeatureLayer(BaseAGOLClass):
         """ returns if it has a m value or not """
         if self._hasM is None:
             self.__init()
-        return self._hasM 
+        return self._hasM
     #----------------------------------------------------------------------
     @property
     def copyrightText(self):
@@ -348,7 +353,7 @@ class FeatureLayer(BaseAGOLClass):
     def canScaleSymbols(self):
         if self._canScaleSymbols is None:
             self.__init()
-        return self._canScaleSymbols 
+        return self._canScaleSymbols
     @property
     def capabilities(self):
         if self._capabilities is None:
@@ -376,7 +381,7 @@ class FeatureLayer(BaseAGOLClass):
         return self._useStandardizedQueries
     #----------------------------------------------------------------------
     def addAttachment(self, oid, file_path):
-        """ Adds an attachment to a feature service 
+        """ Adds an attachment to a feature service
             Input:
               oid - string - OBJECTID value to add attachment to
               file_path - string - path to file
@@ -387,21 +392,20 @@ class FeatureLayer(BaseAGOLClass):
             attachURL = self._url + "/%s/addAttachment" % oid
             params = {'f':'json'}
             if not self._token is None:
-                params['token'] = self._token            
-            content = open(file_path, 'rb').read()
+                params['token'] = self._token
             parsed = urlparse.urlparse(attachURL)
             port = parsed.port
-            res = self._post_multipart(host=parsed.hostname, 
-                                       selector=parsed.path, 
-                                       filename=os.path.basename(file_path), 
-                                       filetype=mimetypes.guess_type(file_path)[0], 
-                                       content=content, 
+            files = []
+            files.append(('attachment', file_path, os.path.basename(file_path)))
+            res = self._post_multipart(host=parsed.hostname,
+                                       selector=parsed.path,
+                                       files=files,
                                        fields=params,
                                        port=port,
-                                       https=parsed.scheme.lower() == 'https')
+                                       ssl=parsed.scheme.lower() == 'https')
             return self._unicode_convert(json.loads(res))
         else:
-            return "Attachments are not supported for this feature service."   
+            return "Attachments are not supported for this feature service."
     #----------------------------------------------------------------------
     def deleteAttachment(self, oid, attachment_id):
         """ removes an attachment from a feature service feature
@@ -421,10 +425,10 @@ class FeatureLayer(BaseAGOLClass):
         return self._do_post(url, params)
     #----------------------------------------------------------------------
     def updateAttachment(self, oid, attachment_id, file_path):
-        """ updates an existing attachment with a new file 
+        """ updates an existing attachment with a new file
             Inputs:
                oid - string/integer - Unique record ID
-               attachment_id - integer - Unique attachment identifier 
+               attachment_id - integer - Unique attachment identifier
                file_path - string - path to new attachment
             Output:
                JSON response
@@ -435,15 +439,17 @@ class FeatureLayer(BaseAGOLClass):
             "attachmentId" : "%s" % attachment_id
         }
         if not self._token is None:
-            params['token'] = self._token        
+            params['token'] = self._token
         parsed = urlparse.urlparse(url)
-        content = open(file_path, 'rb').read()
-        res = self._post_multipart(host=parsed.hostname, 
-                                   selector=parsed.path,  
-                                   filename=os.path.basename(file_path).split('.')[0], 
-                                   filetype=mimetypes.guess_type(file_path)[0], 
-                                   content=content, 
-                                   fields=params)
+        port = parsed.port
+        files = []
+        files.append(('attachment', file_path, os.path.basename(file_path)))
+        res = self._post_multipart(host=parsed.hostname,
+                                   selector=parsed.path,
+                                   files=files,
+                                   port=port,
+                                   fields=params,
+                                   ssl=parsed.scheme.lower() == 'https')
         return self._unicode_convert(json.loads(res))
     #----------------------------------------------------------------------
     def listAttachments(self, oid):
@@ -453,8 +459,8 @@ class FeatureLayer(BaseAGOLClass):
             "f":"json"
         }
         if not self._token is None:
-            params['token'] = self._token        
-        return self._do_get(url, params)    
+            params['token'] = self._token
+        return self._do_get(url, params)
     #----------------------------------------------------------------------
     def create_fc_template(self, out_path, out_name):
         """creates a featureclass template on local disk"""
@@ -462,47 +468,47 @@ class FeatureLayer(BaseAGOLClass):
         objectIdField = self.objectIdField
         geomType = self.geometryType
         wkid = self.parentLayer.spatialReference['wkid']
-        return common.create_feature_class(out_path, 
-                                           out_name, 
-                                           geomType, 
-                                           wkid, 
-                                           fields, 
+        return common.create_feature_class(out_path,
+                                           out_name,
+                                           geomType,
+                                           wkid,
+                                           fields,
                                            objectIdField)
     #----------------------------------------------------------------------
-    def query(self, 
-              where="1=1", 
-              out_fields="*", 
+    def query(self,
+              where="1=1",
+              out_fields="*",
               timeFilter=None,
               geometryFilter=None,
               returnGeometry=True,
-              returnIDsOnly=False, 
+              returnIDsOnly=False,
               returnCountOnly=False,
-              returnFeatureClass=False, 
+              returnFeatureClass=False,
               out_fc=None):
         """ queries a feature service based on a sql statement
             Inputs:
                where - the selection sql statement
                out_fields - the attribute fields to return
-               timeFilter - a TimeFilter object where either the start time 
-                            or start and end time are defined to limit the 
-                            search results for a given time.  The values in 
-                            the timeFilter should be as UTC timestampes in 
+               timeFilter - a TimeFilter object where either the start time
+                            or start and end time are defined to limit the
+                            search results for a given time.  The values in
+                            the timeFilter should be as UTC timestampes in
                             milliseconds.  No checking occurs to see if they
                             are in the right format.
-               geometryFilter - a GeometryFilter object to parse down a given 
+               geometryFilter - a GeometryFilter object to parse down a given
                                query by another spatial dataset.
-               returnGeometry - true means a geometry will be returned, 
+               returnGeometry - true means a geometry will be returned,
                                 else just the attributes
                returnIDsOnly - false is default.  True means only OBJECTIDs
                                will be returned
-               returnCountOnly - if True, then an integer is returned only 
+               returnCountOnly - if True, then an integer is returned only
                                  based on the sql statement
-               returnFeatureClass - Default False. If true, query will be 
+               returnFeatureClass - Default False. If true, query will be
                                     returned as feature class
-               out_fc - only valid if returnFeatureClass is set to True. 
+               out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
             Output:
-               A list of Feature Objects (default) or a path to the output featureclass if 
+               A list of Feature Objects (default) or a path to the output featureclass if
                returnFeatureClass is set to True.
          """
         params = {"f": "json",
@@ -534,18 +540,18 @@ class FeatureLayer(BaseAGOLClass):
                     writer.write(json_text)
                     writer.flush()
                 del writer
-                fc = common.json_to_featureclass(json_file=temp, 
+                fc = common.json_to_featureclass(json_file=temp,
                                                    out_fc=out_fc)
                 os.remove(temp)
                 return fc
             else:
                 feats = []
                 for res in results['features']:
-                    feats.append(common.Feature(res))                            
+                    feats.append(common.Feature(res))
                 return feats
         else:
             return results
-        return 
+        return
     #----------------------------------------------------------------------
     def query_related_records(self,
                               objectIds,
@@ -560,55 +566,55 @@ class FeatureLayer(BaseAGOLClass):
                               returnZ=False,
                               returnM=False):
         """
-           The Query operation is performed on a feature service layer 
-           resource. The result of this operation are feature sets grouped 
-           by source layer/table object IDs. Each feature set contains 
+           The Query operation is performed on a feature service layer
+           resource. The result of this operation are feature sets grouped
+           by source layer/table object IDs. Each feature set contains
            Feature objects including the values for the fields requested by
-           the user. For related layers, if you request geometry 
-           information, the geometry of each feature is also returned in 
-           the feature set. For related tables, the feature set does not 
+           the user. For related layers, if you request geometry
+           information, the geometry of each feature is also returned in
+           the feature set. For related tables, the feature set does not
            include geometries.
            Inputs:
               objectIds - the object IDs of the table/layer to be queried
               relationshipId - The ID of the relationship to be queried.
-              outFields - the list of fields from the related table/layer 
-                          to be included in the returned feature set. This 
+              outFields - the list of fields from the related table/layer
+                          to be included in the returned feature set. This
                           list is a comma delimited list of field names. If
                           you specify the shape field in the list of return
-                          fields, it is ignored. To request geometry, set 
+                          fields, it is ignored. To request geometry, set
                           returnGeometry to true.
-                          You can also specify the wildcard "*" as the 
+                          You can also specify the wildcard "*" as the
                           value of this parameter. In this case, the result
                           s will include all the field values.
-              definitionExpression - The definition expression to be 
-                                     applied to the related table/layer. 
+              definitionExpression - The definition expression to be
+                                     applied to the related table/layer.
                                      From the list of objectIds, only those
-                                     records that conform to this 
-                                     expression are queried for related 
+                                     records that conform to this
+                                     expression are queried for related
                                      records.
-              returnGeometry - If true, the feature set includes the 
-                               geometry associated with each feature. The 
+              returnGeometry - If true, the feature set includes the
+                               geometry associated with each feature. The
                                default is true.
-              maxAllowableOffset - This option can be used to specify the 
-                                   maxAllowableOffset to be used for 
-                                   generalizing geometries returned by the 
-                                   query operation. The maxAllowableOffset 
-                                   is in the units of the outSR. If outSR 
-                                   is not specified, then 
-                                   maxAllowableOffset is assumed to be in 
+              maxAllowableOffset - This option can be used to specify the
+                                   maxAllowableOffset to be used for
+                                   generalizing geometries returned by the
+                                   query operation. The maxAllowableOffset
+                                   is in the units of the outSR. If outSR
+                                   is not specified, then
+                                   maxAllowableOffset is assumed to be in
                                    the unit of the spatial reference of the
                                    map.
-              geometryPrecision - This option can be used to specify the 
-                                  number of decimal places in the response 
+              geometryPrecision - This option can be used to specify the
+                                  number of decimal places in the response
                                   geometries.
               outWKID - The spatial reference of the returned geometry.
               gdbVersion - The geodatabase version to query. This parameter
-                           applies only if the isDataVersioned property of 
+                           applies only if the isDataVersioned property of
                            the layer queried is true.
-              returnZ - If true, Z values are included in the results if 
+              returnZ - If true, Z values are included in the results if
                         the features have Z values. Otherwise, Z values are
                         not returned. The default is false.
-              returnM - If true, M values are included in the results if 
+              returnM - If true, M values are included in the results if
                         the features have M values. Otherwise, M values are
                         not returned. The default is false.
         """
@@ -638,13 +644,13 @@ class FeatureLayer(BaseAGOLClass):
         return res
     #----------------------------------------------------------------------
     def getHTMLPopup(self, oid):
-        """ 
-           The htmlPopup resource provides details about the HTML pop-up 
-           authored by the user using ArcGIS for Desktop. 
+        """
+           The htmlPopup resource provides details about the HTML pop-up
+           authored by the user using ArcGIS for Desktop.
            Input:
               oid - object id of the feature where the HTML pop-up
            Output:
-              
+
         """
         if self.htmlPopupType != "esriServerHTMLPopupTypeNone":
             popURL = self._url + "/%s/htmlPopup" % oid
@@ -653,7 +659,7 @@ class FeatureLayer(BaseAGOLClass):
             }
             if self._token is not None:
                 params['token'] = self._token
-            return self._do_get(url=popURL, param_dict=params)  
+            return self._do_get(url=popURL, param_dict=params)
         return ""
     #----------------------------------------------------------------------
     def _chunks(self, l, n):
@@ -663,7 +669,7 @@ class FeatureLayer(BaseAGOLClass):
         newn = int(1.0 * len(l) / n + 0.5)
         for i in xrange(0, n-1):
             yield l[i*newn:i*newn+newn]
-        yield l[n*newn-newn:]    
+        yield l[n*newn-newn:]
     #----------------------------------------------------------------------
     def get_local_copy(self, out_path, includeAttachments=False):
         """ exports the whole feature service to a feature class
@@ -686,13 +692,13 @@ class FeatureLayer(BaseAGOLClass):
             return self.parentLayer.createReplica(replicaName="fgdb_dump",
                                                   layers="%s" % self.id,
                                                   returnAsFeatureClass=True,
-                                                  out_path=out_path)[0]     
+                                                  out_path=out_path)[0]
         else:
             result_features = []
             res = self.query(returnIDsOnly=True)
             OIDS = res['objectIds']
             OIDS.sort()
-            OIDField = res['objectIdFieldName']            
+            OIDField = res['objectIdFieldName']
             count = len(OIDS)
             if count <= self.maxRecordCount:
                 bins = 1
@@ -700,33 +706,33 @@ class FeatureLayer(BaseAGOLClass):
                 bins = count / self.maxRecordCount
                 v = count % self.maxRecordCount
                 if v > 0:
-                    bins += 1                
+                    bins += 1
             chunks = self._chunks(OIDS, bins)
             for chunk in chunks:
                 chunk.sort()
-                sql = "%s >= %s and %s <= %s" % (OIDField, chunk[0], 
+                sql = "%s >= %s and %s <= %s" % (OIDField, chunk[0],
                                                  OIDField, chunk[len(chunk) -1])
                 temp_base = "a" + uuid.uuid4().get_hex()[:6] + "a"
                 temp_fc = r"%s\%s" % (common.scratchGDB(), temp_base)
-                temp_fc = self.query(where=sql, 
-                                     returnFeatureClass=True, 
+                temp_fc = self.query(where=sql,
+                                     returnFeatureClass=True,
                                      out_fc=temp_fc)
                 result_features.append(temp_fc)
-            return common.merge_feature_class(merges=result_features, 
+            return common.merge_feature_class(merges=result_features,
                                               out_fc=out_path)
     #----------------------------------------------------------------------
-    def updateFeature(self, 
+    def updateFeature(self,
                       features,
                       gdbVersion=None,
                       rollbackOnFailure=True):
-        """ 
-           updates an existing feature in a feature service layer 
+        """
+           updates an existing feature in a feature service layer
            Input:
               feature - feature object(s) to get updated.  A single feature
                         or a list of feature objects can be passed
            Output:
               dictionary of result messages
-        """  
+        """
         params = {
             "f" : "json",
             "rollbackOnFailure" : rollbackOnFailure
@@ -746,10 +752,10 @@ class FeatureLayer(BaseAGOLClass):
         else:
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
-        res = self._do_post(url=updateURL, 
+        res = self._do_post(url=updateURL,
                             param_dict=params)
         return res
-    #----------------------------------------------------------------------    
+    #----------------------------------------------------------------------
     def deleteFeatures(self,
                        objectIds="",
                        where="",
@@ -757,24 +763,24 @@ class FeatureLayer(BaseAGOLClass):
                        gdbVersion=None,
                        rollbackOnFailure=True
                        ):
-        """ removes 1:n features based on a sql statement 
+        """ removes 1:n features based on a sql statement
             Input:
               objectIds - The object IDs of this layer/table to be deleted
-              where - A where clause for the query filter. Any legal SQL 
-                      where clause operating on the fields in the layer is 
-                      allowed. Features conforming to the specified where 
+              where - A where clause for the query filter. Any legal SQL
+                      where clause operating on the fields in the layer is
+                      allowed. Features conforming to the specified where
                       clause will be deleted.
               geometryFilter - a filters.GeometryFilter object to limit
                                deletion by a geometry.
-              gdbVersion - Geodatabase version to apply the edits. This 
-                           parameter applies only if the isDataVersioned 
+              gdbVersion - Geodatabase version to apply the edits. This
+                           parameter applies only if the isDataVersioned
                            property of the layer is true
-              rollbackOnFailure - parameter to specify if the edits should 
-                                  be applied only if all submitted edits 
-                                  succeed. If false, the server will apply 
-                                  the edits that succeed even if some of 
-                                  the submitted edits fail. If true, the 
-                                  server will apply the edits only if all 
+              rollbackOnFailure - parameter to specify if the edits should
+                                  be applied only if all submitted edits
+                                  succeed. If false, the server will apply
+                                  the edits that succeed even if some of
+                                  the submitted edits fail. If true, the
+                                  server will apply the edits only if all
                                   edits succeed. The default value is true.
             Output:
                JSON response as dictionary
@@ -797,35 +803,35 @@ class FeatureLayer(BaseAGOLClass):
            objectIds != "":
             params['objectIds'] = objectIds
         if not self._token is None:
-            params['token'] = self._token        
+            params['token'] = self._token
         result = self._do_post(url=dURL, param_dict=params)
         self.__init()
         return result
     #----------------------------------------------------------------------
-    def applyEdits(self, 
+    def applyEdits(self,
                    addFeatures=[],
                    updateFeatures=[],
                    deleteFeatures=None,
                    gdbVersion=None,
                    rollbackOnFailure=True):
-        """  
-           This operation adds, updates, and deletes features to the 
+        """
+           This operation adds, updates, and deletes features to the
            associated feature layer or table in a single call.
            Inputs:
               addFeatures - The array of features to be added.  These
                             features should be common.Feature objects
-              updateFeatures - The array of features to be updateded.  
-                               These features should be common.Feature 
+              updateFeatures - The array of features to be updateded.
+                               These features should be common.Feature
                                objects
               deleteFeatures - string of OIDs to remove from service
-              gdbVersion - Geodatabase version to apply the edits. 
-              rollbackOnFailure - Optional parameter to specify if the 
-                                  edits should be applied only if all 
-                                  submitted edits succeed. If false, the 
-                                  server will apply the edits that succeed 
-                                  even if some of the submitted edits fail. 
-                                  If true, the server will apply the edits 
-                                  only if all edits succeed. The default 
+              gdbVersion - Geodatabase version to apply the edits.
+              rollbackOnFailure - Optional parameter to specify if the
+                                  edits should be applied only if all
+                                  submitted edits succeed. If false, the
+                                  server will apply the edits that succeed
+                                  even if some of the submitted edits fail.
+                                  If true, the server will apply the edits
+                                  only if all edits succeed. The default
                                   value is true.
            Output:
               dictionary of messages
@@ -846,14 +852,14 @@ class FeatureLayer(BaseAGOLClass):
             params['deletes'] = deleteFeatures
         return self._do_post(url=editURL, param_dict=params)
     #----------------------------------------------------------------------
-    def addFeatures(self, fc, attachmentTable=None, 
+    def addFeatures(self, fc, attachmentTable=None,
                     nameField="ATT_NAME", blobField="DATA",
                     contentTypeField="CONTENT_TYPE",
                     rel_object_field="REL_OBJECTID"):
         """ adds a feature to the feature service
            Inputs:
               fc - string - path to feature class data to add.
-              attachmentTable - string - (optional) path to attachment table 
+              attachmentTable - string - (optional) path to attachment table
               nameField - string - (optional) name of file field in attachment table
               blobField - string - (optional) name field containing blob data
               contentTypeField - string - (optional) name of field containing content type
@@ -881,11 +887,11 @@ class FeatureLayer(BaseAGOLClass):
             for chunk in chunks:
                 params = {
                     "f" : 'json',
-                    "features"  : json.dumps(chunk, 
-                                             default=self._date_handler)                
+                    "features"  : json.dumps(chunk,
+                                             default=self._date_handler)
                 }
                 if not self._token is None:
-                    params['token'] = self._token                
+                    params['token'] = self._token
                 result = self._do_post(url=uURL, param_dict=params)
                 messages.append(result)
                 del params
@@ -900,7 +906,7 @@ class FeatureLayer(BaseAGOLClass):
             del fl
             for oid in OIDs:
                 fl = common.create_feature_layer(fc, "%s = %s" % (oid_field, oid), name="layer%s" % oid)
-                val, msgs = self.addFeatures(fl)                    
+                val, msgs = self.addFeatures(fl)
                 for result in msgs[0]['addResults']:
                     oid_fs = result['objectId']
                     sends = common.get_attachment_data(attachmentTable, sql="%s = %s" % (rel_object_field, oid))
@@ -913,8 +919,8 @@ class FeatureLayer(BaseAGOLClass):
                 del fl
                 del oid
             del OIDs
-            return True, messages  
-        
+            return True, messages
+
 ########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""

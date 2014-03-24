@@ -13,7 +13,6 @@ import mimetypes
 class FeatureService(BaseAGOLClass):
     """ contains information about a feature service """
     _url = None
-    _advancedQueryCapabilities = None
     _currentVersion = None
     _serviceDescription = None
     _hasVersionedData = None
