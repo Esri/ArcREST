@@ -1,6 +1,6 @@
 """
    Python tools for access ArcGIS Servers' REST API.
-   Use at you own risk.  This tools can be dangerous.
+   Use at you own risk.  This package can be dangerous.
 """
 
 from base import BaseAGSServer

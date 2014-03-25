@@ -299,6 +299,38 @@ class FeatureLayer(BaseAGSServer):
             self.__init()
         return self._useStandardizedQueries
 ########################################################################
+class GroupLayer(FeatureLayer):
+    """ represents a group layer  """
+    #----------------------------------------------------------------------
+    def __init__(self, url, token_url=None,
+                 username=None, password=None):
+        """Constructor"""
+        self._url = url
+        self_token_url = token_url
+        self._username = username
+        self._password = password
+        if not username is None and\
+           not password is None:
+            if not token_url is None:
+                self._token = self.generate_token()
+        self.__init()
+    def __init(self):
+        """ inializes the properties """
+        params = {
+            "f" : "json",
+        }
+        if self._token is not None:
+            params['token'] = self._token
+        json_dict = self._do_get(self._url, params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, v)
+            else:
+                print k, " - attribute not implmented."
+########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""
     pass
@@ -654,4 +686,3 @@ class JoinTableDataSource(base.DataSource):
             "rightTableKey": self._rightTableKey,
             "joinType": self._joinType
         }
-

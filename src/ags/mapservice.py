@@ -38,8 +38,11 @@ class MapService(BaseAGSServer):
     _maxImageWidth = None
     _supportedExtensions = None
     _timeInfo = None
+    _maxExportTilesCount = None
+    _hasVersionedData = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None, username=None, password=None):
+    def __init__(self, url, token_url=None, username=None, password=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         if not username is None and \
@@ -49,7 +52,8 @@ class MapService(BaseAGSServer):
             self._password = password
             self._token_url = token_url
             self._token = self.generate_token()
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ populates all the properties for the map service """
@@ -92,13 +96,33 @@ class MapService(BaseAGSServer):
                                                username=self._username,
                                                password=self._password)
                         )
+                    elif layer_type == "Group Layer":
+                        self._layers.append(
+                            layer.GroupLayer(url,
+                                             token_url=self._token_url,
+                                             username=self._username,
+                                             password=self._password)
+                        )
                     else:
                         print 'Type %s is not implemented' % layer_type
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
 
             else:
-                print k, " this is missing "
+                print k, " is not implemented for mapservice."
+    #----------------------------------------------------------------------
+    @property
+    def maxExportTilesCount(self):
+        """ returns the maximum export tiles count """
+        if self._maxExportTilesCount is None:
+            self.__init()
+        return self._maxExportTilesCount
+    @property
+    def hasVersionedData(self):
+        """ reutrn boolean if has versioned data """
+        if self._hasVersionedData is None:
+            self.__init()
+        return self._hasVersionedData
     #----------------------------------------------------------------------
     @property
     def tileInfo(self):
@@ -561,3 +585,4 @@ class MapService(BaseAGSServer):
                                 param_dict=params)
         else:
             return None
+
