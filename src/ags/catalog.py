@@ -7,6 +7,8 @@ from gpservice import GPService
 from geometryservice import GeometryService
 from naservice import NAService
 from geocodeservice import GeocodeService
+from globeservice import GlobeService
+from geodataservice import GeoDataService
 import os
 import sys
 
@@ -270,7 +272,16 @@ class Catalog(BaseAGSServer):
                     )
                 )
             elif service['type'] == "GlobeServer":
-                print 'globe server'
+                self._globeService.append(
+                    GlobeService(
+                        url="%s/%s/%s" % (self._currentURL,
+                                          service['name'],
+                                          service['type']),
+                        username=self._username,
+                        password=self._password,
+                        token_url=self._token_url
+                    )
+                )
             elif service['type'] == "GeocodeServer":
                 self._geoCodeService.append(
                     GeocodeService(
@@ -294,28 +305,34 @@ class Catalog(BaseAGSServer):
                     )
                 )
             elif service['type'] == "GeoDataServer":
-                print 'geodata server'
+                self._networkService.append(
+                    GeoDataService(
+                        url="%s/%s/%s" % (self._currentURL,
+                                          service['name'],
+                                          service['type']),
+                        username=self._username,
+                        password=self._password,
+                        token_url=self._token_url
+                    )
+                )
 
 
 
 
+#if __name__== "__main__":
 
+    #url = "http://sampleserver6.arcgisonline.com/arcgis/rest/services"
+    #c = Catalog(url=url)
+    #print "root ", len(c.services)
+    #print c.featureServices
+    #print c.geocodeServices
+    #for folder in c.folders:
+        #c.folder = folder
+        #print folder, len(c.services), " geocoding service count: ",  len(c.geocodeServices)
 
-
-if __name__== "__main__":
-
-    url = "http://sampleserver6.arcgisonline.com/arcgis/rest/services"
-    c = Catalog(url=url)
-    print "root ", len(c.services)
-    print c.featureServices
-    print c.geocodeServices
-    for folder in c.folders:
-        c.folder = folder
-        print folder, len(c.services), " geocoding service count: ",  len(c.geocodeServices)
-
-    #import mapservice
-    #ms = mapservice.MapService(url=url)
-    #print ms.allLayers
+    ##import mapservice
+    ##ms = mapservice.MapService(url=url)
+    ##print ms.allLayers
 
 
 

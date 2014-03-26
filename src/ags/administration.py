@@ -77,6 +77,14 @@ class ArcGISServer(BaseAGSServer):
                         password=self._password)
     #----------------------------------------------------------------------
     @property
+    def info(self):
+        """ returns the class info that gives information about AGS """
+        return Info(url=self._url + "/info",
+                    token_url=self._token_url,
+                    username=self._username,
+                    password=self._password)
+    #----------------------------------------------------------------------
+    @property
     def acceptLanguage(self):
         if self._acceptLanguage is None:
             self.__init()
@@ -959,6 +967,110 @@ class Services(BaseAGSServer):
 
 
 ########################################################################
+class Info(BaseAGSServer):
+    """
+       A read-only resource that returns meta information about the server.
+    """
+    _url = None
+    _token = None
+    _username = None
+    _password = None
+    _token_url = None
+    _timezone = None
+    _loggedInUser = None
+    _loggedInUserPrivilege = None
+    _currentBuild = None
+    _currentversion = None
+    _fullVersion = None
+    #----------------------------------------------------------------------
+    def __init__(self, url, token_url, username, password):
+        """Constructor
+            Inputs:
+               url - admin url
+               token_url - url to generate token
+               username - admin username
+               password - admin password
+        """
+        self._url = url
+        self._token_url = token_url
+        self._username = username
+        self._password = password
+        self.generate_token()
+        self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ populates server admin information """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        json_dict = self._do_get(url=self._url, param_dict=params)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implmented."
+            del k
+            del v
+    #----------------------------------------------------------------------
+    @property
+    def fullVersion(self):
+        """ returns the full version """
+        if self._fullVersion is None:
+            self.__init()
+        return self._fullVersion
+    #----------------------------------------------------------------------
+    @property
+    def currentversion(self):
+        """ returns the current vesrion """
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def loggedInUser(self):
+        """ get the logged in user """
+        if self._loggedInUser is None:
+            self.__init()
+        return self._loggedInUser
+    #----------------------------------------------------------------------
+    @property
+    def currentbuild(self):
+        """ returns the current build """
+        if self._currentbuild is None:
+            self.__init()
+        return self._currentbuild
+    #----------------------------------------------------------------------
+    @property
+    def timezone(self):
+        """ returns the server's defined time zone """
+        if self._timezone is None:
+            self.__init()
+        return self._timezone
+    #----------------------------------------------------------------------
+    @property
+    def loggedInUserPrivilege(self):
+        """ gets the logged in user's privileges """
+        if self._loggedInUserPrivilege is None:
+            self.__init()
+        return self._loggedInUserPrivilege
+    #----------------------------------------------------------------------
+    def getAvailableTimeZones(self):
+        """
+           Returns an enumeration of all the time zones of which the server
+           is aware. This is used by the GIS service publishing tools
+        """
+        url = self._url + "/getAvailableTimeZones"
+        params = {
+            "token" : self._token,
+            "f" : "json"
+        }
+        return self._do_get(url, params)
+
+########################################################################
 class Log(BaseAGSServer):
     """ Log of a server """
     _url = None
@@ -1426,3 +1538,4 @@ class AGSService(BaseAGSServer):
             "isAllowed" : isAllowed
         }
         return self._do_post(url=uURL, param_dict=params)
+
