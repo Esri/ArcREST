@@ -136,6 +136,7 @@ class ArcGISServer(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
+
         return self._do_get(url=cURL, param_dict=params)['folders']
 ########################################################################
 class Security(BaseAGSServer):

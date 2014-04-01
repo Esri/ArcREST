@@ -206,12 +206,15 @@ class Catalog(BaseAGSServer):
         self._globeService = []
         self._mobileService = [] #
         for service in self.services:
+            url = "%s/%s/%s" % (
+                self._currentURL,
+                service['name'].split("/")[len(service['name'].split("/"))-1],
+                service['type']
+            )
             if service['type'] == "FeatureServer":
                 self._featureService.append(
                     FeatureService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -220,9 +223,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "GPServer":
                 self._gpService.append(
                     GPService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -231,9 +232,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "MapServer":
                 self._mapServices.append(
                     MapService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -241,9 +240,7 @@ class Catalog(BaseAGSServer):
                 )
             elif service['type'] == "ImageServer":
                 self._imageService.append(
-                    ImageService(url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                    ImageService(url=url,
                                     username=self._username,
                                     password=self._password,
                                     token_url=self._token_url
@@ -252,9 +249,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "MobileServer":
                 self._mobileService.append(
                     MobileService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -263,9 +258,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "GeometryServer":
                 self._geometryService.append(
                     GeometryService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -274,9 +267,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "GlobeServer":
                 self._globeService.append(
                     GlobeService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -285,9 +276,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "GeocodeServer":
                 self._geoCodeService.append(
                     GeocodeService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -296,9 +285,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "NAServer":
                 self._networkService.append(
                     NAService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url
@@ -307,9 +294,7 @@ class Catalog(BaseAGSServer):
             elif service['type'] == "GeoDataServer":
                 self._networkService.append(
                     GeoDataService(
-                        url="%s/%s/%s" % (self._currentURL,
-                                          service['name'],
-                                          service['type']),
+                        url=url,
                         username=self._username,
                         password=self._password,
                         token_url=self._token_url

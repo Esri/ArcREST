@@ -255,7 +255,11 @@ class SpatialReference:
 ########################################################################
 class Point(Geometry):
     """ Point Geometry
-
+        Inputs:
+           coord - list of [X,Y] pair or arcpy.Point Object
+           wkid - well know id of spatial references
+           z - is the Z coordinate value
+           m - m value
     """
     _x = None
     _y = None
@@ -266,10 +270,19 @@ class Point(Geometry):
     _geom = None
     _dict = None
     #----------------------------------------------------------------------
-    def __init__(self, x, y, wkid, z=None, m=None):
+    def __init__(self, coord, wkid, z=None, m=None):
         """Constructor"""
-        self._x = float(x)
-        self._y = float(y)
+        if isinstance(coord, list):
+            self._x = float(coord[0])
+            self._y = float(coord[1])
+        elif isinstance(coord, arcpy.Geometry):
+            self._x = coord.centroid.X
+            self._y = coord.centroid.Y
+            self._z = coord.centroid.Z
+            self._m = coord.centroid.M
+            self._json = coord.JSON
+            self._geom = coord.centroid
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         if not z is None:
             self._z = float(z)
@@ -343,7 +356,12 @@ class MultiPoint(Geometry):
     #----------------------------------------------------------------------
     def __init__(self, points, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._points = points
+        if isinstance(points, list):
+            self._points = points
+        elif isinstance(points, arcpy.Geometry):
+            self._points = json.loads(points.JSON)['points']
+            self._json = points.JSON
+            self._dict = _unicode_convert(json.loads(self._json))           
         self._wkid = wkid
         self._hasZ = hasZ
         self._hasM = hasM
@@ -408,7 +426,12 @@ class Polyline(Geometry):
     #----------------------------------------------------------------------
     def __init__(self, paths, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._paths = paths
+        if isinstance(paths, list):
+            self._paths = paths
+        elif isinstance(paths, arcpy.Geometry):
+            self._paths = json.loads(paths.JSON)['paths']
+            self._json = paths.JSON
+            self._dict = _unicode_convert(json.loads(self._json))        
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
@@ -470,7 +493,12 @@ class Polygon(Geometry):
     #----------------------------------------------------------------------
     def __init__(self, rings, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._rings = rings
+        if isinstance(rings, list):
+            self._rings = rings
+        elif isinstance(rings, arcpy.Geometry):
+            self._rings = json.loads(rings.JSON)['rings']
+            self._json = rings.JSON
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
@@ -770,3 +798,9 @@ def _unicode_convert(obj):
         return obj.encode('utf-8')
     else:
         return obj
+    
+        
+    
+        
+    
+        

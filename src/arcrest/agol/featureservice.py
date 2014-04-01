@@ -44,10 +44,10 @@ class FeatureService(BaseAGOLClass):
         self._url = url
         self._username = username
         self._password = password
-        self._token_url = token_url        
+        self._token_url = token_url
         if not username is None and \
            not password is None:
-            self._token = self.generate_token(tokenURL=token_url)[0]
+            self.generate_token(tokenURL=token_url)
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """
@@ -56,16 +56,16 @@ class FeatureService(BaseAGOLClass):
         else:
             param_dict = {"f": "json",
                           "token" : self._token
-                          }            
-        json_dict = self._do_get(self._url, param_dict) 
-        attributes = [attr for attr in dir(self) 
+                          }
+        json_dict = self._do_get(self._url, param_dict)
+        attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
-                    not attr.startswith('_')]          
-        for k,v in json_dict.iteritems(): 
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."     
+                print k, " - attribute not implmented."
     #----------------------------------------------------------------------
     @property
     def xssPreventionInfo(self):
@@ -80,7 +80,7 @@ class FeatureService(BaseAGOLClass):
         if self._size is None:
             self.__init()
         return self._size
-        
+
     #----------------------------------------------------------------------
     def refresh_service(self):
         """ repopulates the properties of the service """
@@ -193,7 +193,7 @@ class FeatureService(BaseAGOLClass):
         else:
             param_dict = {"f": "json",
                           "token" : self._token
-                          }            
+                          }
         json_dict = self._do_get(self._url, param_dict)
         self._layers = []
         if json_dict.has_key("layers"):
@@ -212,7 +212,7 @@ class FeatureService(BaseAGOLClass):
         else:
             param_dict = {"f": "json",
                           "token" : self._token
-                          }            
+                          }
         json_dict = self._do_get(self._url, param_dict)
         self._tables = []
         if json_dict.has_key("tables"):
@@ -258,21 +258,21 @@ class FeatureService(BaseAGOLClass):
         if self._hasStaticData is None:
             self.__init()
         return self._hasStaticData
-    
+
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         """ returns the map service current version """
         if self._currentVersion is None:
             self.__init()
-        return self._currentVersion    
+        return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def serviceDescription(self):
         """ returns the serviceDescription of the map service """
         if self._serviceDescription is None:
             self.__init()
-        return self._serviceDescription  
+        return self._serviceDescription
     #----------------------------------------------------------------------
     @property
     def hasVersionedData(self):
@@ -288,13 +288,13 @@ class FeatureService(BaseAGOLClass):
             self.__init()
         return self._supportsDisconnectedEditing
     #----------------------------------------------------------------------
-    def query(self, 
-              layerDefsFilter=None, 
-              geometryFilter=None, 
-              timeFilter=None, 
+    def query(self,
+              layerDefsFilter=None,
+              geometryFilter=None,
+              timeFilter=None,
               returnGeometry=True,
-              returnIdsOnly=False, 
-              returnCountOnly=False, 
+              returnIdsOnly=False,
+              returnCountOnly=False,
               returnZ=False,
               returnM=False,
               outSR=None
@@ -342,55 +342,55 @@ class FeatureService(BaseAGOLClass):
                               returnZ=False,
                               returnM=False):
         """
-           The Query operation is performed on a feature service layer 
-           resource. The result of this operation are feature sets grouped 
-           by source layer/table object IDs. Each feature set contains 
+           The Query operation is performed on a feature service layer
+           resource. The result of this operation are feature sets grouped
+           by source layer/table object IDs. Each feature set contains
            Feature objects including the values for the fields requested by
-           the user. For related layers, if you request geometry 
-           information, the geometry of each feature is also returned in 
-           the feature set. For related tables, the feature set does not 
+           the user. For related layers, if you request geometry
+           information, the geometry of each feature is also returned in
+           the feature set. For related tables, the feature set does not
            include geometries.
            Inputs:
               objectIds - the object IDs of the table/layer to be queried
               relationshipId - The ID of the relationship to be queried.
-              outFields - the list of fields from the related table/layer 
-                          to be included in the returned feature set. This 
+              outFields - the list of fields from the related table/layer
+                          to be included in the returned feature set. This
                           list is a comma delimited list of field names. If
                           you specify the shape field in the list of return
-                          fields, it is ignored. To request geometry, set 
+                          fields, it is ignored. To request geometry, set
                           returnGeometry to true.
-                          You can also specify the wildcard "*" as the 
+                          You can also specify the wildcard "*" as the
                           value of this parameter. In this case, the result
                           s will include all the field values.
-              definitionExpression - The definition expression to be 
-                                     applied to the related table/layer. 
+              definitionExpression - The definition expression to be
+                                     applied to the related table/layer.
                                      From the list of objectIds, only those
-                                     records that conform to this 
-                                     expression are queried for related 
+                                     records that conform to this
+                                     expression are queried for related
                                      records.
-              returnGeometry - If true, the feature set includes the 
-                               geometry associated with each feature. The 
+              returnGeometry - If true, the feature set includes the
+                               geometry associated with each feature. The
                                default is true.
-              maxAllowableOffset - This option can be used to specify the 
-                                   maxAllowableOffset to be used for 
-                                   generalizing geometries returned by the 
-                                   query operation. The maxAllowableOffset 
-                                   is in the units of the outSR. If outSR 
-                                   is not specified, then 
-                                   maxAllowableOffset is assumed to be in 
+              maxAllowableOffset - This option can be used to specify the
+                                   maxAllowableOffset to be used for
+                                   generalizing geometries returned by the
+                                   query operation. The maxAllowableOffset
+                                   is in the units of the outSR. If outSR
+                                   is not specified, then
+                                   maxAllowableOffset is assumed to be in
                                    the unit of the spatial reference of the
                                    map.
-              geometryPrecision - This option can be used to specify the 
-                                  number of decimal places in the response 
+              geometryPrecision - This option can be used to specify the
+                                  number of decimal places in the response
                                   geometries.
               outWKID - The spatial reference of the returned geometry.
               gdbVersion - The geodatabase version to query. This parameter
-                           applies only if the isDataVersioned property of 
+                           applies only if the isDataVersioned property of
                            the layer queried is true.
-              returnZ - If true, Z values are included in the results if 
+              returnZ - If true, Z values are included in the results if
                         the features have Z values. Otherwise, Z values are
                         not returned. The default is false.
-              returnM - If true, M values are included in the results if 
+              returnM - If true, M values are included in the results if
                         the features have M values. Otherwise, M values are
                         not returned. The default is false.
         """
@@ -424,10 +424,10 @@ class FeatureService(BaseAGOLClass):
         """ returns all the replicas for a feature service """
         params = {
             "f" : "json",
-            
+
         }
         if not self._token is None:
-            params["token"] = self._token        
+            params["token"] = self._token
         url = self._url + "/replicas"
         return self._do_get(url, params)
     #----------------------------------------------------------------------
@@ -438,9 +438,9 @@ class FeatureService(BaseAGOLClass):
             "replicaID" : replica_id
         }
         if not self._token is None:
-            params["token"] = self._token        
+            params["token"] = self._token
         url = self._url + "/unRegisterReplica"
-        return self._do_post(url, params)       
+        return self._do_post(url, params)
     #----------------------------------------------------------------------
     def replicaInfo(self, replica_id):
         """
@@ -450,43 +450,43 @@ class FeatureService(BaseAGOLClass):
             "f" : "json"
         }
         if not self._token is None:
-            params["token"] = self._token        
+            params["token"] = self._token
         url = self._url + "/replicas/%s" + replica_id
         return self._do_get(url, param_dict=params)
     #----------------------------------------------------------------------
-    def createReplica(self, 
-                      replicaName, 
-                      layers, 
+    def createReplica(self,
+                      replicaName,
+                      layers,
                       keep_replica=False,
                       layerQueries=None,
                       geometryFilter=None,
                       #geometry=None, geometryType=None,
-                      returnAttachments=False, 
+                      returnAttachments=False,
                       returnAttachmentDatabyURL=True,
                       returnAsFeatureClass=False,
                       out_path=None
                       ):
-        """ generates a replica 
+        """ generates a replica
             Inputs:
                replicaName - string of replica name
                layers - layer id # as comma seperated string
-               keep_replica - if the replica does not have returnAsFeatureClass set to true, 
-                              the feature service creates a permanent copy of the replica. 
+               keep_replica - if the replica does not have returnAsFeatureClass set to true,
+                              the feature service creates a permanent copy of the replica.
                               If this is just a pull, then erase the replica in order to prevent
                               build up of replicas.
-               layerQueries - In addition to the layers and geometry parameters, the layerQueries 
-                              parameter can be used to further define what is replicated. This 
-                              parameter allows you to set properties on a per layer or per table 
-                              basis. Only the properties for the layers and tables that you want 
+               layerQueries - In addition to the layers and geometry parameters, the layerQueries
+                              parameter can be used to further define what is replicated. This
+                              parameter allows you to set properties on a per layer or per table
+                              basis. Only the properties for the layers and tables that you want
                               changed from the default are required.
                                 Example:
-                                  layerQueries = {"0":{"queryOption": "useFilter", "useGeometry": true, 
+                                  layerQueries = {"0":{"queryOption": "useFilter", "useGeometry": true,
                                                  "where": "requires_inspection = Yes"}}
                geometryFilter - Geospatial filter applied to the replica to parse down data output.
-               returnAttachments - If true, attachments are added to the replica and returned in the 
-                                   response. Otherwise, attachments are not included. 
-               returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each 
-                                            attachment returned from createReplica. Otherwise, 
+               returnAttachments - If true, attachments are added to the replica and returned in the
+                                   response. Otherwise, attachments are not included.
+               returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
+                                            attachment returned from createReplica. Otherwise,
                                             attachments are embedded in the response.
                returnAsFeatureClass - If a local copy is desired, set this parameter to True, else
                                       the service will return information on how to download the
@@ -505,13 +505,13 @@ class FeatureService(BaseAGOLClass):
                 "async" : False
             }
             if not self._token is None:
-                params["token"] = self._token            
+                params["token"] = self._token
             if not geometryFilter is None and \
                isinstance(geometryFilter, GeometryFilter):
                 gf = geometryFilter.filter
                 params['geometryType'] = gf['geometryType']
                 params['geometry'] = gf['geometry']
-                params['inSR'] = gf['inSR']            
+                params['inSR'] = gf['inSR']
             if returnAsFeatureClass and \
                out_path is not None:
                 if os.path.isdir(out_path) == False:
@@ -521,8 +521,8 @@ class FeatureService(BaseAGOLClass):
                 res = self._do_post(url=url, param_dict=params)
                 if res.has_key("responseUrl"):
                     zipURL = res["responseUrl"]
-                    dl_file = self._download_file(url=zipURL, 
-                                        save_path=out_path, 
+                    dl_file = self._download_file(url=zipURL,
+                                        save_path=out_path,
                                         file_name=os.path.basename(zipURL)
                                         )
                     self._unzip_file(zip_file=dl_file, out_folder=out_path)
@@ -531,8 +531,8 @@ class FeatureService(BaseAGOLClass):
                 else:
                     return None
             else:
-                res = self._do_post(url=url, param_dict=params)                
+                res = self._do_post(url=url, param_dict=params)
                 return res
-            
+
         return "Not Supported"
-        
+

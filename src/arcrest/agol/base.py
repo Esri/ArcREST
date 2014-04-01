@@ -187,7 +187,7 @@ class BaseAGOLClass(object):
         return mntype
     #----------------------------------------------------------------------
     def _tostr(self,obj):
-        """ converts a object to list, if object is a list, it creates a 
+        """ converts a object to list, if object is a list, it creates a
             comma seperated string.
         """
         if not obj:
@@ -206,3 +206,12 @@ class BaseAGOLClass(object):
             return obj.encode('utf-8')
         else:
             return obj
+def patch_http_response_read(func):
+    def inner(*args):
+        try:
+            return func(*args)
+        except httplib.IncompleteRead, e:
+            return e.partial
+
+    return inner
+httplib.HTTPResponse.read = patch_http_response_read(httplib.HTTPResponse.read)

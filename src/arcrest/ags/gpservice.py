@@ -1,4 +1,5 @@
 import urllib
+import json
 import time
 import datetime
 from base import BaseAGSServer
@@ -27,7 +28,7 @@ class GPService(BaseAGSServer):
            token_url is not None:
             self._username = username
             self._password = password
-            self._token_url = None
+            self._token_url = token_url
             self._token = self.generate_token()[0]
         if initialize:
             self.__init()
@@ -203,8 +204,109 @@ class GPTask(BaseAGSServer):
         if self._description is None:
             self.__init()
         return self._description
+    #----------------------------------------------------------------------
+    def getJob(self, jobID):
+        """ returns the results or status of a job """
+        url = self._url + "/jobs/%s" % (jobID)
+        return GPJob(url=url,
+                     username=self._username,
+                     password=self._password,
+                     token_url=self._token_url)
 
+########################################################################
+class GPJob(BaseAGSServer):
+    """
+       Represents an ArcGIS GeoProcessing Job
+    """
+    _jobId = None
+    _messages = None
+    _results = None
+    _jobStatus = None
+    _inputs = None
+    #----------------------------------------------------------------------
+    def __init__(self, url, username=None, password=None, token_url=None):
+        """Constructor"""
+        self._url = url
+        if username is not None and \
+           password is not None and \
+           token_url is not None:
+            self._username = username
+            self._password = password
+            self._token_url = token_url
+            self._token = self.generate_token()
+        self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+        if self._token is not None:
+            params['token'] = self._token
+        json_dict = self._do_get(url=self._url, param_dict=params)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implmented for GPJob."
+    #----------------------------------------------------------------------
+    def cancelJob(self):
+        """ cancels the job """
+        params = {
+            "f" : "json"
+        }
+        if self._token is not None:
+            params['token'] = self._token
+        return self._do_get(url=self._url + "/cancel", param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def messages(self):
+        """ returns the messages """
+        self.__init()
+        return self._messages
+    #----------------------------------------------------------------------
+    @property
+    def results(self):
+        """ returns the results """
+        self.__init()
+        return self._results
+    #----------------------------------------------------------------------
+    @property
+    def jobStatus(self):
+        """ returns the job status """
+        self.__init()
+        return self._jobStatus
+    #----------------------------------------------------------------------
+    @property
+    def jobId(self):
+        """ returns the job ID """
+        if self._jobId is None:
+            self.__init()
+        return self._jobId
+    #----------------------------------------------------------------------
+    @property
+    def inputs(self):
+        """ returns the inputs of a service """
+        self.__init()
+        return self._inputs
+    #----------------------------------------------------------------------
+    def getParameterValue(self, parameterName):
+        """ gets a parameter value """
+        if self._inputs is None:
+            self.__init()
+        parameter = self.inputs[parameterName]['paramUrl']
+        paramURL = self._url + "/%s" % (parameter)
+        params = {
+            "f" : "json"
+        }
+        if self._token is not None:
+            params['token'] = self._token
 
+        return self._do_get(url=paramURL,
+                            param_dict=params)
 
 
 
@@ -388,4 +490,94 @@ class GPDate(object):
             self._value = value
         else:
             raise AttributeError("Invalid Input of type: %s" % type(value))
+########################################################################
+class GPFeatureRecordSetLayer(object):
+    """
+       Returns the GPFeatureRecordSetLayer
+    """
+    _json = None
+    _dictionary = None
+
+    #----------------------------------------------------------------------
+    def __init__(self, json_string):
+        """Constructor"""
+        pass
+########################################################################
+class GPRecordSet(object):
+    """"""
+
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        pass
+########################################################################
+class GPInputParameter(object):
+    """ """
+    _dataType = None
+    _paramName = None
+    _value = None
+    _dict = None
+    _json = None
+    #----------------------------------------------------------------------
+    def __init__(self, value):
+        """Constructor"""
+        if isinstance(value, str):
+            param = json.loads(value)
+            self._dataType = param['dataType']
+            self._paramName = param['paramName']
+            self._value = param['value']
+            self._json = value
+            self._dict = param
+        elif isinstance(value, dict):
+            self._dataType = value['dataType']
+            self._paramName = value['paramName']
+            self._value = value['value']
+            self._dict = value
+            self._json = json.dumps(param)
+        else:
+            raise AttributeError("Invalid input, value must be string or dictionary")
+    #----------------------------------------------------------------------
+    def __dict__(self):
+        """ returns the value as a dictionary """
+        return self._dict
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ return the class as a string """
+        return self._json
+    #----------------------------------------------------------------------
+    @property
+    def asJSON(self):
+        """ returns the value as JSON """
+        return self._json
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        """ returns the value as dictionary """
+        return self._dict
+    #----------------------------------------------------------------------
+    @property
+    def dataType(self):
+        """ returns the dataType """
+        return self._dataType
+    #----------------------------------------------------------------------
+    @property
+    def paramName(self):
+        """"""
+        return self._paramName
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """ returns the value """
+        return self._value
+
+
+
+
+
+
+
+
+
+
+
 

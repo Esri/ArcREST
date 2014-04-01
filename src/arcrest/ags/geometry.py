@@ -24,8 +24,12 @@ class SpatialReference:
         return {"wkid": self._wkid}
 ########################################################################
 class Point(Geometry):
-    """ Point Geometry 
-        
+    """ Point Geometry
+        Inputs:
+           coord - list of [X,Y] pair or arcpy.Point Object
+           wkid - well know id of spatial references
+           z - is the Z coordinate value
+           m - m value
     """
     _x = None
     _y = None
@@ -36,10 +40,19 @@ class Point(Geometry):
     _geom = None
     _dict = None
     #----------------------------------------------------------------------
-    def __init__(self, x, y, wkid, z=None, m=None):
+    def __init__(self, coord, wkid, z=None, m=None):
         """Constructor"""
-        self._x = float(x)
-        self._y = float(y)
+        if isinstance(coord, list):
+            self._x = float(coord[0])
+            self._y = float(coord[1])
+        elif isinstance(coord, arcpy.Geometry):
+            self._x = coord.centroid.X
+            self._y = coord.centroid.Y
+            self._z = coord.centroid.Z
+            self._m = coord.centroid.M
+            self._json = coord.JSON
+            self._geom = coord.centroid
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         if not z is None:
             self._z = float(z)
@@ -57,13 +70,14 @@ class Point(Geometry):
     def type(self):
         """ returns the geometry type """
         return "esriGeometryPoint"
-    #----------------------------------------------------------------------    
+    #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """
         value = self._json
         if value is None:
-            value = json.dumps(self.asDictionary)
+            value = json.dumps(self.asDictionary,
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -78,8 +92,8 @@ class Point(Geometry):
         #
         value = self._dict
         if value is None:
-            template = {"x" : self._x, 
-                        "y" : self._y, 
+            template = {"x" : self._x,
+                        "y" : self._y,
                         "spatialReference" : {"wkid" : self._wkid}
                         }
             if not self._z is None:
@@ -112,7 +126,12 @@ class MultiPoint(Geometry):
     #----------------------------------------------------------------------
     def __init__(self, points, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._points = points
+        if isinstance(points, list):
+            self._points = points
+        elif isinstance(points, arcpy.Geometry):
+            self._points = json.loads(points.JSON)['points']
+            self._json = points.JSON
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         self._hasZ = hasZ
         self._hasM = hasM
@@ -125,14 +144,15 @@ class MultiPoint(Geometry):
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryMultipoint"    
+        return "esriGeometryMultipoint"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """
         value = self._json
         if value is None:
-            value = json.dumps(self.asDictionary)
+            value = json.dumps(self.asDictionary,
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -150,21 +170,21 @@ class MultiPoint(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "points" : [], 
+                "points" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for pt in self._points:
                 template['points'].append(pt.asList)
             self._dict = template
-        return self._dict  
+        return self._dict
 ########################################################################
 class Polyline(Geometry):
-    """ Implements the ArcGIS REST API Polyline Object 
+    """ Implements the ArcGIS REST API Polyline Object
         Inputs:
            paths - list - list of lists of Point objects
            wkid - integer - well know spatial reference id
-           hasZ - boolean - 
-           hasM - boolean - 
+           hasZ - boolean -
+           hasM - boolean -
     """
     _paths = None
     _wkid = None
@@ -176,7 +196,12 @@ class Polyline(Geometry):
     #----------------------------------------------------------------------
     def __init__(self, paths, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._paths = paths
+        if isinstance(paths, list):
+            self._paths = paths
+        elif isinstance(paths, arcpy.Geometry):
+            self._paths = json.loads(paths.JSON)['paths']
+            self._json = paths.JSON
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
@@ -184,19 +209,20 @@ class Polyline(Geometry):
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryPolyline"    
+        return "esriGeometryPolyline"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """
         value = self._json
         if value is None:
-            value = json.dumps(self.asDictionary)
+            value = json.dumps(self.asDictionary,
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -213,7 +239,7 @@ class Polyline(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "paths" : [], 
+                "paths" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for part in self._paths:
@@ -223,7 +249,7 @@ class Polyline(Geometry):
                 template['paths'].append(lpart)
                 del lpart
             self._dict = template
-        return self._dict        
+        return self._dict
 ########################################################################
 class Polygon(Geometry):
     """ Implements the ArcGIS REST JSON for Polygon Object """
@@ -233,11 +259,16 @@ class Polygon(Geometry):
     _dict = None
     _geom = None
     _hasZ = None
-    _hasM = None    
+    _hasM = None
     #----------------------------------------------------------------------
     def __init__(self, rings, wkid, hasZ=False, hasM=False):
         """Constructor"""
-        self._rings = rings
+        if isinstance(rings, list):
+            self._rings = rings
+        elif isinstance(rings, arcpy.Geometry):
+            self._rings = json.loads(rings.JSON)['rings']
+            self._json = rings.JSON
+            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
@@ -245,19 +276,20 @@ class Polygon(Geometry):
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryPolygon"           
+        return "esriGeometryPolygon"
     #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """
         value = self._json
         if value is None:
-            value = json.dumps(self.asDictionary)
+            value = json.dumps(self.asDictionary,
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -274,7 +306,7 @@ class Polygon(Geometry):
             template = {
                 "hasM" : self._hasM,
                 "hasZ" : self._hasZ,
-                "rings" : [], 
+                "rings" : [],
                 "spatialReference" : {"wkid" : self._wkid}
             }
             for part in self._rings:
@@ -284,13 +316,13 @@ class Polygon(Geometry):
                 template['rings'].append(lpart)
                 del lpart
             self._dict = template
-        return self._dict         
+        return self._dict
 ########################################################################
 class Envelope(Geometry):
     """
-       An envelope is a rectangle defined by a range of values for each 
-       coordinate and attribute. It also has a spatialReference field. 
-       The fields for the z and m ranges are optional. 
+       An envelope is a rectangle defined by a range of values for each
+       coordinate and attribute. It also has a spatialReference field.
+       The fields for the z and m ranges are optional.
     """
     _json = None
     _dict = None
@@ -305,7 +337,7 @@ class Envelope(Geometry):
     _mmax = None
     _wkid = None
     #----------------------------------------------------------------------
-    def __init__(self, xmin, ymin, xmax, ymax, wkid, 
+    def __init__(self, xmin, ymin, xmax, ymax, wkid,
                  zmin=None, zmax=None, mmin=None, mmax=None):
         """Constructor"""
         self._xmin = xmin
@@ -315,26 +347,26 @@ class Envelope(Geometry):
         self._xmax = xmax
         self._ymax = ymax
         self._zmax = zmax
-        self._mmax = mmax        
+        self._mmax = mmax
         self._wkid = wkid
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
         """returns the geometry spatial reference"""
-        return {'wkid' : self._wkid}    
+        return {'wkid' : self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
         """ returns the geometry type """
-        return "esriGeometryEnvelope"    
+        return "esriGeometryEnvelope"
     #----------------------------------------------------------------------
     @property
     def asDictionary(self):
         """ returns the envelope as a dictionary """
         template = {
-            "xmin" : self._xmin, 
-            "ymin" : self._ymin, 
-            "xmax" : self._xmax, 
+            "xmin" : self._xmin,
+            "ymin" : self._ymin,
+            "xmax" : self._xmax,
             "ymax" : self._ymax,
             "spatialReference" : {"wkid" : self._wkid}
         }
@@ -342,12 +374,12 @@ class Envelope(Geometry):
            self._zmin is not None:
             template['zmin'] = self._zmin
             template['zmax'] = self._zmax
-        
+
         if self._mmin is not None and \
            self._mmax is not None:
             template['mmax'] = self._mmax
             template['mmin'] = self._mmin
-            
+
         return template
     #----------------------------------------------------------------------
     @property
@@ -355,16 +387,17 @@ class Envelope(Geometry):
         """ returns a geometry as JSON """
         value = self._json
         if value is None:
-            value = json.dumps(self.asDictionary)
+            value = json.dumps(self.asDictionary,
+                               default=_date_handler)
             self._json = value
-        return self._json    
+        return self._json
     #----------------------------------------------------------------------
     @property
     def asArcPyObject(self):
         """ returns the Envelope as an ESRI arcpy.Polygon object """
         env = self.asDictionary
         ring = [[
-            Point(env['xmin'], env['ymin'], self._wkid), 
+            Point(env['xmin'], env['ymin'], self._wkid),
             Point(env['xmax'], env['ymin'], self._wkid),
             Point(env['xmax'], env['ymax'], self._wkid),
             Point(env['xmin'], env['ymax'], self._wkid)
