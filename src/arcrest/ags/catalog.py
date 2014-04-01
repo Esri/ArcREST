@@ -304,20 +304,3 @@ class Catalog(BaseAGSServer):
 
 
 
-#if __name__== "__main__":
-
-    #url = "http://sampleserver6.arcgisonline.com/arcgis/rest/services"
-    #c = Catalog(url=url)
-    #print "root ", len(c.services)
-    #print c.featureServices
-    #print c.geocodeServices
-    #for folder in c.folders:
-        #c.folder = folder
-        #print folder, len(c.services), " geocoding service count: ",  len(c.geocodeServices)
-
-    ##import mapservice
-    ##ms = mapservice.MapService(url=url)
-    ##print ms.allLayers
-
-
-
