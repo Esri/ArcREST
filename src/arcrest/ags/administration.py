@@ -85,6 +85,23 @@ class ArcGISServerSite(BaseAGSServer):
                     password=self._password)
     #----------------------------------------------------------------------
     @property
+    def kml(self):
+        """ returns the KML class """
+        return KML(url=self._url + "/kml",
+                   token_url=self._token_url,
+                   username=self._username,
+                   password=self._password,
+                   initialize=False)
+    #----------------------------------------------------------------------
+    @property
+    def data(self):
+        """ returns the operations that work on the data store """
+        return Data(url=self._url + "/data",
+                    token_url=self._token_url,
+                    username=self._username,
+                    password=self._password)
+    #----------------------------------------------------------------------
+    @property
     def acceptLanguage(self):
         if self._acceptLanguage is None:
             self.__init()
@@ -1930,5 +1947,182 @@ class Data(BaseAGSServer):
         }
         url = self._url + "/config/update"
         return self._do_post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def computeTotalRefCount(self, path):
+        """
+           Computes the total number of references to a given data item
+           that exist on the server. You can use this operation to
+           determine if a data resource can be safely deleted (or taken
+           down for maintenance).
+           Input:
+              path - The complete hierarchical path to the item
+           Output:
+              JSON message as dictionary
+        """
+        cURL = self._url + "/computeTotalRefCount"
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "path" : path
+        }
+        return self._do_post(url=cURL,
+                             param_dict=params)
+    #----------------------------------------------------------------------
+    def findDataItems(self, parentPath, ancestorPath=None,
+                      type=None, id=None):
+        """
+           You can use this operation to search through the various data
+           items registered in the server's data store.
+           Inputs:
+              parentPath - The path of the parent under which to find items
+              ancestorPath - The path of the ancestor under which to find
+                             items.
+              type - A filter for the type of the items
+              id - A filter to search by the ID of the item
+           Output:
+              dictionary
+        """
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "parentPath" : parentPath
+        }
+        if ancestorPath is not None:
+            params['ancestorPath'] = ancestorPath
+        if type is not None:
+            params['type'] = type
+        if id is not None:
+            params['id'] = id
+        fURL = self._url + "/findItems"
+        return self._do_post(url=fURL, param_dict=params)
+    #----------------------------------------------------------------------
+    def registerDataItem(self, item):
+        """
+           Registers a new data item with the server's data store.
+           Input
+              item - The JSON representing the data item.
+                     See http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r3000001s9000000
+           Output:
+              dictionary
+        """
+        params = {
+            "item" : item,
+            "f" : "json",
+            "token" : self._token
+        }
+        rURL = self._url + "/registerItem"
+        return self._do_post(url=rURL, param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def rootDataItems(self):
+        """ This resource lists data items that are the root of all other
+            data items in the data store.
+        """
+        url = self._url + "/items"
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        return self._do_get(url=url,
+                            param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def validateAllDataItems(self):
+        """ validates all the items in the datastore """
+        params = {
+        "f" : "json",
+        "token": self._token}
+        url = self._url + "/validateAllDataItems"
+        return self._do_get(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def validateDataItem(self, item):
+        """
+           In order for a data item to be registered and used successfully
+           within the server's data store, you need to make sure that the
+           path (for file shares) or connection string (for databases) is
+           accessible to every server node in the site. This can be done by
+           invoking the Validate Data Item operation on the JSON object
+           representing the data store.
+           Validating a data item does not automatically register it for
+           you. You need to explicitly register your data item by invoking
+           the Register Data Item operation.
+           Input:
+              item - The JSON representing the data item.
+           Output:
+              dicationary
+        """
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "item" : item
+        }
+        url = self._url + "/ validateDataItem"
+        return self._do_post(url=url,
+                             param_dict=params)
+########################################################################
+class KML(BaseAGSServer):
+    """
+       This resource is a container for all the KMZ files created on the
+       server.
+    """
+    _items = None
+    #----------------------------------------------------------------------
+    def __init__(self, url, token_url, username, password,
+                 initialize=False):
+        """Constructor
+            Inputs:
+               url - admin url
+               token_url - url to generate token
+               username - admin username
+               password - admin password
+        """
+        self._url = url
+        self._token_url = token_url
+        self._username = username
+        self._password = password
+        self.generate_token()
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ populates server admin information """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        json_dict = self._do_get(url=self._url,
+                                 param_dict=params)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implmented for KML"
+            del k
+            del v
+    #----------------------------------------------------------------------
+    def createKMZ(self, kmz_as_json):
+        """
+           Creates a KMZ file from json.
+           See http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Create_Kmz/02r3000001tm000000/
+           for more information.
+        """
+        kmlURL = self._url + "/createKmz"
+        params = {
+            "f" : "json",
+            "token" : self._token,
+            "kml" : kmz_as_json
+        }
+        return self._do_post(url=kmlURL, param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def items(self):
+        """ returns list of KMZ/KML on server """
+        if self._items is None:
+            self.__init()
+        return self._items
+
 
 
