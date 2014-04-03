@@ -127,7 +127,8 @@ class GPTask(BaseAGSServer):
     _helpUrl = None
     _description = None
     #----------------------------------------------------------------------
-    def __init__(self, url, username=None, password=None, token_url=None):
+    def __init__(self, url, username=None, password=None, token_url=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         if username is not None and \
@@ -136,8 +137,9 @@ class GPTask(BaseAGSServer):
             self._username = username
             self._password = password
             self._token_url = token_url
-            self._token = self.generate_token()
-        self.__init()
+            self._token = self.generate_token()[0]
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes all the properties """
@@ -224,7 +226,8 @@ class GPJob(BaseAGSServer):
     _jobStatus = None
     _inputs = None
     #----------------------------------------------------------------------
-    def __init__(self, url, username=None, password=None, token_url=None):
+    def __init__(self, url, username=None, password=None, token_url=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         if username is not None and \
@@ -233,8 +236,9 @@ class GPJob(BaseAGSServer):
             self._username = username
             self._password = password
             self._token_url = token_url
-            self._token = self.generate_token()
-        self.__init()
+            self._token = self.generate_token()[0]
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes all the properties """

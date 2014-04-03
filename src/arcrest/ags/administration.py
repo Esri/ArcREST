@@ -733,6 +733,8 @@ class Services(BaseAGSServer):
         """ returns a list of all folders """
         if self._folders is None:
             self.__init()
+        if "/" not in self._folders:
+            self._folders.append("/")
         return self._folders
     #----------------------------------------------------------------------
     @property
@@ -1535,7 +1537,7 @@ class AGSService(BaseAGSServer):
             "f" : "json",
             "token" : self._token
         }
-        uURL = self._url = "/iteminfo"
+        uURL = self._url + "/iteminfo"
         return self._do_get(url=uURL, param_dict=params)
     #----------------------------------------------------------------------
     def addPermission(self, principal, isAllowed=True):

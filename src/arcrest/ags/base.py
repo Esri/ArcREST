@@ -67,14 +67,14 @@ class BaseAGSServer(object):
         file_data = urllib2.urlopen(url)
         with open(save_path + os.sep + file_name, 'wb') as writer:
             writer.write(file_data.read())
-        return save_path + os.sep + file_name    
+        return save_path + os.sep + file_name
     #----------------------------------------------------------------------
     def _do_post(self, url, param_dict):
         """ performs the POST operation and returns dictionary result """
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
-        return self._unicode_convert(jres) 
+        return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _do_get(self, url, param_dict, header={}):
         """ performs a get operation """
@@ -84,12 +84,12 @@ class BaseAGSServer(object):
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector, 
-                        filename, filetype, 
+    def _post_multipart(self, host, selector,
+                        filename, filetype,
                         content, fields,
                         port=None,
                         https=False):
-        """ performs a multi-post to AGOL or AGS 
+        """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
                    ex: www.arcgis.com
@@ -131,7 +131,7 @@ class BaseAGSServer(object):
         h.endheaders()
         h.send(body)
         res = h.getresponse()
-        return res.read() 
+        return res.read()
     #----------------------------------------------------------------------
     def generate_token(self):#, username, password, tokenURL
         """ generates a token for AGS """
@@ -139,7 +139,7 @@ class BaseAGSServer(object):
         params = urllib.urlencode({'username': self._username,
                                    'password': self._password,
                                    'client': 'requestip',
-                                   'f': 'json'})        
+                                   'f': 'json'})
         parsed_url = urlparse.urlparse(self._token_url)
         headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
         port = parsed_url.port
@@ -153,7 +153,7 @@ class BaseAGSServer(object):
         httpConn.request("POST", parsed_url.path, params, headers)
         response = httpConn.getresponse()
         data = self._unicode_convert(json.loads(response.read()))
-        httpConn.close()        
+        httpConn.close()
         del httpConn
         del response
         self._token = data['token']
@@ -168,4 +168,18 @@ class BaseAGSServer(object):
         elif isinstance(obj, unicode):
             return obj.encode('utf-8')
         else:
-            return obj  
+            return obj
+# This function is a workaround to deal with what's typically described as a
+# problem with the web server closing a connection. This is problem
+# experienced with www.arcgis.com (first encountered 12/13/2012). The problem
+# and workaround is described here:
+# http://bobrochel.blogspot.com/2010/11/bad-servers-chunked-encoding-and.html
+def patch_http_response_read(func):
+    def inner(*args):
+        try:
+            return func(*args)
+        except httplib.IncompleteRead, e:
+            return e.partial
+
+    return inner
+httplib.HTTPResponse.read = patch_http_response_read(httplib.HTTPResponse.read)
