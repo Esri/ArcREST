@@ -13,7 +13,7 @@ A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (
 
 ### General Help
 	
-	[New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
+[New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
 
 ## Requirements
 
@@ -34,7 +34,7 @@ A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (
 ## Contributing
 
 	Esri welcomes contributions from anyone and everyone.
-	Please see our [guidelines for contributing](https://github.com/esri/contributing).
+Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ## Licensing
 
