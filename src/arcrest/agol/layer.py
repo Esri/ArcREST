@@ -1,3 +1,15 @@
+"""
+
+.. module:: layer
+   :platform: Windows
+   :synopsis: Base Class from which AGOL function inherit from.
+
+.. moduleauthor:: test
+
+
+"""
+
+
 import common
 import filters
 import featureservice
@@ -474,6 +486,22 @@ class FeatureLayer(BaseAGOLClass):
                                            wkid,
                                            fields,
                                            objectIdField)
+    def create_feature_template(self):
+        """creates a feature template"""
+
+        fields = self.fields
+        feat_schema = {}
+
+        att = {}
+        for fld in fields:
+            self._globalIdField
+            if not fld['name'] == self._objectIdField and not fld['name'] == self._globalIdField:
+                att[fld['name']] = ''
+
+        feat_schema['attributes'] = att
+        feat_schema['geometry'] = ''
+        return common.Feature(feat_schema)
+
     #----------------------------------------------------------------------
     def query(self,
               where="1=1",

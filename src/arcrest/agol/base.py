@@ -1,6 +1,14 @@
 """
-   Base Class from which AGOL function inherit from.
+
+.. module:: base
+   :platform: Windows
+   :synopsis: Base Class from which AGOL function inherit from.
+
+.. moduleauthor:: test
+
+
 """
+
 import os
 import urllib
 import urllib2
@@ -206,12 +214,3 @@ class BaseAGOLClass(object):
             return obj.encode('utf-8')
         else:
             return obj
-def patch_http_response_read(func):
-    def inner(*args):
-        try:
-            return func(*args)
-        except httplib.IncompleteRead, e:
-            return e.partial
-
-    return inner
-httplib.HTTPResponse.read = patch_http_response_read(httplib.HTTPResponse.read)

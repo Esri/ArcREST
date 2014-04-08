@@ -1,3 +1,14 @@
+"""
+
+.. module:: featureservice
+   :platform: Windows
+   :synopsis: Base Class from which AGOL function inherit from.
+
+.. moduleauthor:: test
+
+
+"""
+
 from base import BaseAGOLClass
 import layer as servicelayers
 from common import SpatialReference
@@ -47,7 +58,7 @@ class FeatureService(BaseAGOLClass):
         self._token_url = token_url
         if not username is None and \
            not password is None:
-            self.generate_token(tokenURL=token_url)
+            self._token = self.generate_token(tokenURL=token_url)[0]
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """

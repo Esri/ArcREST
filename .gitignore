@@ -227,8 +227,8 @@ ___*
 source/[Ss]ampleData/
 source/[Tt]est[Cc]onfigs/
 src/service_monitor
-service_monitor
-service_checker
-service_reporter
-service_geometry_logger
+samples/service_monitor
+samples/service_checker
+samples/service_reporter
+samples/service_geometry_logger
 *.pyc

@@ -1,3 +1,13 @@
+"""
+.. module:: common
+   :platform: Windows
+   :synopsis: A useful module indeed.
+
+.. moduleauthor:: test
+
+
+"""
+
 import os
 import copy
 import json
@@ -5,6 +15,8 @@ import arcpy
 from base import Geometry
 import datetime
 import calendar
+import time
+from time import gmtime, strftime,mktime
 
 #----------------------------------------------------------------------
 def _date_handler(obj):
@@ -47,6 +59,21 @@ def get_attachment_data(attachmentTable, sql,
             })
             del row
     return ret_rows
+
+
+#----------------------------------------------------------------------
+def local_time_to_online():
+
+    is_dst = time.daylight and time.localtime().tm_isdst > 0
+    utc_offset =  (time.altzone if is_dst else time.timezone)
+
+    return (time.mktime(datetime.datetime.now().timetuple())  * 1000) - (utc_offset *1000)
+
+def online_time_to_string(value,timeFormat):
+
+    return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
+
+
 #----------------------------------------------------------------------
 def create_feature_layer(ds, sql, name="layer"):
     """ creates a feature layer object """
@@ -280,16 +307,14 @@ class Point(Geometry):
             self._y = coord.centroid.Y
             self._z = coord.centroid.Z
             self._m = coord.centroid.M
-            self._json = coord.JSON
             self._geom = coord.centroid
-            self._dict = _unicode_convert(json.loads(self._json))
+
         self._wkid = wkid
         if not z is None:
             self._z = float(z)
-        self._m = m
-        self._dict = self.asDictionary
-        self._json = self.asJSON
-        self._geom = self.asArcPyObject
+        if not m is None:
+            self._m = m
+
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -359,12 +384,24 @@ class MultiPoint(Geometry):
         if isinstance(points, list):
             self._points = points
         elif isinstance(points, arcpy.Geometry):
-            self._points = json.loads(points.JSON)['points']
-            self._json = points.JSON
-            self._dict = _unicode_convert(json.loads(self._json))           
+            self._points = self.__geomToPointList(points)
         self._wkid = wkid
         self._hasZ = hasZ
         self._hasM = hasM
+    #----------------------------------------------------------------------
+    def __geomToPointList(self, geom):
+        """ converts a geometry object to a common.Geometry object """
+        if isinstance(geom, arcpy.Multipoint):
+            feature_geom = []
+            fPart = []
+            for part in geom:
+                fPart = []
+                for pnt in part:
+                    fPart.append(Point(coord=[pnt.X, pnt.Y],
+                          wkid=geom.spatialReference.factoryCode,
+                          z=pnt.Z, m=pnt.M))
+                feature_geom.append(fPart)
+            return feature_geom
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -429,12 +466,24 @@ class Polyline(Geometry):
         if isinstance(paths, list):
             self._paths = paths
         elif isinstance(paths, arcpy.Geometry):
-            self._paths = json.loads(paths.JSON)['paths']
-            self._json = paths.JSON
-            self._dict = _unicode_convert(json.loads(self._json))        
+            self._paths = self.__geomToPointList(paths)
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
+    #----------------------------------------------------------------------
+    def __geomToPointList(self, geom):
+        """ converts a geometry object to a common.Geometry object """
+        if isinstance(geom, arcpy.Polyline):
+            feature_geom = []
+            fPart = []
+            for part in geom:
+                fPart = []
+                for pnt in part:
+                    fPart.append(Point(coord=[pnt.X, pnt.Y],
+                          wkid=geom.spatialReference.factoryCode,
+                          z=pnt.Z, m=pnt.M))
+                feature_geom.append(fPart)
+            return feature_geom
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -496,12 +545,26 @@ class Polygon(Geometry):
         if isinstance(rings, list):
             self._rings = rings
         elif isinstance(rings, arcpy.Geometry):
-            self._rings = json.loads(rings.JSON)['rings']
-            self._json = rings.JSON
-            self._dict = _unicode_convert(json.loads(self._json))
+            self._rings = self.__geomToPointList(rings)
+##            self._json = rings.JSON
+##            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
         self._hasM = hasM
         self._hasZ = hasZ
+    #----------------------------------------------------------------------
+    def __geomToPointList(self, geom):
+        """ converts a geometry object to a common.Geometry object """
+        if isinstance(geom, arcpy.Polygon):
+            feature_geom = []
+            fPart = []
+            for part in geom:
+                fPart = []
+                for pnt in part:
+                    fPart.append(Point(coord=[pnt.X, pnt.Y],
+                          wkid=geom.spatialReference.factoryCode,
+                          z=pnt.Z, m=pnt.M))
+                feature_geom.append(fPart)
+            return feature_geom
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -658,8 +721,11 @@ class Feature(object):
     def set_value(self, field_name, value):
         """ sets an attribute value for a given field name """
         if field_name in self.fields:
-            self._dict['attributes'][field_name] = value
-            self._json = json.dumps(self._dict, default=_date_handler)
+            if not value is None:
+                self._dict['attributes'][field_name] = _unicode_convert(value)
+                self._json = json.dumps(self._dict, default=_date_handler)
+            else:
+                pass
         elif field_name.upper() in ['SHAPE', 'SHAPE@', "GEOMETRY"]:
             if isinstance(value, Geometry):
                 if isinstance(value, Point):
@@ -682,6 +748,18 @@ class Feature(object):
                 else:
                     return False
                 self._json = json.dumps(self._dict, default=_date_handler)
+            elif isinstance(value, arcpy.Geometry):
+                if isinstance(value, arcpy.PointGeometry):
+                    self.set_value( field_name, Point(value,value.spatialReference.factoryCode))
+                elif isinstance(value, arcpy.Multipoint):
+                    self.set_value( field_name,  MultiPoint(value,value.spatialReference.factoryCode))
+
+                elif isinstance(value, arcpy.Polyline):
+                    self.set_value( field_name,  Polyline(value,value.spatialReference.factoryCode))
+
+                elif isinstance(value, arcpy.Polygon):
+                    self.set_value( field_name, Polygon(value,value.spatialReference.factoryCode))
+
         else:
             return False
         return True
@@ -798,9 +876,4 @@ def _unicode_convert(obj):
         return obj.encode('utf-8')
     else:
         return obj
-    
-        
-    
-        
-    
-        
+

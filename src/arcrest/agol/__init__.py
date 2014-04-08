@@ -1,8 +1,10 @@
-""" package contructor """
-import admin
-import base
+""" package contructor
+.. moduleauthor:: test
+
+"""
 import common
+import admin
+import layer
 import featureservice
 import filters
-import layer
-import tiledservice
+import base

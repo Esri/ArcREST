@@ -1,1 +1,0 @@
-ArcREST provides a python library to hook into the ArcGIS REST API.  This library supports both ArcGIS Server REST and ArcGIS Online REST (arcgis.com)

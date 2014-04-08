@@ -1,3 +1,15 @@
+"""
+
+.. module:: filters
+   :platform: Windows
+   :synopsis: Base Class from which AGOL function inherit from.
+
+.. moduleauthor:: test
+
+
+"""
+
+
 from common import Geometry
 import os
 import json
@@ -11,10 +23,10 @@ class BaseFilter(object):
     pass
 ########################################################################
 class LayerDefinitionFilter(BaseFilter):
-    """ 
-       Allows you to filter the features of individual layers in the 
-       query by specifying definition expressions for those layers. A 
-       definition expression for a layer that is published with the 
+    """
+       Allows you to filter the features of individual layers in the
+       query by specifying definition expressions for those layers. A
+       definition expression for a layer that is published with the
        service will always be honored.
     """
     _ids = []
@@ -51,14 +63,14 @@ class LayerDefinitionFilter(BaseFilter):
         return self._filter
 ########################################################################
 class GeometryFilter(BaseFilter):
-    """ creates a geometry filter for queries 
-        Inputs: 
+    """ creates a geometry filter for queries
+        Inputs:
            geomObject - a common.Geometry object
-           spatialFilter - The spatial relationship to be applied on the 
-                           input geometry while performing the query. The 
-                           supported spatial relationships include 
-                           intersects, contains, envelope intersects, 
-                           within, etc. The default spatial relationship 
+           spatialFilter - The spatial relationship to be applied on the
+                           input geometry while performing the query. The
+                           supported spatial relationships include
+                           intersects, contains, envelope intersects,
+                           within, etc. The default spatial relationship
                            is intersects (esriSpatialRelIntersects).
        Raises:
           AttributeError for invalid inputs
@@ -129,7 +141,7 @@ class GeometryFilter(BaseFilter):
                 "spatialRel": self.spatialRelation,
                 "inSR" : self._geomObject.spatialReference}
     #----------------------------------------------------------------------
-        
+
 ########################################################################
 class TimeFilter(BaseFilter):
     """ Implements the time filter """
