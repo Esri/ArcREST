@@ -50,7 +50,8 @@ class FeatureService(BaseAGOLClass):
     _size = None
     _xssPreventionInfo = None
     #----------------------------------------------------------------------
-    def __init__(self, url,  token_url=None, username=None, password=None):
+    def __init__(self, url,  token_url=None, username=None, password=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         self._username = username
@@ -59,6 +60,8 @@ class FeatureService(BaseAGOLClass):
         if not username is None and \
            not password is None:
             self._token = self.generate_token(tokenURL=token_url)[0]
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """

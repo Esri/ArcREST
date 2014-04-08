@@ -47,7 +47,8 @@ class Admin(BaseAGOLClass):
     def __init__(self, url,
              username=None,
              password=None,
-             token_url=None):
+             token_url=None,
+             initialize=False):
         """Constructor"""
         self._url = url
         self._token_url = token_url
@@ -59,7 +60,8 @@ class Admin(BaseAGOLClass):
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
                 self._token = self.generate_token()[0]
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the service """
@@ -68,6 +70,7 @@ class Admin(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
+        header= {"Referer" : "www.arcgis.com"}
         json_dict = self._do_get(self._url, params)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
@@ -142,7 +145,8 @@ class AdminMapService(BaseAGOLClass):
     def __init__(self, url,
              username=None,
              password=None,
-             token_url=None):
+             token_url=None,
+             initialize=False):
         """Constructor"""
         self._url = url
         self._token_url = token_url
@@ -154,7 +158,8 @@ class AdminMapService(BaseAGOLClass):
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
                 self._token = self.generate_token()[0]
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the service """
@@ -242,7 +247,8 @@ class AdminFeatureService(BaseAGOLClass):
     def __init__(self, url,
              username=None,
              password=None,
-             token_url=None):
+             token_url=None,
+             initialize=False):
         """Constructor"""
         self._url = url
         self._token_url = token_url
@@ -254,7 +260,8 @@ class AdminFeatureService(BaseAGOLClass):
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
                 self._token = self.generate_token()[0]
-        #self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the service """
@@ -282,7 +289,7 @@ class AdminFeatureService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implmented in AdminFeatureService."
     #----------------------------------------------------------------------
     @property
     def status(self):
@@ -570,6 +577,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
        Note, query and edit operations are not available on a layer in the
        adminstrative view.
     """
+    _editFieldsInfo = None
     _drawingInfo = None
     _typeIdField = None
     _advancedQueryCapabilities = None
@@ -644,7 +652,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     def __init__(self, url,
                  username=None,
                  password=None,
-                 token_url=None):
+                 token_url=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         self._token_url = token_url
@@ -656,7 +665,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
                 self._token = self.generate_token()[0]
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the service """
@@ -673,7 +683,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implmented AdminFeatureServiceLayer."
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -683,6 +693,13 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         }
         uURL = self._url + "/refresh"
         return self._do_get(url=uURL, param_dict=params)
+    #----------------------------------------------------------------------
+    @property
+    def editFieldsInfo(self):
+        """ returns the edit fields information """
+        if self._editFieldsInfo is None:
+            self.__init()
+        return self._editFieldsInfo
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):

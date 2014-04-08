@@ -76,7 +76,8 @@ class FeatureLayer(BaseAGOLClass):
     def __init__(self, url,
                  username=None,
                  password=None,
-                 token_url=None):
+                 token_url=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
         self._token_url = token_url
@@ -87,13 +88,13 @@ class FeatureLayer(BaseAGOLClass):
             if not token_url is None:
                 self._token = self.generate_token(tokenURL=token_url)[0]
             else:
-                 res = self.generate_token()
-                 if res == None:
+                res = self.generate_token()
+                if res == None:
                     raise ValueError("Unable to get token")
-                 else:
+                else:
                     self._token =res[0]
-
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the service """
