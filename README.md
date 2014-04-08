@@ -7,7 +7,7 @@ A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (
 	* Add, Delete, Update and Query Feature Services
 	* Upload attachments to feature services
 	* Publish an MXD to AGOL as a feature service
-	* Get AGOL item information
+	* Get AGOL,AGS item information
 
 ## Instructions
 
