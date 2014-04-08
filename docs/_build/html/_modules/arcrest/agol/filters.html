@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.agol.filters &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for arcrest.agol.filters</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">common</span> <span class="kn">import</span> <span class="n">Geometry</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">arcpy</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="c">########################################################################</span>
+<div class="viewcode-block" id="BaseFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.BaseFilter">[docs]</a><span class="k">class</span> <span class="nc">BaseFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; base filter class &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+<span class="c">########################################################################</span></div>
+<div class="viewcode-block" id="LayerDefinitionFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter">[docs]</a><span class="k">class</span> <span class="nc">LayerDefinitionFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">       Allows you to filter the features of individual layers in the </span>
+<span class="sd">       query by specifying definition expressions for those layers. A </span>
+<span class="sd">       definition expression for a layer that is published with the </span>
+<span class="sd">       service will always be honored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_filterTemplate</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;layerId&quot;</span> <span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;where&quot;</span> <span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;outFields&quot;</span> <span class="p">:</span> <span class="s">&quot;*&quot;</span><span class="p">}</span>
+    <span class="n">_filter</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LayerDefinitionFilter.addFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter.addFilter">[docs]</a>    <span class="k">def</span> <span class="nf">addFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_id</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">outFields</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; adds a layer definition filter &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">copy</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filterTemplate</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">[</span><span class="s">&#39;layerId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_id</span>
+        <span class="n">f</span><span class="p">[</span><span class="s">&#39;outFields&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outFields</span>
+        <span class="k">if</span> <span class="n">where</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">[</span><span class="s">&#39;where&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">where</span>
+        <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="LayerDefinitionFilter.removeFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter.removeFilter">[docs]</a>    <span class="k">def</span> <span class="nf">removeFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; removes a layer filter based on position in filter list &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">[</span><span class="n">filter_index</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="LayerDefinitionFilter.removeAll"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter.removeAll">[docs]</a>    <span class="k">def</span> <span class="nf">removeAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; removes all items from the filter &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="LayerDefinitionFilter.filter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the filter object as a list of layer defs &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="GeometryFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter">[docs]</a><span class="k">class</span> <span class="nc">GeometryFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; creates a geometry filter for queries </span>
+<span class="sd">        Inputs: </span>
+<span class="sd">           geomObject - a common.Geometry object</span>
+<span class="sd">           spatialFilter - The spatial relationship to be applied on the </span>
+<span class="sd">                           input geometry while performing the query. The </span>
+<span class="sd">                           supported spatial relationships include </span>
+<span class="sd">                           intersects, contains, envelope intersects, </span>
+<span class="sd">                           within, etc. The default spatial relationship </span>
+<span class="sd">                           is intersects (esriSpatialRelIntersects).</span>
+<span class="sd">       Raises:</span>
+<span class="sd">          AttributeError for invalid inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_allowedFilters</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;esriSpatialRelIntersects&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelContains&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelCrosses&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelEnvelopeIntersects&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelIndexIntersects&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelOverlaps&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelTouches&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;esriSpatialRelWithin&quot;</span><span class="p">]</span>
+    <span class="n">_geomObject</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_spatialAction</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geomType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_spatialReference</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geomObject</span><span class="p">,</span> <span class="n">spatialFilter</span><span class="o">=</span><span class="s">&quot;esriSpatialRelIntersects&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geomObject</span><span class="p">,</span> <span class="n">Geometry</span><span class="p">)</span> <span class="ow">and</span> \
+           <span class="n">spatialFilter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowedFilters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span> <span class="o">=</span> <span class="n">geomObject</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spatialAction</span> <span class="o">=</span> <span class="n">spatialFilter</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geomType</span> <span class="o">=</span> <span class="n">geomObject</span><span class="o">.</span><span class="n">type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spatialReference</span> <span class="o">=</span> <span class="n">geomObject</span><span class="o">.</span><span class="n">spatialReference</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;geomObject must be a geometry object and &quot;</span><span class="o">+</span> \
+                                 <span class="s">&quot;spatialFilter must be of value: &quot;</span> <span class="o">+</span> \
+                                 <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_allowedFilters</span><span class="p">))</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spatialRelation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gets the filter type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatialAction</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@spatialRelation.setter</span>
+<div class="viewcode-block" id="GeometryFilter.spatialRelation"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter.spatialRelation">[docs]</a>    <span class="k">def</span> <span class="nf">spatialRelation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> \
+           <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowedFilters</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_spatialAction</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;spatialRelation must be values of &quot;</span> <span class="o">+</span> \
+                                 <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_allowedFilters</span><span class="p">))</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GeometryFilter.geometryType"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter.geometryType">[docs]</a>    <span class="k">def</span> <span class="nf">geometryType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span><span class="o">.</span><span class="n">type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gets the geometry object used by the filter &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@geometry.setter</span>
+<div class="viewcode-block" id="GeometryFilter.geometry"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the geometry value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Geometry</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span> <span class="o">=</span> <span class="n">geometry</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;geometry must be a common.Geometry object&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GeometryFilter.filter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the key/value pair of a geometry filter &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">geometryType</span><span class="p">,</span>
+                <span class="s">&quot;geometry&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                <span class="s">&quot;spatialRel&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialRelation</span><span class="p">,</span>
+                <span class="s">&quot;inSR&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span><span class="o">.</span><span class="n">spatialReference</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+        
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="TimeFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.TimeFilter">[docs]</a><span class="k">class</span> <span class="nc">TimeFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implements the time filter &quot;&quot;&quot;</span>
+    <span class="n">_startTime</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_endTime</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">time_zone</span><span class="o">=</span><span class="s">&quot;UTC&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_startTime</span> <span class="o">=</span> <span class="n">start_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endTime</span> <span class="o">=</span> <span class="n">end_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tz</span> <span class="o">=</span> <span class="n">time_zone</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TimeFilter.filter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.TimeFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_endTime</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_startTime</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_endTime</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_startTime</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

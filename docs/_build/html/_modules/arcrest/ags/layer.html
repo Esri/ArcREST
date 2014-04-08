@@ -1,0 +1,780 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.ags.layer &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for arcrest.ags.layer</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseAGSServer</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">base</span>
+<span class="c">########################################################################</span>
+<div class="viewcode-block" id="FeatureLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer">[docs]</a><span class="k">class</span> <span class="nc">FeatureLayer</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       This contains information about a feature service&#39;s layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_id</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_definitionExpression</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geometryType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_copyrightText</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_parentLayer</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_subLayers</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_minScale</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_maxScale</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_effectiveMinScale</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_effectiveMaxScale</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_defaultVisibility</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_extent</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_timeInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_drawingInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasAttachments</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_htmlPopupType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_displayField</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_typeIdField</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_types</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># sub-types</span>
+    <span class="n">_relationships</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_maxRecordCount</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_canModifyLayer</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsStatistics</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsAdvancedQueries</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasLabels</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_canScaleSymbols</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_capabilities</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportedQueryFormats</span> <span class="o">=</span>  <span class="bp">None</span>
+    <span class="n">_isDataVersioned</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_ownershipBasedAccessControlForFeatures</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_useStandardizedQueries</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="n">self_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; inializes the properties &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.currentVersion"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.currentVersion">[docs]</a>    <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the current version &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.id"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.id">[docs]</a>    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the id &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.name"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the name &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.type"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the type &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.description"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the layer&#39;s description &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.definitionExpression"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.definitionExpression">[docs]</a>    <span class="k">def</span> <span class="nf">definitionExpression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the definitionExpression&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_definitionExpression</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_definitionExpression</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.geometryType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.geometryType">[docs]</a>    <span class="k">def</span> <span class="nf">geometryType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry type&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.hasZ"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.hasZ">[docs]</a>    <span class="k">def</span> <span class="nf">hasZ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns if it has a Z value or not &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.hasM"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.hasM">[docs]</a>    <span class="k">def</span> <span class="nf">hasM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns if it has a m value or not &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.copyrightText"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.copyrightText">[docs]</a>    <span class="k">def</span> <span class="nf">copyrightText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the copyright text &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.parentLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.parentLayer">[docs]</a>    <span class="k">def</span> <span class="nf">parentLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns information about the parent &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentLayer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parentLayer</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.subLayers"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.subLayers">[docs]</a>    <span class="k">def</span> <span class="nf">subLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns sublayers for layer &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subLayers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subLayers</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.minScale"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.minScale">[docs]</a>    <span class="k">def</span> <span class="nf">minScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; minimum scale layer will show &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minScale</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.maxScale"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.maxScale">[docs]</a>    <span class="k">def</span> <span class="nf">maxScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the max scale &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxScale</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.effectiveMinScale"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.effectiveMinScale">[docs]</a>    <span class="k">def</span> <span class="nf">effectiveMinScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMinScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMinScale</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.effectiveMaxScale"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.effectiveMaxScale">[docs]</a>    <span class="k">def</span> <span class="nf">effectiveMaxScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMaxScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMaxScale</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.defaultVisibility"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.defaultVisibility">[docs]</a>    <span class="k">def</span> <span class="nf">defaultVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultVisibility</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultVisibility</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.extent"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.extent">[docs]</a>    <span class="k">def</span> <span class="nf">extent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.timeInfo"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.timeInfo">[docs]</a>    <span class="k">def</span> <span class="nf">timeInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.drawingInfo"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.drawingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">drawingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drawingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drawingInfo</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.hasAttachments"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.hasAttachments">[docs]</a>    <span class="k">def</span> <span class="nf">hasAttachments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasAttachments</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasAttachments</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.htmlPopupType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.htmlPopupType">[docs]</a>    <span class="k">def</span> <span class="nf">htmlPopupType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_htmlPopupType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_htmlPopupType</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.displayField"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.displayField">[docs]</a>    <span class="k">def</span> <span class="nf">displayField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayField</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayField</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.typeIdField"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.typeIdField">[docs]</a>    <span class="k">def</span> <span class="nf">typeIdField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typeIdField</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typeIdField</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.fields"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.fields">[docs]</a>    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.types"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.types">[docs]</a>    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_types</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.relationships"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.relationships">[docs]</a>    <span class="k">def</span> <span class="nf">relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relationships</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relationships</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.maxRecordCount"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.maxRecordCount">[docs]</a>    <span class="k">def</span> <span class="nf">maxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.canModifyLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.canModifyLayer">[docs]</a>    <span class="k">def</span> <span class="nf">canModifyLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canModifyLayer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canModifyLayer</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.supportsStatistics"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.supportsStatistics">[docs]</a>    <span class="k">def</span> <span class="nf">supportsStatistics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsStatistics</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsStatistics</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.supportsAdvancedQueries"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.supportsAdvancedQueries">[docs]</a>    <span class="k">def</span> <span class="nf">supportsAdvancedQueries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsAdvancedQueries</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsAdvancedQueries</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.hasLabels"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.hasLabels">[docs]</a>    <span class="k">def</span> <span class="nf">hasLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasLabels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasLabels</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.canScaleSymbols"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.canScaleSymbols">[docs]</a>    <span class="k">def</span> <span class="nf">canScaleSymbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canScaleSymbols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canScaleSymbols</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.capabilities"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.capabilities">[docs]</a>    <span class="k">def</span> <span class="nf">capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.supportedQueryFormats"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.supportedQueryFormats">[docs]</a>    <span class="k">def</span> <span class="nf">supportedQueryFormats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.isDataVersioned"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.isDataVersioned">[docs]</a>    <span class="k">def</span> <span class="nf">isDataVersioned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isDataVersioned</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isDataVersioned</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.ownershipBasedAccessControlForFeatures"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.ownershipBasedAccessControlForFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">ownershipBasedAccessControlForFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ownershipBasedAccessControlForFeatures</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ownershipBasedAccessControlForFeatures</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.useStandardizedQueries"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.useStandardizedQueries">[docs]</a>    <span class="k">def</span> <span class="nf">useStandardizedQueries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useStandardizedQueries</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useStandardizedQueries</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="GroupLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.GroupLayer">[docs]</a><span class="k">class</span> <span class="nc">GroupLayer</span><span class="p">(</span><span class="n">FeatureLayer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; represents a group layer  &quot;&quot;&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="n">self_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; inializes the properties &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+<span class="c">########################################################################</span></div>
+<div class="viewcode-block" id="TableLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableLayer">[docs]</a><span class="k">class</span> <span class="nc">TableLayer</span><span class="p">(</span><span class="n">FeatureLayer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Table object is exactly like FeatureLayer object&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+<span class="c">########################################################################</span></div>
+<div class="viewcode-block" id="RasterLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterLayer">[docs]</a><span class="k">class</span> <span class="nc">RasterLayer</span><span class="p">(</span><span class="n">FeatureLayer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raster Layer is exactly like FeatureLayer object&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+<span class="c">########################################################################</span></div>
+<div class="viewcode-block" id="DynamicMapLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicMapLayer">[docs]</a><span class="k">class</span> <span class="nc">DynamicMapLayer</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DynamicData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; creates a dynamic map layer object</span>
+<span class="sd">        A dynamic map layer refers to a layer in the current map service.</span>
+<span class="sd">        If supported, use gdbVersion to specify an alternate geodatabase</span>
+<span class="sd">        version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;mapLayer&quot;</span>
+    <span class="n">_mapLayerId</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_gdbVersion</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapLayerId</span><span class="p">,</span> <span class="n">gdbVersion</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapLayerId</span> <span class="o">=</span> <span class="n">mapLayerId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span> <span class="o">=</span> <span class="n">gdbVersion</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="DynamicMapLayer.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicMapLayer.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;converts the dynamic object to a string&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="DynamicMapLayer.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicMapLayer.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; converts the object to a dictionary &quot;&quot;&quot;</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;type&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span>
+                    <span class="s">&quot;mapLayerId&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapLayerId</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
+           <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;gdbVersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span>
+        <span class="k">return</span> <span class="n">template</span>
+<span class="c">########################################################################</span>
+<span class="c">#TODO DYNAMICDATALAYER CLASS</span>
+<span class="c">#http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Layer_source_object/02r30000019v000000/</span></div></div>
+<div class="viewcode-block" id="DynamicDataLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicDataLayer">[docs]</a><span class="k">class</span> <span class="nc">DynamicDataLayer</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DynamicData</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;dataLayer&quot;</span>
+    <span class="n">_dataSource</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataSource</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataSource</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataSource</span> <span class="o">=</span> <span class="n">dataSource</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid datasource object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="nb">type</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">fields</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid fields object, must be a list&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="DynamicDataLayer.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicDataLayer.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="DynamicDataLayer.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicDataLayer.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the value as a dictionary &quot;&quot;&quot;</span>
+        <span class="n">template</span> <span class="o">=</span>  <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;dataLayer&quot;</span><span class="p">,</span>
+            <span class="s">&quot;dataSource&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSource</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
+        <span class="k">return</span> <span class="n">template</span>
+
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataSource</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSource</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@dataSource.setter</span>
+<div class="viewcode-block" id="DynamicDataLayer.dataSource"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicDataLayer.dataSource">[docs]</a>    <span class="k">def</span> <span class="nf">dataSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the datasource object &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataSource</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;value must be a DataSource object&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the fields &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@fields.setter</span>
+<div class="viewcode-block" id="DynamicDataLayer.fields"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.DynamicDataLayer.fields">[docs]</a>    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the fields variable&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Input must be a list&quot;</span><span class="p">)</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="TableDataSource"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource">[docs]</a><span class="k">class</span> <span class="nc">TableDataSource</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Table data source is a table, feature class, or raster that</span>
+<span class="sd">       resides in a registered workspace (either a folder or geodatabase).</span>
+<span class="sd">       In the case of a geodatabase, if versioned, use version to switch</span>
+<span class="sd">       to an alternate geodatabase version. If version is empty or</span>
+<span class="sd">       missing, the registered geodatabase version will be used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;table&quot;</span>
+    <span class="n">_workspaceId</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dataSourceName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_gdbVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workspaceId</span><span class="p">,</span> <span class="n">dataSourceName</span><span class="p">,</span> <span class="n">gdbVersion</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">workspaceId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span> <span class="o">=</span> <span class="n">dataSourceName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span> <span class="o">=</span> <span class="n">gdbVersion</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TableDataSource.datatype"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.datatype">[docs]</a>    <span class="k">def</span> <span class="nf">datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the workspace id &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@workspaceId.setter</span>
+<div class="viewcode-block" id="TableDataSource.workspaceId"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.workspaceId">[docs]</a>    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the workspace Id&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataSourceName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the dataSourceName &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@dataSourceName.setter</span>
+<div class="viewcode-block" id="TableDataSource.dataSourceName"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.dataSourceName">[docs]</a>    <span class="k">def</span> <span class="nf">dataSourceName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the dataSourceName&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gdbVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gets the gdbVersion &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@gdbVersion.setter</span>
+<div class="viewcode-block" id="TableDataSource.gdbVersion"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.gdbVersion">[docs]</a>    <span class="k">def</span> <span class="nf">gdbVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the GDB version &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TableDataSource.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as JSON &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TableDataSource.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableDataSource.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as JSON &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span>
+            <span class="s">&quot;workspaceId&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span><span class="p">,</span>
+            <span class="s">&quot;dataSourceName&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span><span class="p">,</span>
+            <span class="s">&quot;gdbVersion&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdbVersion</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="RasterDataSource"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource">[docs]</a><span class="k">class</span> <span class="nc">RasterDataSource</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Raster data source is a file-based raster that resides in a</span>
+<span class="sd">       registered raster workspace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;raster&quot;</span>
+    <span class="n">_workspaceId</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dataSourceName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_gdbVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workspaceId</span><span class="p">,</span> <span class="n">dataSourceName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">workspaceId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span> <span class="o">=</span> <span class="n">dataSourceName</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="RasterDataSource.datatype"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource.datatype">[docs]</a>    <span class="k">def</span> <span class="nf">datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the workspace id &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@workspaceId.setter</span>
+<div class="viewcode-block" id="RasterDataSource.workspaceId"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource.workspaceId">[docs]</a>    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the workspace Id&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataSourceName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the dataSourceName &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@dataSourceName.setter</span>
+<div class="viewcode-block" id="RasterDataSource.dataSourceName"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource.dataSourceName">[docs]</a>    <span class="k">def</span> <span class="nf">dataSourceName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the dataSourceName&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="RasterDataSource.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as JSON &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="RasterDataSource.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.RasterDataSource.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as JSON &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span>
+            <span class="s">&quot;workspaceId&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span><span class="p">,</span>
+            <span class="s">&quot;dataSourceName&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataSourceName</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="QueryTableDataSource"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource">[docs]</a><span class="k">class</span> <span class="nc">QueryTableDataSource</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;queryTable&quot;</span>
+    <span class="n">_workspaceId</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_query</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_oidFields</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geometryType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_allowedTypes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;esriGeometryPoint&quot;</span><span class="p">,</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span><span class="p">,</span>
+                     <span class="s">&#39;esriGeometryPolyline&#39;</span><span class="p">,</span> <span class="s">&#39;esriGeometryPolygon&#39;</span><span class="p">]</span>
+    <span class="n">_spatialReference</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workspaceId</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">oidFields</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span> <span class="n">geometryType</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">workspaceId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oidFields</span> <span class="o">=</span> <span class="n">oidFields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+        <span class="k">if</span> <span class="n">geometryType</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+           <span class="n">geometryType</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowedTypes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span> <span class="o">=</span> <span class="n">geometryType</span>
+        <span class="k">elif</span> <span class="n">geometryType</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+             <span class="ow">not</span> <span class="n">geometryType</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowedTypes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;geometryType is invalid&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="QueryTableDataSource.datatype"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource.datatype">[docs]</a>    <span class="k">def</span> <span class="nf">datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the workspace id &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@workspaceId.setter</span>
+<div class="viewcode-block" id="QueryTableDataSource.workspaceId"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource.workspaceId">[docs]</a>    <span class="k">def</span> <span class="nf">workspaceId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sets the workspace Id&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometryType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type of the query table &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@geometryType.setter</span>
+<div class="viewcode-block" id="QueryTableDataSource.geometryType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource.geometryType">[docs]</a>    <span class="k">def</span> <span class="nf">geometryType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the geometry type &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowedTypes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="QueryTableDataSource.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as JSON &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="QueryTableDataSource.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.QueryTableDataSource.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as a dictionary &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;queryTable&quot;</span><span class="p">,</span>
+            <span class="s">&quot;workspaceId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspaceId</span><span class="p">,</span>
+            <span class="s">&quot;query&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">,</span>
+            <span class="s">&quot;oidFields&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oidFields</span><span class="p">,</span>
+            <span class="s">&quot;spatialReference&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&quot;geometryType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryType</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="JoinTableDataSource"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.JoinTableDataSource">[docs]</a><span class="k">class</span> <span class="nc">JoinTableDataSource</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        joinTable data source is the result of a join operation. Nested</span>
+<span class="sd">        joins are supported. To use nested joins, set either</span>
+<span class="sd">        leftTableSource or rightTableSource to be a joinTable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;joinTable&quot;</span>
+    <span class="n">_leftTableSource</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_rightTableSource</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_leftTableKey</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_rightTableKey</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_joinType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">joinTypes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;esriLeftOuterJoin&quot;</span><span class="p">,</span> <span class="s">&quot;esriLeftInnerJoin&quot;</span><span class="p">]</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">leftTableSource</span><span class="p">,</span> <span class="n">rightTableSource</span><span class="p">,</span> <span class="n">leftTableKey</span><span class="p">,</span>
+                 <span class="n">rightTableKey</span><span class="p">,</span> <span class="n">joinType</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">joinType</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">joinTypes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="s">&quot;joinTable&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_leftTableSource</span> <span class="o">=</span> <span class="n">leftTableSource</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rightTableSource</span> <span class="o">=</span> <span class="n">rightTableSource</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_leftTableKey</span> <span class="o">=</span> <span class="n">leftTableKey</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rightTableKey</span> <span class="o">=</span> <span class="n">rightTableKey</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_joinType</span> <span class="o">=</span> <span class="n">joinType</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;joinType is invalid&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="JoinTableDataSource.datatype"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.JoinTableDataSource.datatype">[docs]</a>    <span class="k">def</span> <span class="nf">datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="JoinTableDataSource.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.JoinTableDataSource.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the object as JSON string &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="JoinTableDataSource.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.JoinTableDataSource.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data source as a dictionary &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="s">&quot;joinTable&quot;</span><span class="p">,</span>
+            <span class="s">&quot;leftTableSource&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leftTableSource</span><span class="p">,</span>
+            <span class="s">&quot;rightTableSource&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rightTableSource</span><span class="p">,</span>
+            <span class="s">&quot;leftTableKey&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_leftTableKey</span><span class="p">,</span>
+            <span class="s">&quot;rightTableKey&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rightTableKey</span><span class="p">,</span>
+            <span class="s">&quot;joinType&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joinType</span>
+        <span class="p">}</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

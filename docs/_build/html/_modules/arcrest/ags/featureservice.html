@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.ags.featureservice &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for arcrest.ags.featureservice</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseAGSServer</span>
+<span class="c">########################################################################</span>
+<div class="viewcode-block" id="FeatureService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService">[docs]</a><span class="k">class</span> <span class="nc">FeatureService</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; contains information about a feature service &quot;&quot;&quot;</span>
+    <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">_serviceDescription</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasVersionedData</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsDisconnectedEditing</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasStaticData</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_maxRecordCount</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportedQueryFormats</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_capabilities</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_copyrightText</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_spatialReference</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_initialExtent</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_fullExtent</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_allowGeometryUpdates</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_units</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_syncEnabled</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_syncCapabilities</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_editorTrackingInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_documentInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_layers</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_tables</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_enableZDefaults</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_zDefault</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; loads the data into the class &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+                          <span class="s">&quot;token&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+                          <span class="p">}</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented for Feature Service.&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;currentVersion&quot;):</span>
+            <span class="c">#self._currentVersion = json_dict[&#39;currentVersion&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._currentVersion = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;serviceDescription&quot;):</span>
+            <span class="c">#self._serviceDescription = json_dict[&#39;serviceDescription&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._serviceDescription = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;hasVersionedData&quot;):</span>
+            <span class="c">#self._hasVersionedData = json_dict[&#39;hasVersionedData&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._hasVersionedData = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&#39;supportsDisconnectedEditing&#39;):</span>
+            <span class="c">#self._supportsDisconnectedEditing = json_dict[&#39;supportsDisconnectedEditing&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._supportsDisconnectedEditing = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;hasStaticData&quot;):</span>
+            <span class="c">#self._hasStaticData = json_dict[&#39;hasStaticData&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._hasStaticData = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;maxRecordCount&quot;):</span>
+            <span class="c">#self._maxRecordCount = json_dict[&#39;maxRecordCount&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._maxRecordCount = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;supportedQueryFormats&quot;):</span>
+            <span class="c">#self._supportedQueryFormats = json_dict[&#39;supportedQueryFormats&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._supportedQueryFormats = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;capabilities&quot;):</span>
+            <span class="c">#self._capabilities = json_dict[&#39;capabilities&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._capabilities = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;description&quot;):</span>
+            <span class="c">#self._description = json_dict[&#39;description&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._description = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;copyrightText&quot;):</span>
+            <span class="c">#self._copyrightText = json_dict[&#39;copyrightText&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._copyrightText = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;spatialReference&quot;):</span>
+            <span class="c">#self._spatialReference = json_dict[&#39;spatialReference&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._spatialReference = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;initialExtent&quot;):</span>
+            <span class="c">#self._initialExtent = json_dict[&#39;initialExtent&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._initialExtent = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;fullExtent&quot;):</span>
+            <span class="c">#self._fullExtent = json_dict[&#39;fullExtent&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._fullExtent = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;allowGeometryUpdates&quot;):</span>
+            <span class="c">#self._allowGeometryUpdates = json_dict[&#39;allowGeometryUpdates&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._allowGeometryUpdates = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;units&quot;):</span>
+            <span class="c">#self._units = json_dict[&#39;units&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._units = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;syncEnabled&quot;):</span>
+            <span class="c">#self._syncEnabled = json_dict[&#39;syncEnabled&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._syncEnabled = False</span>
+        <span class="c">#if json_dict.has_key(&quot;syncCapabilities&quot;):</span>
+            <span class="c">#self._syncCapabilities = json_dict[&#39;syncCapabilities&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._syncCapabilities = &quot;Not Supported&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;editorTrackingInfo&quot;):</span>
+            <span class="c">#self._editorTrackingInfo = json_dict[&#39;editorTrackingInfo&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._editorTrackingInfo = &quot;&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;documentInfo&quot;):</span>
+            <span class="c">#self._documentInfo = json_dict[&#39;documentInfo&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._documentInfo = &quot;&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;layers&quot;):</span>
+            <span class="c">#self._layers = json_dict[&#39;layers&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._layers = &quot;&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;tables&quot;):</span>
+            <span class="c">#self._tables = json_dict[&#39;tables&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._tables = &quot;&quot;</span>
+        <span class="c">#if json_dict.has_key(&quot;enableZDefaults&quot;):</span>
+            <span class="c">#self._enableZDefaults = json_dict[&#39;enableZDefaults&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._enableZDefaults = False</span>
+        <span class="c">#if json_dict.has_key(&quot;zDefault&quot;):</span>
+            <span class="c">#self._zDefault = json_dict[&#39;zDefault&#39;]</span>
+        <span class="c">#else:</span>
+            <span class="c">#self._zDefault = &quot;&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.maxRecordCount"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.maxRecordCount">[docs]</a>    <span class="k">def</span> <span class="nf">maxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the max record count&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.supportedQueryFormats"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.supportedQueryFormats">[docs]</a>    <span class="k">def</span> <span class="nf">supportedQueryFormats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.capabilities"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.capabilities">[docs]</a>    <span class="k">def</span> <span class="nf">capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a list of capabilities &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.description"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the service description &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.copyrightText"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.copyrightText">[docs]</a>    <span class="k">def</span> <span class="nf">copyrightText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the copyright text &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.spatialReference"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the spatial reference &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatialReference</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatialReference</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.initialExtent"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.initialExtent">[docs]</a>    <span class="k">def</span> <span class="nf">initialExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the initial extent of the feature service &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialExtent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialExtent</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.fullExtent"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.fullExtent">[docs]</a>    <span class="k">def</span> <span class="nf">fullExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the full extent of the feature service &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullExtent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullExtent</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.allowGeometryUpdates"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.allowGeometryUpdates">[docs]</a>    <span class="k">def</span> <span class="nf">allowGeometryUpdates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; informs the user if the data allows geometry updates &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowGeometryUpdates</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowGeometryUpdates</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.units"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.units">[docs]</a>    <span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the measurement unit &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.syncEnabled"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.syncEnabled">[docs]</a>    <span class="k">def</span> <span class="nf">syncEnabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; informs the user if sync of data can be performed &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_syncEnabled</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_syncEnabled</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.syncCapabilities"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.syncCapabilities">[docs]</a>    <span class="k">def</span> <span class="nf">syncCapabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; type of sync that can be performed &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_syncCapabilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_syncCapabilities</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.editorTrackingInfo"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.editorTrackingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">editorTrackingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editorTrackingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editorTrackingInfo</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.documentInfo"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.documentInfo">[docs]</a>    <span class="k">def</span> <span class="nf">documentInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.layers"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.layers">[docs]</a>    <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.tables"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.tables">[docs]</a>    <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.enableZDefaults"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.enableZDefaults">[docs]</a>    <span class="k">def</span> <span class="nf">enableZDefaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enableZDefaults</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enableZDefaults</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.zDefault"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.zDefault">[docs]</a>    <span class="k">def</span> <span class="nf">zDefault</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zDefault</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zDefault</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.hasStaticData"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.hasStaticData">[docs]</a>    <span class="k">def</span> <span class="nf">hasStaticData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasStaticData</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasStaticData</span>
+
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.currentVersion"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.currentVersion">[docs]</a>    <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the map service current version &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.serviceDescription"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.serviceDescription">[docs]</a>    <span class="k">def</span> <span class="nf">serviceDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the serviceDescription of the map service &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serviceDescription</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serviceDescription</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.hasVersionedData"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.hasVersionedData">[docs]</a>    <span class="k">def</span> <span class="nf">hasVersionedData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns boolean for versioned data &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasVersionedData</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasVersionedData</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.supportsDisconnectedEditing"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.supportsDisconnectedEditing">[docs]</a>    <span class="k">def</span> <span class="nf">supportsDisconnectedEditing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns boolean is disconnecting editted supported &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDisconnectedEditing</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDisconnectedEditing</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

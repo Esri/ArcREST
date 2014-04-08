@@ -1,0 +1,898 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.agol.common &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for arcrest.agol.common</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">arcpy</span>
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">Geometry</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+
+<span class="c">#----------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_date_handler</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timegm</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">utctimetuple</span><span class="p">())</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span>
+<div class="viewcode-block" id="relative_path_to_absolute"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.relative_path_to_absolute">[docs]</a><span class="k">def</span> <span class="nf">relative_path_to_absolute</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">sciptPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sciptPath</span><span class="p">,</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="get_attachment_data"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.get_attachment_data">[docs]</a><span class="k">def</span> <span class="nf">get_attachment_data</span><span class="p">(</span><span class="n">attachmentTable</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span>
+                        <span class="n">nameField</span><span class="o">=</span><span class="s">&quot;ATT_NAME&quot;</span><span class="p">,</span> <span class="n">blobField</span><span class="o">=</span><span class="s">&quot;DATA&quot;</span><span class="p">,</span>
+                        <span class="n">contentTypeField</span><span class="o">=</span><span class="s">&quot;CONTENT_TYPE&quot;</span><span class="p">,</span>
+                        <span class="n">rel_object_field</span><span class="o">=</span><span class="s">&quot;REL_OBJECTID&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; gets all the data to pass to a feature service &quot;&quot;&quot;</span>
+    <span class="n">ret_rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">attachmentTable</span><span class="p">,</span>
+                               <span class="p">[</span><span class="n">nameField</span><span class="p">,</span>
+                                <span class="n">blobField</span><span class="p">,</span>
+                                <span class="n">contentTypeField</span><span class="p">,</span>
+                                <span class="n">rel_object_field</span><span class="p">],</span>
+                               <span class="n">where_clause</span><span class="o">=</span><span class="n">sql</span><span class="p">)</span> <span class="k">as</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">temp_f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;temp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_f</span><span class="p">,</span><span class="s">&#39;wb&#39;</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">writer</span>
+            <span class="n">ret_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">&quot;name&quot;</span> <span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s">&quot;blob&quot;</span> <span class="p">:</span> <span class="n">temp_f</span><span class="p">,</span>
+                <span class="s">&quot;content&quot;</span> <span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s">&quot;rel_oid&quot;</span> <span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="p">})</span>
+            <span class="k">del</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="n">ret_rows</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="create_feature_layer"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.create_feature_layer">[docs]</a><span class="k">def</span> <span class="nf">create_feature_layer</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;layer&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; creates a feature layer object &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">MakeFeatureLayer_management</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">ds</span><span class="p">,</span>
+                                               <span class="n">out_layer</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                               <span class="n">where_clause</span><span class="o">=</span><span class="n">sql</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="get_records_with_attachments"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.get_records_with_attachments">[docs]</a><span class="k">def</span> <span class="nf">get_records_with_attachments</span><span class="p">(</span><span class="n">attachment_table</span><span class="p">,</span> <span class="n">rel_object_field</span><span class="o">=</span><span class="s">&quot;REL_OBJECTID&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="n">OIDs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">attachment_table</span><span class="p">,</span>
+                               <span class="p">[</span><span class="n">rel_object_field</span><span class="p">])</span> <span class="k">as</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">OIDs</span><span class="p">:</span>
+                <span class="n">OIDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">del</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="n">OIDs</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="get_OID_field"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.get_OID_field">[docs]</a><span class="k">def</span> <span class="nf">get_OID_field</span><span class="p">(</span><span class="n">fs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns a featureset&#39;s object id field&quot;&quot;&quot;</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Describe</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">desc</span><span class="o">.</span><span class="n">hasOID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">desc</span><span class="o">.</span><span class="n">OIDFieldName</span>
+    <span class="k">return</span> <span class="bp">None</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="featureclass_to_json"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.featureclass_to_json">[docs]</a><span class="k">def</span> <span class="nf">featureclass_to_json</span><span class="p">(</span><span class="n">fc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; converts a feature class to a json dictionary representation &quot;&quot;&quot;</span>
+    <span class="n">featureSet</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FeatureSet</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span><span class="c"># Load the feature layer into a feature set</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Describe</span><span class="p">(</span><span class="n">featureSet</span><span class="p">)</span><span class="c"># this will allow us to use the json property of the feature set</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="json_to_featureclass"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.json_to_featureclass">[docs]</a><span class="k">def</span> <span class="nf">json_to_featureclass</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">out_fc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; converts a json file (.json) to a feature class &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">JSONToFeatures_conversion</span><span class="p">(</span><span class="n">in_json_file</span><span class="o">=</span><span class="n">json_file</span><span class="p">,</span>
+                                    <span class="n">out_features</span><span class="o">=</span><span class="n">out_fc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="merge_feature_class"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.merge_feature_class">[docs]</a><span class="k">def</span> <span class="nf">merge_feature_class</span><span class="p">(</span><span class="n">merges</span><span class="p">,</span> <span class="n">out_fc</span><span class="p">,</span> <span class="n">cleanUp</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; merges featureclass into a single feature class &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cleanUp</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">merges</span><span class="p">,</span>
+                                      <span class="n">output</span><span class="o">=</span><span class="n">out_fc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">merges</span><span class="p">,</span>
+                                        <span class="n">output</span><span class="o">=</span><span class="n">out_fc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">merges</span><span class="p">:</span>
+            <span class="n">arcpy</span><span class="o">.</span><span class="n">Delete_management</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">m</span>
+        <span class="k">return</span> <span class="n">merged</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="scratchFolder"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.scratchFolder">[docs]</a><span class="k">def</span> <span class="nf">scratchFolder</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; returns the scratch foldre &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="scratchGDB"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.scratchGDB">[docs]</a><span class="k">def</span> <span class="nf">scratchGDB</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; returns the arcpy scratch file geodatabase &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">scratchGDB</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="getDateFields"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.getDateFields">[docs]</a><span class="k">def</span> <span class="nf">getDateFields</span><span class="p">(</span><span class="n">fc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Returns a list of fields that are of type DATE</span>
+<span class="sd">       Input:</span>
+<span class="sd">          fc - feature class or table path</span>
+<span class="sd">       Output:</span>
+<span class="sd">          List of date field names as strings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="s">&quot;Date&quot;</span><span class="p">)]</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="toDateTime"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.toDateTime">[docs]</a><span class="k">def</span> <span class="nf">toDateTime</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;converts a unix time stamp to a datetime object &quot;&quot;&quot;</span>
+    <span class="n">unix_timestamp</span> <span class="o">=</span> <span class="n">unix_timestamp</span><span class="o">/</span><span class="mi">1000</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">)</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="insert_rows"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.insert_rows">[docs]</a><span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span>
+                <span class="n">features</span><span class="p">,</span>
+                <span class="n">fields</span><span class="p">,</span>
+                <span class="n">includeOIDField</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                <span class="n">oidField</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; inserts rows based on a list features object &quot;&quot;&quot;</span>
+    <span class="n">icur</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">includeOIDField</span><span class="p">:</span>
+        <span class="n">arcpy</span><span class="o">.</span><span class="n">AddField_management</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="s">&quot;FSL_OID&quot;</span><span class="p">,</span> <span class="s">&quot;LONG&quot;</span><span class="p">)</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;FSL_OID&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;SHAPE@&quot;</span><span class="p">)</span>
+        <span class="n">workspace</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fc</span><span class="p">))</span>
+        <span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">Editor</span><span class="p">(</span><span class="n">workspace</span><span class="p">)</span> <span class="k">as</span> <span class="n">edit</span><span class="p">:</span>
+            <span class="n">date_fields</span> <span class="o">=</span> <span class="n">getDateFields</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+            <span class="n">icur</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">InsertCursor</span><span class="p">(</span><span class="n">fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+                <span class="n">drow</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">asRow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dfields</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">fields</span>
+                <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">dfields</span> <span class="ow">or</span> \
+                       <span class="p">(</span><span class="n">includeOIDField</span> <span class="ow">and</span> <span class="n">field</span> <span class="o">==</span> <span class="s">&quot;FSL_OID&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">date_fields</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span> <span class="o">=</span> <span class="n">toDateTime</span><span class="p">(</span><span class="n">drow</span><span class="p">[</span><span class="n">dfields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">field</span><span class="p">)])</span>
+                        <span class="k">elif</span> <span class="n">field</span> <span class="o">==</span> <span class="s">&quot;FSL_OID&quot;</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;FSL_OID&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">drow</span><span class="p">[</span><span class="n">dfields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">oidField</span><span class="p">)]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span> <span class="o">=</span> <span class="n">drow</span><span class="p">[</span><span class="n">dfields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span>
+                    <span class="k">del</span> <span class="n">field</span>
+                <span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;SHAPE@&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">geometry</span>
+                <span class="n">icur</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">row</span>
+                <span class="k">del</span> <span class="n">drow</span>
+                <span class="k">del</span> <span class="n">dfields</span>
+                <span class="k">del</span> <span class="n">feat</span>
+            <span class="k">del</span> <span class="n">features</span>
+            <span class="n">icur</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">del</span> <span class="n">icur</span>
+            <span class="k">del</span> <span class="n">fields</span>
+        <span class="k">return</span> <span class="n">fc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fc</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="create_feature_class"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.create_feature_class">[docs]</a><span class="k">def</span> <span class="nf">create_feature_class</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span>
+                         <span class="n">out_name</span><span class="p">,</span>
+                         <span class="n">geom_type</span><span class="p">,</span>
+                         <span class="n">wkid</span><span class="p">,</span>
+                         <span class="n">fields</span><span class="p">,</span>
+                         <span class="n">objectIdField</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; creates a feature class in a given gdb or folder &quot;&quot;&quot;</span>
+    <span class="n">arcpy</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">overwriteOutput</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">field_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fc</span> <span class="o">=</span><span class="n">arcpy</span><span class="o">.</span><span class="n">CreateFeatureclass_management</span><span class="p">(</span><span class="n">out_path</span><span class="o">=</span><span class="n">out_path</span><span class="p">,</span>
+                                            <span class="n">out_name</span><span class="o">=</span><span class="n">out_name</span><span class="p">,</span>
+                                            <span class="n">geometry_type</span><span class="o">=</span><span class="n">lookUpGeometry</span><span class="p">(</span><span class="n">geom_type</span><span class="p">),</span>
+                                            <span class="n">spatial_reference</span><span class="o">=</span><span class="n">arcpy</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span><span class="n">wkid</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">objectIdField</span><span class="p">:</span>
+            <span class="n">field_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+            <span class="n">arcpy</span><span class="o">.</span><span class="n">AddField_management</span><span class="p">(</span><span class="n">out_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">out_name</span><span class="p">,</span>
+                                      <span class="n">field</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span>
+                                      <span class="n">lookUpFieldType</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">fc</span><span class="p">,</span> <span class="n">field_names</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="lookUpGeometry"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.lookUpGeometry">[docs]</a><span class="k">def</span> <span class="nf">lookUpGeometry</span><span class="p">(</span><span class="n">geom_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; converts ArcRest API geometry name to Python names</span>
+<span class="sd">        Input:</span>
+<span class="sd">           geom_type - string - name of geometry</span>
+<span class="sd">        Output:</span>
+<span class="sd">           name of python geometry type for create feature class function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">geom_type</span> <span class="o">==</span> <span class="s">&quot;esriGeometryPoint&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;POINT&quot;</span>
+    <span class="k">elif</span> <span class="n">geom_type</span> <span class="o">==</span> <span class="s">&quot;esriGeometryPolygon&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;POLYGON&quot;</span>
+    <span class="k">elif</span> <span class="n">geom_type</span> <span class="o">==</span> <span class="s">&quot;esriGeometryLine&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;POLYLINE&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;POINT&quot;</span>
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="lookUpFieldType"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.lookUpFieldType">[docs]</a><span class="k">def</span> <span class="nf">lookUpFieldType</span><span class="p">(</span><span class="n">field_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts the ArcGIS REST field types to Python Types</span>
+<span class="sd">        Input:</span>
+<span class="sd">           field_type - string - type of field as string</span>
+<span class="sd">        Output:</span>
+<span class="sd">           Python field type as string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeDate&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;DATE&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeInteger&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;LONG&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeSmallInteger&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;SHORT&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeDouble&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;DOUBLE&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeString&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;TEXT&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeBlob&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;BLOB&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeSingle&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;FLOAT&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeRaster&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;RASTER&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeGUID&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;GUID&quot;</span>
+    <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">&quot;esriFieldTypeGlobalID&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;TEXT&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;TEXT&quot;</span>
+<span class="c">#----------------------------------------------------------------------</span>
+<span class="c">########################################################################</span></div>
+<div class="viewcode-block" id="SpatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.SpatialReference">[docs]</a><span class="k">class</span> <span class="nc">SpatialReference</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; creates a spatial reference instance &quot;&quot;&quot;</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get/set the wkid &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span>
+    <span class="nd">@wkid.setter</span>
+<div class="viewcode-block" id="SpatialReference.wkid"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.SpatialReference.wkid">[docs]</a>    <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get/set the wkid &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SpatialReference.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.SpatialReference.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the wkid id for use in json calls&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="Point"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point">[docs]</a><span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Point Geometry</span>
+<span class="sd">        Inputs:</span>
+<span class="sd">           coord - list of [X,Y] pair or arcpy.Point Object</span>
+<span class="sd">           wkid - well know id of spatial references</span>
+<span class="sd">           z - is the Z coordinate value</span>
+<span class="sd">           m - m value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_z</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_m</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coord</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">X</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">Y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">Z</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">M</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">JSON</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asJSON</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asArcPyObject</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.type"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.asJSON"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                               <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.asArcPyObject"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.asArcPyObject">[docs]</a>    <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Point as an ESRI arcpy.Point object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
+        <span class="c">#</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;x&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+                        <span class="s">&quot;y&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
+                        <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+                        <span class="p">}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">template</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">template</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Point.asList"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.asList">[docs]</a>    <span class="k">def</span> <span class="nf">asList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a Point value as a list of [x,y,&lt;z&gt;,&lt;m&gt;] &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_z</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">base</span>
+
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="MultiPoint"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint">[docs]</a><span class="k">class</span> <span class="nc">MultiPoint</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implements the ArcGIS JSON MultiPoint Geometry Object &quot;&quot;&quot;</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_points</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">points</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;points&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">JSON</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>           
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="MultiPoint.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="MultiPoint.type"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="MultiPoint.asJSON"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                               <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="MultiPoint.asArcPyObject"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.asArcPyObject">[docs]</a>    <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Point as an ESRI arcpy.MultiPoint object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="MultiPoint.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
+        <span class="c">#</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s">&quot;points&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">:</span>
+                <span class="n">template</span><span class="p">[</span><span class="s">&#39;points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="Polyline"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline">[docs]</a><span class="k">class</span> <span class="nc">Polyline</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implements the ArcGIS REST API Polyline Object</span>
+<span class="sd">        Inputs:</span>
+<span class="sd">           paths - list - list of lists of Point objects</span>
+<span class="sd">           wkid - integer - well know spatial reference id</span>
+<span class="sd">           hasZ - boolean -</span>
+<span class="sd">           hasM - boolean -</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_paths</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="n">paths</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;paths&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">JSON</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polyline.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polyline.type"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polyline.asJSON"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                               <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polyline.asArcPyObject"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.asArcPyObject">[docs]</a>    <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Polyline as an ESRI arcpy.Polyline object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polyline.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s">&quot;paths&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span><span class="p">:</span>
+                <span class="n">lpart</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="n">lpart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s">&#39;paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">lpart</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="Polygon"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon">[docs]</a><span class="k">class</span> <span class="nc">Polygon</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Implements the ArcGIS REST JSON for Polygon Object &quot;&quot;&quot;</span>
+    <span class="n">_rings</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rings</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="n">rings</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">rings</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;rings&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">rings</span><span class="o">.</span><span class="n">JSON</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polygon.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polygon.type"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polygon.asJSON"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                               <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polygon.asArcPyObject"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.asArcPyObject">[docs]</a>    <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Polyline as an ESRI arcpy.Polyline object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Polygon.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s">&quot;rings&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span><span class="p">:</span>
+                <span class="n">lpart</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="n">lpart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s">&#39;rings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">lpart</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="Envelope"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope">[docs]</a><span class="k">class</span> <span class="nc">Envelope</span><span class="p">(</span><span class="n">Geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       An envelope is a rectangle defined by a range of values for each</span>
+<span class="sd">       coordinate and attribute. It also has a spatialReference field.</span>
+<span class="sd">       The fields for the z and m ranges are optional.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_xmin</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_ymin</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_zmin</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_mmin</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_xmax</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_ymax</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_zmax</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_mmax</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">wkid</span><span class="p">,</span>
+                 <span class="n">zmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mmax</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span> <span class="o">=</span> <span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span> <span class="o">=</span> <span class="n">ymin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span> <span class="o">=</span> <span class="n">zmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span> <span class="o">=</span> <span class="n">mmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span> <span class="o">=</span> <span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span> <span class="o">=</span> <span class="n">ymax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span> <span class="o">=</span> <span class="n">zmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span> <span class="o">=</span> <span class="n">mmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Envelope.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Envelope.type"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;esriGeometryEnvelope&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Envelope.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the envelope as a dictionary &quot;&quot;&quot;</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;xmin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span><span class="p">,</span>
+            <span class="s">&quot;ymin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span><span class="p">,</span>
+            <span class="s">&quot;xmax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span><span class="p">,</span>
+            <span class="s">&quot;ymax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span><span class="p">,</span>
+            <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span>
+            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span>
+
+        <span class="k">return</span> <span class="n">template</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Envelope.asJSON"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
+                               <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Envelope.asArcPyObject"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Envelope.asArcPyObject">[docs]</a>    <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Envelope as an ESRI arcpy.Polygon object &quot;&quot;&quot;</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span>
+        <span class="n">ring</span> <span class="o">=</span> <span class="p">[[</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">)</span>
+            <span class="p">]]</span>
+        <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">ring</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">)</span><span class="o">.</span><span class="n">asArcPyObject</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="Feature"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature">[docs]</a><span class="k">class</span> <span class="nc">Feature</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; returns a feature  &quot;&quot;&quot;</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geomType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_attributes</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_string</span><span class="p">,</span>
+                                    <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">json_string</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json_string</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid Input, only dictionary of string allowed&quot;</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Feature.set_value"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.set_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets an attribute value for a given field name &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">field_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;SHAPE&#39;</span><span class="p">,</span> <span class="s">&#39;SHAPE@&#39;</span><span class="p">,</span> <span class="s">&quot;GEOMETRY&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Geometry</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s">&quot;x&quot;</span> <span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">],</span>
+                    <span class="s">&quot;y&quot;</span> <span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s">&quot;points&quot;</span> <span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;points&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s">&quot;paths&quot;</span> <span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;paths&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s">&quot;rings&quot;</span> <span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;rings&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Feature.get_value"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a value for a given field name &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">field_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;SHAPE&#39;</span><span class="p">,</span> <span class="s">&#39;SHAPE@&#39;</span><span class="p">,</span> <span class="s">&quot;GEOMETRY&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Feature.asDictionary"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the feature as a dictionary&quot;&quot;&quot;</span>
+        <span class="n">feat_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;feature&#39;</span><span class="p">):</span>
+                <span class="n">feat_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;feature&#39;</span><span class="p">][</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;geometry&#39;</span><span class="p">):</span>
+                <span class="n">feat_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&quot;feature&quot;</span><span class="p">):</span>
+            <span class="n">feat_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;feature&#39;</span><span class="p">][</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">feat_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Feature.asRow"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.asRow">[docs]</a>    <span class="k">def</span> <span class="nf">asRow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; converts a feature to a list for insertion into an insert cursor</span>
+<span class="sd">            Output:</span>
+<span class="sd">               [row items], [field names]</span>
+<span class="sd">               returns a list of fields and the row object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">del</span> <span class="n">v</span>
+            <span class="k">del</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;SHAPE@&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">,</span> <span class="n">fields</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Feature.geometry"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the feature geometry&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;feature&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;feature&#39;</span><span class="p">][</span><span class="s">&#39;geometry&#39;</span><span class="p">],</span> <span class="n">esri_json</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;geometry&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">],</span> <span class="n">esri_json</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Feature.fields"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.fields">[docs]</a>    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a list of feature fields &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&quot;feature&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;feature&#39;</span><span class="p">][</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Feature.geometryType"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.geometryType">[docs]</a>    <span class="k">def</span> <span class="nf">geometryType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the feature&#39;s geometry type &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geomType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">type</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geomType</span> <span class="o">=</span> <span class="s">&quot;Table&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomType</span></div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Feature.fc_to_features"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.fc_to_features">[docs]</a>    <span class="k">def</span> <span class="nf">fc_to_features</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           converts a dataset to a list of feature objects</span>
+<span class="sd">           Input:</span>
+<span class="sd">              dataset - path to table or feature class</span>
+<span class="sd">           Output:</span>
+<span class="sd">              list of feature objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Describe</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;Geometry&#39;</span><span class="p">]]</span>
+        <span class="n">non_geom_fields</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot;shapeFieldName&quot;</span><span class="p">):</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;SHAPE@JSON&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">desc</span>
+        <span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span> <span class="k">as</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s">&quot;attributes&quot;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">non_geom_fields</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="s">&quot;SHAPE@JSON&quot;</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;SHAPE@JSON&quot;</span><span class="p">)])</span>
+
+                <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">Feature</span><span class="p">(</span><span class="n">json_string</span><span class="o">=</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">template</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="k">del</span> <span class="n">row</span>
+        <span class="k">return</span> <span class="n">features</span>
+<span class="c">#----------------------------------------------------------------------</span></div></div>
+<span class="k">def</span> <span class="nf">_unicode_convert</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; converts unicode to anscii &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> \
+                <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> \
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    
+        
+    
+        
+    
+        
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

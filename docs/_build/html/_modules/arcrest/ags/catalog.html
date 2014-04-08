@@ -1,0 +1,394 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.ags.catalog &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for arcrest.ags.catalog</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseAGSServer</span>
+<span class="kn">from</span> <span class="nn">featureservice</span> <span class="kn">import</span> <span class="n">FeatureService</span>
+<span class="kn">from</span> <span class="nn">mapservice</span> <span class="kn">import</span> <span class="n">MapService</span>
+<span class="kn">from</span> <span class="nn">mobileservice</span> <span class="kn">import</span> <span class="n">MobileService</span>
+<span class="kn">from</span> <span class="nn">imageservice</span> <span class="kn">import</span> <span class="n">ImageService</span>
+<span class="kn">from</span> <span class="nn">gpservice</span> <span class="kn">import</span> <span class="n">GPService</span>
+<span class="kn">from</span> <span class="nn">geometryservice</span> <span class="kn">import</span> <span class="n">GeometryService</span>
+<span class="kn">from</span> <span class="nn">naservice</span> <span class="kn">import</span> <span class="n">NAService</span>
+<span class="kn">from</span> <span class="nn">geocodeservice</span> <span class="kn">import</span> <span class="n">GeocodeService</span>
+<span class="kn">from</span> <span class="nn">globeservice</span> <span class="kn">import</span> <span class="n">GlobeService</span>
+<span class="kn">from</span> <span class="nn">geodataservice</span> <span class="kn">import</span> <span class="n">GeoDataService</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c">########################################################################</span>
+<div class="viewcode-block" id="Catalog"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog">[docs]</a><span class="k">class</span> <span class="nc">Catalog</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       The Catalog resource is the root node and initial entry point into</span>
+<span class="sd">       an ArcGIS Server host. This resource represents a catalog of folders</span>
+<span class="sd">       and services published on the host.</span>
+<span class="sd">       The current version of the server is also returned in the response</span>
+<span class="sd">       (introduced at 9.3.1). The value of the version is a number such</span>
+<span class="sd">       that its value at a future release is guaranteed to be greater than</span>
+<span class="sd">       its value at a previous release.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_token_url</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_currentURL</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_acceptLanguage</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_fullVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_folders</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_services</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_folder</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#   Service Holders</span>
+    <span class="n">_mapServices</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geoCodeService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_gpService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geometryService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_imageService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_networkService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_featureService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_geoDataService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_globeService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_mobileService</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+<span class="sd">            Inputs:</span>
+<span class="sd">               url - admin url</span>
+<span class="sd">               token_url - url to generate token</span>
+<span class="sd">               username - admin username</span>
+<span class="sd">               password - admin password</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span><span class="p">()</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; populates server admin information &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&quot;token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;folders&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folders</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span> <span class="ow">and</span> \
+                 <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;folders&#39;</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+            <span class="k">del</span> <span class="n">k</span>
+            <span class="k">del</span> <span class="n">v</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.folders"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.folders">[docs]</a>    <span class="k">def</span> <span class="nf">folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folders</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folders</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.currentVersion"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.currentVersion">[docs]</a>    <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.services"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.services">[docs]</a>    <span class="k">def</span> <span class="nf">services</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span>
+    <span class="nd">@folder.setter</span>
+<div class="viewcode-block" id="Catalog.folder"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.folder">[docs]</a>    <span class="k">def</span> <span class="nf">folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">folder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">folders</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">folder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">folder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">folder</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="ow">or</span> <span class="n">folder</span> <span class="o">==</span> <span class="s">&quot;root&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">currentURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">folder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span><span class="p">()</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.gpServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.gpServices">[docs]</a>    <span class="k">def</span> <span class="nf">gpServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all geoprocessing services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gpService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gpService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.geocodeServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.geocodeServices">[docs]</a>    <span class="k">def</span> <span class="nf">geocodeServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all geocoding services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoCodeService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoCodeService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.naServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.naServices">[docs]</a>    <span class="k">def</span> <span class="nf">naServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the NA services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_networkService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_networkService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.mapServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.mapServices">[docs]</a>    <span class="k">def</span> <span class="nf">mapServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the map services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapServices</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapServices</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.featureServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.featureServices">[docs]</a>    <span class="k">def</span> <span class="nf">featureServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the feature services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_featureService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_featureService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.geometryService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.geometryService">[docs]</a>    <span class="k">def</span> <span class="nf">geometryService</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the geometry service in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometryService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.imageServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.imageServices">[docs]</a>    <span class="k">def</span> <span class="nf">imageServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all the image services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imageService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imageService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.mobileServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.mobileServices">[docs]</a>    <span class="k">def</span> <span class="nf">mobileServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the mobile services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mobileService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mobileService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.globeServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.globeServices">[docs]</a>    <span class="k">def</span> <span class="nf">globeServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the globe services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_globeService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_globeService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Catalog.geodataServices"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.catalog.Catalog.geodataServices">[docs]</a>    <span class="k">def</span> <span class="nf">geodataServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all geodata services in the current folder &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoDataService</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_populateServices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoDataService</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_populateServices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Populates all the service type properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapServices</span> <span class="o">=</span> <span class="p">[]</span> <span class="c">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geoCodeService</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gpService</span> <span class="o">=</span> <span class="p">[]</span> <span class="c">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometryService</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imageService</span> <span class="o">=</span> <span class="p">[]</span> <span class="c">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_networkService</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_featureService</span> <span class="o">=</span> <span class="p">[]</span> <span class="c">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geoDataService</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_globeService</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mobileService</span> <span class="o">=</span> <span class="p">[]</span> <span class="c">#</span>
+        <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">services</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span><span class="p">,</span>
+                <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;FeatureServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_featureService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">FeatureService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_gpService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GPService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MapServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mapServices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">MapService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ImageServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_imageService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ImageService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                    <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                                    <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MobileServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mobileService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">MobileService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeometryServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geometryService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GeometryService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GlobeServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_globeService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GlobeService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeocodeServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_geoCodeService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GeocodeService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;NAServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_networkService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">NAService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeoDataServer&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_networkService</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GeoDataService</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">src  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
