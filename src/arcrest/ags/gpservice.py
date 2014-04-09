@@ -782,6 +782,3 @@ class GPInputParameterInfo(object):
         return self._dict
 
 
-if __name__ == "__main__":
-    task = GPTask(url="http://chronus.esri.com:6080/arcgis/rest/services/GeometryGP/RasterMulti/GPServer/Model", initialize=True)
-    print task.helpUrl
