@@ -1228,6 +1228,8 @@ class Log(BaseAGSServer):
               services="*",
               machines="*",
               server="*",
+              codes=[],
+              processIds=[],
               export=False,
               exportType="CSV", #CSV or TAB
               out_path=None
@@ -1245,6 +1247,10 @@ class Log(BaseAGSServer):
             "machines": "*",
             "server" : "*"
         }
+        if len(processIds) > 0:
+            qFilter['processIds'] = processIds
+        if len(codes) > 0:
+            qFilter['codes'] = codes
         params = {
             "f" : "json",
             "token" : self._token,

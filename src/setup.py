@@ -3,10 +3,10 @@ setup(
     author="Andrew Chapkowski",
     author_email="achapkowski@esri.com",
     description="Python hooks for ArcGIS REST API",
-    license='BSD',
+    license='Apache',
     url='www.esri.com',
     name='ArcREST',
-    version='1.0.4a',
+    version='1.0.5b',
     packages=['arcrest','arcrest/agol', 'arcrest/ags'],
     package_dir={'':''}
     )
