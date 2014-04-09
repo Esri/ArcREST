@@ -153,7 +153,14 @@ class GPTask(BaseAGSServer):
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
         for k,v in json_dict.iteritems():
-            if k in attributes:
+            if k == "parameters":
+                self._parameters = []
+                for param in v:
+                    self._parameters.append(
+                        GPInputParameterInfo(param, True)
+                    )
+                    del param
+            elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented."
@@ -214,6 +221,34 @@ class GPTask(BaseAGSServer):
                      username=self._username,
                      password=self._password,
                      token_url=self._token_url)
+    #----------------------------------------------------------------------
+    def submitJob(self, inputs, method="GET",
+                  returnZ=False, returnM=False):
+        """
+           submits a job to the current task, and returns a job ID
+           Inputs:
+              inputs - dictionary - value should be a Key/Value list of GP
+                       objects that line up with the input names.
+              method - string - either GET or POST.  The way the service is
+                       submitted.
+           Ouput:
+              JOB ID as a string
+        """
+        url = self._url + "/submitJob"
+        params = { "f" : "json" }
+        params['returnZ'] = returnZ
+        params['returnM'] = returnM
+        if self._token is not None:
+            params['token'] = self._token
+        for k in inputs:
+            params[k] = inputs[k]
+        if method.lower() == "get":
+            return self._do_get(url=url, param_dict=params)
+        elif method.lower() == "post":
+            return self._do_post(url=url, param_dict=params)
+        else:
+            raise AttributeError("Invalid input: %s. Must be GET or POST" \
+                                 % method)
 
 ########################################################################
 class GPJob(BaseAGSServer):
@@ -467,11 +502,15 @@ class GPDate(object):
         """Constructor"""
         if isinstance(dateObject, datetime.datetime):
             self._value = dateObject
+        elif isinstance(dateObject, long):
+            self._value = dateObject
         else:
-            raise AttributeError("Invalid Input of type: %s" % type(value))
+            raise AttributeError("Invalid Input of type: %s" % type(dateObject))
     #----------------------------------------------------------------------
     def _timestamp(self):
         "Return POSIX timestamp as float"
+        if isinstance(self._value, long):
+            return self._value
         if self._value.tzinfo is None:
             return  int(time.mktime((self._value.year,
                                  self._value.month,
@@ -492,8 +531,18 @@ class GPDate(object):
         """ sets the value"""
         if isinstance(value, datetime.datetime):
             self._value = value
+        elif isinstance(value, long):
+            self._value = value
         else:
             raise AttributeError("Invalid Input of type: %s" % type(value))
+########################################################################
+class GPDataFile(object):
+    """ represents a data file object for GP task """
+
+    #----------------------------------------------------------------------
+    def __init__(self, json_value):
+        """Constructor"""
+        pass
 ########################################################################
 class GPFeatureRecordSetLayer(object):
     """
@@ -503,43 +552,216 @@ class GPFeatureRecordSetLayer(object):
     _dictionary = None
 
     #----------------------------------------------------------------------
-    def __init__(self, json_string):
+    def __init__(self, **kwargs):
         """Constructor"""
         pass
 ########################################################################
 class GPRecordSet(object):
     """"""
+    _fields = None
+    _features = None
+    _exceededTransferLimit = None
+    _displayFieldName = None
+    #----------------------------------------------------------------------
+    def __init__(self, **kwargs):
+        """Constructor
+           Inputs:
+              json_dict - dictionary representation of the GPRecordSet
+              -- or --
+              features - list of rows
+              displayFieldname - primary display field
+              fields - list of dictionaries describing the fields
+        """
+        if "json_dict" in kwargs and \
+           kwargs['json_dict'] is not None:
+            json_dict = kwargs['json_dict']
+            self._fields = json_dict['fields']
+            self._exceededTransferLimit = json_dict['exceededTransferLimit']
+            self._features = json_dict['features']
+            self._displayFieldName = json_dict['displayFieldName']
+        elif "features" in kwargs and \
+             "fields" in kwargs:
+            self._fields = kwargs['fields']
+            self._features = kwargs['features']
+            if "displayFieldName" in kwargs:
+                self._displayFieldName = kwargs['displayFieldName']
+            else:
+                self._displayFieldName = ""
+            if "exceededTransferLimit" in kwargs:
+                self._exceededTransferLimit = kwargs['exceededTransferLimit']
+            else:
+                self._exceededTransferLimit = False
+        else:
+            raise AttributeError("Invalid Inputs, please consult the documentation")
+        pass
+    #----------------------------------------------------------------------
+    @property
+    def fields(self):
+        """ returns the fields for the GPRecordSet """
+        return self._fields
+    #----------------------------------------------------------------------
+    @property
+    def features(self):
+        """ returns the rows in the recordset """
+        return self._features
+    #----------------------------------------------------------------------
+    @property
+    def displayFieldName(self):
+        """ returns the displayField Name """
+        return self._displayFieldName
+    #----------------------------------------------------------------------
+    @property
+    def exceededTransferLimit(self):
+        """ returns the value for exceededTransferLimit property """
+        return self._exceededTransferLimit
+    #----------------------------------------------------------------------
+    def addRecord(self, row):
+        """ adds a dictionary value to the features list """
+        if self._features is None:
+            self._features = []
+        if isinstance(row, dict):
+            self._features.append(row)
+            return True
+        return False
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """ returns the value as a dictionary """
+        return {
+            "fields" : self._fields,
+            "features" : self._features,
+            "exceededTransferLimit" : self._exceededTransferLimit,
+            "displayFieldName" : self._displayFieldName
+        }
+########################################################################
+class GPMultiValue(object):
+    """ reprsents the GP MultiValue Object """
 
     #----------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, json_dict, GPType):
         """Constructor"""
         pass
+
+
+
+
 ########################################################################
-class GPInputParameter(object):
-    """ """
+class GPInputParameterInfo(object):
+    """ Provides information about the input parameters """
+    _parameterType = None
+    _category = None
+    _direction = None
+    _displayName = None
+    _name = None
     _dataType = None
-    _paramName = None
+    _defaultValue = None
+    _description = None
     _value = None
     _dict = None
     _json = None
     #----------------------------------------------------------------------
-    def __init__(self, value):
+    def __init__(self, value, initialize=False):
         """Constructor"""
         if isinstance(value, str):
-            param = json.loads(value)
-            self._dataType = param['dataType']
-            self._paramName = param['paramName']
-            self._value = param['value']
             self._json = value
-            self._dict = param
+            self._dict = json.loads(value)
         elif isinstance(value, dict):
-            self._dataType = value['dataType']
-            self._paramName = value['paramName']
-            self._value = value['value']
             self._dict = value
-            self._json = json.dumps(param)
+            self._json = json.dumps(value)
         else:
             raise AttributeError("Invalid input, value must be string or dictionary")
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ populates the classes properties """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in self._dict.iteritems():
+            if k == "defaultValue":
+                if len(self._dict['dataType'].split(':')) > 1:
+                    split = self._dict['dataType'].split(':')
+                    self._defaultValue = GPMultiValue(json_dict=v, GPType=split[1])
+                if self._dict['dataType'] == "GPFeatureRecordSetLayer":
+                    self._defaultValue = GPFeatureRecordSetLayer(json_dict=v)
+                elif self._dict['dataType'] == "GPString":
+                    self._defaultValue = GPString(v)
+                elif self._dict['dataType'] == "GPBoolean":
+                    self._defaultValue = GPBoolean(v)
+                elif self._dict['dataType'] == "GPLong":
+                    self._defaultValue = GPLong(v)
+                elif self._dict['dataType'] == "GPLinearUnit":
+                    self._defaultValue = GPLinearUnit(distance=v['distance'],
+                                                      units=v['units'])
+                elif self._dict['dataType'] == "GPDate":
+                    self._defaultValue = GPDate(v)
+                elif self._dict['dataType'] == "GPDouble":
+                    self._defaultValue = GPDouble(v)
+                elif self._dict['dataType'] == "GPDataFile":
+                    self._defaultValue = GPDataFile(v)
+                elif self._dict['dataType'] == "GPRecordSet":
+                    self._defaultValue = GPRecordSet(json_dict=v)
+            elif k in attributes:
+                setattr(self, "_"+ k, self._dict[k])
+            else:
+                print k, " - attribute not implmented for GPInputParameters."
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """ returns the parameter's decription """
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def defaultValue(self):
+        """ returns the Input's default value """
+        if self._defaultValue is None:
+            self.__init()
+        return self._defaultValue
+    #----------------------------------------------------------------------
+    @property
+    def dataType(self):
+        """ returns the data type for the input """
+        if self._dataType is None:
+            self.__init()
+        return self._dataType
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """ returns the input name """
+        if self._name is None:
+            self.__init()
+        return self._name
+    #----------------------------------------------------------------------
+    @property
+    def displayName(self):
+        """ returns the display name """
+        if self._displayName is None:
+            self.__init()
+        return self._displayName
+    #----------------------------------------------------------------------
+    @property
+    def direction(self):
+        """ returns the parameter direction """
+        if self._direction is None:
+            self.__init()
+        return self._direction
+    #----------------------------------------------------------------------
+    @property
+    def category(self):
+        """ returns the category """
+        if self._category is None:
+            self.__init()
+        return self._category
+    #----------------------------------------------------------------------
+    @property
+    def parameterType(self):
+        """ returns the parameter type """
+        if self._parameterType is None:
+            self.__init()
+        return self._parameterType
     #----------------------------------------------------------------------
     def __dict__(self):
         """ returns the value as a dictionary """
@@ -558,30 +780,8 @@ class GPInputParameter(object):
     def asDictionary(self):
         """ returns the value as dictionary """
         return self._dict
-    #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """ returns the dataType """
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @property
-    def value(self):
-        """ returns the value """
-        return self._value
 
 
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    task = GPTask(url="http://chronus.esri.com:6080/arcgis/rest/services/GeometryGP/RasterMulti/GPServer/Model", initialize=True)
+    print task.helpUrl
