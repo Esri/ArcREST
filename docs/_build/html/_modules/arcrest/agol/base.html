@@ -48,8 +48,16 @@
             
   <h1>Source code for arcrest.agol.base</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">   Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. module:: base</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. moduleauthor:: test</span>
+
+
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">urllib2</span>
@@ -255,15 +263,6 @@
             <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">obj</span></div>
-<div class="viewcode-block" id="patch_http_response_read"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.patch_http_response_read">[docs]</a><span class="k">def</span> <span class="nf">patch_http_response_read</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">httplib</span><span class="o">.</span><span class="n">IncompleteRead</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">partial</span>
-
-    <span class="k">return</span> <span class="n">inner</span></div>
-<span class="n">httplib</span><span class="o">.</span><span class="n">HTTPResponse</span><span class="o">.</span><span class="n">read</span> <span class="o">=</span> <span class="n">patch_http_response_read</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">HTTPResponse</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
 </pre></div>
 
           </div>

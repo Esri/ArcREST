@@ -1277,6 +1277,8 @@
               <span class="n">services</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">,</span>
               <span class="n">machines</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">,</span>
               <span class="n">server</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">,</span>
+              <span class="n">codes</span><span class="o">=</span><span class="p">[],</span>
+              <span class="n">processIds</span><span class="o">=</span><span class="p">[],</span>
               <span class="n">export</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
               <span class="n">exportType</span><span class="o">=</span><span class="s">&quot;CSV&quot;</span><span class="p">,</span> <span class="c">#CSV or TAB</span>
               <span class="n">out_path</span><span class="o">=</span><span class="bp">None</span>
@@ -1294,6 +1296,10 @@
             <span class="s">&quot;machines&quot;</span><span class="p">:</span> <span class="s">&quot;*&quot;</span><span class="p">,</span>
             <span class="s">&quot;server&quot;</span> <span class="p">:</span> <span class="s">&quot;*&quot;</span>
         <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">processIds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">qFilter</span><span class="p">[</span><span class="s">&#39;processIds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">processIds</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">qFilter</span><span class="p">[</span><span class="s">&#39;codes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">codes</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
             <span class="s">&quot;token&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span><span class="p">,</span>

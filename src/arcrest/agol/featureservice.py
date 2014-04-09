@@ -4,7 +4,7 @@
    :platform: Windows
    :synopsis: Base Class from which AGOL function inherit from.
 
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 
 """
@@ -111,7 +111,7 @@ class FeatureService(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def supportedQueryFormats(self):
-        """"""
+        """ returns the supported query formats """
         if self._supportedQueryFormats is None:
             self.__init()
         return self._supportedQueryFormats
@@ -188,14 +188,14 @@ class FeatureService(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def editorTrackingInfo(self):
-        """"""
+        """ returns the editor tracking information """
         if self._editorTrackingInfo is None:
             self.__init()
         return self._editorTrackingInfo
     #----------------------------------------------------------------------
     @property
     def documentInfo(self):
-        """"""
+        """ returns the document information """
         if self._documentInfo is None:
             self.__init()
         return self._documentInfo
@@ -247,28 +247,28 @@ class FeatureService(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def tables(self):
-        """"""
+        """ returns the tables  """
         if self._tables is None:
             self._getTables()
         return self._tables
     #----------------------------------------------------------------------
     @property
     def enableZDefaults(self):
-        """"""
+        """ returns the enable Z defaults value """
         if self._enableZDefaults is None:
             self.__init()
         return self._enableZDefaults
     #----------------------------------------------------------------------
     @property
     def zDefault(self):
-        """"""
+        """ returns the Z default value """
         if self._zDefault is None:
             self.__init()
         return self._zDefault
     #----------------------------------------------------------------------
     @property
     def hasStaticData(self):
-        """"""
+        """ returns boolean for has statistic data """
         if self._hasStaticData is None:
             self.__init()
         return self._hasStaticData
@@ -446,7 +446,12 @@ class FeatureService(BaseAGOLClass):
         return self._do_get(url, params)
     #----------------------------------------------------------------------
     def unRegisterReplica(self, replica_id):
-        """"""
+        """
+           removes a replica from a feature service
+           Inputs:
+             replica_id - The replicaID returned by the feature service
+                          when the replica was created.
+        """
         params = {
             "f" : "json",
             "replicaID" : replica_id
@@ -458,7 +463,11 @@ class FeatureService(BaseAGOLClass):
     #----------------------------------------------------------------------
     def replicaInfo(self, replica_id):
         """
-           The replica info resources lists replica metadata for a specific replica.
+           The replica info resources lists replica metadata for a specific
+           replica.
+           Inputs:
+              replica_id - The replicaID returned by the feature service
+                           when the replica was created.
         """
         params = {
             "f" : "json"

@@ -47,6 +47,18 @@
           <div class="body">
             
   <h1>Source code for arcrest.agol.layer</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. module:: layer</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. moduleauthor:: Esri</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="kn">import</span> <span class="nn">common</span>
 <span class="kn">import</span> <span class="nn">filters</span>
 <span class="kn">import</span> <span class="nn">featureservice</span>
@@ -113,7 +125,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                 <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -124,13 +137,13 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                 <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
-                 <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unable to get token&quot;</span><span class="p">)</span>
-                 <span class="k">else</span><span class="p">:</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the service &quot;&quot;&quot;</span>
@@ -308,71 +321,85 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxScale</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.effectiveMinScale"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.effectiveMinScale">[docs]</a>    <span class="k">def</span> <span class="nf">effectiveMinScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the effective minimum scale value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMinScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMinScale</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.effectiveMaxScale"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.effectiveMaxScale">[docs]</a>    <span class="k">def</span> <span class="nf">effectiveMaxScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the effective maximum scale value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMaxScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveMaxScale</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.defaultVisibility"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.defaultVisibility">[docs]</a>    <span class="k">def</span> <span class="nf">defaultVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the default visibility of the layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultVisibility</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultVisibility</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.extent"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.extent">[docs]</a>    <span class="k">def</span> <span class="nf">extent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the extent &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.timeInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.timeInfo">[docs]</a>    <span class="k">def</span> <span class="nf">timeInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the time information about the layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.drawingInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.drawingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">drawingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the symbol information about the layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drawingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drawingInfo</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.hasAttachments"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.hasAttachments">[docs]</a>    <span class="k">def</span> <span class="nf">hasAttachments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; boolean that tells if attachments are associated with layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasAttachments</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasAttachments</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.htmlPopupType"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.htmlPopupType">[docs]</a>    <span class="k">def</span> <span class="nf">htmlPopupType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the popup type  &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_htmlPopupType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_htmlPopupType</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.displayField"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.displayField">[docs]</a>    <span class="k">def</span> <span class="nf">displayField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the primary display field &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayField</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayField</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.typeIdField"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.typeIdField">[docs]</a>    <span class="k">def</span> <span class="nf">typeIdField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the type Id field &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typeIdField</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typeIdField</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.fields"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.fields">[docs]</a>    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the layer&#39;s fields &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.types"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.types">[docs]</a>    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the types &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_types</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.relationships"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.relationships">[docs]</a>    <span class="k">def</span> <span class="nf">relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the relationships for the layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relationships</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relationships</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.maxRecordCount"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.maxRecordCount">[docs]</a>    <span class="k">def</span> <span class="nf">maxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the maximum returned records &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -380,51 +407,61 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.canModifyLayer"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.canModifyLayer">[docs]</a>    <span class="k">def</span> <span class="nf">canModifyLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns boolean to say if layer can be modified &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canModifyLayer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canModifyLayer</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.supportsStatistics"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.supportsStatistics">[docs]</a>    <span class="k">def</span> <span class="nf">supportsStatistics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  boolean to if supports statistics &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsStatistics</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsStatistics</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.supportsAdvancedQueries"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.supportsAdvancedQueries">[docs]</a>    <span class="k">def</span> <span class="nf">supportsAdvancedQueries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; boolean value if advanced queries is supported &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsAdvancedQueries</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsAdvancedQueries</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.hasLabels"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.hasLabels">[docs]</a>    <span class="k">def</span> <span class="nf">hasLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns if layer has labels on or not &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasLabels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasLabels</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.canScaleSymbols"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.canScaleSymbols">[docs]</a>    <span class="k">def</span> <span class="nf">canScaleSymbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; states if symbols can scale &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canScaleSymbols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canScaleSymbols</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.capabilities"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.capabilities">[docs]</a>    <span class="k">def</span> <span class="nf">capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; operations that can be performed on layer &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.supportedQueryFormats"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.supportedQueryFormats">[docs]</a>    <span class="k">def</span> <span class="nf">supportedQueryFormats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns supported query formats &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.isDataVersioned"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.isDataVersioned">[docs]</a>    <span class="k">def</span> <span class="nf">isDataVersioned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns boolean if data is in version control &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isDataVersioned</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isDataVersioned</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.ownershipBasedAccessControlForFeatures"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.ownershipBasedAccessControlForFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">ownershipBasedAccessControlForFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns value for owernship based access control &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ownershipBasedAccessControlForFeatures</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ownershipBasedAccessControlForFeatures</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.useStandardizedQueries"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.useStandardizedQueries">[docs]</a>    <span class="k">def</span> <span class="nf">useStandardizedQueries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns value if standardized queries can be used &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useStandardizedQueries</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useStandardizedQueries</span>
@@ -522,7 +559,22 @@
                                            <span class="n">geomType</span><span class="p">,</span>
                                            <span class="n">wkid</span><span class="p">,</span>
                                            <span class="n">fields</span><span class="p">,</span>
-                                           <span class="n">objectIdField</span><span class="p">)</span>
+                                           <span class="n">objectIdField</span><span class="p">)</span></div>
+<div class="viewcode-block" id="FeatureLayer.create_feature_template"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.create_feature_template">[docs]</a>    <span class="k">def</span> <span class="nf">create_feature_template</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;creates a feature template&quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span>
+        <span class="n">feat_schema</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">att</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">fld</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_globalIdField</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fld</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objectIdField</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fld</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_globalIdField</span><span class="p">:</span>
+                <span class="n">att</span><span class="p">[</span><span class="n">fld</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="n">feat_schema</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">att</span>
+        <span class="n">feat_schema</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">Feature</span><span class="p">(</span><span class="n">feat_schema</span><span class="p">)</span>
+
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.query"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">where</span><span class="o">=</span><span class="s">&quot;1=1&quot;</span><span class="p">,</span>

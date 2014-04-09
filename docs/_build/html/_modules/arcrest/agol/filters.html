@@ -47,6 +47,18 @@
           <div class="body">
             
   <h1>Source code for arcrest.agol.filters</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. module:: filters</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. moduleauthor:: test</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="kn">from</span> <span class="nn">common</span> <span class="kn">import</span> <span class="n">Geometry</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -60,10 +72,10 @@
     <span class="k">pass</span>
 <span class="c">########################################################################</span></div>
 <div class="viewcode-block" id="LayerDefinitionFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.LayerDefinitionFilter">[docs]</a><span class="k">class</span> <span class="nc">LayerDefinitionFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">       Allows you to filter the features of individual layers in the </span>
-<span class="sd">       query by specifying definition expressions for those layers. A </span>
-<span class="sd">       definition expression for a layer that is published with the </span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Allows you to filter the features of individual layers in the</span>
+<span class="sd">       query by specifying definition expressions for those layers. A</span>
+<span class="sd">       definition expression for a layer that is published with the</span>
 <span class="sd">       service will always be honored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -100,14 +112,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span>
 <span class="c">########################################################################</span></div></div>
 <div class="viewcode-block" id="GeometryFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.GeometryFilter">[docs]</a><span class="k">class</span> <span class="nc">GeometryFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; creates a geometry filter for queries </span>
-<span class="sd">        Inputs: </span>
+    <span class="sd">&quot;&quot;&quot; creates a geometry filter for queries</span>
+<span class="sd">        Inputs:</span>
 <span class="sd">           geomObject - a common.Geometry object</span>
-<span class="sd">           spatialFilter - The spatial relationship to be applied on the </span>
-<span class="sd">                           input geometry while performing the query. The </span>
-<span class="sd">                           supported spatial relationships include </span>
-<span class="sd">                           intersects, contains, envelope intersects, </span>
-<span class="sd">                           within, etc. The default spatial relationship </span>
+<span class="sd">           spatialFilter - The spatial relationship to be applied on the</span>
+<span class="sd">                           input geometry while performing the query. The</span>
+<span class="sd">                           supported spatial relationships include</span>
+<span class="sd">                           intersects, contains, envelope intersects,</span>
+<span class="sd">                           within, etc. The default spatial relationship</span>
 <span class="sd">                           is intersects (esriSpatialRelIntersects).</span>
 <span class="sd">       Raises:</span>
 <span class="sd">          AttributeError for invalid inputs</span>
@@ -178,7 +190,7 @@
                 <span class="s">&quot;spatialRel&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialRelation</span><span class="p">,</span>
                 <span class="s">&quot;inSR&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geomObject</span><span class="o">.</span><span class="n">spatialReference</span><span class="p">}</span>
     <span class="c">#----------------------------------------------------------------------</span>
-        
+
 <span class="c">########################################################################</span></div></div>
 <div class="viewcode-block" id="TimeFilter"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.filters.TimeFilter">[docs]</a><span class="k">class</span> <span class="nc">TimeFilter</span><span class="p">(</span><span class="n">BaseFilter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Implements the time filter &quot;&quot;&quot;</span>

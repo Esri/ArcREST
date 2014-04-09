@@ -4,7 +4,7 @@
    :platform: Windows
    :synopsis: Base Class from which AGOL function inherit from.
 
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 
 """
@@ -272,71 +272,85 @@ class FeatureLayer(BaseAGOLClass):
         return self._maxScale
     @property
     def effectiveMinScale(self):
+        """ returns the effective minimum scale value """
         if self._effectiveMinScale is None:
             self.__init()
         return self._effectiveMinScale
     @property
     def effectiveMaxScale(self):
+        """ returns the effective maximum scale value """
         if self._effectiveMaxScale is None:
             self.__init()
         return self._effectiveMaxScale
     @property
     def defaultVisibility(self):
+        """ returns the default visibility of the layer """
         if self._defaultVisibility is None:
             self.__init()
         return self._defaultVisibility
     @property
     def extent(self):
+        """ returns the extent """
         if self._extent is None:
             self.__init()
         return self._extent
     @property
     def timeInfo(self):
+        """ returns the time information about the layer """
         if self._timeInfo is None:
             self.__init()
         return self._timeInfo
     @property
     def drawingInfo(self):
+        """ returns the symbol information about the layer """
         if self._drawingInfo is None:
             self.__init()
         return self._drawingInfo
     @property
     def hasAttachments(self):
+        """ boolean that tells if attachments are associated with layer """
         if self._hasAttachments is None:
             self.__init()
         return self._hasAttachments
     @property
     def htmlPopupType(self):
+        """ returns the popup type  """
         if self._htmlPopupType is None:
             self.__init()
         return self._htmlPopupType
     @property
     def displayField(self):
+        """ returns the primary display field """
         if self._displayField is None:
             self.__init()
         return self._displayField
     @property
     def typeIdField(self):
+        """ returns the type Id field """
         if self._typeIdField is None:
             self.__init()
         return self._typeIdField
     @property
     def fields(self):
+        """ returns the layer's fields """
         if self._fields is None:
             self.__init()
         return self._fields
     @property
     def types(self):
+        """ returns the types """
         if self._types is None:
             self.__init()
         return self._types
     @property
     def relationships(self):
+        """ returns the relationships for the layer """
         if self._relationships is None:
             self.__init()
         return self._relationships
     @property
     def maxRecordCount(self):
+        """ returns the maximum returned records """
         if self._maxRecordCount is None:
             self.__init()
             if self._maxRecordCount is None:
@@ -344,51 +358,61 @@ class FeatureLayer(BaseAGOLClass):
         return self._maxRecordCount
     @property
     def canModifyLayer(self):
+        """ returns boolean to say if layer can be modified """
         if self._canModifyLayer is None:
             self.__init()
         return self._canModifyLayer
     @property
     def supportsStatistics(self):
+        """  boolean to if supports statistics """
         if self._supportsStatistics is None:
             self.__init()
         return self._supportsStatistics
     @property
     def supportsAdvancedQueries(self):
+        """ boolean value if advanced queries is supported """
         if self._supportsAdvancedQueries is None:
             self.__init()
         return self._supportsAdvancedQueries
     @property
     def hasLabels(self):
+        """ returns if layer has labels on or not """
         if self._hasLabels is None:
             self.__init()
         return self._hasLabels
     @property
     def canScaleSymbols(self):
+        """ states if symbols can scale """
         if self._canScaleSymbols is None:
             self.__init()
         return self._canScaleSymbols
     @property
     def capabilities(self):
+        """ operations that can be performed on layer """
         if self._capabilities is None:
             self.__init()
         return self._capabilities
     @property
     def supportedQueryFormats(self):
+        """ returns supported query formats """
         if self._supportedQueryFormats is None:
             self.__init()
         return self._supportedQueryFormats
     @property
     def isDataVersioned(self):
+        """ returns boolean if data is in version control """
         if self._isDataVersioned is None:
             self.__init()
         return self._isDataVersioned
     @property
     def ownershipBasedAccessControlForFeatures(self):
+        """ returns value for owernship based access control """
         if self._ownershipBasedAccessControlForFeatures is None:
             self.__init()
         return self._ownershipBasedAccessControlForFeatures
     @property
     def useStandardizedQueries(self):
+        """ returns value if standardized queries can be used """
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
@@ -489,7 +513,6 @@ class FeatureLayer(BaseAGOLClass):
                                            objectIdField)
     def create_feature_template(self):
         """creates a feature template"""
-
         fields = self.fields
         feat_schema = {}
 

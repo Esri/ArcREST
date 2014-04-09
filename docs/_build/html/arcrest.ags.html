@@ -607,7 +607,7 @@ maxLogFileAge - number of days that a server should save a log</p>
 
 <dl class="method">
 <dt id="arcrest.ags.administration.Log.query">
-<tt class="descname">query</tt><big>(</big><em>startTime=None</em>, <em>endTime=None</em>, <em>sinceServerStart=False</em>, <em>level='WARNING'</em>, <em>services='*'</em>, <em>machines='*'</em>, <em>server='*'</em>, <em>export=False</em>, <em>exportType='CSV'</em>, <em>out_path=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/administration.html#Log.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.administration.Log.query" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">query</tt><big>(</big><em>startTime=None</em>, <em>endTime=None</em>, <em>sinceServerStart=False</em>, <em>level='WARNING'</em>, <em>services='*'</em>, <em>machines='*'</em>, <em>server='*'</em>, <em>codes=</em>, <span class="optional">[</span><span class="optional">]</span><em>processIds=</em>, <span class="optional">[</span><span class="optional">]</span><em>export=False</em>, <em>exportType='CSV'</em>, <em>out_path=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/administration.html#Log.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.administration.Log.query" title="Permalink to this definition">¶</a></dt>
 <dd><p>The query operation on the logs resource provides a way to
 aggregate, filter, and page through logs across the entire site.
 Inputs:</p>
@@ -2372,6 +2372,13 @@ contained in the published globe document.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="arcrest.ags.gpservice.GPDataFile">
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPDataFile</tt><big>(</big><em>json_value</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPDataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>represents a data file object for GP task</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="arcrest.ags.gpservice.GPDate">
 <em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPDate</tt><big>(</big><em>dateObject</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPDate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
@@ -2404,42 +2411,74 @@ contained in the published globe document.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.gpservice.GPFeatureRecordSetLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPFeatureRecordSetLayer</tt><big>(</big><em>json_string</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPFeatureRecordSetLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPFeatureRecordSetLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPFeatureRecordSetLayer</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPFeatureRecordSetLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPFeatureRecordSetLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Returns the GPFeatureRecordSetLayer</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="arcrest.ags.gpservice.GPInputParameter">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPInputParameter</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter" title="Permalink to this definition">¶</a></dt>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo">
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPInputParameterInfo</tt><big>(</big><em>value</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Provides information about the input parameters</p>
 <dl class="attribute">
-<dt id="arcrest.ags.gpservice.GPInputParameter.asDictionary">
-<tt class="descname">asDictionary</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter.asDictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.asDictionary">
+<tt class="descname">asDictionary</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.asDictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.asDictionary" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the value as dictionary</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="arcrest.ags.gpservice.GPInputParameter.asJSON">
-<tt class="descname">asJSON</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter.asJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter.asJSON" title="Permalink to this definition">¶</a></dt>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.asJSON">
+<tt class="descname">asJSON</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.asJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.asJSON" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the value as JSON</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="arcrest.ags.gpservice.GPInputParameter.dataType">
-<tt class="descname">dataType</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter.dataType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter.dataType" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the dataType</p>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.category">
+<tt class="descname">category</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.category" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the category</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="arcrest.ags.gpservice.GPInputParameter.paramName">
-<tt class="descname">paramName</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter.paramName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter.paramName" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.dataType">
+<tt class="descname">dataType</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.dataType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.dataType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data type for the input</p>
+</dd></dl>
 
 <dl class="attribute">
-<dt id="arcrest.ags.gpservice.GPInputParameter.value">
-<tt class="descname">value</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the value</p>
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.defaultValue">
+<tt class="descname">defaultValue</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.defaultValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.defaultValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the Input&#8217;s default value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.description">
+<tt class="descname">description</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.description"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the parameter&#8217;s decription</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.direction">
+<tt class="descname">direction</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the parameter direction</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.displayName">
+<tt class="descname">displayName</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.displayName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.displayName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the display name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.name">
+<tt class="descname">name</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the input name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPInputParameterInfo.parameterType">
+<tt class="descname">parameterType</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPInputParameterInfo.parameterType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPInputParameterInfo.parameterType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the parameter type</p>
 </dd></dl>
 
 </dd></dl>
@@ -2532,9 +2571,52 @@ contained in the published globe document.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="arcrest.ags.gpservice.GPRecordSet">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPRecordSet</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet" title="Permalink to this definition">¶</a></dt>
+<dt id="arcrest.ags.gpservice.GPMultiValue">
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPMultiValue</tt><big>(</big><em>json_dict</em>, <em>GPType</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPMultiValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPMultiValue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>reprsents the GP MultiValue Object</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.gpservice.GPRecordSet">
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPRecordSet</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="arcrest.ags.gpservice.GPRecordSet.addRecord">
+<tt class="descname">addRecord</tt><big>(</big><em>row</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.addRecord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.addRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a dictionary value to the features list</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPRecordSet.displayFieldName">
+<tt class="descname">displayFieldName</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.displayFieldName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.displayFieldName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the displayField Name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPRecordSet.exceededTransferLimit">
+<tt class="descname">exceededTransferLimit</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.exceededTransferLimit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.exceededTransferLimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the value for exceededTransferLimit property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPRecordSet.features">
+<tt class="descname">features</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.features" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the rows in the recordset</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPRecordSet.fields">
+<tt class="descname">fields</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the fields for the GPRecordSet</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.gpservice.GPRecordSet.value">
+<tt class="descname">value</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPRecordSet.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPRecordSet.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the value as a dictionary</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -2658,6 +2740,25 @@ contained in the published globe document.</p>
 <dt id="arcrest.ags.gpservice.GPTask.parameters">
 <tt class="descname">parameters</tt><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPTask.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPTask.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the default parameters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.gpservice.GPTask.submitJob">
+<tt class="descname">submitJob</tt><big>(</big><em>inputs</em>, <em>method='GET'</em>, <em>returnZ=False</em>, <em>returnM=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPTask.submitJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPTask.submitJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>submits a job to the current task, and returns a job ID
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>inputs - dictionary - value should be a Key/Value list of GP</dt>
+<dd>objects that line up with the input names.</dd>
+<dt>method - string - either GET or POST.  The way the service is</dt>
+<dd>submitted.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Ouput:</dt>
+<dd>JOB ID as a string</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

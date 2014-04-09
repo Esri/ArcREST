@@ -47,6 +47,16 @@
           <div class="body">
             
   <h1>Source code for arcrest.agol.common</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: common</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: A useful module indeed.</span>
+
+<span class="sd">.. moduleauthor:: test</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -54,6 +64,8 @@
 <span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">Geometry</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">gmtime</span><span class="p">,</span> <span class="n">strftime</span><span class="p">,</span><span class="n">mktime</span>
 
 <span class="c">#----------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_date_handler</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -96,6 +108,21 @@
             <span class="p">})</span>
             <span class="k">del</span> <span class="n">row</span>
     <span class="k">return</span> <span class="n">ret_rows</span>
+
+
+<span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="local_time_to_online"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.local_time_to_online">[docs]</a><span class="k">def</span> <span class="nf">local_time_to_online</span><span class="p">():</span>
+
+    <span class="n">is_dst</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">daylight</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()</span><span class="o">.</span><span class="n">tm_isdst</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">utc_offset</span> <span class="o">=</span>  <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">altzone</span> <span class="k">if</span> <span class="n">is_dst</span> <span class="k">else</span> <span class="n">time</span><span class="o">.</span><span class="n">timezone</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timetuple</span><span class="p">())</span>  <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">utc_offset</span> <span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="online_time_to_string"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.online_time_to_string">[docs]</a><span class="k">def</span> <span class="nf">online_time_to_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">timeFormat</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timeFormat</span><span class="p">)</span>
+
+
 <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="create_feature_layer"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.create_feature_layer">[docs]</a><span class="k">def</span> <span class="nf">create_feature_layer</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;layer&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; creates a feature layer object &quot;&quot;&quot;</span>
@@ -329,16 +356,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">Y</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">Z</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">M</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">JSON</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">centroid</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">m</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asJSON</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asArcPyObject</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">m</span>
+
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Point.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Point.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -408,12 +433,24 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">points</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;points&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">JSON</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>           
+            <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToPointList</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Multipoint</span><span class="p">):</span>
+            <span class="n">feature_geom</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">geom</span><span class="p">:</span>
+                <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pnt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="n">fPart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="o">=</span><span class="p">[</span><span class="n">pnt</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">pnt</span><span class="o">.</span><span class="n">Y</span><span class="p">],</span>
+                          <span class="n">wkid</span><span class="o">=</span><span class="n">geom</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">,</span>
+                          <span class="n">z</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">M</span><span class="p">))</span>
+                <span class="n">feature_geom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fPart</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">feature_geom</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="MultiPoint.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.MultiPoint.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -478,12 +515,24 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="n">paths</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">paths</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;paths&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">JSON</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>        
+            <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToPointList</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Polyline</span><span class="p">):</span>
+            <span class="n">feature_geom</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">geom</span><span class="p">:</span>
+                <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pnt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="n">fPart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="o">=</span><span class="p">[</span><span class="n">pnt</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">pnt</span><span class="o">.</span><span class="n">Y</span><span class="p">],</span>
+                          <span class="n">wkid</span><span class="o">=</span><span class="n">geom</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">,</span>
+                          <span class="n">z</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">M</span><span class="p">))</span>
+                <span class="n">feature_geom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fPart</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">feature_geom</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Polyline.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polyline.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -545,12 +594,26 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="n">rings</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">rings</span><span class="o">.</span><span class="n">JSON</span><span class="p">)[</span><span class="s">&#39;rings&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">rings</span><span class="o">.</span><span class="n">JSON</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToPointList</span><span class="p">(</span><span class="n">rings</span><span class="p">)</span>
+<span class="c">##            self._json = rings.JSON</span>
+<span class="c">##            self._dict = _unicode_convert(json.loads(self._json))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+            <span class="n">feature_geom</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">geom</span><span class="p">:</span>
+                <span class="n">fPart</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pnt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="n">fPart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="o">=</span><span class="p">[</span><span class="n">pnt</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">pnt</span><span class="o">.</span><span class="n">Y</span><span class="p">],</span>
+                          <span class="n">wkid</span><span class="o">=</span><span class="n">geom</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">,</span>
+                          <span class="n">z</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">M</span><span class="p">))</span>
+                <span class="n">feature_geom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fPart</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">feature_geom</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Polygon.spatialReference"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Polygon.spatialReference">[docs]</a>    <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -707,8 +770,11 @@
 <div class="viewcode-block" id="Feature.set_value"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.Feature.set_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sets an attribute value for a given field name &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_unicode_convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
         <span class="k">elif</span> <span class="n">field_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;SHAPE&#39;</span><span class="p">,</span> <span class="s">&#39;SHAPE@&#39;</span><span class="p">,</span> <span class="s">&quot;GEOMETRY&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Geometry</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
@@ -731,6 +797,18 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">False</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">PointGeometry</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">Point</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">value</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Multipoint</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span> <span class="n">field_name</span><span class="p">,</span>  <span class="n">MultiPoint</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">value</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Polyline</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span> <span class="n">field_name</span><span class="p">,</span>  <span class="n">Polyline</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">value</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">value</span><span class="o">.</span><span class="n">spatialReference</span><span class="o">.</span><span class="n">factoryCode</span><span class="p">))</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="bp">True</span>
@@ -847,12 +925,6 @@
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">obj</span>
-    
-        
-    
-        
-    
-        
 </pre></div>
 
           </div>

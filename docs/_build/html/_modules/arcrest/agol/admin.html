@@ -47,6 +47,18 @@
           <div class="body">
             
   <h1>Source code for arcrest.agol.admin</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. module:: admin</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. moduleauthor:: test</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="kn">import</span> <span class="nn">httplib</span>
 <span class="kn">import</span> <span class="nn">urlparse</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -84,7 +96,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
              <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -96,7 +109,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the service &quot;&quot;&quot;</span>
@@ -105,6 +119,7 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="n">header</span><span class="o">=</span> <span class="p">{</span><span class="s">&quot;Referer&quot;</span> <span class="p">:</span> <span class="s">&quot;www.arcgis.com&quot;</span><span class="p">}</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                       <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
@@ -179,7 +194,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
              <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -191,7 +207,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the service &quot;&quot;&quot;</span>
@@ -279,7 +296,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
              <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
              <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+             <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -291,7 +309,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c">#self.__init()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the service &quot;&quot;&quot;</span>
@@ -319,7 +338,7 @@
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented in AdminFeatureService.&quot;</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="AdminFeatureService.status"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AdminFeatureService.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -607,6 +626,7 @@
 <span class="sd">       Note, query and edit operations are not available on a layer in the</span>
 <span class="sd">       adminstrative view.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_editFieldsInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_drawingInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_typeIdField</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_advancedQueryCapabilities</span> <span class="o">=</span> <span class="bp">None</span>
@@ -681,7 +701,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                 <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -693,7 +714,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the service &quot;&quot;&quot;</span>
@@ -710,7 +732,7 @@
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented AdminFeatureServiceLayer.&quot;</span>
     <span class="c">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="AdminFeatureServiceLayer.refresh"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AdminFeatureServiceLayer.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; refreshes a service &quot;&quot;&quot;</span>
@@ -720,6 +742,13 @@
         <span class="p">}</span>
         <span class="n">uURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/refresh&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">uURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="AdminFeatureServiceLayer.editFieldsInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AdminFeatureServiceLayer.editFieldsInfo">[docs]</a>    <span class="k">def</span> <span class="nf">editFieldsInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the edit fields information &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editFieldsInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editFieldsInfo</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="AdminFeatureServiceLayer.advancedQueryCapabilities"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AdminFeatureServiceLayer.advancedQueryCapabilities">[docs]</a>    <span class="k">def</span> <span class="nf">advancedQueryCapabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

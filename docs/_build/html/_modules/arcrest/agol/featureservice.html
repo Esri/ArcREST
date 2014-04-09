@@ -47,6 +47,17 @@
           <div class="body">
             
   <h1>Source code for arcrest.agol.featureservice</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. module:: featureservice</span>
+<span class="sd">   :platform: Windows</span>
+<span class="sd">   :synopsis: Base Class from which AGOL function inherit from.</span>
+
+<span class="sd">.. moduleauthor:: Esri</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseAGOLClass</span>
 <span class="kn">import</span> <span class="nn">layer</span> <span class="kn">as</span> <span class="nn">servicelayers</span>
 <span class="kn">from</span> <span class="nn">common</span> <span class="kn">import</span> <span class="n">SpatialReference</span>
@@ -88,7 +99,8 @@
     <span class="n">_size</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_xssPreventionInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>  <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>  <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -96,7 +108,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; loads the data into the class &quot;&quot;&quot;</span>
@@ -146,7 +160,7 @@
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.supportedQueryFormats"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.supportedQueryFormats">[docs]</a>    <span class="k">def</span> <span class="nf">supportedQueryFormats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the supported query formats &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span>
@@ -223,14 +237,14 @@
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.editorTrackingInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.editorTrackingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">editorTrackingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the editor tracking information &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editorTrackingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editorTrackingInfo</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.documentInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.documentInfo">[docs]</a>    <span class="k">def</span> <span class="nf">documentInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the document information &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span>
@@ -282,28 +296,28 @@
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.tables"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.tables">[docs]</a>    <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the tables  &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_getTables</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.enableZDefaults"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.enableZDefaults">[docs]</a>    <span class="k">def</span> <span class="nf">enableZDefaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the enable Z defaults value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enableZDefaults</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enableZDefaults</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.zDefault"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.zDefault">[docs]</a>    <span class="k">def</span> <span class="nf">zDefault</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns the Z default value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zDefault</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zDefault</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.hasStaticData"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.hasStaticData">[docs]</a>    <span class="k">def</span> <span class="nf">hasStaticData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns boolean for has statistic data &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasStaticData</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasStaticData</span>
@@ -481,7 +495,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureService.unRegisterReplica"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.unRegisterReplica">[docs]</a>    <span class="k">def</span> <span class="nf">unRegisterReplica</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replica_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           removes a replica from a feature service</span>
+<span class="sd">           Inputs:</span>
+<span class="sd">             replica_id - The replicaID returned by the feature service</span>
+<span class="sd">                          when the replica was created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
             <span class="s">&quot;replicaID&quot;</span> <span class="p">:</span> <span class="n">replica_id</span>
@@ -493,7 +512,11 @@
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureService.replicaInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.replicaInfo">[docs]</a>    <span class="k">def</span> <span class="nf">replicaInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replica_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">           The replica info resources lists replica metadata for a specific replica.</span>
+<span class="sd">           The replica info resources lists replica metadata for a specific</span>
+<span class="sd">           replica.</span>
+<span class="sd">           Inputs:</span>
+<span class="sd">              replica_id - The replicaID returned by the feature service</span>
+<span class="sd">                           when the replica was created.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>

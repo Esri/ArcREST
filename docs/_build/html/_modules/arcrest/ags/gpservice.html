@@ -202,7 +202,14 @@
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
                     <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;parameters&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">GPInputParameterInfo</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="k">del</span> <span class="n">param</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
@@ -263,6 +270,34 @@
                      <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
                      <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
                      <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="GPTask.submitJob"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPTask.submitJob">[docs]</a>    <span class="k">def</span> <span class="nf">submitJob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;GET&quot;</span><span class="p">,</span>
+                  <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           submits a job to the current task, and returns a job ID</span>
+<span class="sd">           Inputs:</span>
+<span class="sd">              inputs - dictionary - value should be a Key/Value list of GP</span>
+<span class="sd">                       objects that line up with the input names.</span>
+<span class="sd">              method - string - either GET or POST.  The way the service is</span>
+<span class="sd">                       submitted.</span>
+<span class="sd">           Ouput:</span>
+<span class="sd">              JOB ID as a string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/submitJob&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span> <span class="p">}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s">&#39;returnZ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">returnZ</span>
+        <span class="n">params</span><span class="p">[</span><span class="s">&#39;returnM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">returnM</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;get&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;post&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid input: </span><span class="si">%s</span><span class="s">. Must be GET or POST&quot;</span> \
+                                 <span class="o">%</span> <span class="n">method</span><span class="p">)</span>
 
 <span class="c">########################################################################</span></div></div>
 <div class="viewcode-block" id="GPJob"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPJob">[docs]</a><span class="k">class</span> <span class="nc">GPJob</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
@@ -516,11 +551,15 @@
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dateObject</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">dateObject</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dateObject</span><span class="p">,</span> <span class="nb">long</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">dateObject</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid Input of type: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid Input of type: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dateObject</span><span class="p">))</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="s">&quot;Return POSIX timestamp as float&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="nb">long</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>  <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
@@ -541,9 +580,19 @@
         <span class="sd">&quot;&quot;&quot; sets the value&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">long</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid Input of type: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 <span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="GPDataFile"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPDataFile">[docs]</a><span class="k">class</span> <span class="nc">GPDataFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; represents a data file object for GP task &quot;&quot;&quot;</span>
+
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+<span class="c">########################################################################</span></div>
 <div class="viewcode-block" id="GPFeatureRecordSetLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPFeatureRecordSetLayer">[docs]</a><span class="k">class</span> <span class="nc">GPFeatureRecordSetLayer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">       Returns the GPFeatureRecordSetLayer</span>
@@ -552,44 +601,217 @@
     <span class="n">_dictionary</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_string</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 <span class="c">########################################################################</span></div>
 <div class="viewcode-block" id="GPRecordSet"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet">[docs]</a><span class="k">class</span> <span class="nc">GPRecordSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_features</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_exceededTransferLimit</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_displayFieldName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+<span class="sd">           Inputs:</span>
+<span class="sd">              json_dict - dictionary representation of the GPRecordSet</span>
+<span class="sd">              -- or --</span>
+<span class="sd">              features - list of rows</span>
+<span class="sd">              displayFieldname - primary display field</span>
+<span class="sd">              fields - list of dictionaries describing the fields</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&quot;json_dict&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> \
+           <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;json_dict&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">json_dict</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;json_dict&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exceededTransferLimit</span> <span class="o">=</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;exceededTransferLimit&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;features&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_displayFieldName</span> <span class="o">=</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;displayFieldName&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s">&quot;features&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> \
+             <span class="s">&quot;fields&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;features&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s">&quot;displayFieldName&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_displayFieldName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;displayFieldName&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_displayFieldName</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="k">if</span> <span class="s">&quot;exceededTransferLimit&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_exceededTransferLimit</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;exceededTransferLimit&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_exceededTransferLimit</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid Inputs, please consult the documentation&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPRecordSet.fields"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.fields">[docs]</a>    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the fields for the GPRecordSet &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPRecordSet.features"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.features">[docs]</a>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the rows in the recordset &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPRecordSet.displayFieldName"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.displayFieldName">[docs]</a>    <span class="k">def</span> <span class="nf">displayFieldName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the displayField Name &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayFieldName</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPRecordSet.exceededTransferLimit"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.exceededTransferLimit">[docs]</a>    <span class="k">def</span> <span class="nf">exceededTransferLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the value for exceededTransferLimit property &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exceededTransferLimit</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="GPRecordSet.addRecord"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.addRecord">[docs]</a>    <span class="k">def</span> <span class="nf">addRecord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; adds a dictionary value to the features list &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPRecordSet.value"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPRecordSet.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the value as a dictionary &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&quot;fields&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span>
+            <span class="s">&quot;features&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>
+            <span class="s">&quot;exceededTransferLimit&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exceededTransferLimit</span><span class="p">,</span>
+            <span class="s">&quot;displayFieldName&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayFieldName</span>
+        <span class="p">}</span>
+<span class="c">########################################################################</span></div></div>
+<div class="viewcode-block" id="GPMultiValue"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPMultiValue">[docs]</a><span class="k">class</span> <span class="nc">GPMultiValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; reprsents the GP MultiValue Object &quot;&quot;&quot;</span>
 
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">,</span> <span class="n">GPType</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">pass</span>
+
+
+
+
 <span class="c">########################################################################</span></div>
-<div class="viewcode-block" id="GPInputParameter"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter">[docs]</a><span class="k">class</span> <span class="nc">GPInputParameter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GPInputParameterInfo"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo">[docs]</a><span class="k">class</span> <span class="nc">GPInputParameterInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Provides information about the input parameters &quot;&quot;&quot;</span>
+    <span class="n">_parameterType</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_category</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_direction</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_displayName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_dataType</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">_paramName</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_defaultValue</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_value</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">param</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dataType</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_paramName</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s">&#39;paramName&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">param</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dataType</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_paramName</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s">&#39;paramName&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid input, value must be string or dictionary&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; populates the classes properties &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;defaultValue&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">split</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPMultiValue</span><span class="p">(</span><span class="n">json_dict</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">GPType</span><span class="o">=</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPFeatureRecordSetLayer&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPFeatureRecordSetLayer</span><span class="p">(</span><span class="n">json_dict</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPString&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPBoolean&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPBoolean</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPLong&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPLong</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPLinearUnit&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPLinearUnit</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;distance&#39;</span><span class="p">],</span>
+                                                      <span class="n">units</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;units&#39;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPDate&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPDate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPDouble&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPDouble</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPDataFile&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPDataFile</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;dataType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPRecordSet&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="o">=</span> <span class="n">GPRecordSet</span><span class="p">(</span><span class="n">json_dict</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented for GPInputParameters.&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.description"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the parameter&#39;s decription &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.defaultValue"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.defaultValue">[docs]</a>    <span class="k">def</span> <span class="nf">defaultValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Input&#39;s default value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaultValue</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.dataType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.dataType">[docs]</a>    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the data type for the input &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataType</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.name"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the input name &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.displayName"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.displayName">[docs]</a>    <span class="k">def</span> <span class="nf">displayName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the display name &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayName</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_displayName</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.direction"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.direction">[docs]</a>    <span class="k">def</span> <span class="nf">direction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the parameter direction &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_direction</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.category"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.category">[docs]</a>    <span class="k">def</span> <span class="nf">category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the category &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_category</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_category</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="GPInputParameterInfo.parameterType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.parameterType">[docs]</a>    <span class="k">def</span> <span class="nf">parameterType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the parameter type &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameterType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameterType</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="k">def</span> <span class="nf">__dict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the value as a dictionary &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
@@ -599,29 +821,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="GPInputParameter.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GPInputParameterInfo.asJSON"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.asJSON">[docs]</a>    <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the value as JSON &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="GPInputParameter.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GPInputParameterInfo.asDictionary"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameterInfo.asDictionary">[docs]</a>    <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the value as dictionary &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
-    <span class="c">#----------------------------------------------------------------------</span></div>
-    <span class="nd">@property</span>
-<div class="viewcode-block" id="GPInputParameter.dataType"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter.dataType">[docs]</a>    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the dataType &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataType</span>
-    <span class="c">#----------------------------------------------------------------------</span></div>
-    <span class="nd">@property</span>
-<div class="viewcode-block" id="GPInputParameter.paramName"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter.paramName">[docs]</a>    <span class="k">def</span> <span class="nf">paramName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramName</span>
-    <span class="c">#----------------------------------------------------------------------</span></div>
-    <span class="nd">@property</span>
-<div class="viewcode-block" id="GPInputParameter.value"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.gpservice.GPInputParameter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the value &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
 </pre></div></div></div>
 
           </div>
