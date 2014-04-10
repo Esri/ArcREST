@@ -62,12 +62,12 @@ def get_attachment_data(attachmentTable, sql,
 
 
 #----------------------------------------------------------------------
-def local_time_to_online():
+def local_time_to_online(dt=datetime.datetime.now()):
 
     is_dst = time.daylight and time.localtime().tm_isdst > 0
     utc_offset =  (time.altzone if is_dst else time.timezone)
 
-    return (time.mktime(datetime.datetime.now().timetuple())  * 1000) - (utc_offset *1000)
+    return (time.mktime(dt.timetuple())  * 1000) - (utc_offset *1000)
 
 def online_time_to_string(value,timeFormat):
 
@@ -844,6 +844,7 @@ class Feature(object):
         """
         desc = arcpy.Describe(dataset)
         fields = [field.name for field in arcpy.ListFields(dataset) if field.type not in ['Geometry']]
+        date_fields = [field.name for field in arcpy.ListFields(dataset) if field.type =='Date']
         non_geom_fields = copy.deepcopy(fields)
         features = []
         if hasattr(desc, "shapeFieldName"):
@@ -851,6 +852,9 @@ class Feature(object):
         del desc
         with arcpy.da.SearchCursor(dataset, fields) as rows:
             for row in rows:
+                row = list(row)
+                for df in date_fields:
+                    row[fields.index(df)] = int(json.dumps(_date_handler(row[fields.index(df)])))
                 template = {
                     "attributes" : dict(zip(non_geom_fields, row))
                 }
