@@ -62,7 +62,16 @@ def get_attachment_data(attachmentTable, sql,
 
 
 #----------------------------------------------------------------------
-def local_time_to_online(dt=datetime.datetime.now()):
+def local_time_to_online(dt=None):
+    """
+       converts datetime object to a UTC timestamp for AGOL
+       Inputs:
+          dt - datetime object
+       Output:
+          Long value
+    """
+    if dt is None:
+        dt = datetime.datetime.now()
 
     is_dst = time.daylight and time.localtime().tm_isdst > 0
     utc_offset =  (time.altzone if is_dst else time.timezone)
@@ -70,10 +79,15 @@ def local_time_to_online(dt=datetime.datetime.now()):
     return (time.mktime(dt.timetuple())  * 1000) - (utc_offset *1000)
 
 def online_time_to_string(value,timeFormat):
-
+    """
+       Converts a timestamp to date/time string
+       Inputs:
+          value - timestamp as long
+          timeFormat - output date/time format
+       Output:
+          string
+    """
     return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
-
-
 #----------------------------------------------------------------------
 def create_feature_layer(ds, sql, name="layer"):
     """ creates a feature layer object """
