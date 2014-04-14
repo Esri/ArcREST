@@ -794,7 +794,7 @@ class FeatureLayer(BaseAGOLClass):
         if self._token is not None:
             params['token'] = self._token
         if isinstance(features, common.Feature):
-            params['features'] = [features.asDictionary]
+            params['features'] = json.dumps([features.asDictionary])
         elif isinstance(features, list):
             vals = []
             for feature in features:
@@ -896,10 +896,9 @@ class FeatureLayer(BaseAGOLClass):
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], common.Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures])
-            #params['adds'] = json.dumps([addFeatures[0].asDictionary])
         if len(updateFeatures) > 0 and \
            isinstance(updateFeatures[0], common.Feature):
-            params['updates'] = [f.asDictionary for f in updateFeatures]
+            params['updates'] = json.dumps([f.asDictionary for f in updateFeatures])
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
