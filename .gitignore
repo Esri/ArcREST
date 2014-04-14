@@ -228,3 +228,4 @@ source/[Ss]ampleData/
 source/[Tt]est[Cc]onfigs/
 src/service_monitor
 *.pyc
+error.txt
