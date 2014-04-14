@@ -2,6 +2,8 @@
  
 A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) and ArcGIS Online (AGOL).  
 
+This is not a full implementation of the Esri REST API.  Please feel free to contribute.
+
 ## Features
 
 * Add, Delete, Update and Query Feature Services
