@@ -128,10 +128,28 @@ def json_to_featureclass(json_file, out_fc):
 def merge_feature_class(merges, out_fc, cleanUp=True):
     """ merges featureclass into a single feature class """
     if cleanUp == False:
-        return arcpy.Merge_management(inputs=merges,
-                                      output=out_fc)[0]
+        if len(merges) == 0:
+            return None
+        elif len(merges) == 1:
+            desc = arcpy.Describe(merges[0])
+            if hasattr(desc, 'shapeFieldName'):
+                return arcpy.CopyFeatures_management(merges[0], out_fc)[0]
+            else:
+                return arcpy.CopyRows_management(merges[0], out_fc)[0]
+        else:
+            return arcpy.Merge_management(inputs=merges,
+                                          output=out_fc)[0]
     else:
-        merged = arcpy.Merge_management(inputs=merges,
+        if len(merges) == 0:
+            return None
+        elif len(merges) == 1:
+            desc = arcpy.Describe(merges[0])
+            if hasattr(desc, 'shapeFieldName'):
+                merged = arcpy.CopyFeatures_management(merges[0], out_fc)[0]
+            else:
+                merged = arcpy.CopyRows_management(merges[0], out_fc)[0]
+        else:
+            merged = arcpy.Merge_management(inputs=merges,
                                         output=out_fc)[0]
         for m in merges:
             arcpy.Delete_management(m)

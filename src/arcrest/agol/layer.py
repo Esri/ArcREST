@@ -800,7 +800,7 @@ class FeatureLayer(BaseAGOLClass):
             for feature in features:
                 if isinstance(feature, common.Feature):
                     vals.append(feature.asDictionary)
-            params['features'] = vals
+            params['features'] = json.dumps(vals)
         else:
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
