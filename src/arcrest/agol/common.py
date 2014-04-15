@@ -76,7 +76,7 @@ def local_time_to_online(dt=None):
     is_dst = time.daylight and time.localtime().tm_isdst > 0
     utc_offset =  (time.altzone if is_dst else time.timezone)
 
-    return (time.mktime(dt.timetuple())  * 1000) - (utc_offset *1000)
+    return (time.mktime(dt.timetuple())  * 1000) + (utc_offset *1000)
 
 def online_time_to_string(value,timeFormat):
     """
