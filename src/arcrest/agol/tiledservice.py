@@ -1,3 +1,13 @@
+"""
+
+.. module:: admin
+   :platform: Windows, Linux
+   :synopsis: Class to help managing Tiled Services
+
+.. moduleauthor:: Esri
+
+
+"""
 import json
 from base import BaseAGOLClass
 import urlparse

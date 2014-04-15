@@ -1,5 +1,5 @@
 """ package contructor
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 """
 import common

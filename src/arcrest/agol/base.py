@@ -1,10 +1,10 @@
 """
 
 .. module:: base
-   :platform: Windows
+   :platform: Windows, Linux
    :synopsis: Base Class from which AGOL function inherit from.
 
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 
 """

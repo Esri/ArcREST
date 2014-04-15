@@ -1,8 +1,8 @@
 """
 
 .. module:: layer
-   :platform: Windows
-   :synopsis: Base Class from which AGOL function inherit from.
+   :platform: Windows, Linux
+   :synopsis: Class that contians feature service layer information.
 
 .. moduleauthor:: Esri
 

@@ -1,10 +1,11 @@
 """
 
 .. module:: filters
-   :platform: Windows
-   :synopsis: Base Class from which AGOL function inherit from.
+   :platform: Windows, Linux
+   :synopsis: Creates the query and spatial filters for Feature Service and
+   hosted feature service layers.
 
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 
 """

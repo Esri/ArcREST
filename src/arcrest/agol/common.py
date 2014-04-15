@@ -1,9 +1,9 @@
 """
 .. module:: common
-   :platform: Windows
-   :synopsis: A useful module indeed.
+   :platform: Windows, Linux
+   :synopsis: A module containing a collection of commonly used functions
 
-.. moduleauthor:: test
+.. moduleauthor:: Esri
 
 
 """
