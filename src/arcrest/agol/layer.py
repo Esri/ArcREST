@@ -904,6 +904,46 @@ class FeatureLayer(BaseAGOLClass):
             params['deletes'] = deleteFeatures
         return self._do_post(url=editURL, param_dict=params)
     #----------------------------------------------------------------------
+    def addFeature(self, features,
+                   gdbVersion=None,
+                   rollbackOnFailure=True):
+        """ Adds a single feature to the service
+           Inputs:
+              feature - list of common.Feature object or a single
+                        common.Feature Object
+              gdbVersion - Geodatabase version to apply the edits
+              rollbackOnFailure - Optional parameter to specify if the
+                                  edits should be applied only if all
+                                  submitted edits succeed. If false, the
+                                  server will apply the edits that succeed
+                                  even if some of the submitted edits fail.
+                                  If true, the server will apply the edits
+                                  only if all edits succeed. The default
+                                  value is true.
+           Output:
+              JSON message as dictionary
+        """
+        url = self._url + "/addFeatures"
+        params = {
+            "f" : "json"
+        }
+        if self._token is not None:
+            params['token'] = self._token
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
+        if isinstance(rollbackOnFailure, bool):
+            params['rollbackOnFailure'] = rollbackOnFailure
+        if isinstance(features, list):
+            params['features'] = json.dumps([feature.asDictionary for feature in features],
+                                            default=common._date_handler)
+        elif isinstance(features, common.Feature):
+            params['features'] = json.dumps([feature.asDictionary],
+                                            default=common._date_handler)
+        else:
+            return None
+        return self._do_post(url=url,
+                             param_dict=params)
+    #----------------------------------------------------------------------
     def addFeatures(self, fc, attachmentTable=None,
                     nameField="ATT_NAME", blobField="DATA",
                     contentTypeField="CONTENT_TYPE",

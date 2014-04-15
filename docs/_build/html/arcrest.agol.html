@@ -1657,7 +1657,7 @@ Inputs:</p>
 </div>
 <div class="section" id="module-arcrest.agol.filters">
 <span id="arcrest-agol-filters-module"></span><h2>arcrest.agol.filters module<a class="headerlink" href="#module-arcrest.agol.filters" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-filters"></span><dl class="class">
+<dl class="class">
 <dt id="arcrest.agol.filters.BaseFilter">
 <em class="property">class </em><tt class="descclassname">arcrest.agol.filters.</tt><tt class="descname">BaseFilter</tt><a class="reference internal" href="_modules/arcrest/agol/filters.html#BaseFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.filters.BaseFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
@@ -1777,6 +1777,33 @@ file_path - string - path to file</div></blockquote>
 <dl class="docutils">
 <dt>Output:</dt>
 <dd>JSON Repsonse</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.layer.FeatureLayer.addFeature">
+<tt class="descname">addFeature</tt><big>(</big><em>features</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/layer.html#FeatureLayer.addFeature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.FeatureLayer.addFeature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a single feature to the service
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>feature - list of common.Feature object or a single</dt>
+<dd>common.Feature Object</dd>
+</dl>
+<p>gdbVersion - Geodatabase version to apply the edits
+rollbackOnFailure - Optional parameter to specify if the</p>
+<blockquote>
+<div>edits should be applied only if all
+submitted edits succeed. If false, the
+server will apply the edits that succeed
+even if some of the submitted edits fail.
+If true, the server will apply the edits
+only if all edits succeed. The default
+value is true.</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>JSON message as dictionary</dd>
 </dl>
 </dd></dl>
 
@@ -2343,7 +2370,7 @@ Input:</p>
 </div>
 <div class="section" id="module-arcrest.agol.tiledservice">
 <span id="arcrest-agol-tiledservice-module"></span><h2>arcrest.agol.tiledservice module<a class="headerlink" href="#module-arcrest.agol.tiledservice" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<span class="target" id="module-admin"></span><dl class="class">
 <dt id="arcrest.agol.tiledservice.TiledService">
 <em class="property">class </em><tt class="descclassname">arcrest.agol.tiledservice.</tt><tt class="descname">TiledService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/tiledservice.html#TiledService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
@@ -2522,7 +2549,7 @@ Input:</p>
 <div class="section" id="module-arcrest.agol">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-arcrest.agol" title="Permalink to this headline">¶</a></h2>
 <p>package contructor
-.. moduleauthor:: test</p>
+.. moduleauthor:: Esri</p>
 </div>
 </div>
 
