@@ -21,7 +21,7 @@ from time import gmtime, strftime,mktime
 #----------------------------------------------------------------------
 def _date_handler(obj):
     if isinstance(obj, datetime.datetime):
-        return calendar.timegm(obj.utctimetuple()) * 1000
+        return local_time_to_online(obj)
     else:
         return obj
 def relative_path_to_absolute(path):

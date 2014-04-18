@@ -895,10 +895,12 @@ class FeatureLayer(BaseAGOLClass):
             params['token'] = self._token
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], common.Feature):
-            params['adds'] = json.dumps([f.asDictionary for f in addFeatures])
+            params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
+                                        default=common._date_handler)
         if len(updateFeatures) > 0 and \
            isinstance(updateFeatures[0], common.Feature):
-            params['updates'] = json.dumps([f.asDictionary for f in updateFeatures])
+            params['updates'] = json.dumps([f.asDictionary for f in updateFeatures],
+                                           default=common._date_handler)
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
@@ -937,7 +939,7 @@ class FeatureLayer(BaseAGOLClass):
             params['features'] = json.dumps([feature.asDictionary for feature in features],
                                             default=common._date_handler)
         elif isinstance(features, common.Feature):
-            params['features'] = json.dumps([feature.asDictionary],
+            params['features'] = json.dumps([features.asDictionary],
                                             default=common._date_handler)
         else:
             return None
@@ -1012,6 +1014,7 @@ class FeatureLayer(BaseAGOLClass):
                 del oid
             del OIDs
             return True, messages
+
 
 ########################################################################
 class TableLayer(FeatureLayer):
