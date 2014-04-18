@@ -1,10 +1,10 @@
 """
 
 .. module:: admin
-   :platform: Windows, Linux
-   :synopsis: Class to help with data administration
+   :platform: Windows
+   :synopsis: Base Class from which AGOL function inherit from.
 
-.. moduleauthor:: Esri
+.. moduleauthor:: test
 
 
 """
@@ -1224,7 +1224,40 @@ class AGOL(BaseAGOLClass):
                                    ssl=parsed.scheme.lower() == 'https')
         res = self._unicode_convert(json.loads(res))
         return res
+
     #----------------------------------------------------------------------
+    def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',folder=None):
+        """ loads a file to AGOL """
+        params = {
+            "f" : "json",
+            "text" : json.dumps(data),
+            "type" : agol_type,
+            "title" : name,
+            "tags" : tags,
+            "description" : description,
+            "snippet" : snippet,
+            "extent": extent
+        }
+        if self._token is not None:
+            params['token'] = self._token
+
+        url = "{}/content/users/{}".format(self._url,
+                                                   self._username)
+        if folder:
+            url += '/' + folder
+        url += '/addItem'
+        parsed = urlparse.urlparse(url)
+
+        res = self._post_multipart(host=parsed.hostname,
+                                   selector=parsed.path,
+                                   fields=params,
+                                   files='',
+                                   ssl=parsed.scheme.lower() == 'https')
+        res = self._unicode_convert(json.loads(res))
+        return res
+
+
+
     def deleteItem(self, item_id,folder=None):
         """ deletes an agol item by it's ID """
 
@@ -1340,36 +1373,7 @@ class AGOL(BaseAGOLClass):
 
                 print "Deleted: " + self._tostr(self.deleteItem(item['id'],folder))
     #----------------------------------------------------------------------
-    def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',folder=None):
-        """ Creates a webmap in AGOL"""
-        params = {
-            "f" : "json",
-            "text" : json.dumps(data),
-            "type" : agol_type,
-            "title" : name,
-            "tags" : tags,
-            "description" : description,
-            "snippet" : snippet,
-            "extent": extent
-        }
-        if self._token is not None:
-            params['token'] = self._token
 
-        url = "{}/content/users/{}".format(self._url,
-                                                   self._username)
-        if folder:
-            url += '/' + folder
-        url += '/addItem'
-        parsed = urlparse.urlparse(url)
-
-        res = self._post_multipart(host=parsed.hostname,
-                                   selector=parsed.path,
-                                   fields=params,
-                                   files='',
-                                   ssl=parsed.scheme.lower() == 'https')
-        res = self._unicode_convert(json.loads(res))
-        return res
-    #----------------------------------------------------------------------
     def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None,delete_sd=False):
         """ publishes a service to AGOL """
 
