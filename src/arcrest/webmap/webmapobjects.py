@@ -1,5 +1,4 @@
 import json
-from base import BaseRenderer
 from geometry import Envelope
 
 ########################################################################
@@ -44,26 +43,6 @@ class Bookmark(object):
     def __dict__(self):
         """ returns a dictionary representation of the object """
         return {"bookmarks" : self._extents}
-
-########################################################################
-class SimpleRenderer(BaseRenderer):
-    """
-       A simple renderer is a renderer that uses one symbol only. The type
-       property for simple renderers is simple.
-    """
-    _type = "simple"
-    _symbol = None
-    _label = None
-    _description = None
-    _rotationType = None
-    _rotationExpression = None
-    #----------------------------------------------------------------------
-    def __init__(self):
-        """Constructor"""
-        pass
-
-
-
 
 
 
