@@ -1374,7 +1374,7 @@ class AGOL(BaseAGOLClass):
                 print "Deleted: " + self._tostr(self.deleteItem(item['id'],folder))
     #----------------------------------------------------------------------
 
-    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None,delete_sd=False):
+    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None):
         """ publishes a service to AGOL """
 
         if not os.path.isabs(mxd_path):
@@ -1449,11 +1449,7 @@ class AGOL(BaseAGOLClass):
                 raise ValueError(service)
             service_id = service['serviceItemId']
             break
-
-        if delete_sd:
-            print "Deleted: " + self._tostr( self.deleteItem( item_id=self._agol_id,folder=folder))
-        del p_vals
-        return service_id
+        return p_vals
 
     #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
