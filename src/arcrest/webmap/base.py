@@ -14,6 +14,18 @@ import mimetypes
 import mimetools
 from cStringIO import StringIO
 ########################################################################
+class BaseSymbol(object):
+    """ class that all symbol object inherit from """
+    pass
+########################################################################
+class BaseRenderer(object):
+    """ all renderers inherit this class """
+    pass
+########################################################################
+class Geometry(object):
+    ''' all geometry classes inherit this class '''
+    pass
+########################################################################
 class BaseWebOperations(object):
     """ base class that holds operations for web requests """
     _token = None
@@ -108,7 +120,6 @@ class BaseWebOperations(object):
             fileExtension.lower() == ".sd":
             mntype = "File/sd"
         elif mntype is None:
-            #mntype = 'application/octet-stream'
             mntype= "File/%s" % fileExtension.replace('.', '')
         return mntype
     #----------------------------------------------------------------------
