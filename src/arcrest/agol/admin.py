@@ -1226,7 +1226,7 @@ class AGOL(BaseAGOLClass):
         return res
 
     #----------------------------------------------------------------------
-    def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',folder=None):
+    def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',thumbnail='',folder=None):
         """ loads a file to AGOL """
         params = {
             "f" : "json",
@@ -1236,7 +1236,8 @@ class AGOL(BaseAGOLClass):
             "tags" : tags,
             "description" : description,
             "snippet" : snippet,
-            "extent": extent
+            "extent": extent,
+            "thumbnail":  os.path.basename(thumbnail)
         }
         if self._token is not None:
             params['token'] = self._token
@@ -1248,10 +1249,13 @@ class AGOL(BaseAGOLClass):
         url += '/addItem'
         parsed = urlparse.urlparse(url)
 
+        files = []
+        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+
         res = self._post_multipart(host=parsed.hostname,
                                    selector=parsed.path,
                                    fields=params,
-                                   files='',
+                                   files=files,
                                    ssl=parsed.scheme.lower() == 'https')
         res = self._unicode_convert(json.loads(res))
         return res
@@ -1443,12 +1447,6 @@ class AGOL(BaseAGOLClass):
         p_vals = self._publish(agol_id=self._agol_id,folder=folder)
         if 'error' in p_vals:
             raise ValueError(p_vals)
-
-        for service in p_vals['services']:
-            if 'error' in service:
-                raise ValueError(service)
-            service_id = service['serviceItemId']
-            break
         return p_vals
 
     #----------------------------------------------------------------------
