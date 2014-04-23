@@ -1354,20 +1354,50 @@ class AGOL(BaseAGOLClass):
                       'token': self._token}
         vals = self._do_post(share_url, query_dict)
         return self._tostr(vals)
+    #----------------------------------------------------------------------
     def updateTitle(self, agol_id, title,folder=None):
         """ changes an items title"""
-        share_url = '{}/content/users/{}'.format(self._url,self._username)
+        update_url = '{}/content/users/{}'.format(self._url,self._username)
 
         if folder:
-            share_url += '/' + folder
+            update_url += '/' + folder
 
-        share_url += '/items/{}/update'.format(agol_id)
+        update_url += '/items/{}/update'.format(agol_id)
 
         query_dict = {'f': 'json',
                       'title' : title,
                       'token': self._token}
-        vals = self._do_post(share_url, query_dict)
+        vals = self._do_post(update_url, query_dict)
         return self._tostr(vals)
+    #----------------------------------------------------------------------
+    def updateThumbnail(self, agol_id, thumbnail,folder=None):
+        """ update an items thumbnail"""
+        update_url = '{}/content/users/{}'.format(self._url,self._username)
+
+        if folder:
+            update_url += '/' + folder
+
+        update_url += '/items/{}/update'.format(agol_id)
+
+        params  = {'f': 'json',
+                      "thumbnail":  os.path.basename(thumbnail)
+                      }
+        if self._token is not None:
+            params['token'] = self._token
+
+        parsed = urlparse.urlparse(update_url)
+
+        files = []
+        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+
+        res = self._post_multipart(host=parsed.hostname,
+                                   selector=parsed.path,
+                                   fields=params,
+                                   files=files,
+                                   ssl=parsed.scheme.lower() == 'https')
+        res = self._unicode_convert(json.loads(res))
+        return self._tostr(res)
+
     #----------------------------------------------------------------------
     def delete_items(self,items,folder=None):
         content = self.getUserContent(folder)
@@ -1448,6 +1478,164 @@ class AGOL(BaseAGOLClass):
         if 'error' in p_vals:
             raise ValueError(p_vals)
         return p_vals
+
+    #----------------------------------------------------------------------
+
+    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None):
+        """
+           The publishWebMap function publishes a web map, sets the details,
+           and shares it with the organization.
+
+           Inputs:
+              name - the name for the webmap
+              tags - the tags for the web map
+              snippet - the breif summary for the webmap
+              description - the description for the webmap
+              extent - Extent in the following format: "xmin, ymin, xmax, ymax"
+              data - the json representation of the webmap
+              thumbnail - full path or absolute path to the image for the webmap
+                200x133 is the suggested side.
+              share_everyone - True/False to share map with everyone
+               share_org - True/False to share map with Org
+              share_groups - List of groups to share the map with
+              folderName - optional folder name to store the item in
+           Output:
+              Boolean - True if function suceeded
+        """
+        if os.path.isfile(thumbnail):
+            if not os.path.isabs(thumbnail):
+                thumbnail = os.path.abspath(thumbnail)
+
+
+        folderID = self.get_folder_ID(folder_name=folder_name)
+
+        items = [name]
+        self.delete_items(items,folderID)
+
+        webmapInfo = self.addWebmap(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID)
+
+        item_id = ''
+        service_url = ''
+        if 'error' in webmapInfo:
+            raise ValueError(str(webmapInfo))
+
+
+        item_id = webmapInfo['id']
+
+        group_ids = self.get_group_IDs(share_groups)
+
+
+        result= self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
+        if 'error' in result:
+            raise ValueError(str(result))
+        return True
+
+     #----------------------------------------------------------------------
+    def get_group_IDs(self, group_names):
+        """
+           This function retrieves the group IDs
+
+           Inputs:
+              group_names - tuple of group names
+
+           Output:
+              dict - list of group IDs
+        """
+        group_ids=[]
+        userInfo = self.getUserInfo()
+        for gp in userInfo['groups']:
+            if gp['title'] in group_names:
+                group_ids.append(gp['id'])
+        del userInfo
+        return group_ids
+    #----------------------------------------------------------------------
+    def get_folder_ID(self, folder_name):
+        """
+           This function retrieves the folder ID and creates the folder if
+           it does not exist
+
+           Inputs:
+              folder_name - the name of the folder
+
+           Output:
+              string - ID of folder, none if no foldername is specified
+        """
+        if not folder_name == None and not folder_name == '':
+            userContent = self.getUserContent()
+            folders = userContent['folders']
+            for folder in folders:
+                if folder['title'] == folder_name:
+                    folderID = folder['id']
+                    break
+            del folders
+            del folder
+
+            if folderID == None:
+                res = self.createFolder(folder_name)
+                if 'success' in res:
+                    folderID = res['folder']['id']
+            del userContent
+            return folderID
+
+        else:
+            return None
+    #----------------------------------------------------------------------
+    def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,thumbnail=None,folder_name=None):
+        """
+           The createFeatureService function publishes a service definition,
+           publishes a features service, sets the details, and shares it with
+           the organization.
+
+           Inputs:
+              mxd - the name for the webmap
+              title - the tags for the web map
+              share_everyone - True/False to share map with everyone
+              share_org - True/False to share map with Org
+              share_groups - List of groups to share the map with
+              thumbnail - optional, full path or absolute path to the image for the webmap
+                200x133 is the suggested side.
+              folderName - optional, folder name to store the item in
+           Output:
+              Dict - results from publishing the feature service
+        """
+        service_name = title
+        service_name_safe = service_name.replace(' ','_')
+
+        folderID = self.get_folder_ID(folder_name=folder_name)
+
+        items = [service_name,service_name_safe]
+
+        self.delete_items(items,folderID)
+        itemInfo = self.publish_to_agol(mxd_path=mxd,service_name=service_name_safe,folder=folderID)
+
+        item_id = ''
+        service_url = ''
+        for service in itemInfo['services']:
+            if 'error' in service:
+                raise ValueError(str(service))
+            item_id = service['serviceItemId']
+            service_url = service['serviceurl']
+
+        group_ids = self.get_group_IDs(share_groups)
+
+        result = self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
+        if 'error' in result:
+            raise ValueError(str(result))
+
+        result = self.updateTitle(agol_id=item_id,title= service_name,folder=folderID)
+        if 'error' in result:
+            raise ValueError(str(result))
+
+        if not thumbnail is None:
+            if os.path.isfile(thumbnail):
+                if not os.path.isabs(thumbnail):
+                    thumbnail = os.path.abspath(thumbnail)
+            result = self.updateThumbnail(agol_id=item_id,thumbnail=thumbnail,folder=folderID)
+            if 'error' in result:
+                raise ValueError(str(result))
+
+        return itemInfo
+
 
     #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
