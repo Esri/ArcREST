@@ -1237,8 +1237,19 @@ class AGOL(BaseAGOLClass):
             "description" : description,
             "snippet" : snippet,
             "extent": extent,
-            "thumbnail":  os.path.basename(thumbnail)
+            "typeKeywords": [
+                "ArcGIS Online",
+                "Collector",
+                "Data Editing",
+                "Explorer Web Map",
+                "Map",
+                "Offline",
+                "Online Map",
+                "Web Map"
+            ],
+            "thumbnail": os.path.basename(thumbnail)
         }
+
         if self._token is not None:
             params['token'] = self._token
 
@@ -1262,6 +1273,19 @@ class AGOL(BaseAGOLClass):
 
 
 
+    def toggleProtect(self, item_id,folder=None):
+        """ deletes an agol item by it's ID """
+
+        deleteURL = '{}/content/users/{}'.format(self._url, self._username )
+        if folder:
+            deleteURL += '/' + folder
+
+        deleteURL += '/items/{}/protect'.format(item_id)
+        query_dict = {'f': 'json',
+                      'token': self._token}
+        jres = self._do_post(deleteURL, query_dict)
+        return jres
+    #----------------------------------------------------------------------
     def deleteItem(self, item_id,folder=None):
         """ deletes an agol item by it's ID """
 
@@ -1481,7 +1505,7 @@ class AGOL(BaseAGOLClass):
 
     #----------------------------------------------------------------------
 
-    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None):
+    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False):
         """
            The publishWebMap function publishes a web map, sets the details,
            and shares it with the organization.
@@ -1521,7 +1545,8 @@ class AGOL(BaseAGOLClass):
 
 
         item_id = webmapInfo['id']
-
+        if protected:
+            self.toggleProtect(item_id,folderID)
         group_ids = self.get_group_IDs(share_groups)
 
 

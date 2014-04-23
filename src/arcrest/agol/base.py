@@ -201,7 +201,7 @@ class BaseAGOLClass(object):
         if not obj:
             return ''
         if isinstance(obj, list):
-            return ', '.join(map(_tostr, obj))
+            return ', '.join(map(self._tostr, obj))
         return str(obj)
     #----------------------------------------------------------------------
     def _unicode_convert(self, obj):
