@@ -1272,21 +1272,37 @@ class AGOL(BaseAGOLClass):
         return res
 
 
+    #----------------------------------------------------------------------
 
-    def toggleProtect(self, item_id,folder=None):
-        """ deletes an agol item by it's ID """
+    def enableProtect(self, item_id,folder=None):
+        """Enables an items protection  """
 
-        deleteURL = '{}/content/users/{}'.format(self._url, self._username )
+        url = '{}/content/users/{}'.format(self._url, self._username )
         if folder:
-            deleteURL += '/' + folder
+            url += '/' + folder
 
-        deleteURL += '/items/{}/protect'.format(item_id)
+        url += '/items/{}/protect'.format(item_id)
         query_dict = {'f': 'json',
                       'token': self._token}
-        jres = self._do_post(deleteURL, query_dict)
+        jres = self._do_post(url, query_dict)
         return jres
     #----------------------------------------------------------------------
-    def deleteItem(self, item_id,folder=None):
+
+    def disableProtect(self, item_id,folder=None):
+        """ Disables an items protection """
+
+        url = '{}/content/users/{}'.format(self._url, self._username )
+        if folder:
+            url += '/' + folder
+
+        url += '/items/{}/unprotect'.format(item_id)
+        query_dict = {'f': 'json',
+                      'token': self._token}
+        jres = self._do_post(url, query_dict)
+        return jres
+
+    #----------------------------------------------------------------------
+    def deleteItem(self, item_id,folder=None,force_delete=False):
         """ deletes an agol item by it's ID """
 
         deleteURL = '{}/content/users/{}'.format(self._url, self._username )
@@ -1297,6 +1313,13 @@ class AGOL(BaseAGOLClass):
         query_dict = {'f': 'json',
                       'token': self._token}
         jres = self._do_post(deleteURL, query_dict)
+        if 'error' in jres:
+            if force_delete:
+                dis_res = self.disableProtect(item_id,folder)
+                if 'success' in dis_res:
+                    return self.deleteItem(item_id=item_id,folder=folder,force_delete=False)
+                else:
+                    return jres
         return jres
     #----------------------------------------------------------------------
     def _modify_sddraft(self, sddraft,maxRecordCount='1000'):
@@ -1423,13 +1446,20 @@ class AGOL(BaseAGOLClass):
         return self._tostr(res)
 
     #----------------------------------------------------------------------
-    def delete_items(self,items,folder=None):
+    def delete_items(self,items,folder=None,force_delete=False):
         content = self.getUserContent(folder)
         #Title, item
+        resultList=[]
         for item in content['items']:
             if item['title'] in items:
 
-                print "Deleted: " + self._tostr(self.deleteItem(item['id'],folder))
+                result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
+                if 'error' in result:
+                    resultList.append(result['error'])
+
+                else:
+                    resultList.append(result)
+        return resultList
     #----------------------------------------------------------------------
 
     def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None):
@@ -1505,7 +1535,7 @@ class AGOL(BaseAGOLClass):
 
     #----------------------------------------------------------------------
 
-    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False):
+    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False,delete_existing = False):
         """
            The publishWebMap function publishes a web map, sets the details,
            and shares it with the organization.
@@ -1532,9 +1562,9 @@ class AGOL(BaseAGOLClass):
 
 
         folderID = self.get_folder_ID(folder_name=folder_name)
-
-        items = [name]
-        self.delete_items(items,folderID)
+        if delete_existing:
+            items = [name]
+            self.delete_items(items,folderID,force_delete=delete_existing)
 
         webmapInfo = self.addWebmap(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID)
 
@@ -1546,7 +1576,7 @@ class AGOL(BaseAGOLClass):
 
         item_id = webmapInfo['id']
         if protected:
-            self.toggleProtect(item_id,folderID)
+            self.enableProtect(item_id,folderID)
         group_ids = self.get_group_IDs(share_groups)
 
 
