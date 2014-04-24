@@ -70,7 +70,7 @@
 <span class="c">#----------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_date_handler</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timegm</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">utctimetuple</span><span class="p">())</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="k">return</span> <span class="n">local_time_to_online</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">obj</span>
 <div class="viewcode-block" id="relative_path_to_absolute"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.common.relative_path_to_absolute">[docs]</a><span class="k">def</span> <span class="nf">relative_path_to_absolute</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
