@@ -3,7 +3,8 @@
    the ArcGIS Webmap JSON
 """
 import base
-from common import _unicode_convert, _date_handler, featureclassToFeatureSet, LayerDefinition
+from common import *
+from common import _unicode_convert, _date_handler, featureclassToFeatureSet
 import json
 import uuid
 ########################################################################
@@ -89,10 +90,6 @@ class MapGraphicLayer(base.BaseOperationalLayer):
             return "esriGeometryMultipoint"
         else:
             return None
-
-
-
-
 ########################################################################
 class KMZLayer(base.BaseOperationalLayer):
     """
@@ -252,7 +249,7 @@ class CSVLayer(base.BaseOperationalLayer):
     _minScale = None
     _maxScale = None
     _opacity = None
-    _popupIndo = None
+    _popupInfo = None
     _title = None
     _type = "CSV"
     _url = None
@@ -260,10 +257,112 @@ class CSVLayer(base.BaseOperationalLayer):
     #----------------------------------------------------------------------
     def __init__(self, url, mapId, title,
                  columnDelimiter,
+                 locationInfo,
+                 layerDefinitions,
+                 popupInfo=None,
                  opacity=1, visibility=True,
                  minScale=0, maxScale=0):
         """Constructor"""
-        pass
+        self._url = url
+        self._id = mapId
+        self._title = title
+        self._columnDelimiter = columnDelimiter
+        self._opacity = opacity
+        self._visibility = visibility
+        self._minScale = minScale
+        self._maxScale = maxScale
+        self._popupInfo = popupInfo
+        if isinstance(locationInfo, LocationInfo):
+            self._locationInfo = locationInfo
+        else:
+            raise AttributeError("Invalid LocationInfo Object")
+        if isinstance(layerDefinitions, LayerDefinition):
+            self._layerDefinitions = layerDefinitions
+        else:
+            raise AttributeError("Invalid LayerDefinition Object")
+    #----------------------------------------------------------------------
+    @property
+    def popupInfo(self):
+        """ gets the popup information """
+        return self._popupInfo
+    #----------------------------------------------------------------------
+    @property
+    def layerDefinition(self):
+        """ gets the layer definition """
+        return self._layerDefinitions
+    #----------------------------------------------------------------------
+    @property
+    def locationInfo(self):
+        """gets the location information"""
+        return self._locationInfo
+    #----------------------------------------------------------------------
+    @property
+    def opacity(self):
+        """gets the opacity value"""
+        return self._opacity
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """ gets the minimum scale """
+        return self._minScale
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """gets the maximum scale"""
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @property
+    def type(self):
+        """ gets the layer type """
+        return self._type
+    #----------------------------------------------------------------------
+    @property
+    def url(self):
+        """ gets the url """
+        return self._url
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        """gets the map id"""
+        return self._id
+    #----------------------------------------------------------------------
+    @property
+    def title(self):
+        """gets the title"""
+        return self._title
+    #----------------------------------------------------------------------
+    @property
+    def columnDelimiter(self):
+        """ gets the column delimiter value """
+        return self._columnDelimiter
+    #----------------------------------------------------------------------
+    @property
+    def visibility(self):
+        """ gets the visibility """
+        return self._visibility
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        """ returns object as dictionary """
+        template = {
+            "id" : self._id,
+            "title" : self._title,
+            "visibility" : self._visibility,
+            "opacity" : self._opacity,
+            "type" : self._type,
+            "url" : self._url,
+            "layerDefinition" : self._layerDefinitions.asDictionary,
+            "locationInfo" : self._locationInfo.asDictionary,
+            "maxScale" : self._maxScale,
+            "minScale" : self._minScale
+        }
+        if self._popupInfo is not None:
+            template['popupInfo'] = self._popupInfo
+        return template
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(self.asDictionary, default=_date_handler)
 ########################################################################
 class MapNotesLayer(base.BaseOperationalLayer):
     """
@@ -297,6 +396,71 @@ class FeatureCollectionLayer(base.BaseOperationalLayer):
         self._minScale = minScale
         self._maxScale = maxScale
         self._id = uuid.uuid4().get_hex()
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """ gets the minimum scale value """
+        return self._minScale
+    #----------------------------------------------------------------------
+    @minScale.setter
+    def minScale(self, value):
+        """ sets the minimum scale """
+        if isinstance(value, (int, float, long)):
+            self._minScale = value
+    #----------------------------------------------------------------------
+    @property
+    def visibility(self):
+        """ gets the visibility value """
+        return self._visibility
+    #----------------------------------------------------------------------
+    @visibility.setter
+    def visibility(self, value):
+        """sets the visibility value"""
+        if isinstance(value, bool):
+            self._visibility = value
+    #----------------------------------------------------------------------
+    @property
+    def title(self):
+        """gets the title"""
+        return self._title
+    #----------------------------------------------------------------------
+    @title.setter
+    def title(self, value):
+        """sets the title value"""
+        self._title = value
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """ gets the maximum scale """
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @maxScale.setter
+    def maxScale(self, value):
+        """ sets the maximum scale """
+        if isinstance(value, (int, long, float)):
+            self._maxScale = value
+    #----------------------------------------------------------------------
+    @property
+    def opacity(self):
+        """ gets the opacity value """
+        return self._Opacity
+    #----------------------------------------------------------------------
+    @opacity.setter
+    def opacity(self, value):
+        """ sets the opacity value """
+        if value >= 0 and value <= 1:
+            self._Opacity = value
+    #----------------------------------------------------------------------
+    @property
+    def showLegend(self):
+        """gets the show legend value"""
+        return self._showLegend
+    #----------------------------------------------------------------------
+    @showLegend.setter
+    def showLegend(self, value):
+        """sets the show legend value"""
+        if isinstance(value, bool):
+            self._showLegend = value
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """

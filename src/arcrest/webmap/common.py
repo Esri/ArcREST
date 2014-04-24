@@ -414,7 +414,7 @@ class Field(object):
             self._domain = value
 
 ########################################################################
-class DrawningInfo(BaseDefinition):
+class DrawingInfo(BaseDefinition):
     """
        The drawingInfo object contains drawing information for a feature
        collection or a single layer in a map service. This object is used
@@ -694,7 +694,7 @@ class LayerDefinition(BaseDefinition):
         self._minScale = minScale
         self._maxScale = maxScale
         self._templates = templates
-        self._type = self._type
+        self._type = type
         self._typeIdField = typeIdField
         self._types = types
         self._definitionExpression = definitionExpression

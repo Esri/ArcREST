@@ -2,7 +2,7 @@
    Core classes contained here to create the webmap data structure
 """
 import json
-from layer import *
+from layers import *
 ########################################################################
 class WebMap(object):
     """"""

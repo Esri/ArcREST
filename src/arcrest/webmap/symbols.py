@@ -16,7 +16,7 @@ class Color(BaseSymbol):
     _blue = None
     _alpha = None
     #----------------------------------------------------------------------
-    def __init__(self, red=0, green=0, blue=0, alpha=255):
+    def __init__(self, red=0, green=0, blue=0, alpha=0):
         """Constructor"""
         self._red = red
         self._green = green
