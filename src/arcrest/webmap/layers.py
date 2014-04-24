@@ -3,7 +3,93 @@
    the ArcGIS Webmap JSON
 """
 import base
+from common import *
+from common import _unicode_convert, _date_handler, featureclassToFeatureSet
 import json
+import uuid
+########################################################################
+class MapGraphicLayer(base.BaseOperationalLayer):
+    """
+       Represents a graphic in the map.  There are no attributes for this
+       data, only geometries.
+    """
+    _id = None
+    _minScale = None
+    _maxScale = None
+    _storedFeatures = {}
+    _layers = []
+    _featureCollection = {}
+    #----------------------------------------------------------------------
+    def __init__(self, id, minScale=0, maxScale=0):
+        """Constructor"""
+        self._id = id
+        self._minScale = minScale
+        self._maxScale = maxScale
+        self._featureCollection = {"featureCollection":{"layers":[]}}
+        self._layers = []
+        self._storedFeatures = {}
+    #----------------------------------------------------------------------
+    def __str__(self):
+        return json.dumps(self.asDictionary, default=_date_handler)
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        self._layers = []
+        for key in self._featureCollection:
+            self._layers.append(self._featureCollection[key])
+            del key
+        template = {"id":self._id,
+                    "minScale":self._minScale,
+                    "maxScale":self._maxScale,
+                    "featureCollection":{"layers":[self._storedFeatures[x] \
+                                                   for x in self._storedFeatures] }
+                    }
+        return template
+    #----------------------------------------------------------------------
+    def addGraphic(self, layerName, geometry, symbol):
+        """ loads a geometry (ArcPy Geometry Object) into Graphic Layer"""
+        allowed_geomtypes = ['polygon', 'polyline', 'point', 'multipoint']
+        if not (geometry.type.lower() in allowed_geomtypes):
+            return False, layerName
+        geom = _unicode_convert(json.loads(geometry.JSON))
+        geomType = self.__look_up_geom(geometry.type.lower())
+        if self._storedFeatures.has_key(layerName):
+            self._storedFeatures[layerName]['featureSet']['features'].append({"geometry":geom,
+                                                                               "symbol":symbol.asDictionary})
+        else:
+            template_ld = {
+                "layerDefinition":{
+                    "name":layerName,
+                    "geometryType":geomType
+                    },
+                "featureSet":{
+                    "geometryType":geomType,
+                    "features":[{"geometry":geom,
+                                 "symbol":symbol.asDictionary}]
+                }
+            }
+            self._storedFeatures[layerName] = template_ld
+        return True, layerName
+    #----------------------------------------------------------------------
+    def __look_up_geom(self, geomType):
+        """ compares the geometry object's type verse the JSOn
+            specs for geometry types
+            Inputs:
+              geomType - string - geometry object's type
+            Returns:
+               string JSON geometry type or None if not an allowed type
+        """
+
+        if geomType.lower() == "point":
+            return "esriGeometryPoint"
+        elif geomType.lower() == "polyline":
+            return "esriGeometryPolyline"
+        elif geomType.lower() == "polygon":
+            return "esriGeometryPolygon"
+        elif geomType.lower() == "multipoint":
+            return "esriGeometryMultipoint"
+        else:
+            return None
 ########################################################################
 class KMZLayer(base.BaseOperationalLayer):
     """
@@ -122,9 +208,10 @@ class KMZLayer(base.BaseOperationalLayer):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns the class as a string (JSON) """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns the object as a dictionary """
         template = {
             "type" : self._type,
@@ -132,7 +219,6 @@ class KMZLayer(base.BaseOperationalLayer):
             "url" : self._url,
             "title" : self._title,
             "opacity" : self._opacity,
-            "visibility" : self._visibility,
             "minScale" : self._minScale,
             "maxScale" : self._maxScale,
             "showLabels" : self._showLabels,
@@ -156,11 +242,127 @@ class CSVLayer(base.BaseOperationalLayer):
     """
        Reprsents a CSV operational layer
     """
-
+    _columnDelimiter = None
+    _id = None
+    _layerDefinitions = None
+    _locationInfo = None
+    _minScale = None
+    _maxScale = None
+    _opacity = None
+    _popupInfo = None
+    _title = None
+    _type = "CSV"
+    _url = None
+    _visibility = None
     #----------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, url, mapId, title,
+                 columnDelimiter,
+                 locationInfo,
+                 layerDefinitions,
+                 popupInfo=None,
+                 opacity=1, visibility=True,
+                 minScale=0, maxScale=0):
         """Constructor"""
-        pass
+        self._url = url
+        self._id = mapId
+        self._title = title
+        self._columnDelimiter = columnDelimiter
+        self._opacity = opacity
+        self._visibility = visibility
+        self._minScale = minScale
+        self._maxScale = maxScale
+        self._popupInfo = popupInfo
+        if isinstance(locationInfo, LocationInfo):
+            self._locationInfo = locationInfo
+        else:
+            raise AttributeError("Invalid LocationInfo Object")
+        if isinstance(layerDefinitions, LayerDefinition):
+            self._layerDefinitions = layerDefinitions
+        else:
+            raise AttributeError("Invalid LayerDefinition Object")
+    #----------------------------------------------------------------------
+    @property
+    def popupInfo(self):
+        """ gets the popup information """
+        return self._popupInfo
+    #----------------------------------------------------------------------
+    @property
+    def layerDefinition(self):
+        """ gets the layer definition """
+        return self._layerDefinitions
+    #----------------------------------------------------------------------
+    @property
+    def locationInfo(self):
+        """gets the location information"""
+        return self._locationInfo
+    #----------------------------------------------------------------------
+    @property
+    def opacity(self):
+        """gets the opacity value"""
+        return self._opacity
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """ gets the minimum scale """
+        return self._minScale
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """gets the maximum scale"""
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @property
+    def type(self):
+        """ gets the layer type """
+        return self._type
+    #----------------------------------------------------------------------
+    @property
+    def url(self):
+        """ gets the url """
+        return self._url
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        """gets the map id"""
+        return self._id
+    #----------------------------------------------------------------------
+    @property
+    def title(self):
+        """gets the title"""
+        return self._title
+    #----------------------------------------------------------------------
+    @property
+    def columnDelimiter(self):
+        """ gets the column delimiter value """
+        return self._columnDelimiter
+    #----------------------------------------------------------------------
+    @property
+    def visibility(self):
+        """ gets the visibility """
+        return self._visibility
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        """ returns object as dictionary """
+        template = {
+            "id" : self._id,
+            "title" : self._title,
+            "visibility" : self._visibility,
+            "opacity" : self._opacity,
+            "type" : self._type,
+            "url" : self._url,
+            "layerDefinition" : self._layerDefinitions.asDictionary,
+            "locationInfo" : self._locationInfo.asDictionary,
+            "maxScale" : self._maxScale,
+            "minScale" : self._minScale
+        }
+        if self._popupInfo is not None:
+            template['popupInfo'] = self._popupInfo
+        return template
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(self.asDictionary, default=_date_handler)
 ########################################################################
 class MapNotesLayer(base.BaseOperationalLayer):
     """
@@ -176,28 +378,173 @@ class FeatureCollectionLayer(base.BaseOperationalLayer):
     """
        Reprsents a Feature Collection operational layer
     """
-
+    _title = ""
+    _visibility = True
+    _Opacity = 1
+    _minScale = 0
+    _maxScale = 0
+    _showLegend = True
+    _layers = []
+    _featureCollection = {}
     #----------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, title, visibility=True, opacity=1,
+                 minScale=0, maxScale=0, ):
         """Constructor"""
-        pass
+        self._title = title
+        self._visibility = visibility
+        self._Opacity = opacity
+        self._minScale = minScale
+        self._maxScale = maxScale
+        self._id = uuid.uuid4().get_hex()
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """ gets the minimum scale value """
+        return self._minScale
+    #----------------------------------------------------------------------
+    @minScale.setter
+    def minScale(self, value):
+        """ sets the minimum scale """
+        if isinstance(value, (int, float, long)):
+            self._minScale = value
+    #----------------------------------------------------------------------
+    @property
+    def visibility(self):
+        """ gets the visibility value """
+        return self._visibility
+    #----------------------------------------------------------------------
+    @visibility.setter
+    def visibility(self, value):
+        """sets the visibility value"""
+        if isinstance(value, bool):
+            self._visibility = value
+    #----------------------------------------------------------------------
+    @property
+    def title(self):
+        """gets the title"""
+        return self._title
+    #----------------------------------------------------------------------
+    @title.setter
+    def title(self, value):
+        """sets the title value"""
+        self._title = value
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """ gets the maximum scale """
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @maxScale.setter
+    def maxScale(self, value):
+        """ sets the maximum scale """
+        if isinstance(value, (int, long, float)):
+            self._maxScale = value
+    #----------------------------------------------------------------------
+    @property
+    def opacity(self):
+        """ gets the opacity value """
+        return self._Opacity
+    #----------------------------------------------------------------------
+    @opacity.setter
+    def opacity(self, value):
+        """ sets the opacity value """
+        if value >= 0 and value <= 1:
+            self._Opacity = value
+    #----------------------------------------------------------------------
+    @property
+    def showLegend(self):
+        """gets the show legend value"""
+        return self._showLegend
+    #----------------------------------------------------------------------
+    @showLegend.setter
+    def showLegend(self, value):
+        """sets the show legend value"""
+        if isinstance(value, bool):
+            self._showLegend = value
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(_unicode_convert(self.asDictionary), default=_date_handler)
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        """ returns object as a dictionary """
+        op_layer_template = {
+            "id": self._id,
+            "title": self._title,
+            "featureCollection": {
+                "layers": [],
+                "showLegend": self._showLegend
+                },
+            "visibility": self._visibility,
+            "opacity": self._Opacity,
+            "minScale" : self._minScale,
+            "maxScale" : self._maxScale
+        }
+        for lyr in self._layers:
+            op_layer_template['featureCollection']['layers'].append(lyr)
+            del lyr
+        return op_layer_template
+    #----------------------------------------------------------------------
+    def loadFeatures(self, featureClass, layerDefinition):
+        """ loads the features from a feature class into the object """
+        fs = featureclassToFeatureSet(featureClass)
+        dict_json = json.loads(fs.JSON)
+        return_template = {
+            "layerDefinition": {},
+            "featureSet" : {
+                "features": [],
+                "geometryType": dict_json['geometryType']
+            }
+        }
+        if isinstance(layerDefinition, LayerDefinition):
+            return_template['layerDefinition'] = layerDefinition.asDictionary
+        else:
+            return False, "Invalid layerDefinition"
+        # Ensure some required values are populated
+        return_template['layerDefinition']['geometryType'] = dict_json['geometryType']
+        return_template['layerDefinition']["type"] = "Feature Layer"
+        return_template['layerDefinition']["fields"] = dict_json['fields']
+        return_template["featureSet"]['features'] = dict_json['features']
+        self._layers.append(return_template)
+        return True, "Success"
+    #----------------------------------------------------------------------
+    def removeAllFeatures(self):
+        """ removes all features from object """
+        self._layers = []
+    #----------------------------------------------------------------------
+    def removeSingleLayer(self, index):
+        """ removes a single layer from the layers list """
+        if index <= len(self._layers) - 1:
+            self._layers.remove(self._layers[index])
+            return True
+        return False
+
+
+
+
 ########################################################################
 class AGSFeatureServiceLayer(base.BaseOperationalLayer):
     """
        Represents a AGS Feature Service operational layer
     """
     _url = None
+    _capabilities = None
     _mapId = None
-    _title = None
     _opacity = None
+    _visibility = None
+    _mode = None
+    _title = None
+    _popupInfo = None
     _minScale = None
     _maxScale = None
     _securityHandler = None
-    _layers = None
     #----------------------------------------------------------------------
     def __init__(self, url, mapId,
                  title, opacity=1,
                  minScale=0, maxScale=0,
+                 capabilities="Query",
+                 mode=1,
                  securityHandler=None):
         """Constructor"""
         self._url = url
@@ -206,7 +553,19 @@ class AGSFeatureServiceLayer(base.BaseOperationalLayer):
         self._opacity = opacity
         self._minScale = minScale
         self._maxScale = maxScale
+        self._capabilities = capabilities
+        self._mode = mode
         self._securityHandler = securityHandler
+    #----------------------------------------------------------------------
+    @property
+    def mode(self):
+        """ returns the feature service mode """
+        return self._mode
+    #----------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """ returns the capabilities """
+        return self._capabilities
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -268,9 +627,10 @@ class AGSFeatureServiceLayer(base.BaseOperationalLayer):
     #----------------------------------------------------------------------
     def __str__(self):
         """ string representation of the class """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ dictionary representation of the object """
         value_dict = {
             "id":self._id,
@@ -279,9 +639,12 @@ class AGSFeatureServiceLayer(base.BaseOperationalLayer):
             "minScale":self._minScale,
             "maxScale":self._maxScale,
             "url":self._url,
-            "visibleLayers":None,
-            "layers":self._layers
+            "visible" : self._visibility,
+            "capabilities" : self._capabilities,
+            "mode" : self._mode
         }
+        if self._popupInfo is not None:
+            value_dict['popupInfo'] = self._popupInfo
         if self._securityHandler is not None:
             value_dict['token'] = self._securityHandler.token
         return value_dict
@@ -391,9 +754,10 @@ class AGSMapServiceLayer(base.BaseOperationalLayer):
     #----------------------------------------------------------------------
     def __str__(self):
         """ string representation of the class """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ dictionary representation of the object """
         value_dict = {
             "id":self._id,
@@ -415,11 +779,64 @@ class AGOLLayer(base.BaseOperationalLayer):
     """
        Reprsents a AGOL service operational layer
     """
-
+    _url = None
+    _mapId = None
+    _visibility = None
+    _opacity = None
+    _title = None
+    _itemId = None
+    _securityHandler = None
     #----------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, title, itemId, url,
+                 opacity=1, id=1, visibility=True,
+                 securityHandler=None):
         """Constructor"""
-        pass
+        self._title = title
+        self._itemId = itemId
+        self._url = url
+        self._opacity = opacity
+        self._mapId = id
+        self._visibility = visibility
+        self._securityHandler = None
+    #----------------------------------------------------------------------
+    @property
+    def asDictionary(self):
+        """ returns object as dictionary """
+        template = {
+
+            "id": self._mapId,
+            "visibility": self._visibility,
+            "opacity": self._opacity,
+            "title": self._title,
+            "itemId": self._itemId
+        }
+        if self._securityHandler is not None:
+            template['url'] = self._url + "?token=%s" % self._securityHandler.token
+        else:
+            template['url'] = self._url
+        return template
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns the object as a string """
+        return json.dumps(self.asDictionary)
+    #----------------------------------------------------------------------
+    @property
+    def token(self):
+        """ gets the token for the service """
+        if self._securityHandler is not None:
+            return self._securityHandler.token
+        return None
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ returns the object that controls the security """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """"""
+        if isinstance(value, base.BaseSecurityHandler):
+            self._securityHandler = value
 ########################################################################
 class BaseMapLayer(object):
     """
@@ -524,9 +941,10 @@ class BaseMapLayer(object):
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the basemap layer as a string """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns the object as a dictionary """
         template = {}
         if self._id is not None:
@@ -546,8 +964,7 @@ class BaseMapLayer(object):
         if self._visibility is not None:
             template['visibility'] = self._visibility
         return template
-if __name__ == "__main__":
-    pass
+
 
 
 

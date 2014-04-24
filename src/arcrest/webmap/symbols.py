@@ -16,7 +16,7 @@ class Color(BaseSymbol):
     _blue = None
     _alpha = None
     #----------------------------------------------------------------------
-    def __init__(self, red=0, green=0, blue=0, alpha=255):
+    def __init__(self, red=0, green=0, blue=0, alpha=0):
         """Constructor"""
         self._red = red
         self._green = green
@@ -125,8 +125,9 @@ class SimpleMarkerSymbol(BaseSymbol):
         self._outlineWidth = outlineWidth
     def __str__(self):
         """  returns the object as a string """
-        return json.dumps(self.__dict__())
-    def __dict__(self):
+        return json.dumps(self.asDictionary)
+    @property
+    def asDictionary(self):
         """ returns the object as a dictionary """
         template = {
             "type" : "esriSMS",
@@ -303,9 +304,10 @@ class SimpleLineSymbol(BaseSymbol):
     #----------------------------------------------------------------------
     def __str__(self):
         """ object as string """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ object as dictionary """
         return {
             "type" : "esriSLS",
@@ -344,7 +346,7 @@ class SimpleFillSymbol(BaseSymbol):
             else:
                 self._color = color.asList
         if isinstance(outline, SimpleLineSymbol):
-            self._outline = outline.__dict__()
+            self._outline = outline.asDictionary
         self._style = style
     #----------------------------------------------------------------------
     @property
@@ -385,13 +387,14 @@ class SimpleFillSymbol(BaseSymbol):
     def outline(self, value):
         """ sets the outline """
         if isinstance(value, SimpleLineSymbol):
-            self._outline = value.__dict__()
+            self._outline = value.asDictionary
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns object as dictionary """
         template = {
             "type" : "esriSFS",
@@ -450,9 +453,10 @@ class PictureMarkerSymbol(BaseSymbol):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns the object as a string """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns the object as a dictionary """
         template = {
             "type" : "esriPMS",
@@ -510,7 +514,7 @@ class PictureFillSymbol(BaseSymbol):
         self._yscale = yscale
         if self._outline is not None and \
            self._outline is SimpleLineSymbol:
-            self._outline = outline.__dict__()
+            self._outline = outline.asDictionary
 
     @staticmethod
     def imageTobase64(path):
@@ -528,9 +532,10 @@ class PictureFillSymbol(BaseSymbol):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns the object as a string """
-        return json.dumps(self.__dict__())
+        return json.dumps(self.asDictionary)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns the object as a dictionary """
         template = {
             "type" : "esriPMS",

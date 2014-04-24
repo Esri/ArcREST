@@ -14,6 +14,14 @@ import mimetypes
 import mimetools
 from cStringIO import StringIO
 ########################################################################
+class BaseDomain:
+    """ all domain values inherit this class """
+    pass
+########################################################################
+class BaseDefinition(object):
+    """ class that all definition objects inherit from """
+    pass
+########################################################################
 class BaseSymbol(object):
     """ class that all symbol object inherit from """
     pass

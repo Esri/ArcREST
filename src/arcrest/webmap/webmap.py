@@ -2,7 +2,7 @@
    Core classes contained here to create the webmap data structure
 """
 import json
-from layer import *
+from layers import *
 ########################################################################
 class WebMap(object):
     """"""
@@ -77,10 +77,11 @@ class BaseMap(object):
         }
         return json.dumps(template)
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns the value as a dictionary """
         template = {
                     "title" : self._title,
-                    "baseMapLayers" : [lyr.__dict__() for lyr in self._baseMapLayers]
+                    "baseMapLayers" : [lyr.asDictionary for lyr in self._baseMapLayers]
                 }
         return template

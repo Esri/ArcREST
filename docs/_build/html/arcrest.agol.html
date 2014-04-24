@@ -84,10 +84,39 @@
 <dd><p>Adds a rating to an item between 1.0 and 5.0</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.addWebmap">
+<tt class="descname">addWebmap</tt><big>(</big><em>name</em>, <em>tags</em>, <em>description</em>, <em>snippet</em>, <em>data</em>, <em>extent</em>, <em>agol_type='Web Map'</em>, <em>thumbnail=''</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.addWebmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.addWebmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>loads a file to AGOL</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="arcrest.agol.admin.AGOL.contentRootURL">
 <tt class="descname">contentRootURL</tt><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.contentRootURL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.contentRootURL" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the Portal&#8217;s content root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.createFeatureService">
+<tt class="descname">createFeatureService</tt><big>(</big><em>mxd</em>, <em>title</em>, <em>share_everyone</em>, <em>share_org</em>, <em>share_groups</em>, <em>thumbnail=None</em>, <em>folder_name=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.createFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.createFeatureService" title="Permalink to this definition">¶</a></dt>
+<dd><p>The createFeatureService function publishes a service definition,
+publishes a features service, sets the details, and shares it with
+the organization.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">mxd - the name for the webmap
+title - the tags for the web map
+share_everyone - True/False to share map with everyone
+share_org - True/False to share map with Org
+share_groups - List of groups to share the map with
+thumbnail - optional, full path or absolute path to the image for the webmap</p>
+<blockquote>
+<div>200x133 is the suggested side.</div></blockquote>
+<p class="last">folderName - optional, folder name to store the item in</p>
+</dd>
+<dt>Output:</dt>
+<dd>Dict - results from publishing the feature service</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -159,14 +188,26 @@ will be stored in the Portal.</dd>
 
 <dl class="method">
 <dt id="arcrest.agol.admin.AGOL.deleteItem">
-<tt class="descname">deleteItem</tt><big>(</big><em>item_id</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.deleteItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.deleteItem" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">deleteItem</tt><big>(</big><em>item_id</em>, <em>folder=None</em>, <em>force_delete=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.deleteItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.deleteItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>deletes an agol item by it&#8217;s ID</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcrest.agol.admin.AGOL.delete_items">
-<tt class="descname">delete_items</tt><big>(</big><em>items</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.delete_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.delete_items" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">delete_items</tt><big>(</big><em>items</em>, <em>folder=None</em>, <em>force_delete=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.delete_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.delete_items" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.disableProtect">
+<tt class="descname">disableProtect</tt><big>(</big><em>item_id</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.disableProtect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.disableProtect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disables an items protection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.enableProtect">
+<tt class="descname">enableProtect</tt><big>(</big><em>item_id</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.enableProtect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.enableProtect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables an items protection</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcrest.agol.admin.AGOL.enableSharing">
@@ -187,15 +228,74 @@ will be stored in the Portal.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="arcrest.agol.admin.AGOL.get_folder_ID">
+<tt class="descname">get_folder_ID</tt><big>(</big><em>folder_name</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.get_folder_ID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.get_folder_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function retrieves the folder ID and creates the folder if
+it does not exist</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>folder_name - the name of the folder</dd>
+<dt>Output:</dt>
+<dd>string - ID of folder, none if no foldername is specified</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.get_group_IDs">
+<tt class="descname">get_group_IDs</tt><big>(</big><em>group_names</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.get_group_IDs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.get_group_IDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function retrieves the group IDs</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>group_names - tuple of group names</dd>
+<dt>Output:</dt>
+<dd>dict - list of group IDs</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="arcrest.agol.admin.AGOL.item">
 <tt class="descname">item</tt><big>(</big><em>item_id</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns information about an item on agol/portal</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="arcrest.agol.admin.AGOL.publishWebMap">
+<tt class="descname">publishWebMap</tt><big>(</big><em>name</em>, <em>tags</em>, <em>snippet</em>, <em>description</em>, <em>extent</em>, <em>data</em>, <em>thumbnail</em>, <em>share_everyone</em>, <em>share_org</em>, <em>share_groups</em>, <em>folder_name=None</em>, <em>protected=False</em>, <em>delete_existing=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.publishWebMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.publishWebMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>The publishWebMap function publishes a web map, sets the details,
+and shares it with the organization.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">name - the name for the webmap
+tags - the tags for the web map
+snippet - the breif summary for the webmap
+description - the description for the webmap
+extent - Extent in the following format: &#8220;xmin, ymin, xmax, ymax&#8221;
+data - the json representation of the webmap
+thumbnail - full path or absolute path to the image for the webmap</p>
+<blockquote>
+<div>200x133 is the suggested side.</div></blockquote>
+<dl class="docutils">
+<dt>share_everyone - True/False to share map with everyone</dt>
+<dd>share_org - True/False to share map with Org</dd>
+</dl>
+<p class="last">share_groups - List of groups to share the map with
+folderName - optional folder name to store the item in</p>
+</dd>
+<dt>Output:</dt>
+<dd>Boolean - True if function suceeded</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="arcrest.agol.admin.AGOL.publish_to_agol">
-<tt class="descname">publish_to_agol</tt><big>(</big><em>mxd_path</em>, <em>service_name='None'</em>, <em>tags='None'</em>, <em>description='None'</em>, <em>folder=None</em>, <em>delete_sd=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.publish_to_agol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.publish_to_agol" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">publish_to_agol</tt><big>(</big><em>mxd_path</em>, <em>service_name='None'</em>, <em>tags='None'</em>, <em>description='None'</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.publish_to_agol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.publish_to_agol" title="Permalink to this definition">¶</a></dt>
 <dd><p>publishes a service to AGOL</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.updateThumbnail">
+<tt class="descname">updateThumbnail</tt><big>(</big><em>agol_id</em>, <em>thumbnail</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.updateThumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.updateThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>update an items thumbnail</p>
 </dd></dl>
 
 <dl class="method">
