@@ -40,7 +40,8 @@ class Bookmark(object):
         """ returns string representation of the object """
         return json.dumps(self.__dict__())
     #----------------------------------------------------------------------
-    def __dict__(self):
+    @property
+    def asDictionary(self):
         """ returns a dictionary representation of the object """
         return {"bookmarks" : self._extents}
 
