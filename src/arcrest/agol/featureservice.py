@@ -49,6 +49,7 @@ class FeatureService(BaseAGOLClass):
     _zDefault = None
     _size = None
     _xssPreventionInfo = None
+    _editingInfo = None
     #----------------------------------------------------------------------
     def __init__(self, url,  token_url=None, username=None, password=None,
                  initialize=False):
@@ -80,6 +81,14 @@ class FeatureService(BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented."
+    #----------------------------------------------------------------------
+    @property
+    def editingInfo(self):
+        """  returns the editing information """
+        if self._editingInfo is None:
+            self.__init()
+        return self._editingInfo
+
     #----------------------------------------------------------------------
     @property
     def xssPreventionInfo(self):
