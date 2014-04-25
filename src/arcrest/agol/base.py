@@ -32,6 +32,43 @@ class BaseAGOLClass(object):
     _token = None
     _username = None
     _password = None
+    _org_url ="http://www.arcgis.com"
+    _url = "http://www.arcgis.com/sharing/rest"
+    _surl = "https://www.arcgis.com/sharing/rest"
+    _referer_url = "https://www.arcgis.com"
+
+    def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
+
+        if org_url is not None:
+            if not org_url.startswith('http://') and not org_url.startswith('https://'):
+                org_url = 'http://' + org_url
+            self._org_url = org_url
+
+        if rest_url is not None:
+            self._url = rest_url
+        else:
+            self._url = self._org_url + "/sharing/rest"
+
+        if self._url.startswith('http://'):
+            self._surl = self._url.replace('http://', 'https://')
+        else:
+             self._surl  =  self._url
+
+        if token_url is None:
+            self._token_url = self._surl  + '/generateToken'
+        else:
+            self._token_url = token_url
+
+        if referer_url is None:
+            if not self._org_url.startswith('http://'):
+                self._referer_url = self._org_url.replace('http://', 'https://')
+            else:
+                self._referer_url = self._org_url
+        else:
+            self._referer_url = referer_url
+
+
+
     #----------------------------------------------------------------------
     def _unzip_file(self, zip_file, out_folder):
         """ unzips a file to a given folder """
@@ -65,25 +102,31 @@ class BaseAGOLClass(object):
             writer.write(file_data.read())
         return save_path + os.sep + file_name
     #----------------------------------------------------------------------
-    def generate_token(self, tokenURL=None):
+    def generate_token(self, referer=None, tokenURL=None):
         """ generates a token for a feature service """
-        referer='https://www.arcgis.com'
+        if referer is None:
+            referer=self._referer_url
         if tokenURL is None:
-            tokenUrl  = 'https://arcgis.com/sharing/rest/generateToken'
+            tokenUrl  = self._token_url
+
         query_dict = {'username': self._username,
                       'password': self._password,
                       'expiration': str(60),
                       'referer': referer,
                       'f': 'json'}
         query_string = urllib.urlencode(query_dict)
-        token = json.loads(urllib.urlopen(tokenUrl + "?f=json", query_string).read())
+        result = urllib.urlopen(tokenUrl + "?f=json", query_string).read()
+        try:
+            token = json.loads(result)
+        except:
+            return None
         if "token" not in token:
             self._token = None
             return None
         else:
-            httpPrefix = "http://www.arcgis.com/sharing/rest"
+            httpPrefix = self._url
             if token['ssl'] == True:
-                httpPrefix = "https://www.arcgis.com/sharing/rest"
+                httpPrefix = self._surl
             self._token = token['token']
             return token['token'], httpPrefix
     #----------------------------------------------------------------------

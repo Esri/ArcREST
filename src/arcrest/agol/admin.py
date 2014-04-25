@@ -1085,15 +1085,25 @@ class AGOL(BaseAGOLClass):
     _username = None
     _password = None
     _token = None
+    _org_url ="http://www.arcgis.com"
     _url = "http://www.arcgis.com/sharing/rest"
-    def __init__(self, username, password, token_url=None):
+    _token_url = ""
+
+    def __init__(self, username, password,org_url=None, rest_url=None,token_url=None,referer_url=None):
         """ constructor """
         self._username = username
         self._password = password
-        if token_url is None:
-            self._token = self.generate_token()[0]
-        else:
-            self._token = self.generate_token()[0]
+        self.initURL(org_url, rest_url,token_url,referer_url)
+        self._token = self.generate_token()[0]
+
+##        else:
+##
+##            self._token = self.generate_token(tokenURL=token_url)[0]
+    #----------------------------------------------------------------------
+    @property
+    def orgURL(self):
+        """ returns the Portal's base org url"""
+        return self._org_url
     #----------------------------------------------------------------------
     @property
     def contentRootURL(self):
@@ -1181,7 +1191,8 @@ class AGOL(BaseAGOLClass):
         """ gets a user's content on agol """
         data = {"token": self._token,
                 "f": "json"}
-        url = "http://www.arcgis.com/sharing/content/users/%s" % (self._username,)
+        url = '{}/content/users/{}'.format(self._url,self._username)
+
         if folder:
             url += '/' + folder
         jres = self._do_get(url=url, param_dict=data, header={"Accept-Encoding":""})
@@ -1191,7 +1202,8 @@ class AGOL(BaseAGOLClass):
         """ gets a user's info on agol """
         data = {"token": self._token,
                 "f": "json"}
-        url = "http://www.arcgis.com/sharing/rest/community/users/%s" % (self._username,)
+        url = '{}/content/users/{}'.format(self._url,self._username)
+
         jres = self._do_get(url=url, param_dict=data, header={"Accept-Encoding":""})
         return jres
     #----------------------------------------------------------------------
