@@ -28,14 +28,16 @@ class Geometry(object):
     pass
 ########################################################################
 class BaseAGOLClass(object):
-    _token_url = None
+
     _token = None
     _username = None
     _password = None
+
     _org_url ="http://www.arcgis.com"
     _url = "http://www.arcgis.com/sharing/rest"
     _surl = "https://www.arcgis.com/sharing/rest"
     _referer_url = "https://www.arcgis.com"
+    _tokenurl = 'https://www.arcgis.com/sharing/rest/generateToken'
 
     def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
 
@@ -55,9 +57,9 @@ class BaseAGOLClass(object):
              self._surl  =  self._url
 
         if token_url is None:
-            self._token_url = self._surl  + '/generateToken'
+            self._tokenurl = self._surl  + '/generateToken'
         else:
-            self._token_url = token_url
+            self._tokenurl = token_url
 
         if referer_url is None:
             if not self._org_url.startswith('http://'):
@@ -107,7 +109,7 @@ class BaseAGOLClass(object):
         if referer is None:
             referer=self._referer_url
         if tokenURL is None:
-            tokenUrl  = self._token_url
+            tokenUrl  = self._tokenurl
 
         query_dict = {'username': self._username,
                       'password': self._password,
