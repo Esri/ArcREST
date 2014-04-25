@@ -1610,9 +1610,10 @@ class AGOL(BaseAGOLClass):
         """
         group_ids=[]
         userInfo = self.getUserInfo()
-        for gp in userInfo['groups']:
-            if gp['title'] in group_names:
-                group_ids.append(gp['id'])
+        if 'groups' in userInfo:
+            for gp in userInfo['groups']:
+                if gp['title'] in group_names:
+                    group_ids.append(gp['id'])
         del userInfo
         return group_ids
     #----------------------------------------------------------------------
