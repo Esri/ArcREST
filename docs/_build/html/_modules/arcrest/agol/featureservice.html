@@ -98,6 +98,7 @@
     <span class="n">_zDefault</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_size</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_xssPreventionInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_editingInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>  <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -130,6 +131,14 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
     <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureService.editingInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.editingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">editingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  returns the editing information &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editingInfo</span>
+
+    <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.xssPreventionInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.featureservice.FeatureService.xssPreventionInfo">[docs]</a>    <span class="k">def</span> <span class="nf">xssPreventionInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the xssPreventionInfo information &quot;&quot;&quot;</span>

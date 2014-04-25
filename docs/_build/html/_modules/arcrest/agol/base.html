@@ -77,11 +77,50 @@
     <span class="k">pass</span>
 <span class="c">########################################################################</span></div>
 <div class="viewcode-block" id="BaseAGOLClass"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.BaseAGOLClass">[docs]</a><span class="k">class</span> <span class="nc">BaseAGOLClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="n">_token_url</span> <span class="o">=</span> <span class="bp">None</span>
+
     <span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+
+    <span class="n">_org_url</span> <span class="o">=</span><span class="s">&quot;http://www.arcgis.com&quot;</span>
+    <span class="n">_url</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/rest&quot;</span>
+    <span class="n">_surl</span> <span class="o">=</span> <span class="s">&quot;https://www.arcgis.com/sharing/rest&quot;</span>
+    <span class="n">_referer_url</span> <span class="o">=</span> <span class="s">&quot;https://www.arcgis.com&quot;</span>
+    <span class="n">_tokenurl</span> <span class="o">=</span> <span class="s">&#39;https://www.arcgis.com/sharing/rest/generateToken&#39;</span>
+
+<div class="viewcode-block" id="BaseAGOLClass.initURL"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.BaseAGOLClass.initURL">[docs]</a>    <span class="k">def</span> <span class="nf">initURL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">org_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rest_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">referer_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">org_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">org_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">org_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;https://&#39;</span><span class="p">):</span>
+                <span class="n">org_url</span> <span class="o">=</span> <span class="s">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">org_url</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span> <span class="o">=</span> <span class="n">org_url</span>
+
+        <span class="k">if</span> <span class="n">rest_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">rest_url</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span> <span class="o">+</span> <span class="s">&quot;/sharing/rest&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_surl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">,</span> <span class="s">&#39;https://&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">_surl</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
+
+        <span class="k">if</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tokenurl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surl</span>  <span class="o">+</span> <span class="s">&#39;/generateToken&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tokenurl</span> <span class="o">=</span> <span class="n">token_url</span>
+
+        <span class="k">if</span> <span class="n">referer_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">,</span> <span class="s">&#39;https://&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span> <span class="o">=</span> <span class="n">referer_url</span>
+
+
+
+    <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="k">def</span> <span class="nf">_unzip_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">,</span> <span class="n">out_folder</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; unzips a file to a given folder &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -114,25 +153,31 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">save_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">file_name</span>
     <span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseAGOLClass.generate_token"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.BaseAGOLClass.generate_token">[docs]</a>    <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenURL</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseAGOLClass.generate_token"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.BaseAGOLClass.generate_token">[docs]</a>    <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">referer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tokenURL</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; generates a token for a feature service &quot;&quot;&quot;</span>
-        <span class="n">referer</span><span class="o">=</span><span class="s">&#39;https://www.arcgis.com&#39;</span>
+        <span class="k">if</span> <span class="n">referer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">referer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span>
         <span class="k">if</span> <span class="n">tokenURL</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">tokenUrl</span>  <span class="o">=</span> <span class="s">&#39;https://arcgis.com/sharing/rest/generateToken&#39;</span>
+            <span class="n">tokenUrl</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenurl</span>
+
         <span class="n">query_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
                       <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
                       <span class="s">&#39;expiration&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
                       <span class="s">&#39;referer&#39;</span><span class="p">:</span> <span class="n">referer</span><span class="p">,</span>
                       <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="s">&#39;json&#39;</span><span class="p">}</span>
         <span class="n">query_string</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">query_dict</span><span class="p">)</span>
-        <span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">tokenUrl</span> <span class="o">+</span> <span class="s">&quot;?f=json&quot;</span><span class="p">,</span> <span class="n">query_string</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">tokenUrl</span> <span class="o">+</span> <span class="s">&quot;?f=json&quot;</span><span class="p">,</span> <span class="n">query_string</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s">&quot;token&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">token</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">httpPrefix</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/rest&quot;</span>
+            <span class="n">httpPrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
             <span class="k">if</span> <span class="n">token</span><span class="p">[</span><span class="s">&#39;ssl&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">httpPrefix</span> <span class="o">=</span> <span class="s">&quot;https://www.arcgis.com/sharing/rest&quot;</span>
+                <span class="n">httpPrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_surl</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">token</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">],</span> <span class="n">httpPrefix</span>
     <span class="c">#----------------------------------------------------------------------</span></div>

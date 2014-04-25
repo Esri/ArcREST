@@ -63,7 +63,7 @@
 <span id="arcrest-agol-admin-module"></span><h2>arcrest.agol.admin module<a class="headerlink" href="#module-arcrest.agol.admin" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-admin"></span><dl class="class">
 <dt id="arcrest.agol.admin.AGOL">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AGOL</tt><big>(</big><em>username</em>, <em>password</em>, <em>token_url=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AGOL</tt><big>(</big><em>username</em>, <em>password</em>, <em>org_url=None</em>, <em>rest_url=None</em>, <em>token_url=None</em>, <em>referer_url=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>publishes to AGOL</p>
 <dl class="method">
@@ -256,6 +256,12 @@ it does not exist</p>
 <dt id="arcrest.agol.admin.AGOL.item">
 <tt class="descname">item</tt><big>(</big><em>item_id</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns information about an item on agol/portal</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.admin.AGOL.orgURL">
+<tt class="descname">orgURL</tt><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.orgURL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.orgURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the Portal&#8217;s base org url</p>
 </dd></dl>
 
 <dl class="method">
@@ -978,9 +984,14 @@ that manage the state and contents of the service.</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
 <dt id="arcrest.agol.base.BaseAGOLClass.generate_token">
-<tt class="descname">generate_token</tt><big>(</big><em>tokenURL=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/base.html#BaseAGOLClass.generate_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.base.BaseAGOLClass.generate_token" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">generate_token</tt><big>(</big><em>referer=None</em>, <em>tokenURL=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/base.html#BaseAGOLClass.generate_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.base.BaseAGOLClass.generate_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>generates a token for a feature service</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.base.BaseAGOLClass.initURL">
+<tt class="descname">initURL</tt><big>(</big><em>org_url=None</em>, <em>rest_url=None</em>, <em>token_url=None</em>, <em>referer_url=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/base.html#BaseAGOLClass.initURL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.base.BaseAGOLClass.initURL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="arcrest.agol.base.BaseAGOLClass.password">
@@ -1527,6 +1538,12 @@ json file.</dd>
 <dt id="arcrest.agol.featureservice.FeatureService.documentInfo">
 <tt class="descname">documentInfo</tt><a class="reference internal" href="_modules/arcrest/agol/featureservice.html#FeatureService.documentInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.featureservice.FeatureService.documentInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the document information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.featureservice.FeatureService.editingInfo">
+<tt class="descname">editingInfo</tt><a class="reference internal" href="_modules/arcrest/agol/featureservice.html#FeatureService.editingInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.featureservice.FeatureService.editingInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the editing information</p>
 </dd></dl>
 
 <dl class="attribute">

@@ -1134,16 +1134,26 @@
     <span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_org_url</span> <span class="o">=</span><span class="s">&quot;http://www.arcgis.com&quot;</span>
     <span class="n">_url</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/rest&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">_token_url</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span><span class="n">org_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rest_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">referer_url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; constructor &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
-        <span class="k">if</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initURL</span><span class="p">(</span><span class="n">org_url</span><span class="p">,</span> <span class="n">rest_url</span><span class="p">,</span><span class="n">token_url</span><span class="p">,</span><span class="n">referer_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c">##        else:</span>
+<span class="c">##</span>
+<span class="c">##            self._token = self.generate_token(tokenURL=token_url)[0]</span>
     <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="AGOL.orgURL"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.orgURL">[docs]</a>    <span class="k">def</span> <span class="nf">orgURL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the Portal&#39;s base org url&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="AGOL.contentRootURL"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.contentRootURL">[docs]</a>    <span class="k">def</span> <span class="nf">contentRootURL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Portal&#39;s content root &quot;&quot;&quot;</span>
@@ -1230,7 +1240,8 @@
         <span class="sd">&quot;&quot;&quot; gets a user&#39;s content on agol &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span><span class="p">,</span>
                 <span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/content/users/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;{}/content/users/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">folder</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">+=</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">folder</span>
         <span class="n">jres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;Accept-Encoding&quot;</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">})</span>
@@ -1240,7 +1251,8 @@
         <span class="sd">&quot;&quot;&quot; gets a user&#39;s info on agol &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span><span class="p">,</span>
                 <span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/rest/community/users/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;{}/content/users/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
+
         <span class="n">jres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;Accept-Encoding&quot;</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">jres</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
