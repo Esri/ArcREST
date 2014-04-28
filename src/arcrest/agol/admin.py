@@ -1285,7 +1285,39 @@ class AGOL(BaseAGOLClass):
 
 
     #----------------------------------------------------------------------
+    def updateWebmap(self,  agol_id, data,folder=None):
 
+        """ update an items thumbnail"""
+        update_url = '{}/content/users/{}'.format(self._url,self._username)
+
+        if folder:
+            update_url += '/' + folder
+
+        update_url += '/items/{}/update'.format(agol_id)
+
+        params = {
+            "f" : "json",
+            "text" : json.dumps(data)
+
+        }
+        if self._token is not None:
+            params['token'] = self._token
+
+        parsed = urlparse.urlparse(update_url)
+
+        files = []
+
+        res = self._post_multipart(host=parsed.hostname,
+                                   selector=parsed.path,
+                                   fields=params,
+                                   files=files,
+                                   ssl=parsed.scheme.lower() == 'https')
+        res = self._unicode_convert(json.loads(res))
+        return self._tostr(res)
+
+
+
+    #----------------------------------------------------------------------
     def enableProtect(self, item_id,folder=None):
         """Enables an items protection  """
 
@@ -1566,7 +1598,7 @@ class AGOL(BaseAGOLClass):
               share_groups - List of groups to share the map with
               folderName - optional folder name to store the item in
            Output:
-              Boolean - True if function suceeded
+              WebMapID - returns the webmap id if created or updated
         """
         if os.path.isfile(thumbnail):
             if not os.path.isabs(thumbnail):
@@ -1578,24 +1610,32 @@ class AGOL(BaseAGOLClass):
             items = [name]
             self.delete_items(items,folderID,force_delete=delete_existing)
 
-        webmapInfo = self.addWebmap(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID)
-
-        item_id = ''
-        service_url = ''
-        if 'error' in webmapInfo:
-            raise ValueError(str(webmapInfo))
 
 
-        item_id = webmapInfo['id']
-        if protected:
-            self.enableProtect(item_id,folderID)
-        group_ids = self.get_group_IDs(share_groups)
+        item_id = self.get_item_ID(item_name=name,folder=folderID)
+        if item_id is not None:
+            webmapInfo = self.updateWebmap(agol_id=item_id,data=data,folder=folderID)
+            if 'error' in webmapInfo:
+                raise ValueError(str(webmapInfo))
+        else:
+            webmapInfo = self.addWebmap(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID)
+            if 'error' in webmapInfo:
+                raise ValueError(str(webmapInfo))
+
+            item_id = webmapInfo['id']
+            if protected:
+                self.enableProtect(item_id,folderID)
+
+            group_ids = self.get_group_IDs(share_groups)
 
 
-        result= self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
-        if 'error' in result:
-            raise ValueError(str(result))
-        return True
+            result= self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
+            if 'error' in result:
+                raise ValueError(str(result))
+
+
+
+        return item_id
 
      #----------------------------------------------------------------------
     def get_group_IDs(self, group_names):
@@ -1610,9 +1650,10 @@ class AGOL(BaseAGOLClass):
         """
         group_ids=[]
         userInfo = self.getUserInfo()
-        for gp in userInfo['groups']:
-            if gp['title'] in group_names:
-                group_ids.append(gp['id'])
+        if 'groups' in userInfo:
+            for gp in userInfo['groups']:
+                if gp['title'] in group_names:
+                    group_ids.append(gp['id'])
         del userInfo
         return group_ids
     #----------------------------------------------------------------------
@@ -1646,6 +1687,29 @@ class AGOL(BaseAGOLClass):
 
         else:
             return None
+    #----------------------------------------------------------------------
+    def get_item_ID(self, item_name,folder=None):
+        """
+           This function retrieves the item ID if the item exist
+
+           Inputs:
+              item_name - the name of the item
+
+           Output:
+              string - ID of item, none if item does not exist
+        """
+        itemID = None
+        if not item_name == None and not item_name == '':
+            userContent = self.getUserContent(folder=folder)
+            items = userContent['items']
+            for item in items:
+                if item['title'] == item_name:
+                    itemID = item['id']
+                    break
+            del items
+            del item
+
+        return itemID
     #----------------------------------------------------------------------
     def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,thumbnail=None,folder_name=None):
         """
