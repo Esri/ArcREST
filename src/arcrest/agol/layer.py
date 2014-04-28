@@ -72,6 +72,7 @@ class FeatureLayer(BaseAGOLClass):
     _hasStaticData = None
     _supportsRollbackOnFailureParameter = None
     _advancedQueryCapabilities = None
+    _editingInfo = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  username=None,
@@ -111,12 +112,19 @@ class FeatureLayer(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implmented in Feature Layer."
         self._parentLayer = featureservice.FeatureService(
             url=os.path.dirname(self._url),
             token_url=self._token_url,
             username=self._username,
             password=self._password)
+    #----------------------------------------------------------------------
+    @property
+    def editingInfo(self):
+        """ returns the edit information """
+        if self._editingInfo is None:
+            self.__init()
+        return self._editingInfo
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
