@@ -253,6 +253,18 @@ it does not exist</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="arcrest.agol.admin.AGOL.get_item_ID">
+<tt class="descname">get_item_ID</tt><big>(</big><em>item_name</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.get_item_ID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.get_item_ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function retrieves the item ID if the item exist</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>item_name - the name of the item</dd>
+<dt>Output:</dt>
+<dd>string - ID of item, none if item does not exist</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="arcrest.agol.admin.AGOL.item">
 <tt class="descname">item</tt><big>(</big><em>item_id</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns information about an item on agol/portal</p>
@@ -288,7 +300,7 @@ thumbnail - full path or absolute path to the image for the webmap</p>
 folderName - optional folder name to store the item in</p>
 </dd>
 <dt>Output:</dt>
-<dd>Boolean - True if function suceeded</dd>
+<dd>WebMapID - returns the webmap id if created or updated</dd>
 </dl>
 </dd></dl>
 
@@ -308,6 +320,12 @@ folderName - optional folder name to store the item in</p>
 <dt id="arcrest.agol.admin.AGOL.updateTitle">
 <tt class="descname">updateTitle</tt><big>(</big><em>agol_id</em>, <em>title</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.updateTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.updateTitle" title="Permalink to this definition">¶</a></dt>
 <dd><p>changes an items title</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.agol.admin.AGOL.updateWebmap">
+<tt class="descname">updateWebmap</tt><big>(</big><em>agol_id</em>, <em>data</em>, <em>folder=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL.updateWebmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL.updateWebmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>update an items thumbnail</p>
 </dd></dl>
 
 </dd></dl>
@@ -2103,6 +2121,12 @@ edits succeed. The default value is true.</dd>
 <dt id="arcrest.agol.layer.FeatureLayer.drawingInfo">
 <tt class="descname">drawingInfo</tt><a class="reference internal" href="_modules/arcrest/agol/layer.html#FeatureLayer.drawingInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.FeatureLayer.drawingInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the symbol information about the layer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.layer.FeatureLayer.editingInfo">
+<tt class="descname">editingInfo</tt><a class="reference internal" href="_modules/arcrest/agol/layer.html#FeatureLayer.editingInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.FeatureLayer.editingInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the edit information</p>
 </dd></dl>
 
 <dl class="attribute">

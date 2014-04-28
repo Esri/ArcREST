@@ -121,6 +121,7 @@
     <span class="n">_hasStaticData</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_supportsRollbackOnFailureParameter</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_advancedQueryCapabilities</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_editingInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -160,13 +161,20 @@
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented.&quot;</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented in Feature Layer.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parentLayer</span> <span class="o">=</span> <span class="n">featureservice</span><span class="o">.</span><span class="n">FeatureService</span><span class="p">(</span>
             <span class="n">url</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">),</span>
             <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
             <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
             <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FeatureLayer.editingInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.editingInfo">[docs]</a>    <span class="k">def</span> <span class="nf">editingInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the edit information &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editingInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editingInfo</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureLayer.advancedQueryCapabilities"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.advancedQueryCapabilities">[docs]</a>    <span class="k">def</span> <span class="nf">advancedQueryCapabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the advanced query capabilities &quot;&quot;&quot;</span>
