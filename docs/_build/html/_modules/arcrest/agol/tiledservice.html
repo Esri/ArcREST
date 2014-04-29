@@ -63,7 +63,7 @@
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
-
+<span class="kn">import</span> <span class="nn">common</span>
 <span class="c">########################################################################</span>
 <div class="viewcode-block" id="TiledService"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.tiledservice.TiledService">[docs]</a><span class="k">class</span> <span class="nc">TiledService</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -127,7 +127,26 @@
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s">&quot;_</span><span class="si">%s</span><span class="s"> = None&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="c">#k, &quot; - attribute not implmented in tiled service.&quot;</span>
+                <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented in tiled service.&quot;</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns object as string &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                          <span class="n">default</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">_date_handler</span><span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; iterator generator for public values/properties</span>
+<span class="sd">            It only returns the properties that are public.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">,</span>
+                                                           <span class="n">types</span><span class="o">.</span><span class="n">BuiltinFunctionType</span><span class="p">,</span>
+                                                           <span class="n">types</span><span class="o">.</span><span class="n">BuiltinMethodType</span><span class="p">))</span>
+                      <span class="p">]</span>
+        <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">att</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">att</span><span class="p">))</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="TiledService.initialExtent"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.tiledservice.TiledService.initialExtent">[docs]</a>    <span class="k">def</span> <span class="nf">initialExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
