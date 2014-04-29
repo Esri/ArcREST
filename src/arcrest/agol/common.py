@@ -7,7 +7,7 @@
 
 
 """
-
+import types
 import os
 import copy
 import json
@@ -351,7 +351,11 @@ class Point(Geometry):
             self._z = float(z)
         if not m is None:
             self._m = m
-
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns the object as a string """
+        return json.dumps(self.asDictionary,
+                          default=_date_handler)
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -382,18 +386,15 @@ class Point(Geometry):
     def asDictionary(self):
         """ returns the object as a python dictionary """
         #
-        value = self._dict
-        if value is None:
-            template = {"x" : self._x,
-                        "y" : self._y,
-                        "spatialReference" : {"wkid" : self._wkid}
-                        }
-            if not self._z is None:
-                template['z'] = self._z
-            if not self._m is None:
-                template['z'] = self._m
-            self._dict = template
-        return self._dict
+        template = {"x" : self._x,
+                    "y" : self._y,
+                    "spatialReference" : {"wkid" : self._wkid}
+                    }
+        if not self._z is None:
+            template['z'] = self._z
+        if not self._m is None:
+            template['z'] = self._m
+        return template
     #----------------------------------------------------------------------
     @property
     def asList(self):
@@ -404,6 +405,59 @@ class Point(Geometry):
         elif not self._m is None:
             base.append(self._m)
         return base
+    #----------------------------------------------------------------------
+    @property
+    def X(self):
+        """ gets the X coordinate """
+        return self._x
+    #----------------------------------------------------------------------
+    @X.setter
+    def X(self, value):
+        """sets the X coordinate"""
+        if isinstance(value, (int, float,
+                              long, types.NoneType)):
+            self._x = value
+    #----------------------------------------------------------------------
+    @property
+    def Y(self):
+        """ gets the Y Coordinate """
+        return self._y
+    #----------------------------------------------------------------------
+    @Y.setter
+    def Y(self, value):
+        """ sets the Y coordinate """
+        if isinstance(value, (int, float,
+                              long, types.NoneType)):
+            self._y = value
+    #----------------------------------------------------------------------
+    @property
+    def Z(self):
+        """ gets the Z Coordinate """
+        return self._z
+    #----------------------------------------------------------------------
+    @Z.setter
+    def Z(self, value):
+        """ sets the Z coordinate """
+        if isinstance(value, (int, float,
+                              long, types.NoneType)):
+            self._z = value
+    #----------------------------------------------------------------------
+    @property
+    def wkid(self):
+        """ gets the wkid """
+        return self._wkid
+    #----------------------------------------------------------------------
+    @wkid.setter
+    def wkid(self, value):
+        """ sets the wkid """
+        if isinstance(value, (int,
+                              long)):
+            self._wkid = value
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """ gets the spatialReference """
+        return {"wkid" : self._wkid}
 
 ########################################################################
 class MultiPoint(Geometry):
