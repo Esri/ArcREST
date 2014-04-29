@@ -14,7 +14,7 @@ import urlparse
 import urllib
 import os
 import json
-
+import common
 ########################################################################
 class TiledService(BaseAGOLClass):
     """
@@ -78,7 +78,26 @@ class TiledService(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print "_%s = None" % k#k, " - attribute not implmented in tiled service."
+                print k, " - attribute not implmented in tiled service."
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(dict(self),
+                          default=common._date_handler)
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """ iterator generator for public values/properties
+            It only returns the properties that are public.
+        """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_') and \
+                      not isinstance(getattr(self, attr), (types.MethodType,
+                                                           types.BuiltinFunctionType,
+                                                           types.BuiltinMethodType))
+                      ]
+        for att in attributes:
+            yield (att, getattr(self, att))
     #----------------------------------------------------------------------
     @property
     def initialExtent(self):

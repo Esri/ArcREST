@@ -8,10 +8,10 @@
 
 
 """
-
+import types
 from base import BaseAGOLClass
 import layer as servicelayers
-from common import SpatialReference
+import common
 from filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 from base import Geometry
 import urlparse
@@ -81,6 +81,25 @@ class FeatureService(BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented in Feature Service."
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(dict(self),
+                          default=common._date_handler)
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """ iterator generator for public values/properties
+            It only returns the properties that are public.
+        """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_') and \
+                      not isinstance(getattr(self, attr), (types.MethodType,
+                                                           types.BuiltinFunctionType,
+                                                           types.BuiltinMethodType))
+                      ]
+        for att in attributes:
+            yield (att, getattr(self, att))
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):
@@ -345,7 +364,7 @@ class FeatureService(BaseAGOLClass):
             params['geometry'] = gf['geometry']
             params['inSR'] = gf['inSR']
         if not outSR is None and \
-           isinstance(outSR, SpatialReference):
+           isinstance(outSR, common.SpatialReference):
             params['outSR'] = outSR.asDictionary
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):

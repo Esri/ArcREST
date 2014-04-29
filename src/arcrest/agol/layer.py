@@ -9,7 +9,7 @@
 
 """
 
-
+import types
 import common
 import filters
 import featureservice
@@ -118,6 +118,24 @@ class FeatureLayer(BaseAGOLClass):
             token_url=self._token_url,
             username=self._username,
             password=self._password)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(dict(self), default=common._date_handler)
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """ iterator generator for public values/properties
+            It only returns the properties that are public.
+        """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_') and \
+                      not isinstance(getattr(self, attr), (types.MethodType,
+                                                           types.BuiltinFunctionType,
+                                                           types.BuiltinMethodType))
+                      ]
+        for att in attributes:
+            yield (att, getattr(self, att))
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):

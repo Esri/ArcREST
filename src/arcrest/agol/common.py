@@ -17,11 +17,16 @@ import datetime
 import calendar
 import time
 from time import gmtime, strftime,mktime
-
+import featureservice
+import layer
 #----------------------------------------------------------------------
 def _date_handler(obj):
     if isinstance(obj, datetime.datetime):
         return local_time_to_online(obj)
+    elif isinstance(obj, (featureservice.FeatureService,
+                          layer.FeatureLayer,
+                          layer.TableLayer)):
+        return dict(obj)
     else:
         return obj
 def relative_path_to_absolute(path):
