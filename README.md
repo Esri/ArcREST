@@ -1,6 +1,6 @@
 # ArcREST
  
-A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) and ArcGIS Online (AGOL).  
+A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.  
 
 This is not a full implementation of the Esri REST API.  Please feel free to contribute.
 
