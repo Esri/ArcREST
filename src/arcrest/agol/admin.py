@@ -1300,7 +1300,10 @@ class AGOL(BaseAGOLClass):
                                    selector=parsed.path,
                                    files = files,
                                    fields=params,
-                                   ssl=parsed.scheme.lower() == 'https')
+                                   port=parsed.port,
+                                   ssl=parsed.scheme.lower() == 'https',
+                                   proxy_port=self._proxy_port,
+                                   proxy_url=self._proxy_url)
         res = self._unicode_convert(json.loads(res))
         return res
 
@@ -1346,7 +1349,10 @@ class AGOL(BaseAGOLClass):
                                    selector=parsed.path,
                                    fields=params,
                                    files=files,
-                                   ssl=parsed.scheme.lower() == 'https')
+                                   ssl=parsed.scheme.lower() == 'https',
+                                   proxy_port=self._proxy_port,
+                                   proxy_url=self._proxy_url,
+                                   port=parsed.host)
         res = self._unicode_convert(json.loads(res))
         return res
 
@@ -1378,7 +1384,10 @@ class AGOL(BaseAGOLClass):
                                    selector=parsed.path,
                                    fields=params,
                                    files=files,
-                                   ssl=parsed.scheme.lower() == 'https')
+                                   port=parsed.host,
+                                   ssl=parsed.scheme.lower() == 'https',
+                                   proxy_port=self._proxy_port,
+                                   proxy_url=self._proxy_url)
         res = self._unicode_convert(json.loads(res))
         return self._tostr(res)
 
@@ -1554,10 +1563,13 @@ class AGOL(BaseAGOLClass):
         files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
 
         res = self._post_multipart(host=parsed.hostname,
+                                   port=parsed.port,
                                    selector=parsed.path,
                                    fields=params,
                                    files=files,
-                                   ssl=parsed.scheme.lower() == 'https')
+                                   ssl=parsed.scheme.lower() == 'https',
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
         res = self._unicode_convert(json.loads(res))
         return self._tostr(res)
 
@@ -1954,10 +1966,13 @@ class AGOL(BaseAGOLClass):
             files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
 
             return self._post_multipart(host=parsed.hostname,
+                                        port=parsed.port,
                                         selector=parsed.path,
                                         fields=params,
                                         files=files,
-                                        ssl=parsed.scheme.lower() == 'https')
+                                        ssl=parsed.scheme.lower() == 'https',
+                                        proxy_port=self._proxy_port,
+                                        proxy_url=self._proxy_url)
 
         else:
             return self._do_post(url=uURL, param_dict=params, proxy_port=self._proxy_port,

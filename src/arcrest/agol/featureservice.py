@@ -603,4 +603,3 @@ class FeatureService(BaseAGOLClass):
                 return res
 
         return "Not Supported"
-
