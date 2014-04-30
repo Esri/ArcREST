@@ -468,14 +468,14 @@ class FeatureLayer(BaseAGOLClass):
             if not self._token is None:
                 params['token'] = self._token
             parsed = urlparse.urlparse(attachURL)
-            port = parsed.port
+
             files = []
             files.append(('attachment', file_path, os.path.basename(file_path)))
             res = self._post_multipart(host=parsed.hostname,
                                        selector=parsed.path,
                                        files=files,
                                        fields=params,
-                                       port=port,
+                                       port=parsed.port,
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
