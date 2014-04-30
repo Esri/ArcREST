@@ -191,7 +191,7 @@ class BaseAGOLClass(object):
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector, fields, files, ssl=False,proxy_url=None,proxy_port=None):
+    def _post_multipart(self, host, selector, fields, files, ssl=False,port=80,proxy_url=None,proxy_port=None):
         """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
@@ -234,10 +234,10 @@ class BaseAGOLClass(object):
                 h.request('POST', 'http://' + host + selector, body, headers)
         else:
             if ssl:
-                h = httplib.HTTPSConnection(host)
+                h = httplib.HTTPSConnection(host,port)
                 h.request('POST', selector, body, headers)
             else:
-                h = httplib.HTTPConnection(host)
+                h = httplib.HTTPConnection(host,port)
                 h.request('POST', selector, body, headers)
 
         return h.getresponse().read()
