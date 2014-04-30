@@ -190,7 +190,7 @@ class BaseAGOLClass(object):
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector, fields, files, ssl=False,port=None):
+    def _post_multipart(self, host, selector, fields, files, ssl=False,proxy_url=None,proxy_port=None):
         """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
@@ -200,7 +200,9 @@ class BaseAGOLClass(object):
                fields - dictionary - additional parameters like token and format information
                files - tuple array- tuple with the file name type, filename, full path
                ssl - option to use SSL
-               port - interger - port value if not on port 80
+               proxy_url - string - url to proxy server
+               proxy_port - interger - port value if not on port 80
+
             Output:
                JSON response as dictionary
             Useage:
@@ -219,12 +221,24 @@ class BaseAGOLClass(object):
         'User-Agent': "ArcREST",
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary
         }
-        if ssl:
-            h = httplib.HTTPSConnection(host, port=port)
-            h.request('POST', selector, body, headers)
+
+
+
+        if proxy_url:
+            if ssl:
+                h = httplib.HTTPSConnection(proxy_url, proxy_port)
+                h.request('POST', 'https://' + host + selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(proxy_url, proxy_port)
+                h.request('POST', 'http://' + host + selector, body, headers)
         else:
-            h = httplib.HTTPConnection(host, port=port)
-            h.request('POST', selector, body, headers)
+            if ssl:
+                h = httplib.HTTPSConnection(host)
+                h.request('POST', selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(host)
+                h.request('POST', selector, body, headers)
+
         return h.getresponse().read()
     #----------------------------------------------------------------------
     def _encode_multipart_formdata(self, fields, files):
