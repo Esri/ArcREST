@@ -73,23 +73,32 @@ class FeatureLayer(BaseAGOLClass):
     _supportsRollbackOnFailureParameter = None
     _advancedQueryCapabilities = None
     _editingInfo = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  username=None,
                  password=None,
                  token_url=None,
-                 initialize=False):
+                 initialize=False,
+                 proxy_url=None,
+                 proxy_port=None):
         """Constructor"""
         self._url = url
         self._token_url = token_url
         self._username = username
         self._password = password
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         if not username is None and\
            not password is None:
             if not token_url is None:
-                self._token = self.generate_token(tokenURL=token_url)[0]
+                self._token = self.generate_token(tokenURL=token_url,
+                                                  proxy_port=proxy_port,
+                                                  proxy_url=proxy_url)[0]
             else:
-                res = self.generate_token()
+                res = self.generate_token(proxy_port=proxy_port,
+                                          proxy_url=proxy_url)
                 if res == None:
                     raise ValueError("Unable to get token")
                 else:
@@ -104,7 +113,9 @@ class FeatureLayer(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params,
+                                 proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -485,7 +496,8 @@ class FeatureLayer(BaseAGOLClass):
         }
         if not self._token is None:
             params['token'] = self._token
-        return self._do_post(url, params)
+        return self._do_post(url, params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def updateAttachment(self, oid, attachment_id, file_path):
         """ updates an existing attachment with a new file
@@ -523,7 +535,8 @@ class FeatureLayer(BaseAGOLClass):
         }
         if not self._token is None:
             params['token'] = self._token
-        return self._do_get(url, params)
+        return self._do_get(url, params, proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def create_fc_template(self, out_path, out_name):
         """creates a featureclass template on local disk"""
@@ -609,7 +622,8 @@ class FeatureLayer(BaseAGOLClass):
             params['spatialRelationship'] = gf['spatialRel']
             params['inSR'] = gf['inSR']
         fURL = self._url + "/query"
-        results = self._do_get(fURL, params)
+        results = self._do_get(fURL, params, proxy_port=proxy_port,
+                               proxy_url=proxy_url)
         if not returnCountOnly and not returnIDsOnly:
             if returnFeatureClass:
                 json_text = json.dumps(results)
@@ -718,7 +732,9 @@ class FeatureLayer(BaseAGOLClass):
         if geometryPrecision is not None:
             params['geometryPrecision'] = geometryPrecision
         quURL = self._url + "/queryRelatedRecords"
-        res = self._do_get(url=quURL, param_dict=params)
+        res = self._do_get(url=quURL, param_dict=params,
+                           proxy_port=proxy_port,
+                           proxy_url=proxy_url)
         return res
     #----------------------------------------------------------------------
     def getHTMLPopup(self, oid):
@@ -737,7 +753,8 @@ class FeatureLayer(BaseAGOLClass):
             }
             if self._token is not None:
                 params['token'] = self._token
-            return self._do_get(url=popURL, param_dict=params)
+            return self._do_get(url=popURL, param_dict=params, proxy_port=proxy_port,
+                                proxy_url=proxy_url)
         return ""
     #----------------------------------------------------------------------
     def _chunks(self, l, n):
@@ -831,7 +848,8 @@ class FeatureLayer(BaseAGOLClass):
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
         res = self._do_post(url=updateURL,
-                            param_dict=params)
+                            param_dict=params, proxy_port=proxy_port,
+                            proxy_url=proxy_url)
         return res
     #----------------------------------------------------------------------
     def deleteFeatures(self,
@@ -882,7 +900,8 @@ class FeatureLayer(BaseAGOLClass):
             params['objectIds'] = objectIds
         if not self._token is None:
             params['token'] = self._token
-        result = self._do_post(url=dURL, param_dict=params)
+        result = self._do_post(url=dURL, param_dict=params, proxy_port=proxy_port,
+                               proxy_url=proxy_url)
         self.__init()
         return result
     #----------------------------------------------------------------------
@@ -930,7 +949,8 @@ class FeatureLayer(BaseAGOLClass):
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
-        return self._do_post(url=editURL, param_dict=params)
+        return self._do_post(url=editURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def addFeature(self, features,
                    gdbVersion=None,
@@ -970,7 +990,8 @@ class FeatureLayer(BaseAGOLClass):
         else:
             return None
         return self._do_post(url=url,
-                             param_dict=params)
+                             param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def addFeatures(self, fc, attachmentTable=None,
                     nameField="ATT_NAME", blobField="DATA",
@@ -1012,7 +1033,8 @@ class FeatureLayer(BaseAGOLClass):
                 }
                 if not self._token is None:
                     params['token'] = self._token
-                result = self._do_post(url=uURL, param_dict=params)
+                result = self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                                       proxy_url=proxy_url)
                 messages.append(result)
                 del params
                 del result

@@ -50,17 +50,23 @@ class FeatureService(BaseAGOLClass):
     _size = None
     _xssPreventionInfo = None
     _editingInfo = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
     def __init__(self, url,  token_url=None, username=None, password=None,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         if not username is None and \
            not password is None:
-            self._token = self.generate_token(tokenURL=token_url)[0]
+            self._token = self.generate_token(tokenURL=token_url,
+                                              proxy_port=proxy_port,
+                                              proxy_url=proxy_url)[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -72,7 +78,8 @@ class FeatureService(BaseAGOLClass):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict,
+                                 proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -236,7 +243,9 @@ class FeatureService(BaseAGOLClass):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
         self._layers = []
         if json_dict.has_key("layers"):
             for l in json_dict["layers"]:
@@ -255,7 +264,8 @@ class FeatureService(BaseAGOLClass):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict,
+                                 proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         self._tables = []
         if json_dict.has_key("tables"):
             for l in json_dict["tables"]:
@@ -369,7 +379,7 @@ class FeatureService(BaseAGOLClass):
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
-        return self._do_get(url=qurl, param_dict=params)
+        return self._do_get(url=qurl, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def query_related_records(self,
                               objectIds,
@@ -458,7 +468,7 @@ class FeatureService(BaseAGOLClass):
         if geometryPrecision is not None:
             params['geometryPrecision'] = geometryPrecision
         quURL = self._url + "/queryRelatedRecords"
-        res = self._do_get(url=quURL, param_dict=params)
+        res = self._do_get(url=quURL, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         return res
     #----------------------------------------------------------------------
     @property
@@ -471,7 +481,8 @@ class FeatureService(BaseAGOLClass):
         if not self._token is None:
             params["token"] = self._token
         url = self._url + "/replicas"
-        return self._do_get(url, params)
+        return self._do_get(url, params,
+                            proxy_url=self._proxy_url, proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def unRegisterReplica(self, replica_id):
         """
@@ -487,7 +498,9 @@ class FeatureService(BaseAGOLClass):
         if not self._token is None:
             params["token"] = self._token
         url = self._url + "/unRegisterReplica"
-        return self._do_post(url, params)
+        return self._do_post(url, params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def replicaInfo(self, replica_id):
         """
@@ -503,7 +516,9 @@ class FeatureService(BaseAGOLClass):
         if not self._token is None:
             params["token"] = self._token
         url = self._url + "/replicas/%s" + replica_id
-        return self._do_get(url, param_dict=params)
+        return self._do_get(url, param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def createReplica(self,
                       replicaName,
@@ -569,7 +584,9 @@ class FeatureService(BaseAGOLClass):
                     os.makedirs(out_path)
                 params['dataFormat'] = "filegdb"
                 params['syncModel'] = 'none'
-                res = self._do_post(url=url, param_dict=params)
+                res = self._do_post(url=url, param_dict=params,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
                 if res.has_key("responseUrl"):
                     zipURL = res["responseUrl"]
                     dl_file = self._download_file(url=zipURL,
@@ -582,7 +599,7 @@ class FeatureService(BaseAGOLClass):
                 else:
                     return None
             else:
-                res = self._do_post(url=url, param_dict=params)
+                res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
                 return res
 
         return "Not Supported"

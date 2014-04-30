@@ -42,24 +42,32 @@ class Admin(BaseAGOLClass):
     _currentVersion = None
     _resources = None
     _serverType = None
-
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
     def __init__(self, url,
              username=None,
              password=None,
              token_url=None,
-             initialize=False):
+             initialize=False,
+             proxy_url=None,
+             proxy_port=None):
         """Constructor"""
         self._url = url
         self._token_url = token_url
         self._username = username
         self._password = password
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         if not username is None and\
            not password is None:
             if not token_url is None:
-                self._token = self.generate_token(tokenURL=token_url)[0]
+                self._token = self.generate_token(tokenURL=token_url,
+                                                  proxy_port=proxy_port,
+                                                  proxy_url=proxy_url)[0]
             else:
-                self._token = self.generate_token()[0]
+                self._token = self.generate_token(proxy_port=proxy_port,
+                                                  proxy_url=proxy_url)[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -71,7 +79,9 @@ class Admin(BaseAGOLClass):
         if self._token is not None:
             params['token'] = self._token
         header= {"Referer" : "www.arcgis.com"}
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params,
+                                 proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -111,7 +121,9 @@ class Admin(BaseAGOLClass):
             "token" : self._token
         }
         uURL = self._url + "/services"
-        res = self._do_get(url=uURL, param_dict=params)
+        res = self._do_get(url=uURL, param_dict=params,
+                           proxy_port=proxy_port,
+                           proxy_url=proxy_url)
 
         for k, v in res.iteritems():
             if k == "services":
@@ -168,7 +180,8 @@ class AdminMapService(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params, proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -186,7 +199,9 @@ class AdminMapService(BaseAGOLClass):
             "token" : self._token,
             "f" : "json"
         }
-        return self._do_get(url=uURL, param_dict=params)
+        return self._do_get(url=uURL, param_dict=params,
+                            proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -195,10 +210,9 @@ class AdminMapService(BaseAGOLClass):
             "token" : self._token
         }
         uURL = self._url + "/refresh"
-        return self._do_get(url=uURL, param_dict=params)
-
-
-
+        return self._do_get(url=uURL, param_dict=params,
+                            proxy_port=proxy_port,
+                            proxy_url=proxy_url)
 ########################################################################
 class AdminFeatureService(BaseAGOLClass):
     """
@@ -270,7 +284,9 @@ class AdminFeatureService(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params,
+                                 proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
         self._dict = json_dict
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
@@ -299,7 +315,9 @@ class AdminFeatureService(BaseAGOLClass):
             "token" : self._token,
             "f" : "json"
         }
-        return self._do_get(url=uURL, param_dict=params)
+        return self._do_get(url=uURL, param_dict=params,
+                            proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -308,7 +326,8 @@ class AdminFeatureService(BaseAGOLClass):
             "token" : self._token
         }
         uURL = self._url + "/refresh"
-        return self._do_get(url=uURL, param_dict=params)
+        return self._do_get(url=uURL, param_dict=params, proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     @property
     def xssPreventionInfo(self):
@@ -497,7 +516,8 @@ class AdminFeatureService(BaseAGOLClass):
             "async" : False
         }
         uURL = self._url + "/addToDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def updateDefinition(self, json_dict):
         """
@@ -521,7 +541,8 @@ class AdminFeatureService(BaseAGOLClass):
             "async" : False
         }
         uURL = self._url + "/updateDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def deleteFromDefinition(self, json_dict):
         """
@@ -550,7 +571,8 @@ class AdminFeatureService(BaseAGOLClass):
             "async" : False
         }
         uURL = self._url + "/deleteFromDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
 ########################################################################
 class AdminFeatureServiceLayer(BaseAGOLClass):
     """
@@ -675,7 +697,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params, proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -692,7 +715,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             "token" : self._token
         }
         uURL = self._url + "/refresh"
-        return self._do_get(url=uURL, param_dict=params)
+        return self._do_get(url=uURL, param_dict=params, proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     @property
     def editFieldsInfo(self):
@@ -1025,7 +1049,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             #"async" : False
         }
         uURL = self._url + "/addToDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def updateDefinition(self, json_dict):
         """
@@ -1049,7 +1074,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             "async" : False
         }
         uURL = self._url + "/updateDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def deleteFromDefinition(self, json_dict):
         """
@@ -1078,7 +1104,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             #"async" : False
         }
         uURL = self._url + "/deleteFromDefinition"
-        return self._do_post(url=uURL, param_dict=params)
+        return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
 ########################################################################
 class AGOL(BaseAGOLClass):
     """ publishes to AGOL """
@@ -1118,7 +1145,8 @@ class AGOL(BaseAGOLClass):
             "comment" : comment,
             "token" : self._token
         }
-        return self._do_post(url, params)
+        return self._do_post(url, params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def addRating(self, item_id, rating=5.0):
         """Adds a rating to an item between 1.0 and 5.0"""
@@ -1132,7 +1160,8 @@ class AGOL(BaseAGOLClass):
             "token" : self._token,
             "rating" : "%s" % rating
         }
-        return self._do_post(url, params)
+        return self._do_post(url, params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def createFolder(self, folder_name):
         """ creats a folder for a user's agol account """
@@ -1142,7 +1171,8 @@ class AGOL(BaseAGOLClass):
             "token" : self._token,
             "title" : folder_name
         }
-        return self._do_post(url, params)
+        return self._do_post(url, params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def deleteFolder(self, item_id):
         """ deletes a user's folder """
@@ -1151,7 +1181,8 @@ class AGOL(BaseAGOLClass):
             "f" : "json",
             "token" : self._token
         }
-        return self._do_post(url, params)
+        return self._do_post(url, params, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def item(self, item_id):
         """ returns information about an item on agol/portal """
@@ -1160,7 +1191,8 @@ class AGOL(BaseAGOLClass):
             "token" : self._token
         }
         url = self.contentRootURL + "/items/%s" % item_id
-        return self._do_get(url, params)
+        return self._do_get(url, params, proxy_port=proxy_port,
+                            proxy_url=proxy_url)
     #----------------------------------------------------------------------
     def _prep_mxd(self, mxd):
         """ ensures the requires mxd properties are set to something """
@@ -1195,7 +1227,11 @@ class AGOL(BaseAGOLClass):
 
         if folder:
             url += '/' + folder
-        jres = self._do_get(url=url, param_dict=data, header={"Accept-Encoding":""})
+        jres = self._do_get(url=url,
+                            param_dict=data,
+                            header={"Accept-Encoding":""},
+                            proxy_port=proxy_port,
+                            proxy_url=proxy_url)
         return jres
     #----------------------------------------------------------------------
     def getUserInfo(self):
@@ -1204,7 +1240,10 @@ class AGOL(BaseAGOLClass):
                 "f": "json"}
         url = '{}/content/users/{}'.format(self._url,self._username)
 
-        jres = self._do_get(url=url, param_dict=data, header={"Accept-Encoding":""})
+        jres = self._do_get(url=url, param_dict=data,
+                            header={"Accept-Encoding":""},
+                            proxy_port=proxy_port,
+                            proxy_url=proxy_url)
         return jres
     #----------------------------------------------------------------------
     def addFile(self, file_path, agol_type, name, tags, description,folder=None):
@@ -1328,7 +1367,8 @@ class AGOL(BaseAGOLClass):
         url += '/items/{}/protect'.format(item_id)
         query_dict = {'f': 'json',
                       'token': self._token}
-        jres = self._do_post(url, query_dict)
+        jres = self._do_post(url, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
         return jres
     #----------------------------------------------------------------------
 
@@ -1342,7 +1382,8 @@ class AGOL(BaseAGOLClass):
         url += '/items/{}/unprotect'.format(item_id)
         query_dict = {'f': 'json',
                       'token': self._token}
-        jres = self._do_post(url, query_dict)
+        jres = self._do_post(url, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
         return jres
 
     #----------------------------------------------------------------------
@@ -1356,7 +1397,8 @@ class AGOL(BaseAGOLClass):
         deleteURL += '/items/{}/delete'.format(item_id)
         query_dict = {'f': 'json',
                       'token': self._token}
-        jres = self._do_post(deleteURL, query_dict)
+        jres = self._do_post(deleteURL, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
         if 'error' in jres:
             if force_delete:
                 dis_res = self.disableProtect(item_id,folder)
@@ -1443,7 +1485,8 @@ class AGOL(BaseAGOLClass):
                       'org' : orgs,
                       'groups' : groups,
                       'token': self._token}
-        vals = self._do_post(share_url, query_dict)
+        vals = self._do_post(share_url, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
         return self._tostr(vals)
     #----------------------------------------------------------------------
     def updateTitle(self, agol_id, title,folder=None):
@@ -1458,7 +1501,8 @@ class AGOL(BaseAGOLClass):
         query_dict = {'f': 'json',
                       'title' : title,
                       'token': self._token}
-        vals = self._do_post(update_url, query_dict)
+        vals = self._do_post(update_url, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
         return self._tostr(vals)
     #----------------------------------------------------------------------
     def updateThumbnail(self, agol_id, thumbnail,folder=None):
@@ -1785,7 +1829,8 @@ class AGOL(BaseAGOLClass):
                       'token': self._token
                       }
 
-        return self._do_post(publishURL, query_dict)
+        return self._do_post(publishURL, query_dict, proxy_port=proxy_port,
+                             proxy_url=proxy_url)
     #----------------------------------------------------------------------
 ##    def searchGroups(self,q=None, start='1',num=1000,sortField='',
 ##               sortOrder='asc'):
@@ -1887,7 +1932,8 @@ class AGOL(BaseAGOLClass):
                                         ssl=parsed.scheme.lower() == 'https')
 
         else:
-            return self._do_post(url=uURL, param_dict=params)
+            return self._do_post(url=uURL, param_dict=params, proxy_port=proxy_port,
+                                 proxy_url=proxy_url)
 
 
 
