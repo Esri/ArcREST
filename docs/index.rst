@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to src's documentation!
+Welcome to ArcREST's documentation!
 ===============================
 
 Contents:
@@ -12,7 +12,6 @@ Contents:
    :maxdepth: 4
 
    arcrest
-   setup
 
 
 Indices and tables
