@@ -38,7 +38,8 @@ class BaseAGOLClass(object):
     _surl = "https://www.arcgis.com/sharing/rest"
     _referer_url = "https://www.arcgis.com"
     _tokenurl = 'https://www.arcgis.com/sharing/rest/generateToken'
-
+    _proxy_url = None
+    _proxy_port = None
     def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
 
         if org_url is not None:

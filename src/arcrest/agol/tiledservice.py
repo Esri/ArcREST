@@ -50,15 +50,20 @@ class TiledService(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init__(self, url,  token_url=None,
                  username=None, password=None,
-                 initialize=False):
+                 initialize=False,
+                 proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         if not username is None and \
            not password is None:
-            self.generate_token(tokenURL=token_url)
+            self.generate_token(tokenURL=token_url,
+                                proxy_port=self._proxy_port,
+                                proxy_url=self._proxy_url)
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -70,7 +75,7 @@ class TiledService(BaseAGOLClass):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
