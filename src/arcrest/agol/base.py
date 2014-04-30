@@ -54,7 +54,7 @@ class BaseAGOLClass(object):
         if self._url.startswith('http://'):
             self._surl = self._url.replace('http://', 'https://')
         else:
-             self._surl  =  self._url
+            self._surl  =  self._url
 
         if token_url is None:
             self._tokenurl = self._surl  + '/generateToken'
@@ -97,14 +97,23 @@ class BaseAGOLClass(object):
         files.sort()
         return files
     #----------------------------------------------------------------------
-    def _download_file(self, url, save_path, file_name):
+    def _download_file(self, url, save_path, file_name, proxy_url=None, proxy_port=None):
         """ downloads a file """
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         file_data = urllib2.urlopen(url)
         with open(save_path + os.sep + file_name, 'wb') as writer:
             writer.write(file_data.read())
         return save_path + os.sep + file_name
     #----------------------------------------------------------------------
-    def generate_token(self, referer=None, tokenURL=None):
+    def generate_token(self, referer=None, tokenURL=None,
+                       proxy_url=None, proxy_port=None):
         """ generates a token for a feature service """
         if referer is None:
             referer=self._referer_url
@@ -116,12 +125,10 @@ class BaseAGOLClass(object):
                       'expiration': str(60),
                       'referer': referer,
                       'f': 'json'}
-        query_string = urllib.urlencode(query_dict)
-        result = urllib.urlopen(tokenUrl + "?f=json", query_string).read()
-        try:
-            token = json.loads(result)
-        except:
-            return None
+        token = self._do_post(url=tokenUrl,
+                              param_dict=query_dict,
+                              proxy_url=proxy_url,
+                              proxy_port=proxy_port)
         if "token" not in token:
             self._token = None
             return None
@@ -152,16 +159,32 @@ class BaseAGOLClass(object):
         """ sets the username's password """
         self._password = value
     #----------------------------------------------------------------------
-    def _do_post(self, url, param_dict):
+    def _do_post(self, url, param_dict, proxy_url=None, proxy_port=None):
         """ performs the POST operation and returns dictionary result """
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _do_get(self, url, param_dict, header={}):
+    def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None):
         """ performs a get operation """
         url = url + "?%s" % urllib.urlencode(param_dict)
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support)#, urllib2.HTTPHandler(debuglevel=1)
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, headers=header)
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
