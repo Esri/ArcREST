@@ -133,7 +133,9 @@ class Admin(BaseAGOLClass):
                                                                         item['adminServiceInfo']['type']),
                                             username=self._username,
                                             password=self._password,
-                                            token_url=self._token_url)
+                                            token_url=self._token_url,
+                                            proxy_url=self._proxy_url,
+                                            proxy_port=self._proxy_port)
                                             )
         return self._services
 ########################################################################

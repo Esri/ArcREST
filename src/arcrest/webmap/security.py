@@ -1,6 +1,4 @@
 import base
-import json
-import urllib
 import datetime
 ########################################################################
 class OAuthSecurityHandler(base.BaseSecurityHandler):
@@ -9,6 +7,8 @@ class OAuthSecurityHandler(base.BaseSecurityHandler):
           client_id - OAuth client key
           secret_id - OAuth secret key
           token_url - optional - url to where the token is obtained
+          proxy_url - optional - proxy url as a string
+          proxy_port - optional - proxy port as integer
        Output:
           OAuthSecurityHandler Class Object
     """
@@ -20,12 +20,38 @@ class OAuthSecurityHandler(base.BaseSecurityHandler):
     _token_created_on = None
     _token_expires_on = None
     _expires_in = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
-    def __init__(self, client_id, secret_id, token_url=None):
+    def __init__(self, client_id, secret_id, token_url=None,
+                 proxy_url=None, proxy_port=None):
         """Constructor"""
         self._client_id = client_id
         self._secret_id = secret_id
         self._token_url = token_url
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+    #----------------------------------------------------------------------
+    @property
+    def proxy_url(self):
+        """gets the proxy url"""
+        return self._proxy_url
+    #----------------------------------------------------------------------
+    @proxy_url.setter
+    def proxy_url(self, value):
+        """ sets the proxy_url """
+        self._proxy_url = value
+    #----------------------------------------------------------------------
+    @property
+    def proxy_port(self):
+        """ gets the proxy port """
+        return self._proxy_port
+    #----------------------------------------------------------------------
+    @proxy_port.setter
+    def proxy_port(self, value):
+        """ sets the proxy port """
+        if isinstance(value, int):
+            self._proxy_port = value
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -97,7 +123,8 @@ class OAuthSecurityHandler(base.BaseSecurityHandler):
             "grant_type":grant_type,
             "f" : "json"
         }
-        token = self._do_get(url=token_url, param_dict=params)
+        token = self._do_get(url=token_url, param_dict=params,
+                             proxy_port=self._proxy_port, proxy_url=self._proxy_url)
 
         if 'access_token' in token:
             self._token = token['access_token']
@@ -111,7 +138,16 @@ class OAuthSecurityHandler(base.BaseSecurityHandler):
             self._token_expires_on = None
 ########################################################################
 class AGOLTokenSecurityHandler(base.BaseSecurityHandler):
-    """"""
+    """ handles ArcGIS Online Token Base Security
+        username - required - username to access AGOL services
+        password - required - password for username above
+        token_url - optional - if URL is different than default AGOL token
+                    url, then enter it here for AGOL token service.
+        proxy_url - optional - if proxy is required to access internet, the
+                    IP goes here.
+        proxy_post - optional - if proxy is used and it's not port 90 enter
+                     it here.
+    """
     _token = None
     _username = None
     _password = None
@@ -120,12 +156,38 @@ class AGOLTokenSecurityHandler(base.BaseSecurityHandler):
     _token_created_on = None
     _token_expires_on = None
     _expires_in = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
-    def __init__(self, username, password, token_url=None):
+    def __init__(self, username, password, token_url=None,
+                 proxy_url=None, proxy_port=None):
         """Constructor"""
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+    #----------------------------------------------------------------------
+    @property
+    def proxy_url(self):
+        """gets the proxy url"""
+        return self._proxy_url
+    #----------------------------------------------------------------------
+    @proxy_url.setter
+    def proxy_url(self, value):
+        """ sets the proxy_url """
+        self._proxy_url = value
+    #----------------------------------------------------------------------
+    @property
+    def proxy_port(self):
+        """ gets the proxy port """
+        return self._proxy_port
+    #----------------------------------------------------------------------
+    @proxy_port.setter
+    def proxy_port(self, value):
+        """ sets the proxy port """
+        if isinstance(value, int):
+            self._proxy_port = value
     #----------------------------------------------------------------------
     @property
     def username(self):
@@ -203,7 +265,8 @@ class AGOLTokenSecurityHandler(base.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL, param_dict=query_dict)
+        token = self._do_post(url=tokenURL, param_dict=query_dict,
+                              proxy_port=self._proxy_port, proxy_url=self._proxy_url)
         if "token" not in token:
             self._token = None
             self._token_created_on = None
@@ -225,7 +288,13 @@ class AGOLTokenSecurityHandler(base.BaseSecurityHandler):
             return token['token'], httpPrefix
 ########################################################################
 class AGSTokenSecurityHandler(base.BaseSecurityHandler):
-    """"""
+    """ handles ArcGIS Server Security
+        username - required - person accessing server
+        password - required - login credential
+        token_url - required - URL to generate a token on server
+        proxy_url - optional - IP of proxy
+        proxy_port - optional - port of the proxy server
+    """
     _token = None
     _username = None
     _password = None
@@ -233,12 +302,39 @@ class AGSTokenSecurityHandler(base.BaseSecurityHandler):
     _token_created_on = None
     _token_expires_on = None
     _expires_in = None
+    _proxy_url = None
+    _proxy_port = None
+    _default_token_url = None
     #----------------------------------------------------------------------
-    def __init__(self, username, password, token_url):
+    def __init__(self, username, password, token_url,
+                 proxy_url=None, proxy_port=None):
         """Constructor"""
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+    #----------------------------------------------------------------------
+    @property
+    def proxy_url(self):
+        """gets the proxy url"""
+        return self._proxy_url
+    #----------------------------------------------------------------------
+    @proxy_url.setter
+    def proxy_url(self, value):
+        """ sets the proxy_url """
+        self._proxy_url = value
+    #----------------------------------------------------------------------
+    @property
+    def proxy_port(self):
+        """ gets the proxy port """
+        return self._proxy_port
+    #----------------------------------------------------------------------
+    @proxy_port.setter
+    def proxy_port(self, value):
+        """ sets the proxy port """
+        if isinstance(value, int):
+            self._proxy_port = value
     #----------------------------------------------------------------------
     @property
     def username(self):
@@ -265,8 +361,6 @@ class AGSTokenSecurityHandler(base.BaseSecurityHandler):
     @property
     def token_url(self):
         """ returns the token url """
-        if self._token_url is None:
-            return self._default_token_url
         return self._token_url
     #----------------------------------------------------------------------
     @token_url.setter
@@ -305,7 +399,8 @@ class AGSTokenSecurityHandler(base.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL, param_dict=query_dict)
+        token = self._do_post(url=tokenURL, param_dict=query_dict,
+                              proxy_port=self._proxy_port, proxy_url=self._proxy_url)
         if "token" not in token:
             self._token = None
             self._token_created_on = None

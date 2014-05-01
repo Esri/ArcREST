@@ -45,22 +45,40 @@ class BaseWebOperations(object):
             writer.write(file_data.read())
         return save_path + os.sep + file_name
     #----------------------------------------------------------------------
-    def _do_post(self, url, param_dict):
+    def _do_post(self, url, param_dict, proxy_url=None, proxy_port=None):
         """ performs the POST operation and returns dictionary result """
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _do_get(self, url, param_dict, header={}):
+    def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None):
         """ performs a get operation """
         url = url + "?%s" % urllib.urlencode(param_dict)
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support)
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, headers=header)
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector, fields, files, ssl=False,port=None):
+    def _post_multipart(self, host, selector, fields, files,
+                        ssl=False,port=80,
+                        proxy_url=None, proxy_port=None):
         """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
@@ -70,7 +88,9 @@ class BaseWebOperations(object):
                fields - dictionary - additional parameters like token and format information
                files - tuple array- tuple with the file name type, filename, full path
                ssl - option to use SSL
-               port - interger - port value if not on port 80
+               proxy_url - string - url to proxy server
+               proxy_port - interger - port value if not on port 80
+
             Output:
                JSON response as dictionary
             Useage:
@@ -89,12 +109,20 @@ class BaseWebOperations(object):
         'User-Agent': "ArcREST",
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary
         }
-        if ssl:
-            h = httplib.HTTPSConnection(host, port=port)
-            h.request('POST', selector, body, headers)
+        if proxy_url:
+            if ssl:
+                h = httplib.HTTPSConnection(proxy_url, proxy_port)
+                h.request('POST', 'https://' + host + selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(proxy_url, proxy_port)
+                h.request('POST', 'http://' + host + selector, body, headers)
         else:
-            h = httplib.HTTPConnection(host, port=port)
-            h.request('POST', selector, body, headers)
+            if ssl:
+                h = httplib.HTTPSConnection(host,port)
+                h.request('POST', selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(host,port)
+                h.request('POST', selector, body, headers)
         return h.getresponse().read()
     #----------------------------------------------------------------------
     def _encode_multipart_formdata(self, fields, files):
@@ -128,6 +156,7 @@ class BaseWebOperations(object):
             fileExtension.lower() == ".sd":
             mntype = "File/sd"
         elif mntype is None:
+            #mntype = 'application/octet-stream'
             mntype= "File/%s" % fileExtension.replace('.', '')
         return mntype
     #----------------------------------------------------------------------
@@ -138,14 +167,13 @@ class BaseWebOperations(object):
         if not obj:
             return ''
         if isinstance(obj, list):
-            return ', '.join(map(_tostr, obj))
+            return ', '.join(map(self._tostr, obj))
         return str(obj)
     #----------------------------------------------------------------------
     def _unicode_convert(self, obj):
         """ converts unicode to anscii """
         if isinstance(obj, dict):
-            return {self._unicode_convert(key): self._unicode_convert(value)\
-                    for key, value in obj.iteritems()}
+            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.iteritems()}
         elif isinstance(obj, list):
             return [self._unicode_convert(element) for element in obj]
         elif isinstance(obj, unicode):
