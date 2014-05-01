@@ -122,23 +122,32 @@
     <span class="n">_supportsRollbackOnFailureParameter</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_advancedQueryCapabilities</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_editingInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
            <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
+                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">()</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unable to get token&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -153,7 +162,9 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+                                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                       <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
                       <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
@@ -506,15 +517,17 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
             <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">attachURL</span><span class="p">)</span>
-            <span class="n">port</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">port</span>
+
             <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">)))</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_multipart</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
                                        <span class="n">selector</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
                                        <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
                                        <span class="n">fields</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                                       <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-                                       <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">)</span>
+                                       <span class="n">port</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                                       <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">,</span>
+                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                                       <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s">&quot;Attachments are not supported for this feature service.&quot;</span>
@@ -534,7 +547,8 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.updateAttachment"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.updateAttachment">[docs]</a>    <span class="k">def</span> <span class="nf">updateAttachment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oid</span><span class="p">,</span> <span class="n">attachment_id</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; updates an existing attachment with a new file</span>
@@ -561,7 +575,9 @@
                                    <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
                                    <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
                                    <span class="n">fields</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                                   <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">)</span>
+                                   <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">,</span>
+                                   <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                   <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.listAttachments"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.listAttachments">[docs]</a>    <span class="k">def</span> <span class="nf">listAttachments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oid</span><span class="p">):</span>
@@ -572,7 +588,8 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.create_fc_template"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.create_fc_template">[docs]</a>    <span class="k">def</span> <span class="nf">create_fc_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">out_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;creates a featureclass template on local disk&quot;&quot;&quot;</span>
@@ -658,7 +675,8 @@
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;spatialRelationship&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;spatialRel&#39;</span><span class="p">]</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;inSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;inSR&#39;</span><span class="p">]</span>
         <span class="n">fURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/query&quot;</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">fURL</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">fURL</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                               <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">returnCountOnly</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">returnIDsOnly</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">returnFeatureClass</span><span class="p">:</span>
                 <span class="n">json_text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
@@ -767,7 +785,9 @@
         <span class="k">if</span> <span class="n">geometryPrecision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometryPrecision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometryPrecision</span>
         <span class="n">quURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/queryRelatedRecords&quot;</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">quURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">quURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                           <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.getHTMLPopup"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.getHTMLPopup">[docs]</a>    <span class="k">def</span> <span class="nf">getHTMLPopup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oid</span><span class="p">):</span>
@@ -786,7 +806,8 @@
             <span class="p">}</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">popURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">popURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="s">&quot;&quot;</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="k">def</span> <span class="nf">_chunks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
@@ -880,7 +901,8 @@
             <span class="k">return</span> <span class="p">{</span><span class="s">&#39;message&#39;</span> <span class="p">:</span> <span class="s">&quot;invalid inputs&quot;</span><span class="p">}</span>
         <span class="n">updateURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/updateFeatures&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">updateURL</span><span class="p">,</span>
-                            <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                            <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.deleteFeatures"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.deleteFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">deleteFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -931,7 +953,8 @@
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;objectIds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">objectIds</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">dURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">dURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                               <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
@@ -979,7 +1002,8 @@
         <span class="k">if</span> <span class="n">deleteFeatures</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="nb">isinstance</span><span class="p">(</span><span class="n">deleteFeatures</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">params</span><span class="p">[</span><span class="s">&#39;deletes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deleteFeatures</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">editURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">editURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.addFeature"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.addFeature">[docs]</a>    <span class="k">def</span> <span class="nf">addFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span>
                    <span class="n">gdbVersion</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -1019,7 +1043,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="FeatureLayer.addFeatures"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.layer.FeatureLayer.addFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">addFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">attachmentTable</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                     <span class="n">nameField</span><span class="o">=</span><span class="s">&quot;ATT_NAME&quot;</span><span class="p">,</span> <span class="n">blobField</span><span class="o">=</span><span class="s">&quot;DATA&quot;</span><span class="p">,</span>
@@ -1061,7 +1086,8 @@
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">uURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">uURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                 <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">params</span>
                 <span class="k">del</span> <span class="n">result</span>

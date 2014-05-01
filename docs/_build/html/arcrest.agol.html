@@ -63,7 +63,7 @@
 <span id="arcrest-agol-admin-module"></span><h2>arcrest.agol.admin module<a class="headerlink" href="#module-arcrest.agol.admin" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-admin"></span><dl class="class">
 <dt id="arcrest.agol.admin.AGOL">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AGOL</tt><big>(</big><em>username</em>, <em>password</em>, <em>org_url=None</em>, <em>rest_url=None</em>, <em>token_url=None</em>, <em>referer_url=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AGOL</tt><big>(</big><em>username</em>, <em>password</em>, <em>org_url=None</em>, <em>rest_url=None</em>, <em>token_url=None</em>, <em>referer_url=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AGOL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AGOL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>publishes to AGOL</p>
 <dl class="method">
@@ -332,7 +332,7 @@ folderName - optional folder name to store the item in</p>
 
 <dl class="class">
 <dt id="arcrest.agol.admin.Admin">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">Admin</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#Admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.Admin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">Admin</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#Admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.Admin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>The administration resource is the root node and initial entry point
 into a Spatial Data Server adminstrative interface. This resource
@@ -370,7 +370,7 @@ previous release.</p>
 
 <dl class="class">
 <dt id="arcrest.agol.admin.AdminFeatureService">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminFeatureService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminFeatureService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminFeatureService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminFeatureService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>A feature service can contain datasets (e.g. tables, views) with and
 without a spatial column.  Datasets with a spatial column are
@@ -604,7 +604,7 @@ individual feature service layer object.</dd>
 
 <dl class="class">
 <dt id="arcrest.agol.admin.AdminFeatureServiceLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminFeatureServiceLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminFeatureServiceLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminFeatureServiceLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminFeatureServiceLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminFeatureServiceLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminFeatureServiceLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>The layer resource represents a single feature layer or a non
 spatial table in a feature service.  A feature layer is a table or
@@ -965,7 +965,7 @@ individual feature service layer object.</dd>
 
 <dl class="class">
 <dt id="arcrest.agol.admin.AdminMapService">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminMapService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminMapService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminMapService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.admin.</tt><tt class="descname">AdminMapService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/admin.html#AdminMapService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.admin.AdminMapService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>A map service offer access to map and layer content.</p>
 <p>The REST API administrative map service resource represents a map
@@ -1002,7 +1002,7 @@ that manage the state and contents of the service.</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="method">
 <dt id="arcrest.agol.base.BaseAGOLClass.generate_token">
-<tt class="descname">generate_token</tt><big>(</big><em>referer=None</em>, <em>tokenURL=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/base.html#BaseAGOLClass.generate_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.base.BaseAGOLClass.generate_token" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">generate_token</tt><big>(</big><em>referer=None</em>, <em>tokenURL=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/base.html#BaseAGOLClass.generate_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.base.BaseAGOLClass.generate_token" title="Permalink to this definition">¶</a></dt>
 <dd><p>generates a token for a feature service</p>
 </dd></dl>
 
@@ -1495,7 +1495,7 @@ timeFormat - output date/time format</div></blockquote>
 <span id="arcrest-agol-featureservice-module"></span><h2>arcrest.agol.featureservice module<a class="headerlink" href="#module-arcrest.agol.featureservice" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-featureservice"></span><dl class="class">
 <dt id="arcrest.agol.featureservice.FeatureService">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.featureservice.</tt><tt class="descname">FeatureService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/featureservice.html#FeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.featureservice.FeatureService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.featureservice.</tt><tt class="descname">FeatureService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/featureservice.html#FeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.featureservice.FeatureService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>contains information about a feature service</p>
 <dl class="attribute">
@@ -1922,7 +1922,7 @@ service will always be honored.</p>
 <span id="arcrest-agol-layer-module"></span><h2>arcrest.agol.layer module<a class="headerlink" href="#module-arcrest.agol.layer" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-layer"></span><dl class="class">
 <dt id="arcrest.agol.layer.FeatureLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.layer.</tt><tt class="descname">FeatureLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/layer.html#FeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.FeatureLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.layer.</tt><tt class="descname">FeatureLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/layer.html#FeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.FeatureLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>This contains information about a feature service&#8217;s layer.</p>
 <dl class="method">
@@ -2527,7 +2527,7 @@ Input:</p>
 
 <dl class="class">
 <dt id="arcrest.agol.layer.TableLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.layer.</tt><tt class="descname">TableLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/layer.html#TableLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.TableLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.layer.</tt><tt class="descname">TableLayer</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/layer.html#TableLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.layer.TableLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.layer.FeatureLayer" title="arcrest.agol.layer.FeatureLayer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.layer.FeatureLayer</span></tt></a></p>
 <p>Table object is exactly like FeatureLayer object</p>
 </dd></dl>
@@ -2537,7 +2537,7 @@ Input:</p>
 <span id="arcrest-agol-tiledservice-module"></span><h2>arcrest.agol.tiledservice module<a class="headerlink" href="#module-arcrest.agol.tiledservice" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-admin"></span><dl class="class">
 <dt id="arcrest.agol.tiledservice.TiledService">
-<em class="property">class </em><tt class="descclassname">arcrest.agol.tiledservice.</tt><tt class="descname">TiledService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/tiledservice.html#TiledService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.agol.tiledservice.</tt><tt class="descname">TiledService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/agol/tiledservice.html#TiledService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.agol.base.BaseAGOLClass" title="arcrest.agol.base.BaseAGOLClass"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.agol.base.BaseAGOLClass</span></tt></a></p>
 <p>AGOL Tiled Map Service</p>
 <dl class="attribute">
