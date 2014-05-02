@@ -18,8 +18,11 @@ class ArcGISServerSite(BaseAGSServer):
     _currentVersion = None
     _resources = None
     _fullVersion = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -27,6 +30,8 @@ class ArcGISServerSite(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -58,7 +63,9 @@ class ArcGISServerSite(BaseAGSServer):
         return Log(url=self._url + "/logs",
                    token_url=self._token_url,
                    username=self._username,
-                   password=self._password)
+                   password=self._password,
+                   proxy_port=self._proxy_port,
+                   proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     @property
     def services(self):
@@ -66,7 +73,9 @@ class ArcGISServerSite(BaseAGSServer):
         return Services(url=self._url + "/services",
                         token_url=self._token_url,
                         username=self._username,
-                        password=self._password)
+                        password=self._password,
+                        proxy_port=self._proxy_port,
+                        proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     @property
     def security(self):
@@ -74,7 +83,9 @@ class ArcGISServerSite(BaseAGSServer):
         return Security(url=self._url + "/security",
                         token_url=self._token_url,
                         username=self._username,
-                        password=self._password)
+                        password=self._password,
+                        proxy_port=self._proxy_port,
+                        proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     @property
     def info(self):
@@ -82,7 +93,9 @@ class ArcGISServerSite(BaseAGSServer):
         return Info(url=self._url + "/info",
                     token_url=self._token_url,
                     username=self._username,
-                    password=self._password)
+                    password=self._password,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
     def kml(self):
@@ -91,7 +104,9 @@ class ArcGISServerSite(BaseAGSServer):
                    token_url=self._token_url,
                    username=self._username,
                    password=self._password,
-                   initialize=False)
+                   initialize=False,
+                   proxy_port=self._proxy_port,
+                   proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     @property
     def data(self):
@@ -99,7 +114,9 @@ class ArcGISServerSite(BaseAGSServer):
         return Data(url=self._url + "/data",
                     token_url=self._token_url,
                     username=self._username,
-                    password=self._password)
+                    password=self._password,
+                    proxy_port=self._proxy_port,
+                    proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     @property
     def acceptLanguage(self):
@@ -135,7 +152,9 @@ class ArcGISServerSite(BaseAGSServer):
                         token_url=self._token_url,
                         username=self._username,
                         password=self._password,
-                        initialize=False)
+                        initialize=False,
+                        proxy_port=self._proxy_port,
+                        proxy_url=self._proxy_url)
 
     @property
     def clusters(self):
@@ -172,8 +191,11 @@ class Security(BaseAGSServer):
     _password = None
     _token_url = None
     _resources = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -181,6 +203,8 @@ class Security(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -660,8 +684,11 @@ class Services(BaseAGSServer):
     _description = None
     _isDefault = None
     _services = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -669,6 +696,8 @@ class Services(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._currentURL = url
         self._token_url = token_url
@@ -776,7 +805,9 @@ class Services(BaseAGSServer):
                                                                  s['type']),
                                token_url=self._token_url,
                                username=self._username,
-                               password=self._password)
+                               password=self._password,
+                               proxy_url=self._proxy_url,
+                               proxy_port=self._proxy_port)
                 )
         return self._services
     #----------------------------------------------------------------------
@@ -1003,8 +1034,11 @@ class Info(BaseAGSServer):
     _currentBuild = None
     _currentversion = None
     _fullVersion = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -1012,6 +1046,8 @@ class Info(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -1101,8 +1137,11 @@ class Log(BaseAGSServer):
     _token_url = None
     _operations = None
     _resources = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -1110,6 +1149,8 @@ class Log(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -1296,6 +1337,8 @@ class Log(BaseAGSServer):
 ########################################################################
 class AGSService(BaseAGSServer):
     """ Defines a AGS Admin Service """
+    _proxy_port = None
+    _proxy_url = None
     _username = None
     _password = None
     _token = None
@@ -1326,14 +1369,19 @@ class AGSService(BaseAGSServer):
     _keepAliveInterval = None
     _maxInstancesPerNode = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url, username, password):
+    def __init__(self, url, token_url, username, password,
+                 proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
                token_url - url to generate token
                username - admin username
                password - admin password
+               proxy_url - url of proxy
+               proxy_port - port value of proxy
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._currentURL = url
         self._token_url = token_url
@@ -1581,9 +1629,11 @@ class Machines(BaseAGSServer):
        need them.
     """
     _machines = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
     def __init__(self, url, token_url, username, password,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -1591,6 +1641,8 @@ class Machines(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -1618,7 +1670,9 @@ class Machines(BaseAGSServer):
                         Machine(url=self._url +"/%s" % m['machineName'],
                                 token_url=self._token_url,
                                 username=self._username,
-                                password=self._password)
+                                password=self._password,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
                     )
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
@@ -1718,9 +1772,11 @@ class Machine(BaseAGSServer):
     _synchronize = None
     _configuredState = None
     _ports = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
     def __init__(self, url, token_url, username, password,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -1728,6 +1784,8 @@ class Machine(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._currentURL = url
         self._token_url = token_url
@@ -1900,10 +1958,11 @@ class Data(BaseAGSServer):
        specific data item. This operation helps you determine if a
        particular data item can be safely deleted or refreshed.
     """
-
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
     def __init__(self, url, token_url, username, password,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -1911,6 +1970,8 @@ class Data(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -2074,9 +2135,11 @@ class KML(BaseAGSServer):
        server.
     """
     _items = None
+    _proxy_port = None
+    _proxy_url = None
     #----------------------------------------------------------------------
     def __init__(self, url, token_url, username, password,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor
             Inputs:
                url - admin url
@@ -2084,6 +2147,8 @@ class KML(BaseAGSServer):
                username - admin username
                password - admin password
         """
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         self._url = url
         self._token_url = token_url
         self._username = username
@@ -2131,6 +2196,4 @@ class KML(BaseAGSServer):
         if self._items is None:
             self.__init()
         return self._items
-
-
 

@@ -25,6 +25,29 @@ class BaseAGSServer(object):
     _token = None
     _url = None
     _token_url = None
+    _proxy_url = None
+    _proxy_port = None
+    #----------------------------------------------------------------------
+    @property
+    def proxy_port(self):
+        """gets the proxy port"""
+        return self._proxy_port
+    #----------------------------------------------------------------------
+    @property
+    def proxy_url(self):
+        """ gets the proxy URL """
+        return self._proxy_url
+    #----------------------------------------------------------------------
+    @proxy_url.setter
+    def proxy_url(self, value):
+        """ sets the proxy url """
+        self._proxy_url = value
+    #----------------------------------------------------------------------
+    @proxy_port.setter
+    def proxy_port(self, value):
+        """ sets the proxy port """
+        if isinstance(value, int):
+            self._proxy_port = value
     @property
     def url(self):
         return self._url
@@ -64,6 +87,16 @@ class BaseAGSServer(object):
     #----------------------------------------------------------------------
     def _download_file(self, url, save_path, file_name):
         """ downloads a file """
+        proxy_url = self._proxy_url
+        proxy_port = self._proxy_port
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         file_data = urllib2.urlopen(url)
         with open(save_path + os.sep + file_name, 'wb') as writer:
             writer.write(file_data.read())
@@ -71,6 +104,16 @@ class BaseAGSServer(object):
     #----------------------------------------------------------------------
     def _do_post(self, url, param_dict):
         """ performs the POST operation and returns dictionary result """
+        proxy_url = self._proxy_url
+        proxy_port = self._proxy_port
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
@@ -78,28 +121,33 @@ class BaseAGSServer(object):
     #----------------------------------------------------------------------
     def _do_get(self, url, param_dict, header={}):
         """ performs a get operation """
+        proxy_url = self._proxy_url
+        proxy_port = self._proxy_port
         url = url + "?%s" % urllib.urlencode(param_dict)
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support)
+            urllib2.install_opener(opener)
         request = urllib2.Request(url, headers=header)
         result = urllib2.urlopen(request).read()
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _post_multipart(self, host, selector,
-                        filename, filetype,
-                        content, fields,
-                        port=None,
-                        https=False):
+    def _post_multipart(self, host, selector, fields, files,
+                        ssl=False,port=80):
         """ performs a multi-post to AGOL or AGS
             Inputs:
                host - string - root url (no http:// or https://)
                    ex: www.arcgis.com
                selector - string - everything after the host
                    ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
-               filename - string - name file will be called on server
-               filetype - string - mimetype of data uploading
-               content - binary data - derived from open(<file>, 'rb').read()
                fields - dictionary - additional parameters like token and format information
-               port - interger - port value if not on port 80
+               files - tuple array- tuple with the file name type, filename, full path
+               ssl - option to use SSL
             Output:
                JSON response as dictionary
             Useage:
@@ -109,48 +157,115 @@ class BaseAGSServer(object):
                params = {"f":"json"}
                print _post_multipart(host=parsed_url.hostname,
                                selector=parsed_url.path,
-                               filename="Jellyfish.jpg",
-                               content=open(r"c:\temp\Jellyfish.jpg, 'rb').read(),
+                               files=files,
                                fields=params
                                )
         """
-        body = ''
-        for field in fields.keys():
-            body += '------------ThIs_Is_tHe_bouNdaRY_$\r\nContent-Disposition: form-data; name="' + field + '"\r\n\r\n' + fields[field] + '\r\n'
-        body += '------------ThIs_Is_tHe_bouNdaRY_$\r\nContent-Disposition: form-data; name="file"; filename="'
-        body += filename + '"\r\nContent-Type: ' + filetype + '\r\n\r\n'
-        body = body.encode('utf-8')
-        body += content + '\r\n------------ThIs_Is_tHe_bouNdaRY_$--\r\n'
-        if https:
-            h = httplib.HTTPSConnection(host, port=port)
+        proxy_url = self._proxy_url
+        proxy_port = self._proxy_port
+        boundary, body = self._encode_multipart_formdata(fields, files)
+        headers = {
+        'User-Agent': "ArcREST",
+        'Content-Type': 'multipart/form-data; boundary=%s' % boundary
+        }
+        if proxy_url:
+            if ssl:
+                h = httplib.HTTPSConnection(proxy_url, proxy_port)
+                h.request('POST', 'https://' + host + selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(proxy_url, proxy_port)
+                h.request('POST', 'http://' + host + selector, body, headers)
         else:
-            h = httplib.HTTPConnection(host, port=port)
-        h.putrequest('POST', selector)
-        h.putheader('content-type', 'multipart/form-data; boundary=----------ThIs_Is_tHe_bouNdaRY_$')
-        h.putheader('content-length', str(len(body)))
-        h.endheaders()
-        h.send(body)
-        res = h.getresponse()
-        return res.read()
+            if ssl:
+                h = httplib.HTTPSConnection(host,port)
+                h.request('POST', selector, body, headers)
+            else:
+                h = httplib.HTTPConnection(host,port)
+                h.request('POST', selector, body, headers)
+        return h.getresponse().read()
     #----------------------------------------------------------------------
-    def generate_token(self):#, username, password, tokenURL
+    def _encode_multipart_formdata(self, fields, files):
+        boundary = mimetools.choose_boundary()
+        buf = StringIO()
+        for (key, value) in fields.iteritems():
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"' % key)
+            buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
+        for (key, filepath, filename) in files:
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
+            buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
+            file = open(filepath, "rb")
+            try:
+                buf.write('\r\n' + file.read() + '\r\n')
+            finally:
+                file.close()
+        buf.write('--' + boundary + '--\r\n\r\n')
+        buf = buf.getvalue()
+        return boundary, buf
+    #----------------------------------------------------------------------
+    def _get_content_type(self, filename):
+        """ gets the content type of a file """
+        mntype = mimetypes.guess_type(filename)[0]
+        filename, fileExtension = os.path.splitext(filename)
+        if mntype is None and\
+            fileExtension.lower() == ".csv":
+            mntype = "text/csv"
+        elif mntype is None and \
+            fileExtension.lower() == ".sd":
+            mntype = "File/sd"
+        elif mntype is None:
+            #mntype = 'application/octet-stream'
+            mntype= "File/%s" % fileExtension.replace('.', '')
+        return mntype
+    #----------------------------------------------------------------------
+    def _tostr(self,obj):
+        """ converts a object to list, if object is a list, it creates a
+            comma seperated string.
+        """
+        if not obj:
+            return ''
+        if isinstance(obj, list):
+            return ', '.join(map(self._tostr, obj))
+        return str(obj)
+    #----------------------------------------------------------------------
+    def _unicode_convert(self, obj):
+        """ converts unicode to anscii """
+        if isinstance(obj, dict):
+            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.iteritems()}
+        elif isinstance(obj, list):
+            return [self._unicode_convert(element) for element in obj]
+        elif isinstance(obj, unicode):
+            return obj.encode('utf-8')
+        else:
+            return obj
+    #----------------------------------------------------------------------
+    def generate_token(self):
         """ generates a token for AGS """
-        #params = urllib.urlencode({'username': username, 'password': password, 'client': 'requestip', 'f': 'json'})
         params = urllib.urlencode({'username': self._username,
                                    'password': self._password,
                                    'client': 'requestip',
                                    'f': 'json'})
         parsed_url = urlparse.urlparse(self._token_url)
         headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+
         port = parsed_url.port
         if port is None:
             port = 80
-        # Connect to URL and post parameters
-        if parsed_url.scheme.lower() == "https":
-            httpConn = httplib.HTTPSConnection(parsed_url.hostname, port)
+        ## Connect to URL and post parameters
+        if self.proxy_url is not None:
+            if parsed_url.scheme.lower() == "https":
+                httpConn = httplib.HTTPSConnection(parsed_url.hostname, port)
+            else:
+                httpConn = httplib.HTTPConnection(parsed_url.hostname, port)
+            httpConn.request('POST', '%s://%s%s'% (parsed_url.scheme, parsed_url.hostname, parsed_url.path), params, headers)
         else:
-            httpConn = httplib.HTTPConnection(parsed_url.hostname, port)
-        httpConn.request("POST", parsed_url.path, params, headers)
+            if parsed_url.scheme.lower() == "https":
+                httpConn = httplib.HTTPSConnection(parsed_url.hostname, port)
+
+            else:
+                httpConn = httplib.HTTPConnection(parsed_url.hostname, port)
+            httpConn.request("POST", parsed_url.path, params, headers)
         response = httpConn.getresponse()
         data = self._unicode_convert(json.loads(response.read()))
         httpConn.close()

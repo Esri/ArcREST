@@ -222,9 +222,6 @@ class BaseAGOLClass(object):
         'User-Agent': "ArcREST",
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary
         }
-
-
-
         if proxy_url:
             if ssl:
                 h = httplib.HTTPSConnection(proxy_url, proxy_port)

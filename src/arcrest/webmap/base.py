@@ -38,8 +38,16 @@ class BaseWebOperations(object):
     """ base class that holds operations for web requests """
     _token = None
     #----------------------------------------------------------------------
-    def _download_file(self, url, save_path, file_name):
+    def _download_file(self, url, save_path, file_name, proxy_url=None, proxy_port=None):
         """ downloads a file """
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
         file_data = urllib2.urlopen(url)
         with open(save_path + os.sep + file_name, 'wb') as writer:
             writer.write(file_data.read())
