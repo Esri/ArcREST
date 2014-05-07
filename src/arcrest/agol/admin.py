@@ -1832,6 +1832,7 @@ class AGOL(BaseAGOLClass):
                 raise ValueError(str(service))
             item_id = service['serviceItemId']
             service_url = service['serviceurl']
+            service['folderId'] = folderID
 
         group_ids = self.get_group_IDs(share_groups)
 
