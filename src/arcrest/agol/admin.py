@@ -1224,6 +1224,16 @@ class AGOL(BaseAGOLClass):
         return self._do_get(url, params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def itemData(self, item_id):
+        """ returns data for an item on agol/portal """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        url = self.contentRootURL + "/items/%s/data" % item_id
+        return self._do_get(url, params, proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
     def _prep_mxd(self, mxd):
         """ ensures the requires mxd properties are set to something """
         changed = False

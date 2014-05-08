@@ -20,6 +20,7 @@ import calendar
 import datetime
 import mimetypes
 import mimetools
+import gzip
 from cStringIO import StringIO
 
 ########################################################################
@@ -37,6 +38,7 @@ class BaseAGOLClass(object):
     _url = "http://www.arcgis.com/sharing/rest"
     _surl = "https://www.arcgis.com/sharing/rest"
     _referer_url = "https://www.arcgis.com"
+    _useragent = "ArcREST"
     _tokenurl = 'https://www.arcgis.com/sharing/rest/generateToken'
     _proxy_url = None
     _proxy_port = None
@@ -175,9 +177,17 @@ class BaseAGOLClass(object):
         jres = json.loads(result)
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None):
+    def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None,compress=True):
         """ performs a get operation """
         url = url + "?%s" % urllib.urlencode(param_dict)
+
+        headers = [('Referer', self._referer_url),
+                   ('User-Agent', self._useragent)]
+
+        if compress:
+            headers.append(('Accept-encoding', 'gzip'))
+        opener= None
+
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80
@@ -185,11 +195,24 @@ class BaseAGOLClass(object):
                        "https":"https://%s:%s" % (proxy_url, proxy_port)}
             proxy_support = urllib2.ProxyHandler(proxies)
             opener = urllib2.build_opener(proxy_support)#, urllib2.HTTPHandler(debuglevel=1)
-            urllib2.install_opener(opener)
-        request = urllib2.Request(url, headers=header)
-        result = urllib2.urlopen(request).read()
-        jres = json.loads(result)
-        return self._unicode_convert(jres)
+            #urllib2.install_opener(opener)
+        else:
+            opener = urllib2.build_opener()
+        opener.addheaders = headers
+        resp = opener.open(url)
+
+        #request = urllib2.Request(url, headers=header)
+        #resp = urllib2.urlopen(request)
+        if resp.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO(resp.read())
+            f = gzip.GzipFile(fileobj=buf)
+            resp_data = f.read()
+        else:
+            resp_data = resp.read()
+        if resp_data =="":
+            return ""
+        result = json.loads(resp_data)
+        return self._unicode_convert(result)
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector, fields, files, ssl=False,port=80,proxy_url=None,proxy_port=None):
         """ performs a multi-post to AGOL or AGS
@@ -222,6 +245,9 @@ class BaseAGOLClass(object):
         'User-Agent': "ArcREST",
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary
         }
+
+
+
         if proxy_url:
             if ssl:
                 h = httplib.HTTPSConnection(proxy_url, proxy_port)
