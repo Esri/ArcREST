@@ -1370,7 +1370,7 @@ class AGOL(BaseAGOLClass):
 
 
     #----------------------------------------------------------------------
-    def updateWebmap(self,  agol_id, data,folder=None):
+    def updateItem(self,  agol_id, data,folder=None):
 
         """ update an items thumbnail"""
         update_url = '{}/content/users/{}'.format(self._url,self._username)
