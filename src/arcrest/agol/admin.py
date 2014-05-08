@@ -1372,7 +1372,7 @@ class AGOL(BaseAGOLClass):
     #----------------------------------------------------------------------
     def updateItem(self,  agol_id, data,folder=None):
 
-        """ update an items thumbnail"""
+        """ update an items details"""
         update_url = '{}/content/users/{}'.format(self._url,self._username)
 
         if folder:
@@ -1710,7 +1710,7 @@ class AGOL(BaseAGOLClass):
 
         item_id = self.get_item_ID(item_name=name,folder=folderID)
         if item_id is not None:
-            webmapInfo = self.updateWebmap(agol_id=item_id,data=data,folder=folderID)
+            webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
             if 'error' in webmapInfo:
                 raise ValueError(str(webmapInfo))
         else:
