@@ -1224,6 +1224,16 @@ class AGOL(BaseAGOLClass):
         return self._do_get(url, params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def itemData(self, item_id):
+        """ returns data for an item on agol/portal """
+        params = {
+            "f" : "json",
+            "token" : self._token
+        }
+        url = self.contentRootURL + "/items/%s/data" % item_id
+        return self._do_get(url, params, proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
     def _prep_mxd(self, mxd):
         """ ensures the requires mxd properties are set to something """
         changed = False
@@ -1360,9 +1370,9 @@ class AGOL(BaseAGOLClass):
 
 
     #----------------------------------------------------------------------
-    def updateWebmap(self,  agol_id, data,folder=None):
+    def updateItem(self,  agol_id, data,folder=None):
 
-        """ update an items thumbnail"""
+        """ update an items details"""
         update_url = '{}/content/users/{}'.format(self._url,self._username)
 
         if folder:
@@ -1700,7 +1710,7 @@ class AGOL(BaseAGOLClass):
 
         item_id = self.get_item_ID(item_name=name,folder=folderID)
         if item_id is not None:
-            webmapInfo = self.updateWebmap(agol_id=item_id,data=data,folder=folderID)
+            webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
             if 'error' in webmapInfo:
                 raise ValueError(str(webmapInfo))
         else:
@@ -1832,6 +1842,7 @@ class AGOL(BaseAGOLClass):
                 raise ValueError(str(service))
             item_id = service['serviceItemId']
             service_url = service['serviceurl']
+            service['folderId'] = folderID
 
         group_ids = self.get_group_IDs(share_groups)
 
