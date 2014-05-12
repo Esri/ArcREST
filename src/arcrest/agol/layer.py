@@ -628,6 +628,8 @@ class FeatureLayer(BaseAGOLClass):
         fURL = self._url + "/query"
         results = self._do_get(fURL, params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
+        if 'error' in results:
+            raise ValueError (results)
         if not returnCountOnly and not returnIDsOnly:
             if returnFeatureClass:
                 json_text = json.dumps(results)
