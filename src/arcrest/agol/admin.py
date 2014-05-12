@@ -1767,6 +1767,7 @@ class AGOL(BaseAGOLClass):
         if not folder_name == None and not folder_name == '':
             userContent = self.getUserContent()
             folders = userContent['folders']
+            folderID = None
             for folder in folders:
                 if folder['title'] == folder_name:
                     folderID = folder['id']
@@ -1827,6 +1828,8 @@ class AGOL(BaseAGOLClass):
         """
         service_name = title
         service_name_safe = service_name.replace(' ','_')
+        service_name_safe = service_name_safe.replace(':','-')
+
 
         folderID = self.get_folder_ID(folder_name=folder_name)
 
@@ -1858,9 +1861,9 @@ class AGOL(BaseAGOLClass):
             if os.path.isfile(thumbnail):
                 if not os.path.isabs(thumbnail):
                     thumbnail = os.path.abspath(thumbnail)
-            result = self.updateThumbnail(agol_id=item_id,thumbnail=thumbnail,folder=folderID)
-            if 'error' in result:
-                raise ValueError(str(result))
+                result = self.updateThumbnail(agol_id=item_id,thumbnail=thumbnail,folder=folderID)
+                if 'error' in result:
+                    raise ValueError(str(result))
 
         return itemInfo
 
