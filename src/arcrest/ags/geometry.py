@@ -2,7 +2,7 @@ import json
 import arcpy
 from base import Geometry
 ########################################################################
-class SpatialReference:
+class SpatialReference(Geometry):
     """ creates a spatial reference instance """
     _wkid = None
     #----------------------------------------------------------------------

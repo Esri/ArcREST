@@ -526,7 +526,6 @@ class FeatureService(BaseAGOLClass):
                       keep_replica=False,
                       layerQueries=None,
                       geometryFilter=None,
-                      #geometry=None, geometryType=None,
                       returnAttachments=False,
                       returnAttachmentDatabyURL=True,
                       returnAsFeatureClass=False,

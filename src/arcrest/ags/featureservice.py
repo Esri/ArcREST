@@ -1,4 +1,6 @@
 from base import BaseAGSServer
+import layer
+from filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 ########################################################################
 class FeatureService(BaseAGSServer):
     """ contains information about a feature service """
@@ -165,10 +167,29 @@ class FeatureService(BaseAGSServer):
     #----------------------------------------------------------------------
     @property
     def layers(self):
-        """"""
+        """ gets the layers for the feature service """
         if self._layers is None:
             self.__init()
+        self._getLayers()
         return self._layers
+    def _getLayers(self):
+        """ gets layers for the featuer service """
+        if self._token is None:
+            param_dict = {"f": "json"}
+        else:
+            param_dict = {"f": "json",
+                          "token" : self._token
+                          }
+        json_dict = self._do_get(self._url, param_dict)
+        self._layers = []
+        if json_dict.has_key("layers"):
+            for l in json_dict["layers"]:
+                self._layers.append(
+                    layer.FeatureLayer(url=self._url + "/%s" % l['id'],
+                                       username=self._username,
+                                       password=self._password,
+                                       token_url=self._token_url)
+                )
     #----------------------------------------------------------------------
     @property
     def tables(self):
@@ -226,3 +247,44 @@ class FeatureService(BaseAGSServer):
         if self._supportsDisconnectedEditing is None:
             self.__init()
         return self._supportsDisconnectedEditing
+    #----------------------------------------------------------------------
+    def query(self,
+              layerDefsFilter=None,
+              geometryFilter=None,
+              timeFilter=None,
+              returnGeometry=True,
+              returnIdsOnly=False,
+              returnCountOnly=False,
+              returnZ=False,
+              returnM=False,
+              outSR=None
+              ):
+        """
+           The Query operation is performed on a feature service resource
+        """
+        qurl = self._url + "/query"
+        params = {"f": "json",
+                  "returnGeometry": returnGeometry,
+                  "returnIdsOnly": returnIdsOnly,
+                  "returnCountOnly": returnCountOnly,
+                  "returnZ": returnZ,
+                  "returnM" : returnM}
+        if not self._token is None:
+            params["token"] = self._token
+        if not layerDefsFilter is None and \
+           isinstance(layerDefsFilter, LayerDefinitionFilter):
+            params['layerDefs'] = layerDefsFilter.filter
+        if not geometryFilter is None and \
+           isinstance(geometryFilter, GeometryFilter):
+            gf = geometryFilter.filter
+            params['geometryType'] = gf['geometryType']
+            params['spatialRel'] = gf['spatialRel']
+            params['geometry'] = gf['geometry']
+            params['inSR'] = gf['inSR']
+        if not outSR is None and \
+           isinstance(outSR, common.SpatialReference):
+            params['outSR'] = outSR.asDictionary
+        if not timeFilter is None and \
+           isinstance(timeFilter, TimeFilter):
+            params['time'] = timeFilter.filter
+        return self._do_get(url=qurl, param_dict=params)

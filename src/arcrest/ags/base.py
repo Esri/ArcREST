@@ -4,7 +4,10 @@ import urllib
 import urllib2
 import json
 import os
-import common
+########################################################################
+class BaseFilter(object):
+    """ base filter class """
+    pass
 ########################################################################
 class DynamicData(object):
     """base class for data source"""
