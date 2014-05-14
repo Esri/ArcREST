@@ -1878,7 +1878,19 @@ class AGOL(BaseAGOLClass):
                     raise ValueError(str(result))
 
         return itemInfo
+    #----------------------------------------------------------------------
+    def get_group_content(self, groupID):
+        contentURL = '{}/search'.format(self._url)
 
+        query_dict = {
+                      'q':'group:{}'.format(groupID),
+                      'num': 100,
+                      'f': 'json',
+                      'token': self._token
+                      }
+
+        return self._do_post(contentURL, query_dict, proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
 
     #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
