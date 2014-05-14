@@ -1869,6 +1869,21 @@ class AGOL(BaseAGOLClass):
 
 
     #----------------------------------------------------------------------
+    def get_group_content(self, groupID):
+        """"""
+#q=group:5d64803bfeeb4db7b105bd5692919a40&num=1000000&sortField=modified&sortOrder=desc&f=pjson
+        contentURL = '{}/search'.format(self._url)
+
+        query_dict = {
+                      'q':'group:{}'.format(groupID),
+                      'num': 100,
+                      'f': 'json',
+                      'token': self._token
+                      }
+
+        return self._do_post(contentURL, query_dict, proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
         """"""
         publishURL = '{}/content/users/{}'.format(self._url,
