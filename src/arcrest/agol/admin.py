@@ -1286,6 +1286,18 @@ class AGOL(BaseAGOLClass):
                             proxy_url=self._proxy_url)
         return jres
     #----------------------------------------------------------------------
+    def getUserCommunityInfo(self):
+        """ gets a user's info on agol """
+        data = {"token": self._token,
+                "f": "json"}
+        url = '{}/community/users/{}'.format(self._url,self._username)
+
+        jres = self._do_get(url=url, param_dict=data,
+                            header={"Accept-Encoding":""},
+                            proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
+        return jres
+      #----------------------------------------------------------------------
     def addFile(self, file_path, agol_type, name, tags, description,folder=None):
         """ loads a file to AGOL """
         params = {
@@ -1745,7 +1757,7 @@ class AGOL(BaseAGOLClass):
               dict - list of group IDs
         """
         group_ids=[]
-        userInfo = self.getUserInfo()
+        userInfo = self.getUserCommunityInfo()
         if 'groups' in userInfo:
             for gp in userInfo['groups']:
                 if gp['title'] in group_names:
@@ -1868,21 +1880,6 @@ class AGOL(BaseAGOLClass):
         return itemInfo
 
 
-    #----------------------------------------------------------------------
-    def get_group_content(self, groupID):
-        """"""
-#q=group:5d64803bfeeb4db7b105bd5692919a40&num=1000000&sortField=modified&sortOrder=desc&f=pjson
-        contentURL = '{}/search'.format(self._url)
-
-        query_dict = {
-                      'q':'group:{}'.format(groupID),
-                      'num': 100,
-                      'f': 'json',
-                      'token': self._token
-                      }
-
-        return self._do_post(contentURL, query_dict, proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
         """"""
