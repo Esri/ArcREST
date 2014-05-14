@@ -1527,8 +1527,9 @@ class AGOL(BaseAGOLClass):
         del doc
         return newSDdraft
 
+
    #----------------------------------------------------------------------
-    def enableSharing(self, agol_id, everyone='true', orgs='true', groups='None',folder=None):
+    def enableSharingUserItem(self, agol_id, everyone='true', orgs='true', groups='None',folder=None):
         """ changes an items sharing permissions """
         share_url = '{}/content/users/{}'.format(self._url,self._username)
 
@@ -1549,6 +1550,28 @@ class AGOL(BaseAGOLClass):
         vals = self._do_post(share_url, query_dict, proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
         return self._tostr(vals)
+
+    #----------------------------------------------------------------------
+    def enableSharing(self, agol_id, everyone='true', orgs='true', groups='None',folder=None):
+        """ changes an items sharing permissions """
+        share_url = '{}/content'.format(self._url)
+
+
+        share_url += '/items/{}/share'.format(agol_id)
+
+
+
+        if groups == None:
+            groups = ''
+        query_dict = {'f': 'json',
+                      'everyone' : everyone,
+                      'org' : orgs,
+                      'groups' : groups,
+                      'token': self._token}
+        vals = self._do_post(share_url, query_dict, proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+        return self._tostr(vals)
+
     #----------------------------------------------------------------------
     def updateTitle(self, agol_id, title,folder=None):
         """ changes an items title"""
