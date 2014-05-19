@@ -1839,7 +1839,6 @@ class AGOL(BaseAGOLClass):
                     itemID = item['id']
                     break
             del items
-            del item
 
         return itemID
     #----------------------------------------------------------------------
