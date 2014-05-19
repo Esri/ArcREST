@@ -273,14 +273,15 @@ class BaseAGOLClass(object):
             buf.write('Content-Disposition: form-data; name="%s"' % key)
             buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
         for (key, filepath, filename) in files:
-            buf.write('--%s\r\n' % boundary)
-            buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
-            buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
-            file = open(filepath, "rb")
-            try:
-                buf.write('\r\n' + file.read() + '\r\n')
-            finally:
-                file.close()
+           if os.path.isfile(filepath):
+                buf.write('--%s\r\n' % boundary)
+                buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
+                buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
+                file = open(filepath, "rb")
+                try:
+                    buf.write('\r\n' + file.read() + '\r\n')
+                finally:
+                    file.close()
         buf.write('--' + boundary + '--\r\n\r\n')
         buf = buf.getvalue()
         return boundary, buf
