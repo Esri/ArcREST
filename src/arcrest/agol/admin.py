@@ -1678,7 +1678,6 @@ class AGOL(BaseAGOLClass):
         if analysis['errors'] == {}:
             # Stage the service
             arcpy.StageService_server(sddraft, sd)
-            print "Created {}".format(sd)
 
         else:
             # If the sddraft analysis contained errors, display them and quit.
