@@ -1800,14 +1800,16 @@ class AGOL(BaseAGOLClass):
         """
         if not folder_name == None and not folder_name == '':
             userContent = self.getUserContent()
-            folders = userContent['folders']
             folderID = None
-            for folder in folders:
-                if folder['title'] == folder_name:
-                    folderID = folder['id']
-                    break
-            del folders
-            del folder
+            if 'folders' in userContent:
+                folders = userContent['folders']
+
+                for folder in folders:
+                    if folder['title'] == folder_name:
+                        folderID = folder['id']
+                        break
+                del folders
+                del folder
 
             if folderID == None:
                 res = self.createFolder(folder_name)
