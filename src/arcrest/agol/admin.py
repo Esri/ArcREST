@@ -1621,7 +1621,7 @@ class AGOL(BaseAGOLClass):
         return self._tostr(res)
 
     #----------------------------------------------------------------------
-   def delete_items(self,items,folder=None,force_delete=False):
+    def delete_items(self,items,folder=None,force_delete=False):
         content = self.getUserContent(folder)
         #Title, item
         resultList=[]
