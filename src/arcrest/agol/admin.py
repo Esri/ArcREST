@@ -1621,19 +1621,20 @@ class AGOL(BaseAGOLClass):
         return self._tostr(res)
 
     #----------------------------------------------------------------------
-    def delete_items(self,items,folder=None,force_delete=False):
+   def delete_items(self,items,folder=None,force_delete=False):
         content = self.getUserContent(folder)
         #Title, item
         resultList=[]
-        for item in content['items']:
-            if item['title'] in items:
+        if 'items' in content:
+            for item in content['items']:
+                if item['title'] in items:
 
-                result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
-                if 'error' in result:
-                    resultList.append(result['error'])
+                    result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
+                    if 'error' in result:
+                        resultList.append(result['error'])
 
-                else:
-                    resultList.append(result)
+                    else:
+                        resultList.append(result)
         return resultList
     #----------------------------------------------------------------------
 
