@@ -174,12 +174,20 @@ class BaseAGOLClass(object):
             urllib2.install_opener(opener)
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
+        if result =="":
+            return ""
         jres = json.loads(result)
+        if 'error' in jres:
+            if jres['error']['message'] == 'Request not made over ssl':
+                if url.startswith('http://'):
+                    url = url.replace('http://', 'https://')
+                    return self._do_post( url, param_dict, proxy_url, proxy_port)
+
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None,compress=True):
         """ performs a get operation """
-        url = url + "?%s" % urllib.urlencode(param_dict)
+        format_url = url + "?%s" % urllib.urlencode(param_dict)
 
         headers = [('Referer', self._referer_url),
                    ('User-Agent', self._useragent)]
@@ -199,7 +207,7 @@ class BaseAGOLClass(object):
         else:
             opener = urllib2.build_opener()
         opener.addheaders = headers
-        resp = opener.open(url)
+        resp = opener.open(format_url)
 
         #request = urllib2.Request(url, headers=header)
         #resp = urllib2.urlopen(request)
@@ -212,6 +220,11 @@ class BaseAGOLClass(object):
         if resp_data =="":
             return ""
         result = json.loads(resp_data)
+        if 'error' in result:
+            if result['error']['message'] == 'Request not made over ssl':
+                if url.startswith('http://'):
+                    url = url.replace('http://', 'https://')
+                    return self._do_get(url=url, param_dict=param_dict ,proxy_url=proxy_url, proxy_port=proxy_port,compress=compress)
         return self._unicode_convert(result)
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector, fields, files, ssl=False,port=80,proxy_url=None,proxy_port=None):
@@ -263,7 +276,14 @@ class BaseAGOLClass(object):
                 h = httplib.HTTPConnection(host,port)
                 h.request('POST', selector, body, headers)
 
-        return h.getresponse().read()
+        resp_data = h.getresponse().read()
+        if resp_data =="":
+            return ""
+        result = json.loads(resp_data)
+        if 'error' in result:
+            if result['error']['message'] == 'Request not made over ssl':
+                return self._post_multipart(host=host, selector=selector, fields=fields, files=files, ssl=True,port=port,proxy_url=proxy_url,proxy_port=proxy_port)
+        return resp_data
     #----------------------------------------------------------------------
     def _encode_multipart_formdata(self, fields, files):
         boundary = mimetools.choose_boundary()
@@ -273,7 +293,7 @@ class BaseAGOLClass(object):
             buf.write('Content-Disposition: form-data; name="%s"' % key)
             buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
         for (key, filepath, filename) in files:
-           if os.path.isfile(filepath):
+            if os.path.isfile(filepath):
                 buf.write('--%s\r\n' % boundary)
                 buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
                 buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
