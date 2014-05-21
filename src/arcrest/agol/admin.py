@@ -1740,11 +1740,11 @@ class AGOL(BaseAGOLClass):
         folderID = self.get_folder_ID(folder_name=folder_name)
         if delete_existing:
             items = [name]
-            self.delete_items(items,folderID,item_type="WebMap",force_delete=delete_existing)
+            self.delete_items(items,folderID,item_type="Web Map",force_delete=delete_existing)
 
 
 
-        item_id = self.get_item_ID(item_name=name,item_type='WebMap', folder=folderID)
+        item_id = self.get_item_ID(item_name=name,item_type='Web Map', folder=folderID)
         if item_id is not None:
             webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
             if 'error' in webmapInfo:
@@ -1839,7 +1839,7 @@ class AGOL(BaseAGOLClass):
             userContent = self.getUserContent(folder=folder)
             items = userContent['items']
             for item in items:
-                if item['title'] == item_name and item['type'] == item_type:
+                if item['title'] == item_name and item['type'] in item_type:
                     itemID = item['id']
                     break
             del items
