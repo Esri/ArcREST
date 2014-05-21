@@ -1621,13 +1621,14 @@ class AGOL(BaseAGOLClass):
         return self._tostr(res)
 
     #----------------------------------------------------------------------
-    def delete_items(self,items,folder=None,force_delete=False):
+    def delete_items(self,items,item_type,folder=None,force_delete=False):
         content = self.getUserContent(folder)
+        itemID = None
         #Title, item
         resultList=[]
         if 'items' in content:
             for item in content['items']:
-                if item['title'] in items:
+                if item['title'] in items and item['type'] in item_type:
 
                     result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
                     if 'error' in result:
@@ -1739,7 +1740,7 @@ class AGOL(BaseAGOLClass):
         folderID = self.get_folder_ID(folder_name=folder_name)
         if delete_existing:
             items = [name]
-            self.delete_items(items,folderID,force_delete=delete_existing)
+            self.delete_items(items,folderID,item_type="WebMap",force_delete=delete_existing)
 
 
 
@@ -1787,7 +1788,7 @@ class AGOL(BaseAGOLClass):
                     group_ids.append(gp['id'])
         del userInfo
         return group_ids
-    #----------------------------------------------------------------------
+   #----------------------------------------------------------------------
     def get_folder_ID(self, folder_name):
         """
            This function retrieves the folder ID and creates the folder if
@@ -1821,6 +1822,7 @@ class AGOL(BaseAGOLClass):
 
         else:
             return None
+
     #----------------------------------------------------------------------
     def get_item_ID(self, item_name,item_type,folder=None):
         """
@@ -1871,7 +1873,7 @@ class AGOL(BaseAGOLClass):
 
         items = [service_name,service_name_safe]
 
-        self.delete_items(items,folderID)
+        self.delete_items(items=items,item_type=['Feature Service','Service Definition'],folder=folderID)
         itemInfo = self.publish_to_agol(mxd_path=mxd,service_name=service_name_safe,folder=folderID)
 
         item_id = ''
