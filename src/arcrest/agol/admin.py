@@ -1330,55 +1330,110 @@ class AGOL(BaseAGOLClass):
                                    proxy_url=self._proxy_url)
         res = self._unicode_convert(json.loads(res))
         return res
-
     #----------------------------------------------------------------------
-    def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',thumbnail='',folder=None):
-        """ loads a file to AGOL """
-        params = {
-            "f" : "json",
-            "text" : json.dumps(data),
-            "type" : agol_type,
-            "title" : name,
-            "tags" : tags,
-            "description" : description,
-            "snippet" : snippet,
-            "extent": extent,
-            "typeKeywords": [
-                "ArcGIS Online",
-                "Collector",
-                "Data Editing",
-                "Explorer Web Map",
-                "Map",
-                "Offline",
-                "Online Map",
-                "Web Map"
-            ],
-            "thumbnail": os.path.basename(thumbnail)
-        }
+    def addItem(self,  name, tags, description,snippet,data,extent,item_type='Web Map',thumbnail='',folder=None):
+            """ loads a file to AGOL """
+            if item_type == "Operation View":        
+                typeKeywords =  ["Application","ArcGIS Operation View","ArcGIS Operations Dashboard","TabletLayout"]
+            else:
+                typeKeywords = [
+                    "ArcGIS Online",
+                    "Collector",
+                    "Data Editing",
+                    "Explorer Web Map",
+                    "Map",
+                    "Offline",
+                    "Online Map",
+                    "Web Map"
+                ]               
+            params = {
+                "f" : "json",
+                "text" : json.dumps(data),
+                "type" : item_type,
+                "title" : name,
+                "tags" : tags,
+                "description" : description,
+                "snippet" : snippet,
+                "extent": extent,
+                "typeKeywords":typeKeywords,
+                "thumbnail": os.path.basename(thumbnail)
+            }
+    
+            if self._token is not None:
+                params['token'] = self._token
+    
+            url = "{}/content/users/{}".format(self._url,
+                                                       self._username)
+            if folder:
+                url += '/' + folder
+            url += '/addItem'
+            parsed = urlparse.urlparse(url)
+    
+            files = []
+            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+    
+            res = self._post_multipart(host=parsed.hostname,
+                                       selector=parsed.path,
+                                       fields=params,
+                                       files=files,
+                                       ssl=parsed.scheme.lower() == 'https',
+                                       proxy_port=self._proxy_port,
+                                       proxy_url=self._proxy_url,
+                                       port=parsed.port)
+            res = self._unicode_convert(json.loads(res))
+            return res
+    
+    
+        
+  
+    #----------------------------------------------------------------------
+    #def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',thumbnail='',folder=None):
+        #""" loads a file to AGOL """
+        #params = {
+            #"f" : "json",
+            #"text" : json.dumps(data),
+            #"type" : agol_type,
+            #"title" : name,
+            #"tags" : tags,
+            #"description" : description,
+            #"snippet" : snippet,
+            #"extent": extent,
+            #"typeKeywords": [
+                #"ArcGIS Online",
+                #"Collector",
+                #"Data Editing",
+                #"Explorer Web Map",
+                #"Map",
+                #"Offline",
+                #"Online Map",
+                #"Web Map"
+            #],
+            #"thumbnail": os.path.basename(thumbnail)
+        #}
 
-        if self._token is not None:
-            params['token'] = self._token
+        #if self._token is not None:
+            #params['token'] = self._token
 
-        url = "{}/content/users/{}".format(self._url,
-                                                   self._username)
-        if folder:
-            url += '/' + folder
-        url += '/addItem'
-        parsed = urlparse.urlparse(url)
+        #url = "{}/content/users/{}".format(self._url,
+                                                   #self._username)
+        #if folder:
+            #url += '/' + folder
+        #url += '/addItem'
+        #parsed = urlparse.urlparse(url)
 
-        files = []
-        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+        #files = []
+        #files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
 
-        res = self._post_multipart(host=parsed.hostname,
-                                   selector=parsed.path,
-                                   fields=params,
-                                   files=files,
-                                   ssl=parsed.scheme.lower() == 'https',
-                                   proxy_port=self._proxy_port,
-                                   proxy_url=self._proxy_url,
-                                   port=parsed.port)
-        res = self._unicode_convert(json.loads(res))
-        return res
+        #res = self._post_multipart(host=parsed.hostname,
+                                   #selector=parsed.path,
+                                   #fields=params,
+                                   #files=files,
+                                   #ssl=parsed.scheme.lower() == 'https',
+                                   #proxy_port=self._proxy_port,
+                                   #proxy_url=self._proxy_url,
+                                   #port=parsed.port)
+        #res = self._unicode_convert(json.loads(res))
+        #return res
 
 
     #----------------------------------------------------------------------
@@ -1629,11 +1684,11 @@ class AGOL(BaseAGOLClass):
         if 'items' in content:
             for item in content['items']:
                 if item['title'] in items and item['type'] in item_type:
-
+                                       
                     result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
                     if 'error' in result:
                         resultList.append(result['error'])
-
+    
                     else:
                         resultList.append(result)
         return resultList
@@ -1680,7 +1735,7 @@ class AGOL(BaseAGOLClass):
         if analysis['errors'] == {}:
             # Stage the service
             arcpy.StageService_server(sddraft, sd)
-
+           
         else:
             # If the sddraft analysis contained errors, display them and quit.
             print analysis['errors']
@@ -1709,11 +1764,68 @@ class AGOL(BaseAGOLClass):
             raise ValueError(p_vals)
         return p_vals
 
-    #----------------------------------------------------------------------
+    ##----------------------------------------------------------------------
+    #def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False,delete_existing = False):
+        #"""
+           #The publishWebMap function publishes a web map, sets the details,
+           #and shares it with the organization.
 
-    def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False,delete_existing = False):
+           #Inputs:
+              #name - the name for the webmap
+              #tags - the tags for the web map
+              #snippet - the breif summary for the webmap
+              #description - the description for the webmap
+              #extent - Extent in the following format: "xmin, ymin, xmax, ymax"
+              #data - the json representation of the webmap
+              #thumbnail - full path or absolute path to the image for the webmap
+                #200x133 is the suggested side.
+              #share_everyone - True/False to share map with everyone
+               #share_org - True/False to share map with Org
+              #share_groups - List of groups to share the map with
+              #folderName - optional folder name to store the item in
+           #Output:
+              #WebMapID - returns the webmap id if created or updated
+        #"""
+        #if os.path.isfile(thumbnail):
+            #if not os.path.isabs(thumbnail):
+                #thumbnail = os.path.abspath(thumbnail)
+
+
+        #folderID = self.get_folder_ID(folder_name=folder_name)
+        #if delete_existing:
+            #items = [name]
+            #self.delete_items(items,folderID,item_type="Web Map",force_delete=delete_existing)
+
+
+
+        #item_id = self.get_item_ID(item_name=name,item_type='Web Map', folder=folderID)
+        #if item_id is not None:
+            #webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
+            #if 'error' in webmapInfo:
+                #raise ValueError(str(webmapInfo))
+        #else:
+            #webmapInfo = self.addItem(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID,item_type='Web Map')
+            #if 'error' in webmapInfo:
+                #raise ValueError(str(webmapInfo))
+
+            #item_id = webmapInfo['id']
+            #if protected:
+                #self.enableProtect(item_id,folderID)
+
+            #group_ids = self.get_group_IDs(share_groups)
+
+
+            #result= self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
+            #if 'error' in result:
+                #raise ValueError(str(result))
+
+
+
+        #return item_id
+    #----------------------------------------------------------------------
+    def publishItem(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,item_type="Web Map",folder_name=None,protected=False,delete_existing = False):
         """
-           The publishWebMap function publishes a web map, sets the details,
+           The publish function publishes a item, sets the details,
            and shares it with the organization.
 
            Inputs:
@@ -1730,31 +1842,32 @@ class AGOL(BaseAGOLClass):
               share_groups - List of groups to share the map with
               folderName - optional folder name to store the item in
            Output:
-              WebMapID - returns the webmap id if created or updated
+              ItemID - returns the webmap id if created or updated
         """
+            
         if os.path.isfile(thumbnail):
             if not os.path.isabs(thumbnail):
                 thumbnail = os.path.abspath(thumbnail)
 
 
         folderID = self.get_folder_ID(folder_name=folder_name)
-        if delete_existing:
-            items = [name]
-            self.delete_items(items,folderID,item_type="Web Map",force_delete=delete_existing)
 
+        item_id = self.get_item_ID(item_name=name,item_type=item_type, folder=folderID)
+                        
+        if delete_existing and item_id != None:
+            self.deleteItem(item_id =item_id,folder=folderID,force_delete=delete_existing)
+            item_id = None
 
-
-        item_id = self.get_item_ID(item_name=name,item_type='Web Map', folder=folderID)
         if item_id is not None:
-            webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
-            if 'error' in webmapInfo:
-                raise ValueError(str(webmapInfo))
+            itemInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)
+            if 'error' in itemInfo:
+                raise ValueError(str(itemInfo))
         else:
-            webmapInfo = self.addWebmap(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID)
-            if 'error' in webmapInfo:
-                raise ValueError(str(webmapInfo))
+            itemInfo = self.addItem(name=name,tags=tags,snippet=snippet,description=description,extent=extent,item_type=item_type,data=data,thumbnail=thumbnail,folder=folderID)
+            if 'error' in itemInfo:
+                raise ValueError(str(itemInfo))
 
-            item_id = webmapInfo['id']
+            item_id = itemInfo['id']
             if protected:
                 self.enableProtect(item_id,folderID)
 
@@ -1822,7 +1935,7 @@ class AGOL(BaseAGOLClass):
 
         else:
             return None
-
+    
     #----------------------------------------------------------------------
     def get_item_ID(self, item_name,item_type,folder=None):
         """
@@ -1843,7 +1956,7 @@ class AGOL(BaseAGOLClass):
                     itemID = item['id']
                     break
             del items
-
+          
         return itemID
     #----------------------------------------------------------------------
     def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,thumbnail=None,folder_name=None):

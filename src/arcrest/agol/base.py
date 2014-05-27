@@ -175,14 +175,14 @@ class BaseAGOLClass(object):
         request = urllib2.Request(url, urllib.urlencode(param_dict))
         result = urllib2.urlopen(request).read()
         if result =="":
-            return ""
+            return ""        
         jres = json.loads(result)
         if 'error' in jres:
             if jres['error']['message'] == 'Request not made over ssl':
                 if url.startswith('http://'):
                     url = url.replace('http://', 'https://')
                     return self._do_post( url, param_dict, proxy_url, proxy_port)
-
+                   
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None,compress=True):
@@ -224,7 +224,7 @@ class BaseAGOLClass(object):
             if result['error']['message'] == 'Request not made over ssl':
                 if url.startswith('http://'):
                     url = url.replace('http://', 'https://')
-                    return self._do_get(url=url, param_dict=param_dict ,proxy_url=proxy_url, proxy_port=proxy_port,compress=compress)
+                    return self._do_get(url=url, param_dict=param_dict ,proxy_url=proxy_url, proxy_port=proxy_port,compress=compress)        
         return self._unicode_convert(result)
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector, fields, files, ssl=False,port=80,proxy_url=None,proxy_port=None):

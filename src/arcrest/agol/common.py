@@ -167,7 +167,7 @@ def scratchFolder():
 #----------------------------------------------------------------------
 def scratchGDB():
     """ returns the arcpy scratch file geodatabase """
-    return arcpy.env.scratchGDB
+    return env.scratchGDB
 #----------------------------------------------------------------------
 def getDateFields(fc):
     """
