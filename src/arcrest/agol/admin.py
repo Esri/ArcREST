@@ -1331,12 +1331,7 @@ class AGOL(BaseAGOLClass):
         res = self._unicode_convert(json.loads(res))
         return res
     #----------------------------------------------------------------------
-    def addItem(self,  name, tags, description,snippet,data,extent,item_type='Web Map',thumbnail='',folder=None):
-            """ loads a file to AGOL """
-            if item_type == "Operation View":        
-                typeKeywords =  ["Application","ArcGIS Operation View","ArcGIS Operations Dashboard","TabletLayout"]
-            else:
-                typeKeywords = [
+    def addItem(self,  name, tags, description,snippet,data,extent,item_type='Web Map',thumbnail='',folder=None,typeKeywords = [
                     "ArcGIS Online",
                     "Collector",
                     "Data Editing",
@@ -1345,7 +1340,10 @@ class AGOL(BaseAGOLClass):
                     "Offline",
                     "Online Map",
                     "Web Map"
-                ]               
+                    ]
+                ):
+            """ loads a file to AGOL """
+          
             params = {
                 "f" : "json",
                 "text" : json.dumps(data),
@@ -1823,7 +1821,7 @@ class AGOL(BaseAGOLClass):
 
         #return item_id
     #----------------------------------------------------------------------
-    def publishItem(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,item_type="Web Map",folder_name=None,protected=False,delete_existing = False):
+    def publishItem(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,item_type,typeKeywords,folder_name=None,protected=False,delete_existing = False):
         """
            The publish function publishes a item, sets the details,
            and shares it with the organization.
@@ -1863,7 +1861,7 @@ class AGOL(BaseAGOLClass):
             if 'error' in itemInfo:
                 raise ValueError(str(itemInfo))
         else:
-            itemInfo = self.addItem(name=name,tags=tags,snippet=snippet,description=description,extent=extent,item_type=item_type,data=data,thumbnail=thumbnail,folder=folderID)
+            itemInfo = self.addItem(name=name,tags=tags,snippet=snippet,description=description,extent=extent,item_type=item_type,typeKeywords=typeKeywords,data=data,thumbnail=thumbnail,folder=folderID)
             if 'error' in itemInfo:
                 raise ValueError(str(itemInfo))
 
