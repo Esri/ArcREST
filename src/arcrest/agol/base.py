@@ -44,7 +44,7 @@ class BaseAGOLClass(object):
     _proxy_port = None
     def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
 
-        if org_url is not None:
+        if org_url is not None and org_url != '':
             if not org_url.startswith('http://') and not org_url.startswith('https://'):
                 org_url = 'http://' + org_url
             self._org_url = org_url
