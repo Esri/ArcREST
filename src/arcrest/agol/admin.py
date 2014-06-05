@@ -1150,12 +1150,11 @@ class AGOL(BaseAGOLClass):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self.initURL(org_url, rest_url,token_url,referer_url)
-        self._token = self.generate_token(proxy_port=proxy_port,
-                                          proxy_url=proxy_url)[0]
+        result = self.generate_token(proxy_port=proxy_port,
+                                          proxy_url=proxy_url)
+        if result != None:
+            self._token = result[0]
 
-##        else:
-##
-##            self._token = self.generate_token(tokenURL=token_url)[0]
     #----------------------------------------------------------------------
     @property
     def orgURL(self):
@@ -1343,7 +1342,7 @@ class AGOL(BaseAGOLClass):
                     ]
                 ):
             """ loads a file to AGOL """
-          
+
             params = {
                 "f" : "json",
                 "text" : json.dumps(data),
@@ -1356,20 +1355,20 @@ class AGOL(BaseAGOLClass):
                 "typeKeywords":typeKeywords,
                 "thumbnail": os.path.basename(thumbnail)
             }
-    
+
             if self._token is not None:
                 params['token'] = self._token
-    
+
             url = "{}/content/users/{}".format(self._url,
                                                        self._username)
             if folder:
                 url += '/' + folder
             url += '/addItem'
             parsed = urlparse.urlparse(url)
-    
+
             files = []
             files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-    
+
             res = self._post_multipart(host=parsed.hostname,
                                        selector=parsed.path,
                                        fields=params,
@@ -1380,10 +1379,10 @@ class AGOL(BaseAGOLClass):
                                        port=parsed.port)
             res = self._unicode_convert(json.loads(res))
             return res
-    
-    
-        
-  
+
+
+
+
     #----------------------------------------------------------------------
     #def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type='Web Map',thumbnail='',folder=None):
         #""" loads a file to AGOL """
@@ -1682,11 +1681,11 @@ class AGOL(BaseAGOLClass):
         if 'items' in content:
             for item in content['items']:
                 if item['title'] in items and item['type'] in item_type:
-                                       
+
                     result = self.deleteItem(item_id=item['id'],folder=folder,force_delete=force_delete)
                     if 'error' in result:
                         resultList.append(result['error'])
-    
+
                     else:
                         resultList.append(result)
         return resultList
@@ -1733,7 +1732,7 @@ class AGOL(BaseAGOLClass):
         if analysis['errors'] == {}:
             # Stage the service
             arcpy.StageService_server(sddraft, sd)
-           
+
         else:
             # If the sddraft analysis contained errors, display them and quit.
             print analysis['errors']
@@ -1842,7 +1841,7 @@ class AGOL(BaseAGOLClass):
            Output:
               ItemID - returns the webmap id if created or updated
         """
-            
+
         if os.path.isfile(thumbnail):
             if not os.path.isabs(thumbnail):
                 thumbnail = os.path.abspath(thumbnail)
@@ -1851,7 +1850,7 @@ class AGOL(BaseAGOLClass):
         folderID = self.get_folder_ID(folder_name=folder_name)
 
         item_id = self.get_item_ID(item_name=name,item_type=item_type, folder=folderID)
-                        
+
         if delete_existing and item_id != None:
             self.deleteItem(item_id =item_id,folder=folderID,force_delete=delete_existing)
             item_id = None
@@ -1933,7 +1932,7 @@ class AGOL(BaseAGOLClass):
 
         else:
             return None
-    
+
     #----------------------------------------------------------------------
     def get_item_ID(self, item_name,item_type,folder=None):
         """
@@ -1954,7 +1953,7 @@ class AGOL(BaseAGOLClass):
                     itemID = item['id']
                     break
             del items
-          
+
         return itemID
     #----------------------------------------------------------------------
     def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,thumbnail=None,folder_name=None):
@@ -1998,13 +1997,14 @@ class AGOL(BaseAGOLClass):
 
         group_ids = self.get_group_IDs(share_groups)
 
+        errors = []
         result = self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== "true" , orgs= share_org.lower()== "true", groups=','.join(group_ids),folder=folderID)
         if 'error' in result:
-            raise ValueError(str(result))
+            errors.append(result['error'])
 
         result = self.updateTitle(agol_id=item_id,title= service_name,folder=folderID)
         if 'error' in result:
-            raise ValueError(str(result))
+            errors.append(result['error'])
 
         if not thumbnail is None:
             if os.path.isfile(thumbnail):
@@ -2012,8 +2012,10 @@ class AGOL(BaseAGOLClass):
                     thumbnail = os.path.abspath(thumbnail)
                 result = self.updateThumbnail(agol_id=item_id,thumbnail=thumbnail,folder=folderID)
                 if 'error' in result:
-                    raise ValueError(str(result))
+                    errors.append(result['error'])
+        if len(errors)> 0:
 
+            itemInfo['errors'] =  errors
         return itemInfo
     #----------------------------------------------------------------------
     def get_group_content(self, groupID):
