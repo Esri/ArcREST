@@ -2024,12 +2024,14 @@ class AGOL(BaseAGOLClass):
         query_dict = {
                       'q':'group:{}'.format(groupID),
                       'num': 100,
-                      'f': 'json',
-                      'token': self._token
+                      'f': 'json'
                       }
+        if self._token != None:
+            query_dict['token'] =  self._token
 
-        return self._do_post(contentURL, query_dict, proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._do_get(contentURL, query_dict,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
 
     #----------------------------------------------------------------------
     def _publish(self, agol_id,folder=None):
