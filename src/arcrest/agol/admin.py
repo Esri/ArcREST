@@ -1740,13 +1740,14 @@ class AGOL(BaseAGOLClass):
         # POST data to site
         content = self.getUserContent(folder=folder)
         #Title, item
-        for item in content['items']:
-            if item['title'] == service_name and \
-               item['item'] == os.path.basename(sd):
-                print "Deleted: " + self._tostr( self.deleteItem(item['id']))
-
-            elif item['title'] == service_name:
-                print "Deleted: " + self._tostr( self.deleteItem(item['id']))
+        if 'items' in content:
+            for item in content['items']:
+                if item['title'] == service_name and \
+                   item['item'] == os.path.basename(sd):
+                    print "Deleted: " + self._tostr( self.deleteItem(item['id']))
+    
+                elif item['title'] == service_name:
+                    print "Deleted: " + self._tostr( self.deleteItem(item['id']))
 
         res = self.addFile(sd, agol_type="Service Definition", name=service_name,
                                              tags=tags, description=description,folder=folder)
@@ -1947,12 +1948,13 @@ class AGOL(BaseAGOLClass):
         itemID = None
         if not item_name == None and not item_name == '':
             userContent = self.getUserContent(folder=folder)
-            items = userContent['items']
-            for item in items:
-                if item['title'] == item_name and item['type'] in item_type:
-                    itemID = item['id']
-                    break
-            del items
+            if 'items' in userContent:
+                items = userContent['items']
+                for item in items:
+                    if item['title'] == item_name and item['type'] in item_type:
+                        itemID = item['id']
+                        break
+                del items
 
         return itemID
     #----------------------------------------------------------------------
