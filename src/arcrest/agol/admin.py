@@ -1754,7 +1754,7 @@ class AGOL(BaseAGOLClass):
         if "success" in res:
             self._agol_id =  res['id']
         else:
-            return "Error Uploading"
+            return res
 
         del mxd
         p_vals = self._publish(agol_id=self._agol_id,folder=folder)
@@ -1987,9 +1987,11 @@ class AGOL(BaseAGOLClass):
 
         self.delete_items(items=items,item_type=['Feature Service','Service Definition'],folder=folderID)
         itemInfo = self.publish_to_agol(mxd_path=mxd,service_name=service_name_safe,folder=folderID)
-
+        if 'error' in itemInfo:
+            return itemInfo
         item_id = ''
         service_url = ''
+        
         for service in itemInfo['services']:
             if 'error' in service:
                 raise ValueError(str(service))
