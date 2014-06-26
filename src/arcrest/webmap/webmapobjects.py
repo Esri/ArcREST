@@ -1,5 +1,5 @@
 import json
-from layer import *
+from layers import *
 from geometry import Envelope
 ########################################################################
 class BaseMap(object):
@@ -54,7 +54,7 @@ class BaseMap(object):
         """ returns the string JSON representation of the basemap """
         template = {
             "title" : self._title,
-            "baseMapLayers" : self._baseMapLayers
+	    "baseMapLayers" : [ json.loads(str(l)) for l in self._baseMapLayers]
         }
         return json.dumps(template)
     #----------------------------------------------------------------------
