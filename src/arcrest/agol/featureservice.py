@@ -601,4 +601,4 @@ class FeatureService(BaseAGOLClass):
                 res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
                 return res
 
-        return "Sync Not Enabled"
+        return "Not Supported"

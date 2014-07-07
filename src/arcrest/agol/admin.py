@@ -1521,7 +1521,7 @@ class AGOL(BaseAGOLClass):
                     return jres
         return jres
     #----------------------------------------------------------------------
-    def _modify_sddraft(self, sddraft,maxRecordCount='1000'):
+    def _modify_sddraft(self, sddraft,capabilities,maxRecordCount='1000'):
         """ modifies the sddraft for agol publishing """
 
         doc = ET.parse(sddraft)
@@ -1567,7 +1567,7 @@ class AGOL(BaseAGOLClass):
         # Turn on feature access capabilities
         for prop in doc.findall("./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty"):
             if prop.find("Key").text == 'WebCapabilities':
-                prop.find("Value").text = "Query,Create,Update,Delete,Uploads,Editing,Sync"
+                prop.find("Value").text = capabilities
 
         # Add the namespaces which get stripped, back into the .SD
         root_elem.attrib["xmlns:typens"] = 'http://www.esri.com/schemas/ArcGIS/10.1'
@@ -1691,7 +1691,7 @@ class AGOL(BaseAGOLClass):
         return resultList
     #----------------------------------------------------------------------
 
-    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None):
+    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync'):
         """ publishes a service to AGOL """
 
         if not os.path.isabs(mxd_path):
@@ -1722,7 +1722,7 @@ class AGOL(BaseAGOLClass):
         analysis = mapping.CreateMapSDDraft(mxd, sddraft,
                                             service_name,
                                             "MY_HOSTED_SERVICES")
-        sddraft = self._modify_sddraft(sddraft)
+        sddraft = self._modify_sddraft(sddraft=sddraft,capabilities=capabilities)
         analysis = mapping.AnalyzeForSD(sddraft)
         if os.path.isdir(sdFolder):
             shutil.rmtree(sdFolder, ignore_errors=True)
@@ -1958,7 +1958,7 @@ class AGOL(BaseAGOLClass):
 
         return itemID
     #----------------------------------------------------------------------
-    def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,thumbnail=None,folder_name=None):
+    def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,capabilities,thumbnail=None,folder_name=None):
         """
            The createFeatureService function publishes a service definition,
            publishes a features service, sets the details, and shares it with
