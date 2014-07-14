@@ -1745,7 +1745,7 @@ class AGOL(BaseAGOLClass):
                 if item['title'] == service_name and \
                    item['item'] == os.path.basename(sd):
                     print "Deleted: " + self._tostr( self.deleteItem(item['id']))
-    
+
                 elif item['title'] == service_name:
                     print "Deleted: " + self._tostr( self.deleteItem(item['id']))
 
@@ -1922,7 +1922,7 @@ class AGOL(BaseAGOLClass):
                         folderID = folder['id']
                         break
                 del folders
-                del folder
+
 
             if folderID == None:
                 res = self.createFolder(folder_name)
@@ -1991,7 +1991,7 @@ class AGOL(BaseAGOLClass):
             return itemInfo
         item_id = ''
         service_url = ''
-        
+
         for service in itemInfo['services']:
             if 'error' in service:
                 raise ValueError(str(service))
