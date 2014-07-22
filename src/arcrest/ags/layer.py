@@ -46,16 +46,29 @@ class FeatureLayer(BaseAGSServer):
     _useStandardizedQueries = None
     #----------------------------------------------------------------------
     def __init__(self, url, token_url=None,
-                 username=None, password=None):
+                 username=None, password=None, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         self_token_url = token_url
         self._username = username
         self._password = password
-        if not username is None and\
-           not password is None:
+        if not username is None and \
+           not password is None and \
+           not username is "" and \
+           not password is "":
             if not token_url is None:
-                self._token = self.generate_token()
+                res = self.generate_token(tokenURL=token_url,
+                                              proxy_port=proxy_port,
+                                            proxy_url=proxy_url)
+            else:   
+                res = self.generate_token(proxy_port=self._proxy_port,
+                                          proxy_url=self._proxy_url)                
+            if res is None:
+                print "Token was not generated"
+            elif 'error' in res:
+                print res
+            else:
+                self._token = res[0]
         self.__init()
     def __init(self):
         """ inializes the properties """
@@ -303,16 +316,29 @@ class GroupLayer(FeatureLayer):
     """ represents a group layer  """
     #----------------------------------------------------------------------
     def __init__(self, url, token_url=None,
-                 username=None, password=None):
+                 username=None, password=None, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         self_token_url = token_url
         self._username = username
         self._password = password
-        if not username is None and\
-           not password is None:
+        if not username is None and \
+           not password is None and \
+           not username is "" and \
+           not password is "":
             if not token_url is None:
-                self._token = self.generate_token()
+                res = self.generate_token(tokenURL=token_url,
+                                              proxy_port=proxy_port,
+                                            proxy_url=proxy_url)
+            else:   
+                res = self.generate_token(proxy_port=self._proxy_port,
+                                                       proxy_url=self._proxy_url)                
+            if res is None:
+                print "Token was not generated"
+            elif 'error' in res:
+                print res
+            else:
+                self._token = res[0]
         self.__init()
     def __init(self):
         """ inializes the properties """

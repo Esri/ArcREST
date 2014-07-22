@@ -64,10 +64,23 @@ class FeatureService(BaseAGOLClass):
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if not username is None and \
-           not password is None:
-            self._token = self.generate_token(tokenURL=token_url,
+           not password is None and \
+           not username is "" and \
+           not password is "":
+            if not token_url is None:
+                res = self.generate_token(tokenURL=token_url,
                                               proxy_port=proxy_port,
-                                              proxy_url=proxy_url)[0]
+                                            proxy_url=proxy_url)
+            else:   
+                res = self.generate_token(proxy_port=self._proxy_port,
+                                                       proxy_url=self._proxy_url)                
+            if res is None:
+                print "Token was not generated"
+            elif 'error' in res:
+                print res
+            else:
+                self._token = res[0]
+      
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -212,10 +225,15 @@ class FeatureService(BaseAGOLClass):
     def extractEnabled(self):
         """ informs the user if sync of data can be performed """
         if self._extractEnabled is None:
-            if 'Extract' in self.capabilities:
-                self._extractEnabled = True
+            capabilities = self.capabilities
+            if capabilities is None:
+                self._extractEnabled = False                
             else:
-                self._extractEnabled = False
+
+                if 'Extract' in self.capabilities:
+                    self._extractEnabled = True
+                else:
+                    self._extractEnabled = False
             
         return self._extractEnabled
     #----------------------------------------------------------------------  

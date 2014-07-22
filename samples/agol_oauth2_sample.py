@@ -21,27 +21,31 @@ def _do_get(url, param_dict, header={}):
      return jres#self._unicode_convert(jres)
 
 if __name__ == "__main__":
-     client_id = ""
-     client_secret = ""
-     grant_type="client_credentials"
-     request_token_url = "https://www.arcgis.com/sharing/oauth2/token"
+    try:
+        client_id = ""
+        client_secret = ""
+        grant_type="client_credentials"
+        request_token_url = "https://www.arcgis.com/sharing/oauth2/token"
 
-     params = {
+        params = {
           "client_id" : "",
           "client_secret" : "",
           "grant_type":"client_credentials"
-     }
-     token = _do_get(url=request_token_url, param_dict=params)['access_token']
-     #consumer = oauth.Consumer(key=client_id,
+        }
+        token = _do_get(url=request_token_url, param_dict=params)['access_token']
+        #consumer = oauth.Consumer(key=client_id,
                          #secret=client_secret)
-     #client = oauth.Client(consumer)
+        #client = oauth.Client(consumer)
 
-     ## The OAuth Client request works just like httplib2 for the most part.
-     #resp, content = client.request(request_token_url, "GET")
-     #print resp
-     #print content
-     params = {}
-     params['token'] = token
-     params['f'] = "json"
-     url = "http://services2.arcgis.com/...."
-     print _do_get(url, params)
+        ## The OAuth Client request works just like httplib2 for the most part.
+        #resp, content = client.request(request_token_url, "GET")
+        #print resp
+        #print content
+        params = {}
+        params['token'] = token
+        params['f'] = "json"
+        url = "http://services2.arcgis.com/...."
+        print _do_get(url, params)
+
+    except ValueError, e:
+        print e

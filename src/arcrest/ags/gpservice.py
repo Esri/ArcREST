@@ -20,7 +20,7 @@ class GPService(BaseAGSServer):
     _serviceDescription = None
     #----------------------------------------------------------------------
     def __init__(self, url, username=None, password=None, token_url=None,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         if username is not None and \
@@ -29,7 +29,23 @@ class GPService(BaseAGSServer):
             self._username = username
             self._password = password
             self._token_url = token_url
-            self._token = self.generate_token()[0]
+            if not username is None and \
+             not password is None and \
+             not username is "" and \
+             not password is "":
+                if not token_url is None:
+                    res = self.generate_token(tokenURL=token_url,
+                                                  proxy_port=proxy_port,
+                                                proxy_url=proxy_url)
+                else:   
+                    res = self.generate_token(proxy_port=self._proxy_port,
+                                                           proxy_url=self._proxy_url)                
+                if res is None:
+                    print "Token was not generated"
+                elif 'error' in res:
+                    print res
+                else:
+                    self._token = res[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -128,7 +144,7 @@ class GPTask(BaseAGSServer):
     _description = None
     #----------------------------------------------------------------------
     def __init__(self, url, username=None, password=None, token_url=None,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         if username is not None and \
@@ -137,7 +153,23 @@ class GPTask(BaseAGSServer):
             self._username = username
             self._password = password
             self._token_url = token_url
-            self._token = self.generate_token()[0]
+            if not username is None and \
+             not password is None and \
+             not username is "" and \
+             not password is "":
+                if not token_url is None:
+                    res = self.generate_token(tokenURL=token_url,
+                                                  proxy_port=proxy_port,
+                                                proxy_url=proxy_url)
+                else:   
+                    res = self.generate_token(proxy_port=self._proxy_port,
+                                                           proxy_url=self._proxy_url)                
+                if res is None:
+                    print "Token was not generated"
+                elif 'error' in res:
+                    print res
+                else:
+                    self._token = res[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -262,7 +294,7 @@ class GPJob(BaseAGSServer):
     _inputs = None
     #----------------------------------------------------------------------
     def __init__(self, url, username=None, password=None, token_url=None,
-                 initialize=False):
+                 initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
         if username is not None and \
@@ -271,7 +303,23 @@ class GPJob(BaseAGSServer):
             self._username = username
             self._password = password
             self._token_url = token_url
-            self._token = self.generate_token()[0]
+            if not username is None and \
+             not password is None and \
+             not username is "" and \
+             not password is "":
+                if not token_url is None:
+                    res = self.generate_token(tokenURL=token_url,
+                                                  proxy_port=proxy_port,
+                                                proxy_url=proxy_url)
+                else:   
+                    res = self.generate_token(proxy_port=self._proxy_port,
+                                                           proxy_url=self._proxy_url)                
+                if res is None:
+                    print "Token was not generated"
+                elif 'error' in res:
+                    print res
+                else:
+                    self._token = res[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

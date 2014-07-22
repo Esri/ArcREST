@@ -134,7 +134,7 @@ class BaseAGOLClass(object):
                               proxy_port=proxy_port)
         if "token" not in token:
             self._token = None
-            return None
+            return token
         else:
             httpPrefix = self._url
             if token['ssl'] == True:

@@ -60,10 +60,22 @@ class TiledService(BaseAGOLClass):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if not username is None and \
-           not password is None:
-            self.generate_token(tokenURL=token_url,
-                                proxy_port=self._proxy_port,
-                                proxy_url=self._proxy_url)
+           not password is None and \
+           not username is "" and \
+           not password is "":
+            if not token_url is None:
+                res = self.generate_token(tokenURL=token_url,
+                                              proxy_port=proxy_port,
+                                            proxy_url=proxy_url)
+            else:   
+                res = self.generate_token(proxy_port=self._proxy_port,
+                                                       proxy_url=self._proxy_url)                
+            if res is None:
+                print "Token was not generated"
+            elif 'error' in res:
+                print res
+            else:
+                self._token = res[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
