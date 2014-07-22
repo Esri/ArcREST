@@ -39,6 +39,7 @@ class FeatureService(BaseAGOLClass):
     _fullExtent = None
     _allowGeometryUpdates = None
     _units = None
+    _extractEnabled = None
     _syncEnabled = None
     _syncCapabilities = None
     _editorTrackingInfo = None
@@ -207,6 +208,17 @@ class FeatureService(BaseAGOLClass):
             self.__init()
         return self._units
     #----------------------------------------------------------------------
+    @property
+    def extractEnabled(self):
+        """ informs the user if sync of data can be performed """
+        if self._extractEnabled is None:
+            if 'Extract' in self.capabilities:
+                self._extractEnabled = True
+            else:
+                self._extractEnabled = False
+            
+        return self._extractEnabled
+    #----------------------------------------------------------------------  
     @property
     def syncEnabled(self):
         """ informs the user if sync of data can be performed """
@@ -523,22 +535,19 @@ class FeatureService(BaseAGOLClass):
     def createReplica(self,
                       replicaName,
                       layers,
-                      keep_replica=False,
                       layerQueries=None,
                       geometryFilter=None,
                       returnAttachments=False,
                       returnAttachmentDatabyURL=True,
-                      returnAsFeatureClass=False,
+                      returnAsFeatureClass=None,
+                      outputFormat='FILEGDB',
                       out_path=None
                       ):
         """ generates a replica
             Inputs:
                replicaName - string of replica name
                layers - layer id # as comma seperated string
-               keep_replica - if the replica does not have returnAsFeatureClass set to true,
-                              the feature service creates a permanent copy of the replica.
-                              If this is just a pull, then erase the replica in order to prevent
-                              build up of replicas.
+
                layerQueries - In addition to the layers and geometry parameters, the layerQueries
                               parameter can be used to further define what is replicated. This
                               parameter allows you to set properties on a per layer or per table
@@ -553,13 +562,15 @@ class FeatureService(BaseAGOLClass):
                returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
                                             attachment returned from createReplica. Otherwise,
                                             attachments are embedded in the response.
-               returnAsFeatureClass - If a local copy is desired, set this parameter to True, else
-                                      the service will return information on how to download the
-                                      json file.
-               out_path - Path where the FGDB will be saved.  Only used with returnAsFeatureClass is
-                          True.
+               returnAsFeatureClass - Deprecated and replaced with outputFormat
+               outputFormat - [sqlite,filegdb,json] The types of features that can be return
+               out_path - Path where the replica will be saved.  If not provided, the url to the replica
+                                    will be returned.
         """
-        if self.syncEnabled:
+        if not returnAsFeatureClass is None:
+            print "ReturnAsFeatureClass has been replaced with outputFormat"
+        
+        if self.extractEnabled or self.syncEnabled:
             url = self._url + "/createReplica"
             params = {
                 "f" : "json",
@@ -567,7 +578,9 @@ class FeatureService(BaseAGOLClass):
                 "layers": layers,
                 "returnAttachmentDatabyURL" : returnAttachmentDatabyURL,
                 "returnAttachments" : returnAttachments,
-                "async" : False
+                "async" : False,
+                "dataFormat": outputFormat
+                
             }
             if not self._token is None:
                 params["token"] = self._token
@@ -577,28 +590,73 @@ class FeatureService(BaseAGOLClass):
                 params['geometryType'] = gf['geometryType']
                 params['geometry'] = gf['geometry']
                 params['inSR'] = gf['inSR']
-            if returnAsFeatureClass and \
-               out_path is not None:
-                if os.path.isdir(out_path) == False:
-                    os.makedirs(out_path)
-                params['dataFormat'] = "filegdb"
+            if outputFormat == 'filegdb':
+            
+              
                 params['syncModel'] = 'none'
                 res = self._do_post(url=url, param_dict=params,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
                 if res.has_key("responseUrl"):
                     zipURL = res["responseUrl"]
-                    dl_file = self._download_file(url=zipURL,
-                                        save_path=out_path,
-                                        file_name=os.path.basename(zipURL)
-                                        )
-                    self._unzip_file(zip_file=dl_file, out_folder=out_path)
-                    os.remove(dl_file)
-                    return self._list_files(path=out_path + os.sep + "*.gdb")
+                    if not out_path is None:
+                        if os.path.isdir(out_path) == False:
+                            os.makedirs(out_path)                        
+                        dl_file = self._download_file(url=zipURL,
+                                            save_path=out_path,
+                                            file_name=os.path.basename(zipURL)
+                                            )
+                        
+                        existing_files = self._list_files(path=out_path + os.sep + "*.gdb")
+                        self._unzip_file(zip_file=dl_file, out_folder=out_path)
+                        os.remove(dl_file)              
+                        return list(set(self._list_files(path=out_path + os.sep + "*.gdb")) - set(existing_files)) 
+                    else:
+                        return zipURL
                 else:
-                    return None
-            else:
+                    return res
+            elif self.syncEnabled == False:
+                params['syncModel'] = 'none'
+                
                 res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
-                return res
+                if res.has_key("URL") or res.has_key("responseUrl"):
+                    if res.has_key("URL"):                    
+                        URL = res["URL"]
+                    else:
+                        URL = res["responseUrl"]
+                    if not out_path is None:
+                        if os.path.isdir(out_path) == False:
+                            os.makedirs(out_path)                                                
+                        dl_file = self._download_file(url=URL,
+                                            save_path=out_path,
+                                            file_name=os.path.basename(URL)
+                                            )
+    
+                        return dl_file 
+                    else:
+                        return URL  
+                else:
+                    return res            
+            else:
+              
+                res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+                if res.has_key("URL") or res.has_key("responseUrl"):
+                    if res.has_key("URL"):                    
+                        URL = res["URL"]
+                    else:
+                        URL = res["responseUrl"]
+                    if not out_path is None:
+                        if os.path.isdir(out_path) == False:
+                            os.makedirs(out_path)                                                                        
+                        dl_file = self._download_file(url=URL,
+                                            save_path=out_path,
+                                            file_name=os.path.basename(URL)
+                                            )
+                            
+                        return dl_file 
+                    else:                  
+                        return URL                  
+                else:
+                    return res            
 
         return "Not Supported"

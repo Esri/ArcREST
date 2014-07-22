@@ -13,6 +13,6 @@ if __name__ == "__main__":
     print fs.createReplica(replicaName="test_replica",
                            layers="0",
                            returnAttachments=True,
-                           returnAsFeatureClass=True,
-                           out_path=r"c:\temp\replicas")
+                           outputFormat="filegdb",
+                           out_path=r"c:\temp")
 
