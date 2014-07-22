@@ -75,6 +75,8 @@ class FeatureLayer(BaseAGOLClass):
     _editingInfo = None
     _proxy_url = None
     _proxy_port = None
+    _supportsCalculate = None
+    _supportsAttachmentsByUploadId = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  username=None,
@@ -152,6 +154,20 @@ class FeatureLayer(BaseAGOLClass):
                       ]
         for att in attributes:
             yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    @property
+    def supportsAttachmentsByUploadId(self):
+        """ returns the supports attachments by upload id """
+        if self._supportsAttachmentsByUploadId is None:
+            self.__init()
+        return self._supportsAttachmentsByUploadId
+    #----------------------------------------------------------------------
+    @property
+    def supportsCalculate(self):
+        """ returns the supports calculate value """
+        if self._supportsCalculate is None:
+            self.__init()
+        return self._supportsCalculate
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):
