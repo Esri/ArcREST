@@ -677,6 +677,8 @@
         <span class="n">fURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/query&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">fURL</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">returnCountOnly</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">returnIDsOnly</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">returnFeatureClass</span><span class="p">:</span>
                 <span class="n">json_text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>

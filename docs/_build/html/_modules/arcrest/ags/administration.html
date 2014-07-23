@@ -67,8 +67,11 @@
     <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_fullVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -76,6 +79,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -107,7 +112,9 @@
         <span class="k">return</span> <span class="n">Log</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/logs&quot;</span><span class="p">,</span>
                    <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                    <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                   <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                   <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                   <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                   <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.services"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.services">[docs]</a>    <span class="k">def</span> <span class="nf">services</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -115,7 +122,9 @@
         <span class="k">return</span> <span class="n">Services</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/services&quot;</span><span class="p">,</span>
                         <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                         <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.security"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.security">[docs]</a>    <span class="k">def</span> <span class="nf">security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -123,7 +132,9 @@
         <span class="k">return</span> <span class="n">Security</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/security&quot;</span><span class="p">,</span>
                         <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                         <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.info"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -131,7 +142,9 @@
         <span class="k">return</span> <span class="n">Info</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/info&quot;</span><span class="p">,</span>
                     <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                     <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                    <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.kml"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.kml">[docs]</a>    <span class="k">def</span> <span class="nf">kml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -140,7 +153,9 @@
                    <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                    <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
-                   <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                   <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                   <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                   <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.data"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -148,7 +163,9 @@
         <span class="k">return</span> <span class="n">Data</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/data&quot;</span><span class="p">,</span>
                     <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                     <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                    <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.acceptLanguage"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.acceptLanguage">[docs]</a>    <span class="k">def</span> <span class="nf">acceptLanguage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -184,7 +201,9 @@
                         <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                         <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
                         <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
-                        <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                        <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
 </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ArcGISServerSite.clusters"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.ArcGISServerSite.clusters">[docs]</a>    <span class="k">def</span> <span class="nf">clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -221,8 +240,11 @@
     <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_token_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -230,6 +252,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -709,8 +733,11 @@
     <span class="n">_description</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_isDefault</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_services</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -718,6 +745,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -825,7 +854,9 @@
                                                                  <span class="n">s</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]),</span>
                                <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                                <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                               <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                               <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                               <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                               <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
@@ -1052,8 +1083,11 @@
     <span class="n">_currentBuild</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_currentversion</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_fullVersion</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -1061,6 +1095,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -1150,8 +1186,11 @@
     <span class="n">_token_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_operations</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -1159,6 +1198,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -1345,6 +1386,8 @@
 <span class="c">########################################################################</span></div></div>
 <div class="viewcode-block" id="AGSService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.administration.AGSService">[docs]</a><span class="k">class</span> <span class="nc">AGSService</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Defines a AGS Admin Service &quot;&quot;&quot;</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
@@ -1375,14 +1418,19 @@
     <span class="n">_keepAliveInterval</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_maxInstancesPerNode</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
+                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
 <span class="sd">               token_url - url to generate token</span>
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
+<span class="sd">               proxy_url - url of proxy</span>
+<span class="sd">               proxy_port - port value of proxy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -1630,9 +1678,11 @@
 <span class="sd">       need them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_machines</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -1640,6 +1690,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -1667,7 +1719,9 @@
                         <span class="n">Machine</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span><span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">m</span><span class="p">[</span><span class="s">&#39;machineName&#39;</span><span class="p">],</span>
                                 <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">,</span>
                                 <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
-                                <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">)</span>
+                                <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
                     <span class="p">)</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
@@ -1767,9 +1821,11 @@
     <span class="n">_synchronize</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_configuredState</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_ports</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -1777,6 +1833,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_currentURL</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
@@ -1949,10 +2007,11 @@
 <span class="sd">       specific data item. This operation helps you determine if a</span>
 <span class="sd">       particular data item can be safely deleted or refreshed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -1960,6 +2019,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
@@ -2123,9 +2184,11 @@
 <span class="sd">       server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_items</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">            Inputs:</span>
 <span class="sd">               url - admin url</span>
@@ -2133,6 +2196,8 @@
 <span class="sd">               username - admin username</span>
 <span class="sd">               password - admin password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>

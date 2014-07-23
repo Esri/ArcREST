@@ -48,6 +48,8 @@
             
   <h1>Source code for arcrest.ags.featureservice</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">BaseAGSServer</span>
+<span class="kn">import</span> <span class="nn">layer</span>
+<span class="kn">from</span> <span class="nn">filters</span> <span class="kn">import</span> <span class="n">LayerDefinitionFilter</span><span class="p">,</span> <span class="n">GeometryFilter</span><span class="p">,</span> <span class="n">TimeFilter</span>
 <span class="c">########################################################################</span>
 <div class="viewcode-block" id="FeatureService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService">[docs]</a><span class="k">class</span> <span class="nc">FeatureService</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; contains information about a feature service &quot;&quot;&quot;</span>
@@ -76,10 +78,14 @@
     <span class="n">_tables</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_enableZDefaults</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_zDefault</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">token_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                 <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span> <span class="o">=</span> <span class="n">token_url</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
@@ -109,98 +115,6 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implmented for Feature Service.&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;currentVersion&quot;):</span>
-            <span class="c">#self._currentVersion = json_dict[&#39;currentVersion&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._currentVersion = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;serviceDescription&quot;):</span>
-            <span class="c">#self._serviceDescription = json_dict[&#39;serviceDescription&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._serviceDescription = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;hasVersionedData&quot;):</span>
-            <span class="c">#self._hasVersionedData = json_dict[&#39;hasVersionedData&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._hasVersionedData = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&#39;supportsDisconnectedEditing&#39;):</span>
-            <span class="c">#self._supportsDisconnectedEditing = json_dict[&#39;supportsDisconnectedEditing&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._supportsDisconnectedEditing = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;hasStaticData&quot;):</span>
-            <span class="c">#self._hasStaticData = json_dict[&#39;hasStaticData&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._hasStaticData = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;maxRecordCount&quot;):</span>
-            <span class="c">#self._maxRecordCount = json_dict[&#39;maxRecordCount&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._maxRecordCount = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;supportedQueryFormats&quot;):</span>
-            <span class="c">#self._supportedQueryFormats = json_dict[&#39;supportedQueryFormats&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._supportedQueryFormats = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;capabilities&quot;):</span>
-            <span class="c">#self._capabilities = json_dict[&#39;capabilities&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._capabilities = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;description&quot;):</span>
-            <span class="c">#self._description = json_dict[&#39;description&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._description = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;copyrightText&quot;):</span>
-            <span class="c">#self._copyrightText = json_dict[&#39;copyrightText&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._copyrightText = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;spatialReference&quot;):</span>
-            <span class="c">#self._spatialReference = json_dict[&#39;spatialReference&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._spatialReference = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;initialExtent&quot;):</span>
-            <span class="c">#self._initialExtent = json_dict[&#39;initialExtent&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._initialExtent = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;fullExtent&quot;):</span>
-            <span class="c">#self._fullExtent = json_dict[&#39;fullExtent&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._fullExtent = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;allowGeometryUpdates&quot;):</span>
-            <span class="c">#self._allowGeometryUpdates = json_dict[&#39;allowGeometryUpdates&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._allowGeometryUpdates = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;units&quot;):</span>
-            <span class="c">#self._units = json_dict[&#39;units&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._units = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;syncEnabled&quot;):</span>
-            <span class="c">#self._syncEnabled = json_dict[&#39;syncEnabled&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._syncEnabled = False</span>
-        <span class="c">#if json_dict.has_key(&quot;syncCapabilities&quot;):</span>
-            <span class="c">#self._syncCapabilities = json_dict[&#39;syncCapabilities&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._syncCapabilities = &quot;Not Supported&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;editorTrackingInfo&quot;):</span>
-            <span class="c">#self._editorTrackingInfo = json_dict[&#39;editorTrackingInfo&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._editorTrackingInfo = &quot;&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;documentInfo&quot;):</span>
-            <span class="c">#self._documentInfo = json_dict[&#39;documentInfo&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._documentInfo = &quot;&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;layers&quot;):</span>
-            <span class="c">#self._layers = json_dict[&#39;layers&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._layers = &quot;&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;tables&quot;):</span>
-            <span class="c">#self._tables = json_dict[&#39;tables&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._tables = &quot;&quot;</span>
-        <span class="c">#if json_dict.has_key(&quot;enableZDefaults&quot;):</span>
-            <span class="c">#self._enableZDefaults = json_dict[&#39;enableZDefaults&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._enableZDefaults = False</span>
-        <span class="c">#if json_dict.has_key(&quot;zDefault&quot;):</span>
-            <span class="c">#self._zDefault = json_dict[&#39;zDefault&#39;]</span>
-        <span class="c">#else:</span>
-            <span class="c">#self._zDefault = &quot;&quot;</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.maxRecordCount"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.maxRecordCount">[docs]</a>    <span class="k">def</span> <span class="nf">maxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -302,11 +216,30 @@
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.layers"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.layers">[docs]</a>    <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; gets the layers for the feature service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span>
-    <span class="c">#----------------------------------------------------------------------</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_getLayers</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span></div>
+    <span class="k">def</span> <span class="nf">_getLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gets layers for the featuer service &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+                          <span class="s">&quot;token&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+                          <span class="p">}</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&quot;layers&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&quot;layers&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">layer</span><span class="o">.</span><span class="n">FeatureLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">l</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+                                       <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+                                       <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
+                                       <span class="n">token_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_url</span><span class="p">)</span>
+                <span class="p">)</span>
+    <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FeatureService.tables"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.tables">[docs]</a>    <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
@@ -362,7 +295,48 @@
         <span class="sd">&quot;&quot;&quot; returns boolean is disconnecting editted supported &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDisconnectedEditing</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDisconnectedEditing</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDisconnectedEditing</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="FeatureService.query"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.featureservice.FeatureService.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">layerDefsFilter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">geometryFilter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">timeFilter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">returnGeometry</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+              <span class="n">returnIdsOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">returnCountOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">outSR</span><span class="o">=</span><span class="bp">None</span>
+              <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           The Query operation is performed on a feature service resource</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qurl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/query&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+                  <span class="s">&quot;returnGeometry&quot;</span><span class="p">:</span> <span class="n">returnGeometry</span><span class="p">,</span>
+                  <span class="s">&quot;returnIdsOnly&quot;</span><span class="p">:</span> <span class="n">returnIdsOnly</span><span class="p">,</span>
+                  <span class="s">&quot;returnCountOnly&quot;</span><span class="p">:</span> <span class="n">returnCountOnly</span><span class="p">,</span>
+                  <span class="s">&quot;returnZ&quot;</span><span class="p">:</span> <span class="n">returnZ</span><span class="p">,</span>
+                  <span class="s">&quot;returnM&quot;</span> <span class="p">:</span> <span class="n">returnM</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&quot;token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">layerDefsFilter</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">layerDefsFilter</span><span class="p">,</span> <span class="n">LayerDefinitionFilter</span><span class="p">):</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;layerDefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerDefsFilter</span><span class="o">.</span><span class="n">filter</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">geometryFilter</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometryFilter</span><span class="p">,</span> <span class="n">GeometryFilter</span><span class="p">):</span>
+            <span class="n">gf</span> <span class="o">=</span> <span class="n">geometryFilter</span><span class="o">.</span><span class="n">filter</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;spatialRel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;spatialRel&#39;</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;inSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s">&#39;inSR&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outSR</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">outSR</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">):</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;outSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outSR</span><span class="o">.</span><span class="n">asDictionary</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timeFilter</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeFilter</span><span class="p">,</span> <span class="n">TimeFilter</span><span class="p">):</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timeFilter</span><span class="o">.</span><span class="n">filter</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">qurl</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
