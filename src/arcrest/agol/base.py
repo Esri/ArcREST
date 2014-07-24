@@ -21,6 +21,7 @@ import datetime
 import mimetypes
 import mimetools
 import gzip
+import math
 from cStringIO import StringIO
 
 ########################################################################
@@ -102,18 +103,37 @@ class BaseAGOLClass(object):
     #----------------------------------------------------------------------
     def _download_file(self, url, save_path, file_name, proxy_url=None, proxy_port=None):
         """ downloads a file """
-        if proxy_url is not None:
-            if proxy_port is None:
-                proxy_port = 80
-            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
-            proxy_support = urllib2.ProxyHandler(proxies)
-            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
-            urllib2.install_opener(opener)
-        file_data = urllib2.urlopen(url)
-        with open(save_path + os.sep + file_name, 'wb') as writer:
-            writer.write(file_data.read())
-        return save_path + os.sep + file_name
+        try:
+            if proxy_url is not None:
+                if proxy_port is None:
+                    proxy_port = 80
+                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
+                proxy_support = urllib2.ProxyHandler(proxies)
+                opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+                urllib2.install_opener(opener)
+           
+            file_data = urllib2.urlopen(url)
+            total_size = int(file_data.info().getheader('Content-Length').strip())
+            downloaded = 0
+            CHUNK = 4096
+            
+            with open(save_path + os.sep + file_name, 'wb') as out_file:
+                while True:
+                    chunk = file_data.read(CHUNK)
+                    downloaded += len(chunk)
+                    if not chunk: break
+                    #print str(int(math.floor(float(downloaded) / float(total_size) * 100 ))) + "% download"
+                                                      
+                    out_file.write(chunk)       
+               
+            return save_path + os.sep + file_name
+        except urllib2.HTTPError, e:
+            print "HTTP Error:",e.code , url
+            return False
+        except urllib2.URLError, e:
+            print "URL Error:",e.reason , url
+            return False
     #----------------------------------------------------------------------
     def generate_token(self, referer=None, tokenURL=None,
                        proxy_url=None, proxy_port=None):
