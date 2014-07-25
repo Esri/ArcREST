@@ -108,15 +108,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
-           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+                   <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+                   <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+                   <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
-                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
+                                              <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
+                                            <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>                
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Token was not generated&quot;</span>
+            <span class="k">elif</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">res</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
-                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>      
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
@@ -219,15 +227,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
-           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
-                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
+                                              <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
+                                            <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>                
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Token was not generated&quot;</span>
+            <span class="k">elif</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">res</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
@@ -330,15 +346,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
-           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
+                                              <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
+                                            <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>                
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Token was not generated&quot;</span>
+            <span class="k">elif</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">res</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
@@ -752,15 +776,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span>\
-           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">username</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> \
+           <span class="ow">not</span> <span class="n">password</span> <span class="ow">is</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">token_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
-                                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">tokenURL</span><span class="o">=</span><span class="n">token_url</span><span class="p">,</span>
+                                              <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
+                                            <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>                
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Token was not generated&quot;</span>
+            <span class="k">elif</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">res</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
-                                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
     <span class="c">#----------------------------------------------------------------------</span>
@@ -1187,7 +1219,7 @@
     <span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_org_url</span> <span class="o">=</span><span class="s">&quot;http://www.arcgis.com&quot;</span>
-    <span class="n">_url</span> <span class="o">=</span> <span class="s">&quot;https://www.arcgis.com/sharing/rest&quot;</span>
+    <span class="n">_url</span> <span class="o">=</span> <span class="s">&quot;http://www.arcgis.com/sharing/rest&quot;</span>
     <span class="n">_token_url</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">org_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -1199,12 +1231,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initURL</span><span class="p">(</span><span class="n">org_url</span><span class="p">,</span> <span class="n">rest_url</span><span class="p">,</span><span class="n">token_url</span><span class="p">,</span><span class="n">referer_url</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
-                                          <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_token</span><span class="p">(</span><span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">,</span>
+                                          <span class="n">proxy_url</span><span class="o">=</span><span class="n">proxy_url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="c">##        else:</span>
-<span class="c">##</span>
-<span class="c">##            self._token = self.generate_token(tokenURL=token_url)[0]</span>
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="AGOL.orgURL"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.orgURL">[docs]</a>    <span class="k">def</span> <span class="nf">orgURL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1335,6 +1366,18 @@
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jres</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AGOL.getUserCommunityInfo"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.getUserCommunityInfo">[docs]</a>    <span class="k">def</span> <span class="nf">getUserCommunityInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gets a user&#39;s info on agol &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span><span class="p">,</span>
+                <span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;{}/community/users/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
+
+        <span class="n">jres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                            <span class="n">header</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;Accept-Encoding&quot;</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">},</span>
+                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jres</span>
+      <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="AGOL.addFile"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.addFile">[docs]</a>    <span class="k">def</span> <span class="nf">addFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">agol_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; loads a file to AGOL &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -1367,55 +1410,108 @@
                                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">res</span>
-
     <span class="c">#----------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AGOL.addWebmap"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.addWebmap">[docs]</a>    <span class="k">def</span> <span class="nf">addWebmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">name</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span><span class="n">snippet</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">extent</span><span class="p">,</span><span class="n">agol_type</span><span class="o">=</span><span class="s">&#39;Web Map&#39;</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; loads a file to AGOL &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;text&quot;</span> <span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
-            <span class="s">&quot;type&quot;</span> <span class="p">:</span> <span class="n">agol_type</span><span class="p">,</span>
-            <span class="s">&quot;title&quot;</span> <span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s">&quot;tags&quot;</span> <span class="p">:</span> <span class="n">tags</span><span class="p">,</span>
-            <span class="s">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-            <span class="s">&quot;snippet&quot;</span> <span class="p">:</span> <span class="n">snippet</span><span class="p">,</span>
-            <span class="s">&quot;extent&quot;</span><span class="p">:</span> <span class="n">extent</span><span class="p">,</span>
-            <span class="s">&quot;typeKeywords&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s">&quot;ArcGIS Online&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Collector&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Data Editing&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Explorer Web Map&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Map&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Offline&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Online Map&quot;</span><span class="p">,</span>
-                <span class="s">&quot;Web Map&quot;</span>
-            <span class="p">],</span>
-            <span class="s">&quot;thumbnail&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
-        <span class="p">}</span>
+<div class="viewcode-block" id="AGOL.addItem"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.addItem">[docs]</a>    <span class="k">def</span> <span class="nf">addItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">name</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span><span class="n">snippet</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">extent</span><span class="p">,</span><span class="n">item_type</span><span class="o">=</span><span class="s">&#39;Web Map&#39;</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">typeKeywords</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="s">&quot;ArcGIS Online&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Collector&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Data Editing&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Explorer Web Map&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Map&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Offline&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Online Map&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;Web Map&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot; loads a file to AGOL &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+                <span class="s">&quot;text&quot;</span> <span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+                <span class="s">&quot;type&quot;</span> <span class="p">:</span> <span class="n">item_type</span><span class="p">,</span>
+                <span class="s">&quot;title&quot;</span> <span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s">&quot;tags&quot;</span> <span class="p">:</span> <span class="n">tags</span><span class="p">,</span>
+                <span class="s">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+                <span class="s">&quot;snippet&quot;</span> <span class="p">:</span> <span class="n">snippet</span><span class="p">,</span>
+                <span class="s">&quot;extent&quot;</span><span class="p">:</span> <span class="n">extent</span><span class="p">,</span>
+                <span class="s">&quot;typeKeywords&quot;</span><span class="p">:</span><span class="n">typeKeywords</span><span class="p">,</span>
+                <span class="s">&quot;thumbnail&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
+            <span class="p">}</span>
 
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;{}/content/users/{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">folder</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">+=</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">folder</span>
-        <span class="n">url</span> <span class="o">+=</span> <span class="s">&#39;/addItem&#39;</span>
-        <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
 
-        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&#39;thumbnail&#39;</span><span class="p">,</span> <span class="n">thumbnail</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)))</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;{}/content/users/{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span>
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">folder</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">+=</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">folder</span>
+            <span class="n">url</span> <span class="o">+=</span> <span class="s">&#39;/addItem&#39;</span>
+            <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_multipart</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
-                                   <span class="n">selector</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-                                   <span class="n">fields</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                                   <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
-                                   <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">,</span>
-                                   <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
-                                   <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
-                                   <span class="n">port</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">res</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&#39;thumbnail&#39;</span><span class="p">,</span> <span class="n">thumbnail</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)))</span>
+
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_multipart</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span>
+                                       <span class="n">selector</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                                       <span class="n">fields</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                                       <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+                                       <span class="n">ssl</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;https&#39;</span><span class="p">,</span>
+                                       <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                       <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                                       <span class="n">port</span><span class="o">=</span><span class="n">parsed</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unicode_convert</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">res</span>
+
+
+
+
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c">#def addWebmap(self,  name, tags, description,snippet,data,extent,agol_type=&#39;Web Map&#39;,thumbnail=&#39;&#39;,folder=None):</span>
+        <span class="c">#&quot;&quot;&quot; loads a file to AGOL &quot;&quot;&quot;</span>
+        <span class="c">#params = {</span>
+            <span class="c">#&quot;f&quot; : &quot;json&quot;,</span>
+            <span class="c">#&quot;text&quot; : json.dumps(data),</span>
+            <span class="c">#&quot;type&quot; : agol_type,</span>
+            <span class="c">#&quot;title&quot; : name,</span>
+            <span class="c">#&quot;tags&quot; : tags,</span>
+            <span class="c">#&quot;description&quot; : description,</span>
+            <span class="c">#&quot;snippet&quot; : snippet,</span>
+            <span class="c">#&quot;extent&quot;: extent,</span>
+            <span class="c">#&quot;typeKeywords&quot;: [</span>
+                <span class="c">#&quot;ArcGIS Online&quot;,</span>
+                <span class="c">#&quot;Collector&quot;,</span>
+                <span class="c">#&quot;Data Editing&quot;,</span>
+                <span class="c">#&quot;Explorer Web Map&quot;,</span>
+                <span class="c">#&quot;Map&quot;,</span>
+                <span class="c">#&quot;Offline&quot;,</span>
+                <span class="c">#&quot;Online Map&quot;,</span>
+                <span class="c">#&quot;Web Map&quot;</span>
+            <span class="c">#],</span>
+            <span class="c">#&quot;thumbnail&quot;: os.path.basename(thumbnail)</span>
+        <span class="c">#}</span>
+
+        <span class="c">#if self._token is not None:</span>
+            <span class="c">#params[&#39;token&#39;] = self._token</span>
+
+        <span class="c">#url = &quot;{}/content/users/{}&quot;.format(self._url,</span>
+                                                   <span class="c">#self._username)</span>
+        <span class="c">#if folder:</span>
+            <span class="c">#url += &#39;/&#39; + folder</span>
+        <span class="c">#url += &#39;/addItem&#39;</span>
+        <span class="c">#parsed = urlparse.urlparse(url)</span>
+
+        <span class="c">#files = []</span>
+        <span class="c">#files.append((&#39;thumbnail&#39;, thumbnail, os.path.basename(thumbnail)))</span>
+
+        <span class="c">#res = self._post_multipart(host=parsed.hostname,</span>
+                                   <span class="c">#selector=parsed.path,</span>
+                                   <span class="c">#fields=params,</span>
+                                   <span class="c">#files=files,</span>
+                                   <span class="c">#ssl=parsed.scheme.lower() == &#39;https&#39;,</span>
+                                   <span class="c">#proxy_port=self._proxy_port,</span>
+                                   <span class="c">#proxy_url=self._proxy_url,</span>
+                                   <span class="c">#port=parsed.port)</span>
+        <span class="c">#res = self._unicode_convert(json.loads(res))</span>
+        <span class="c">#return res</span>
 
 
     <span class="c">#----------------------------------------------------------------------</span></div>
@@ -1506,7 +1602,7 @@
                     <span class="k">return</span> <span class="n">jres</span>
         <span class="k">return</span> <span class="n">jres</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
-    <span class="k">def</span> <span class="nf">_modify_sddraft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sddraft</span><span class="p">,</span><span class="n">maxRecordCount</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_modify_sddraft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sddraft</span><span class="p">,</span><span class="n">capabilities</span><span class="p">,</span><span class="n">maxRecordCount</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; modifies the sddraft for agol publishing &quot;&quot;&quot;</span>
 
         <span class="n">doc</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
@@ -1552,7 +1648,7 @@
         <span class="c"># Turn on feature access capabilities</span>
         <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;WebCapabilities&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Query,Create,Update,Delete,Uploads,Editing,Sync&quot;</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">capabilities</span>
 
         <span class="c"># Add the namespaces which get stripped, back into the .SD</span>
         <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&quot;xmlns:typens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;http://www.esri.com/schemas/ArcGIS/10.1&#39;</span>
@@ -1564,8 +1660,9 @@
         <span class="k">del</span> <span class="n">doc</span>
         <span class="k">return</span> <span class="n">newSDdraft</span>
 
+
    <span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="AGOL.enableSharing"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.enableSharing">[docs]</a>    <span class="k">def</span> <span class="nf">enableSharing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agol_id</span><span class="p">,</span> <span class="n">everyone</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">orgs</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AGOL.enableSharingUserItem"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.enableSharingUserItem">[docs]</a>    <span class="k">def</span> <span class="nf">enableSharingUserItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agol_id</span><span class="p">,</span> <span class="n">everyone</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">orgs</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; changes an items sharing permissions &quot;&quot;&quot;</span>
         <span class="n">share_url</span> <span class="o">=</span> <span class="s">&#39;{}/content/users/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">)</span>
 
@@ -1586,6 +1683,28 @@
         <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">share_url</span><span class="p">,</span> <span class="n">query_dict</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AGOL.enableSharing"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.enableSharing">[docs]</a>    <span class="k">def</span> <span class="nf">enableSharing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agol_id</span><span class="p">,</span> <span class="n">everyone</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">orgs</span><span class="o">=</span><span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; changes an items sharing permissions &quot;&quot;&quot;</span>
+        <span class="n">share_url</span> <span class="o">=</span> <span class="s">&#39;{}/content&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+
+
+        <span class="n">share_url</span> <span class="o">+=</span> <span class="s">&#39;/items/{}/share&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">agol_id</span><span class="p">)</span>
+
+
+
+        <span class="k">if</span> <span class="n">groups</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="n">query_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="s">&#39;json&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;everyone&#39;</span> <span class="p">:</span> <span class="n">everyone</span><span class="p">,</span>
+                      <span class="s">&#39;org&#39;</span> <span class="p">:</span> <span class="n">orgs</span><span class="p">,</span>
+                      <span class="s">&#39;groups&#39;</span> <span class="p">:</span> <span class="n">groups</span><span class="p">,</span>
+                      <span class="s">&#39;token&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span><span class="p">}</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_post</span><span class="p">(</span><span class="n">share_url</span><span class="p">,</span> <span class="n">query_dict</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
     <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="AGOL.updateTitle"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.updateTitle">[docs]</a>    <span class="k">def</span> <span class="nf">updateTitle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agol_id</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; changes an items title&quot;&quot;&quot;</span>
@@ -1635,23 +1754,25 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
     <span class="c">#----------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AGOL.delete_items"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.delete_items">[docs]</a>    <span class="k">def</span> <span class="nf">delete_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">items</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AGOL.delete_items"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.delete_items">[docs]</a>    <span class="k">def</span> <span class="nf">delete_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">items</span><span class="p">,</span><span class="n">item_type</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserContent</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="n">itemID</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c">#Title, item</span>
         <span class="n">resultList</span><span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s">&#39;items&#39;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">items</span> <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item_type</span><span class="p">:</span>
 
-                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="n">force_delete</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-                    <span class="n">resultList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="n">force_delete</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="n">resultList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
 
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">resultList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">resultList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">resultList</span>
     <span class="c">#----------------------------------------------------------------------</span>
 </div>
-<div class="viewcode-block" id="AGOL.publish_to_agol"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.publish_to_agol">[docs]</a>    <span class="k">def</span> <span class="nf">publish_to_agol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mxd_path</span><span class="p">,</span> <span class="n">service_name</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AGOL.publish_to_agol"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.publish_to_agol">[docs]</a>    <span class="k">def</span> <span class="nf">publish_to_agol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mxd_path</span><span class="p">,</span> <span class="n">service_name</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">&quot;None&quot;</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">capabilities</span> <span class="o">=</span><span class="s">&#39;Query,Create,Update,Delete,Uploads,Editing,Sync&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; publishes a service to AGOL &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">mxd_path</span><span class="p">):</span>
@@ -1682,7 +1803,7 @@
         <span class="n">analysis</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">CreateMapSDDraft</span><span class="p">(</span><span class="n">mxd</span><span class="p">,</span> <span class="n">sddraft</span><span class="p">,</span>
                                             <span class="n">service_name</span><span class="p">,</span>
                                             <span class="s">&quot;MY_HOSTED_SERVICES&quot;</span><span class="p">)</span>
-        <span class="n">sddraft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify_sddraft</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
+        <span class="n">sddraft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify_sddraft</span><span class="p">(</span><span class="n">sddraft</span><span class="o">=</span><span class="n">sddraft</span><span class="p">,</span><span class="n">capabilities</span><span class="o">=</span><span class="n">capabilities</span><span class="p">)</span>
         <span class="n">analysis</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">AnalyzeForSD</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">):</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -1692,7 +1813,6 @@
         <span class="k">if</span> <span class="n">analysis</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
             <span class="c"># Stage the service</span>
             <span class="n">arcpy</span><span class="o">.</span><span class="n">StageService_server</span><span class="p">(</span><span class="n">sddraft</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s">&quot;Created {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># If the sddraft analysis contained errors, display them and quit.</span>
@@ -1701,20 +1821,21 @@
         <span class="c"># POST data to site</span>
         <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserContent</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
         <span class="c">#Title, item</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">service_name</span> <span class="ow">and</span> \
-               <span class="n">item</span><span class="p">[</span><span class="s">&#39;item&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sd</span><span class="p">):</span>
-                <span class="k">print</span> <span class="s">&quot;Deleted: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="s">&#39;items&#39;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">service_name</span> <span class="ow">and</span> \
+                   <span class="n">item</span><span class="p">[</span><span class="s">&#39;item&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sd</span><span class="p">):</span>
+                    <span class="k">print</span> <span class="s">&quot;Deleted: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]))</span>
 
-            <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">service_name</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s">&quot;Deleted: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">service_name</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;Deleted: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tostr</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]))</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addFile</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">agol_type</span><span class="o">=</span><span class="s">&quot;Service Definition&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">service_name</span><span class="p">,</span>
                                              <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
         <span class="k">if</span> <span class="s">&quot;success&quot;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_agol_id</span> <span class="o">=</span>  <span class="n">res</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;Error Uploading&quot;</span>
+            <span class="k">return</span> <span class="n">res</span>
 
         <span class="k">del</span> <span class="n">mxd</span>
         <span class="n">p_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publish</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_agol_id</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
@@ -1722,11 +1843,68 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">p_vals</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p_vals</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
-</div>
-<div class="viewcode-block" id="AGOL.publishWebMap"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.publishWebMap">[docs]</a>    <span class="k">def</span> <span class="nf">publishWebMap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span><span class="n">tags</span><span class="p">,</span><span class="n">snippet</span><span class="p">,</span><span class="n">description</span><span class="p">,</span><span class="n">extent</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">share_everyone</span><span class="p">,</span><span class="n">share_org</span><span class="p">,</span><span class="n">share_groups</span><span class="p">,</span><span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">protected</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">delete_existing</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="c">##----------------------------------------------------------------------</span>
+    <span class="c">#def publishWebMap(self, name,tags,snippet,description,extent,data,thumbnail,share_everyone,share_org,share_groups,folder_name=None,protected=False,delete_existing = False):</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+           <span class="c">#The publishWebMap function publishes a web map, sets the details,</span>
+           <span class="c">#and shares it with the organization.</span>
+
+           <span class="c">#Inputs:</span>
+              <span class="c">#name - the name for the webmap</span>
+              <span class="c">#tags - the tags for the web map</span>
+              <span class="c">#snippet - the breif summary for the webmap</span>
+              <span class="c">#description - the description for the webmap</span>
+              <span class="c">#extent - Extent in the following format: &quot;xmin, ymin, xmax, ymax&quot;</span>
+              <span class="c">#data - the json representation of the webmap</span>
+              <span class="c">#thumbnail - full path or absolute path to the image for the webmap</span>
+                <span class="c">#200x133 is the suggested side.</span>
+              <span class="c">#share_everyone - True/False to share map with everyone</span>
+               <span class="c">#share_org - True/False to share map with Org</span>
+              <span class="c">#share_groups - List of groups to share the map with</span>
+              <span class="c">#folderName - optional folder name to store the item in</span>
+           <span class="c">#Output:</span>
+              <span class="c">#WebMapID - returns the webmap id if created or updated</span>
+        <span class="c">#&quot;&quot;&quot;</span>
+        <span class="c">#if os.path.isfile(thumbnail):</span>
+            <span class="c">#if not os.path.isabs(thumbnail):</span>
+                <span class="c">#thumbnail = os.path.abspath(thumbnail)</span>
+
+
+        <span class="c">#folderID = self.get_folder_ID(folder_name=folder_name)</span>
+        <span class="c">#if delete_existing:</span>
+            <span class="c">#items = [name]</span>
+            <span class="c">#self.delete_items(items,folderID,item_type=&quot;Web Map&quot;,force_delete=delete_existing)</span>
+
+
+
+        <span class="c">#item_id = self.get_item_ID(item_name=name,item_type=&#39;Web Map&#39;, folder=folderID)</span>
+        <span class="c">#if item_id is not None:</span>
+            <span class="c">#webmapInfo = self.updateItem(agol_id=item_id,data=data,folder=folderID)</span>
+            <span class="c">#if &#39;error&#39; in webmapInfo:</span>
+                <span class="c">#raise ValueError(str(webmapInfo))</span>
+        <span class="c">#else:</span>
+            <span class="c">#webmapInfo = self.addItem(name=name,tags=tags,snippet=snippet,description=description,extent=extent,data=data,thumbnail=thumbnail,folder=folderID,item_type=&#39;Web Map&#39;)</span>
+            <span class="c">#if &#39;error&#39; in webmapInfo:</span>
+                <span class="c">#raise ValueError(str(webmapInfo))</span>
+
+            <span class="c">#item_id = webmapInfo[&#39;id&#39;]</span>
+            <span class="c">#if protected:</span>
+                <span class="c">#self.enableProtect(item_id,folderID)</span>
+
+            <span class="c">#group_ids = self.get_group_IDs(share_groups)</span>
+
+
+            <span class="c">#result= self.enableSharing(agol_id=item_id, everyone=share_everyone.lower()== &quot;true&quot; , orgs= share_org.lower()== &quot;true&quot;, groups=&#39;,&#39;.join(group_ids),folder=folderID)</span>
+            <span class="c">#if &#39;error&#39; in result:</span>
+                <span class="c">#raise ValueError(str(result))</span>
+
+
+
+        <span class="c">#return item_id</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AGOL.publishItem"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.publishItem">[docs]</a>    <span class="k">def</span> <span class="nf">publishItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span><span class="n">tags</span><span class="p">,</span><span class="n">snippet</span><span class="p">,</span><span class="n">description</span><span class="p">,</span><span class="n">extent</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">share_everyone</span><span class="p">,</span><span class="n">share_org</span><span class="p">,</span><span class="n">share_groups</span><span class="p">,</span><span class="n">item_type</span><span class="p">,</span><span class="n">typeKeywords</span><span class="p">,</span><span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">protected</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">delete_existing</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">           The publishWebMap function publishes a web map, sets the details,</span>
+<span class="sd">           The publish function publishes a item, sets the details,</span>
 <span class="sd">           and shares it with the organization.</span>
 
 <span class="sd">           Inputs:</span>
@@ -1743,31 +1921,32 @@
 <span class="sd">              share_groups - List of groups to share the map with</span>
 <span class="sd">              folderName - optional folder name to store the item in</span>
 <span class="sd">           Output:</span>
-<span class="sd">              WebMapID - returns the webmap id if created or updated</span>
+<span class="sd">              ItemID - returns the webmap id if created or updated</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">):</span>
                 <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
 
 
         <span class="n">folderID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_folder_ID</span><span class="p">(</span><span class="n">folder_name</span><span class="o">=</span><span class="n">folder_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">delete_existing</span><span class="p">:</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delete_items</span><span class="p">(</span><span class="n">items</span><span class="p">,</span><span class="n">folderID</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="n">delete_existing</span><span class="p">)</span>
 
+        <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_ID</span><span class="p">(</span><span class="n">item_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">item_type</span><span class="o">=</span><span class="n">item_type</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">delete_existing</span> <span class="ow">and</span> <span class="n">item_id</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteItem</span><span class="p">(</span><span class="n">item_id</span> <span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">,</span><span class="n">force_delete</span><span class="o">=</span><span class="n">delete_existing</span><span class="p">)</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">None</span>
 
-        <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_ID</span><span class="p">(</span><span class="n">item_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">item_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">webmapInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateItem</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">webmapInfo</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">webmapInfo</span><span class="p">))</span>
+            <span class="n">itemInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateItem</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">itemInfo</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">itemInfo</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">webmapInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addWebmap</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span><span class="n">snippet</span><span class="o">=</span><span class="n">snippet</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span><span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">webmapInfo</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">webmapInfo</span><span class="p">))</span>
+            <span class="n">itemInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span><span class="n">snippet</span><span class="o">=</span><span class="n">snippet</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span><span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span><span class="n">item_type</span><span class="o">=</span><span class="n">item_type</span><span class="p">,</span><span class="n">typeKeywords</span><span class="o">=</span><span class="n">typeKeywords</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">itemInfo</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">itemInfo</span><span class="p">))</span>
 
-            <span class="n">item_id</span> <span class="o">=</span> <span class="n">webmapInfo</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">itemInfo</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">protected</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">enableProtect</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span><span class="n">folderID</span><span class="p">)</span>
 
@@ -1794,14 +1973,14 @@
 <span class="sd">              dict - list of group IDs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">group_ids</span><span class="o">=</span><span class="p">[]</span>
-        <span class="n">userInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserInfo</span><span class="p">()</span>
+        <span class="n">userInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserCommunityInfo</span><span class="p">()</span>
         <span class="k">if</span> <span class="s">&#39;groups&#39;</span> <span class="ow">in</span> <span class="n">userInfo</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">gp</span> <span class="ow">in</span> <span class="n">userInfo</span><span class="p">[</span><span class="s">&#39;groups&#39;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">gp</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">group_names</span><span class="p">:</span>
                     <span class="n">group_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gp</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
         <span class="k">del</span> <span class="n">userInfo</span>
         <span class="k">return</span> <span class="n">group_ids</span>
-    <span class="c">#----------------------------------------------------------------------</span></div>
+   <span class="c">#----------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="AGOL.get_folder_ID"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.get_folder_ID">[docs]</a>    <span class="k">def</span> <span class="nf">get_folder_ID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           This function retrieves the folder ID and creates the folder if</span>
@@ -1815,13 +1994,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">folder_name</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">folder_name</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="n">userContent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserContent</span><span class="p">()</span>
-            <span class="n">folders</span> <span class="o">=</span> <span class="n">userContent</span><span class="p">[</span><span class="s">&#39;folders&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">folder</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">folder_name</span><span class="p">:</span>
-                    <span class="n">folderID</span> <span class="o">=</span> <span class="n">folder</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
-                    <span class="k">break</span>
-            <span class="k">del</span> <span class="n">folders</span>
-            <span class="k">del</span> <span class="n">folder</span>
+            <span class="n">folderID</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="s">&#39;folders&#39;</span> <span class="ow">in</span> <span class="n">userContent</span><span class="p">:</span>
+                <span class="n">folders</span> <span class="o">=</span> <span class="n">userContent</span><span class="p">[</span><span class="s">&#39;folders&#39;</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">folder</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">folder_name</span><span class="p">:</span>
+                        <span class="n">folderID</span> <span class="o">=</span> <span class="n">folder</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+                        <span class="k">break</span>
+                <span class="k">del</span> <span class="n">folders</span>
+
 
             <span class="k">if</span> <span class="n">folderID</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createFolder</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span>
@@ -1832,8 +2014,9 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
+
     <span class="c">#----------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AGOL.get_item_ID"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.get_item_ID">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_ID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_name</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AGOL.get_item_ID"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.get_item_ID">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_ID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_name</span><span class="p">,</span><span class="n">item_type</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           This function retrieves the item ID if the item exist</span>
 
@@ -1846,17 +2029,17 @@
         <span class="n">itemID</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item_name</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">item_name</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="n">userContent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getUserContent</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="n">userContent</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">item_name</span><span class="p">:</span>
-                    <span class="n">itemID</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
-                    <span class="k">break</span>
-            <span class="k">del</span> <span class="n">items</span>
-            <span class="k">del</span> <span class="n">item</span>
+            <span class="k">if</span> <span class="s">&#39;items&#39;</span> <span class="ow">in</span> <span class="n">userContent</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">userContent</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">item_name</span> <span class="ow">and</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item_type</span><span class="p">:</span>
+                        <span class="n">itemID</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+                        <span class="k">break</span>
+                <span class="k">del</span> <span class="n">items</span>
 
         <span class="k">return</span> <span class="n">itemID</span>
     <span class="c">#----------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AGOL.createFeatureService"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.createFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">createFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mxd</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">share_everyone</span><span class="p">,</span><span class="n">share_org</span><span class="p">,</span><span class="n">share_groups</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AGOL.createFeatureService"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.createFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">createFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mxd</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">share_everyone</span><span class="p">,</span><span class="n">share_org</span><span class="p">,</span><span class="n">share_groups</span><span class="p">,</span><span class="n">capabilities</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           The createFeatureService function publishes a service definition,</span>
 <span class="sd">           publishes a features service, sets the details, and shares it with</span>
@@ -1876,16 +2059,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">service_name</span> <span class="o">=</span> <span class="n">title</span>
         <span class="n">service_name_safe</span> <span class="o">=</span> <span class="n">service_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">)</span>
+        <span class="n">service_name_safe</span> <span class="o">=</span> <span class="n">service_name_safe</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span><span class="s">&#39;-&#39;</span><span class="p">)</span>
+
 
         <span class="n">folderID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_folder_ID</span><span class="p">(</span><span class="n">folder_name</span><span class="o">=</span><span class="n">folder_name</span><span class="p">)</span>
 
         <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_name</span><span class="p">,</span><span class="n">service_name_safe</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete_items</span><span class="p">(</span><span class="n">items</span><span class="p">,</span><span class="n">folderID</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_items</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">,</span><span class="n">item_type</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Feature Service&#39;</span><span class="p">,</span><span class="s">&#39;Service Definition&#39;</span><span class="p">],</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
         <span class="n">itemInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">publish_to_agol</span><span class="p">(</span><span class="n">mxd_path</span><span class="o">=</span><span class="n">mxd</span><span class="p">,</span><span class="n">service_name</span><span class="o">=</span><span class="n">service_name_safe</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">itemInfo</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">itemInfo</span>
         <span class="n">item_id</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
         <span class="n">service_url</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
         <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">itemInfo</span><span class="p">[</span><span class="s">&#39;services&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">service</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">service</span><span class="p">))</span>
@@ -1895,24 +2082,41 @@
 
         <span class="n">group_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_IDs</span><span class="p">(</span><span class="n">share_groups</span><span class="p">)</span>
 
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enableSharing</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">everyone</span><span class="o">=</span><span class="n">share_everyone</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span> <span class="s">&quot;true&quot;</span> <span class="p">,</span> <span class="n">orgs</span><span class="o">=</span> <span class="n">share_org</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span> <span class="s">&quot;true&quot;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group_ids</span><span class="p">),</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
         <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateTitle</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">title</span><span class="o">=</span> <span class="n">service_name</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
         <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">thumbnail</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">):</span>
                     <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateThumbnail</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateThumbnail</span><span class="p">(</span><span class="n">agol_id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span><span class="n">thumbnail</span><span class="o">=</span><span class="n">thumbnail</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="n">folderID</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span><span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
+            <span class="n">itemInfo</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">errors</span>
         <span class="k">return</span> <span class="n">itemInfo</span>
+    <span class="c">#----------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AGOL.get_group_content"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.admin.AGOL.get_group_content">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupID</span><span class="p">):</span>
+        <span class="n">contentURL</span> <span class="o">=</span> <span class="s">&#39;{}/search&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
 
+        <span class="n">query_dict</span> <span class="o">=</span> <span class="p">{</span>
+                      <span class="s">&#39;q&#39;</span><span class="p">:</span><span class="s">&#39;group:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groupID</span><span class="p">),</span>
+                      <span class="s">&#39;num&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                      <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="s">&#39;json&#39;</span>
+                      <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">query_dict</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_get</span><span class="p">(</span><span class="n">contentURL</span><span class="p">,</span> <span class="n">query_dict</span><span class="p">,</span>
+                                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
 
     <span class="c">#----------------------------------------------------------------------</span></div>
     <span class="k">def</span> <span class="nf">_publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agol_id</span><span class="p">,</span><span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
