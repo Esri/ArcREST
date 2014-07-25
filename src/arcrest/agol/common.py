@@ -945,7 +945,8 @@ class Feature(object):
             for row in rows:
                 row = list(row)
                 for df in date_fields:
-                    row[fields.index(df)] = int(json.dumps(_date_handler(row[fields.index(df)])))
+                    if row[fields.index(df)] != None:
+                        row[fields.index(df)] = int((_date_handler(row[fields.index(df)])))
                 template = {
                     "attributes" : dict(zip(non_geom_fields, row))
                 }
