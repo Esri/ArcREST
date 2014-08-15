@@ -1451,7 +1451,7 @@ Inputs:</p>
 <span id="arcrest-ags-catalog-module"></span><h2>arcrest.ags.catalog module<a class="headerlink" href="#module-arcrest.ags.catalog" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.catalog.Catalog">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.catalog.</tt><tt class="descname">Catalog</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/catalog.html#Catalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.catalog.Catalog" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.catalog.</tt><tt class="descname">Catalog</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/catalog.html#Catalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.catalog.Catalog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>The Catalog resource is the root node and initial entry point into
 an ArcGIS Server host. This resource represents a catalog of folders
@@ -2011,7 +2011,7 @@ service will always be honored.</p>
 <span id="arcrest-ags-geocodeservice-module"></span><h2>arcrest.ags.geocodeservice module<a class="headerlink" href="#module-arcrest.ags.geocodeservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.geocodeservice.GeocodeService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.geocodeservice.</tt><tt class="descname">GeocodeService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geocodeservice.html#GeocodeService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geocodeservice.GeocodeService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.geocodeservice.</tt><tt class="descname">GeocodeService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geocodeservice.html#GeocodeService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geocodeservice.GeocodeService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>A geometry service contains utility methods that provide access to
 sophisticated and frequently used geometric operations. An ArcGIS
@@ -2072,7 +2072,7 @@ name &#8220;Geometry&#8221;.</p>
 <span id="arcrest-ags-geodataservice-module"></span><h2>arcrest.ags.geodataservice module<a class="headerlink" href="#module-arcrest.ags.geodataservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.geodataservice.GeoDataService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.geodataservice.</tt><tt class="descname">GeoDataService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geodataservice.html#GeoDataService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geodataservice.GeoDataService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.geodataservice.</tt><tt class="descname">GeoDataService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geodataservice.html#GeoDataService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geodataservice.GeoDataService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>The GeoData Service resource represents a geodata service that
 you&#8217;ve published with ArcGIS for Server. This resource provides
@@ -2343,7 +2343,7 @@ hasM - boolean -</div></blockquote>
 <span id="arcrest-ags-geometryservice-module"></span><h2>arcrest.ags.geometryservice module<a class="headerlink" href="#module-arcrest.ags.geometryservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.geometryservice.GeometryService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.geometryservice.</tt><tt class="descname">GeometryService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geometryservice.html#GeometryService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geometryservice.GeometryService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.geometryservice.</tt><tt class="descname">GeometryService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/geometryservice.html#GeometryService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.geometryservice.GeometryService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>A geometry service contains utility methods that provide access to
 sophisticated and frequently used geometric operations. An ArcGIS
@@ -2487,7 +2487,7 @@ type.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.globeservice.GlobeService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.globeservice.</tt><tt class="descname">GlobeService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/globeservice.html#GlobeService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.globeservice.GlobeService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.globeservice.</tt><tt class="descname">GlobeService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/globeservice.html#GlobeService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.globeservice.GlobeService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>The Globe Service resource represents a globe service published with
 ArcGIS for Server. The resource provides information about the
@@ -2649,7 +2649,7 @@ contained in the published globe document.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.gpservice.GPJob">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPJob</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPJob" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPJob</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>Represents an ArcGIS GeoProcessing Job</p>
 <dl class="method">
@@ -2785,7 +2785,7 @@ contained in the published globe document.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.gpservice.GPService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPService</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>An instasnce of a publish geoprocessing service</p>
 <dl class="attribute">
@@ -2855,7 +2855,7 @@ contained in the published globe document.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.gpservice.GPTask">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPTask</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPTask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.gpservice.</tt><tt class="descname">GPTask</tt><big>(</big><em>url</em>, <em>username=None</em>, <em>password=None</em>, <em>token_url=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/gpservice.html#GPTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.gpservice.GPTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>This is the GP task that performs the operation</p>
 <dl class="attribute">
@@ -2954,7 +2954,7 @@ Inputs:</p>
 <span id="arcrest-ags-imageservice-module"></span><h2>arcrest.ags.imageservice module<a class="headerlink" href="#module-arcrest.ags.imageservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.imageservice.ImageService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.imageservice.</tt><tt class="descname">ImageService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/imageservice.html#ImageService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.imageservice.ImageService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.imageservice.</tt><tt class="descname">ImageService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/imageservice.html#ImageService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.imageservice.ImageService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>An image service provides access to raster data through a web
 service. Multiple rasters can be served as one image service through
@@ -3292,7 +3292,7 @@ version.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.layer.FeatureLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">FeatureLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">FeatureLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>This contains information about a feature service&#8217;s layer.</p>
 <dl class="attribute">
@@ -3503,7 +3503,7 @@ version.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.layer.GroupLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">GroupLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#GroupLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.GroupLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">GroupLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#GroupLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.GroupLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></tt></a></p>
 <p>represents a group layer</p>
 </dd></dl>
@@ -3616,7 +3616,7 @@ registered raster workspace.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.layer.RasterLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">RasterLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#RasterLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.RasterLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">RasterLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#RasterLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.RasterLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></tt></a></p>
 <p>Raster Layer is exactly like FeatureLayer object</p>
 </dd></dl>
@@ -3670,7 +3670,7 @@ missing, the registered geodatabase version will be used.</p>
 
 <dl class="class">
 <dt id="arcrest.ags.layer.TableLayer">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">TableLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#TableLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.TableLayer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.layer.</tt><tt class="descname">TableLayer</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/layer.html#TableLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.TableLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></tt></a></p>
 <p>Table object is exactly like FeatureLayer object</p>
 </dd></dl>
@@ -3680,7 +3680,7 @@ missing, the registered geodatabase version will be used.</p>
 <span id="arcrest-ags-mapservice-module"></span><h2>arcrest.ags.mapservice module<a class="headerlink" href="#module-arcrest.ags.mapservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.mapservice.MapService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.mapservice.</tt><tt class="descname">MapService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.mapservice.</tt><tt class="descname">MapService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>contains information about a map service</p>
 <dl class="attribute">
@@ -3992,7 +3992,7 @@ layer in a map service</p>
 <span id="arcrest-ags-mobileservice-module"></span><h2>arcrest.ags.mobileservice module<a class="headerlink" href="#module-arcrest.ags.mobileservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.mobileservice.MobileService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.mobileservice.</tt><tt class="descname">MobileService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/mobileservice.html#MobileService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mobileservice.MobileService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.mobileservice.</tt><tt class="descname">MobileService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/mobileservice.html#MobileService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mobileservice.MobileService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>The mobile service resource represents a mobile service published
 with ArcGIS Server. The resource provides information about the
@@ -4051,7 +4051,7 @@ map document.</p>
 <span id="arcrest-ags-naservice-module"></span><h2>arcrest.ags.naservice module<a class="headerlink" href="#module-arcrest.ags.naservice" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="arcrest.ags.naservice.NAService">
-<em class="property">class </em><tt class="descclassname">arcrest.ags.naservice.</tt><tt class="descname">NAService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/naservice.html#NAService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.naservice.NAService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">arcrest.ags.naservice.</tt><tt class="descname">NAService</tt><big>(</big><em>url</em>, <em>token_url=None</em>, <em>username=None</em>, <em>password=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="reference internal" href="_modules/arcrest/ags/naservice.html#NAService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.naservice.NAService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.base.BaseAGSServer" title="arcrest.ags.base.BaseAGSServer"><tt class="xref py py-class docutils literal"><span class="pre">arcrest.ags.base.BaseAGSServer</span></tt></a></p>
 <p>A geometry service contains utility methods that provide access to
 sophisticated and frequently used geometric operations. An ArcGIS

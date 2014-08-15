@@ -70,6 +70,7 @@
 <span class="kn">import</span> <span class="nn">mimetypes</span>
 <span class="kn">import</span> <span class="nn">mimetools</span>
 <span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
 
 <span class="c">########################################################################</span>
@@ -151,18 +152,37 @@
     <span class="c">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; downloads a file &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">proxy_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">proxy_port</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">proxy_port</span> <span class="o">=</span> <span class="mi">80</span>
-            <span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;http&quot;</span><span class="p">:</span><span class="s">&quot;http://</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy_url</span><span class="p">,</span> <span class="n">proxy_port</span><span class="p">),</span>
-                       <span class="s">&quot;https&quot;</span><span class="p">:</span><span class="s">&quot;https://</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy_url</span><span class="p">,</span> <span class="n">proxy_port</span><span class="p">)}</span>
-            <span class="n">proxy_support</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">(</span><span class="n">proxies</span><span class="p">)</span>
-            <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_support</span><span class="p">,</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPHandler</span><span class="p">(</span><span class="n">debuglevel</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
-        <span class="n">file_data</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">save_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">file_name</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">proxy_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">proxy_port</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">proxy_port</span> <span class="o">=</span> <span class="mi">80</span>
+                <span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;http&quot;</span><span class="p">:</span><span class="s">&quot;http://</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy_url</span><span class="p">,</span> <span class="n">proxy_port</span><span class="p">),</span>
+                           <span class="s">&quot;https&quot;</span><span class="p">:</span><span class="s">&quot;https://</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy_url</span><span class="p">,</span> <span class="n">proxy_port</span><span class="p">)}</span>
+                <span class="n">proxy_support</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">(</span><span class="n">proxies</span><span class="p">)</span>
+                <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_support</span><span class="p">,</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPHandler</span><span class="p">(</span><span class="n">debuglevel</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+           
+            <span class="n">file_data</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">total_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">&#39;Content-Length&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">downloaded</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">CHUNK</span> <span class="o">=</span> <span class="mi">4096</span>
+            
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
+                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="n">chunk</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">CHUNK</span><span class="p">)</span>
+                    <span class="n">downloaded</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span> <span class="k">break</span>
+                    <span class="c">#print str(int(math.floor(float(downloaded) / float(total_size) * 100 ))) + &quot;% download&quot;</span>
+                                                      
+                    <span class="n">out_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>       
+               
+            <span class="k">return</span> <span class="n">save_path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">file_name</span>
+        <span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;HTTP Error:&quot;</span><span class="p">,</span><span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="p">,</span> <span class="n">url</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;URL Error:&quot;</span><span class="p">,</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span> <span class="p">,</span> <span class="n">url</span>
+            <span class="k">return</span> <span class="bp">False</span>
     <span class="c">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="BaseAGOLClass.generate_token"><a class="viewcode-back" href="../../../arcrest.agol.html#arcrest.agol.base.BaseAGOLClass.generate_token">[docs]</a>    <span class="k">def</span> <span class="nf">generate_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">referer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tokenURL</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -171,7 +191,7 @@
             <span class="n">referer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span>
         <span class="k">if</span> <span class="n">tokenURL</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">tokenUrl</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenurl</span>
-        <span class="k">print</span> <span class="n">referer</span><span class="p">,</span> <span class="n">tokenUrl</span>
+
         <span class="n">query_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
                       <span class="s">&#39;password&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span>
                       <span class="s">&#39;expiration&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
@@ -183,7 +203,7 @@
                               <span class="n">proxy_port</span><span class="o">=</span><span class="n">proxy_port</span><span class="p">)</span>
         <span class="k">if</span> <span class="s">&quot;token&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">token</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="n">token</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">httpPrefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
             <span class="k">if</span> <span class="n">token</span><span class="p">[</span><span class="s">&#39;ssl&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
