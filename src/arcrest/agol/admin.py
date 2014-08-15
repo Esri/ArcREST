@@ -1362,7 +1362,7 @@ class AGOL(BaseAGOLClass):
         res = self._unicode_convert(json.loads(res))
         return res
     #----------------------------------------------------------------------
-    def addItem(self,  name, tags, description,snippet,data,extent,item_type='Web Map',thumbnail='',folder=None,typeKeywords = [
+    def addItem(self,  name, tags, description,snippet,data,extent,inparams = {},item_type='Web Map',thumbnail='',folder=None,typeKeywords = [
                     "ArcGIS Online",
                     "Collector",
                     "Data Editing",
@@ -1374,7 +1374,7 @@ class AGOL(BaseAGOLClass):
                     ]
                 ):
             """ loads a file to AGOL """
-
+ 
             params = {
                 "f" : "json",
                 "text" : json.dumps(data),
@@ -1387,7 +1387,7 @@ class AGOL(BaseAGOLClass):
                 "typeKeywords":typeKeywords,
                 "thumbnail": os.path.basename(thumbnail)
             }
-
+            params.update(inparams)
             if self._token is not None:
                 params['token'] = self._token
 
