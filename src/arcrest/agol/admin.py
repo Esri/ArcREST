@@ -1723,7 +1723,7 @@ class AGOL(BaseAGOLClass):
         return resultList
     #----------------------------------------------------------------------
 
-    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync'):
+    def publish_to_agol(self, mxd_path, service_name="None", tags="None", description="None",folder=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',maxRecordCount=1000):
         """ publishes a service to AGOL """
 
         if not os.path.isabs(mxd_path):
@@ -1754,7 +1754,7 @@ class AGOL(BaseAGOLClass):
         analysis = mapping.CreateMapSDDraft(mxd, sddraft,
                                             service_name,
                                             "MY_HOSTED_SERVICES")
-        sddraft = self._modify_sddraft(sddraft=sddraft,capabilities=capabilities)
+        sddraft = self._modify_sddraft(sddraft=sddraft,capabilities=capabilities,maxRecordCount=maxRecordCount)
         analysis = mapping.AnalyzeForSD(sddraft)
         if os.path.isdir(sdFolder):
             shutil.rmtree(sdFolder, ignore_errors=True)
@@ -1990,7 +1990,7 @@ class AGOL(BaseAGOLClass):
 
         return itemID
     #----------------------------------------------------------------------
-    def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,capabilities,thumbnail=None,folder_name=None):
+    def createFeatureService(self, mxd, title, share_everyone,share_org,share_groups,capabilities,thumbnail=None,folder_name=None,maxRecordCount=1000):
         """
            The createFeatureService function publishes a service definition,
            publishes a features service, sets the details, and shares it with
@@ -2002,6 +2002,7 @@ class AGOL(BaseAGOLClass):
               share_everyone - True/False to share map with everyone
               share_org - True/False to share map with Org
               share_groups - List of groups to share the map with
+              capabilities - the feature service capabilites, 
               thumbnail - optional, full path or absolute path to the image for the webmap
                 200x133 is the suggested side.
               folderName - optional, folder name to store the item in
@@ -2018,7 +2019,7 @@ class AGOL(BaseAGOLClass):
         items = [service_name,service_name_safe]
 
         self.delete_items(items=items,item_type=['Feature Service','Service Definition'],folder=folderID)
-        itemInfo = self.publish_to_agol(mxd_path=mxd,service_name=service_name_safe,folder=folderID)
+        itemInfo = self.publish_to_agol(mxd_path=mxd,service_name=service_name_safe,folder=folderID,capabilities=capabilities,maxRecordCount=maxRecordCount)
         if 'error' in itemInfo:
             return itemInfo
         item_id = ''
