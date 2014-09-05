@@ -267,6 +267,7 @@ class AdminFeatureService(BaseAGOLClass):
     _layers = None
     _syncCapabilities = None
     _capabilities = None
+    _editorTrackingInfo = None
     _currentVersion = None
     _hasVersionedData = None
     _units = None
@@ -399,6 +400,12 @@ class AdminFeatureService(BaseAGOLClass):
             self.__init()
         return self._supportedQueryFormats
     #----------------------------------------------------------------------
+    @property
+    def editorTrackingInfo(self):
+        if self._editorTrackingInfo is None:
+            self.__init()
+        return self._editorTrackingInfo    
+    #----------------------------------------------------------------------    
     @property
     def capabilities(self):
         """ returns a list of capabilities """
@@ -651,6 +658,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _id = None
     _relationships = None
     _capabilities = None
+    _editorTrackingInfo = None
     _indexes = None
     _currentVersion = None
     _geometryType = None
@@ -685,7 +693,6 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _supportsAdvancedQueries = None
     _id = None
     _relationships = None
-    _capabilities = None
     _indexes = None
     _currentVersion = None
     _geometryType = None
@@ -1050,6 +1057,13 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self._canScaleSymbols is None:
             self.__init()
         return self._canScaleSymbols
+    #----------------------------------------------------------------------
+    @property
+    def editorTrackingInfo(self):
+        if self._editorTrackingInfo is None:
+            self.__init()
+        return self._editorTrackingInfo
+        
     #----------------------------------------------------------------------
     @property
     def capabilities(self):
