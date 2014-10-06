@@ -7,6 +7,7 @@ import web
 import manageagol
 import manageags
 import manageportal
+import hostedservice
 #import webmap
 from geometryservice import *
 __version__ = "2.0.100"
