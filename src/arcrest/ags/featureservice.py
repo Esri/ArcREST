@@ -1,12 +1,17 @@
-from base import BaseAGSServer
+"""
+   Contains information regarding an ArcGIS Server Feature Server
+"""
+from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
+from ..security import security
 import layer
-from filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
+import json
+from ..common.geometry import SpatialReference
+from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 ########################################################################
 class FeatureService(BaseAGSServer):
     """ contains information about a feature service """
     _url = None
     _currentVersion = None
-
     _serviceDescription = None
     _hasVersionedData = None
     _supportsDisconnectedEditing = None
@@ -31,37 +36,23 @@ class FeatureService(BaseAGSServer):
     _zDefault = None
     _proxy_url = None
     _proxy_port = None
+    _securityHandler = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None, username=None, password=None,
+    def __init__(self, url, securityHandler=None,
                  initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
-        self._token_url = token_url
-        if not username is None and \
-           not password is None and \
-           not token_url is None:
-            self._username = username
-            self._password = password
-            self._token_url = token_url
-            if not username is None and \
-             not password is None and \
-             not username is "" and \
-             not password is "":
-                if not token_url is None:
-                    res = self.generate_token(tokenURL=token_url,
-                                                  proxy_port=proxy_port,
-                                                proxy_url=proxy_url)
-                else:   
-                    res = self.generate_token(proxy_port=self._proxy_port,
-                                                           proxy_url=self._proxy_url)                
-                if res is None:
-                    print "Token was not generated"
-                elif 'error' in res:
-                    print res
-                else:
-                    self._token = res[0]
+        if securityHandler is not None and \
+           isinstance(securityHandler,
+                      security.AGSTokenSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
+        elif securityHandler is None:
+            pass
+        else:
+            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -73,7 +64,9 @@ class FeatureService(BaseAGSServer):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -82,6 +75,24 @@ class FeatureService(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for Feature Service."
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, BaseSecurityHandler):
+            if isinstance(value, security.AGSTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+            else:
+                pass
+        elif value is None:
+            self._securityHandler = None
+            self._token = None
     #----------------------------------------------------------------------
     @property
     def maxRecordCount(self):
@@ -202,9 +213,7 @@ class FeatureService(BaseAGSServer):
             for l in json_dict["layers"]:
                 self._layers.append(
                     layer.FeatureLayer(url=self._url + "/%s" % l['id'],
-                                       username=self._username,
-                                       password=self._password,
-                                       token_url=self._token_url)
+                                       securityHandler=self._securityHandler)
                 )
     #----------------------------------------------------------------------
     @property
@@ -298,7 +307,7 @@ class FeatureService(BaseAGSServer):
             params['geometry'] = gf['geometry']
             params['inSR'] = gf['inSR']
         if not outSR is None and \
-           isinstance(outSR, common.SpatialReference):
+           isinstance(outSR, SpatialReference):
             params['outSR'] = outSR.asDictionary
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):

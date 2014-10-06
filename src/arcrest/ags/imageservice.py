@@ -1,4 +1,7 @@
-from base import BaseAGSServer
+from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
+from ..security.security import AGSTokenSecurityHandler
+from ..common.general import MosaicRuleObject, local_time_to_online
+import datetime, urllib
 
 ########################################################################
 class ImageService(BaseAGSServer):
@@ -63,31 +66,21 @@ class ImageService(BaseAGSServer):
     _allowedMosaicMethods = None
     _tileInfo = None
     _singleFusedMapCache = None
+    _securityHandler = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None, username=None, password=None,
-                 initialize=False, proxy_url=None, proxy_port=None):
+    def __init__(self, url, securityHandler=None,
+                 initialize=False):
         """Constructor"""
         self._url = url
-        self_token_url = token_url
-        self._username = username
-        self._password = password
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
+        if securityHandler is not None and \
+           isinstance(securityHandler,
+                      AGSTokenSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
+        elif securityHandler is None:
+            pass
+        else:
+            raise AttributeError("Security Handler must type of AGSTokenSecurityHandler")
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -107,6 +100,24 @@ class ImageService(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for Image Service."
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, BaseSecurityHandler):
+            if isinstance(value, AGSTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+            else:
+                pass
+        elif value is None:
+            self._securityHandler = None
+            self._token = None
     #----------------------------------------------------------------------
     @property
     def tileInfo(self):
@@ -384,3 +395,256 @@ class ImageService(BaseAGSServer):
         if self._supportsAdvancedQueries is None:
             self.__init()
         return self._supportsAdvancedQueries
+    #----------------------------------------------------------------------
+    def exportImage(self,
+                    bbox,
+                    imageSR,
+                    bboxSR,
+                    size=[400,400],
+                    time=None,
+                    format="jpgpng",
+                    pixelType="UNKNOWN",
+                    noData=None,
+                    noDataInterpretation="esriNoDataMatchAny",
+                    interpolation=None,
+                    compression=None,
+                    compressionQuality=75,
+                    bandIds=None,
+                    moasiacRule=None,
+                    renderingRule="",
+                    f="json",
+                    saveFolder=None,
+                    saveFile=None
+                    ):
+        """
+        The exportImage operation is performed on an image service resource
+        The result of this operation is an image resource. This resource
+        provides information about the exported image, such as its URL,
+        extent, width, and height.
+        In addition to the usual response formats of HTML and JSON, you can
+        also request the image format while performing this operation. When
+        you perform an export with the image format , the server responds
+        by directly streaming the image bytes to the client. With this
+        approach, you don't get any information associated with the
+        exported image other than the image itself.
+
+        Inputs:
+           bbox - The extent (bounding box) of the exported image. Unless
+                  the bboxSR parameter has been specified, the bbox is
+                  assumed to be in the spatial reference of the image
+                  service.
+           imageSR - The spatial reference of the exported image.
+           bboxSR - The spatial reference of the bbox.
+           size - The size (width * height) of the exported image in
+                  pixels. If size is not specified, an image with a default
+                  size of 400 * 400 will be exported.
+           time - The time instant or the time extent of the exported image.
+           format - The format of the exported image. The default format is
+                    jpgpng.
+                    Values: jpgpng | png | png8 | png24 | jpg | bmp | gif |
+                            tiff | png32
+           pixelType - The pixel type, also known as data type, pertains to
+                       the type of values stored in the raster, such as
+                       signed integer, unsigned integer, or floating point.
+                       Integers are whole numbers, whereas floating points
+                       have decimals.
+           noDate - The pixel value representing no information.
+           noDataInterpretation - Interpretation of the noData setting. The
+                               default is esriNoDataMatchAny when noData is
+                               a number, and esriNoDataMatchAll when noData
+                               is a comma-delimited string:
+                               esriNoDataMatchAny | esriNoDataMatchAll.
+           interpolation - The resampling process of extrapolating the
+                           pixel values while transforming the raster
+                           dataset when it undergoes warping or when it
+                           changes coordinate space.
+           compression - Controls how to compress the image when exporting
+                         to TIFF format: None, JPEG, LZ77. It does not
+                         control compression on other formats.
+           compressionQuality - Controls how much loss the image will be
+                                subjected to by the compression algorithm.
+                                Valid value ranges of compression quality
+                                are from 0 to 100.
+           bandIds - If there are multiple bands, you can specify a single
+                     band to export, or you can change the band combination
+                     (red, green, blue) by specifying the band number. Band
+                     number is 0 based.
+           mosaicRule - Specifies the mosaic rule when defining how
+                        individual images should be mosaicked. When a mosaic
+                        rule is not specified, the default mosaic rule of
+                        the image service will be used (as advertised in
+                        the root resource: defaultMosaicMethod,
+                        mosaicOperator, sortField, sortValue).
+           renderingRule - Specifies the rendering rule for how the
+                           requested image should be rendered.
+           f - The response format.  default is json
+               Values: json | image | kmz
+        """
+        params = {
+            "bbox" : bbox,
+            "imageSR": imageSR,
+            "bboxSR": bboxSR,
+            "size" : "%s %s" % (size[0], size[1]),
+            "pixelType" : pixelType,
+            "compressionQuality" : compressionQuality,
+
+        }
+        url = self._url + "/exportImage"
+        __allowedFormat = ["jpgpng", "png",
+                           "png8", "png24",
+                           "jpg", "bmp",
+                           "gif", "tiff",
+                           "png32"]
+        __allowedPixelTypes = [
+            "C128", "C64", "F32",
+            "F64", "S16", "S32",
+            "S8", "U1", "U16",
+            "U2", "U32", "U4",
+            "U8", "UNKNOWN"
+        ]
+        __allowednoDataInt = [
+            "esriNoDataMatchAny",
+            "esriNoDataMatchAll"
+        ]
+        __allowedInterpolation = [
+            "RSP_BilinearInterpolation",
+            "RSP_CubicConvolution",
+            "RSP_Majority",
+            "RSP_NearestNeighbor"
+        ]
+        __allowedCompression = [
+            "JPEG", "LZ77"
+        ]
+        if isinstance(moasiacRule,MosaicRuleObject):
+            params["moasiacRule"] = moasiacRule.value
+        if format in __allowedFormat:
+            params['format'] = format
+        if isinstance(time, datetime.datetime):
+            params['time'] = local_time_to_online(time)
+        if interpolation is not None and \
+           interpolation in __allowedInterpolation and \
+           isinstance(interpolation, str):
+            params['interpolation'] = interpolation
+        if pixelType is not None and \
+           pixelType in __allowedPixelTypes:
+            params['pixelType'] = pixelType
+        if noDataInterpretation in __allowedInterpolation:
+            params['noDataInterpretation']  = noDataInterpretation
+        if noData is not None:
+            params['noData'] = noData
+        if compression is not None and \
+           compression in __allowedCompression:
+            params['compression'] = compression
+        if bandIds is not None and \
+           isinstance(bandIds, list):
+            params['bandIds'] = ",".join(bandIds)
+        if renderingRule is not None:
+            params['renderingRule'] = renderingRule
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token
+        params["f" ] = f
+        if f == "json":
+            return self._do_get(url=url,
+                                param_dict=params,
+                                proxy_port=self._proxy_port,
+                                proxy_url=self._proxy_url)
+        elif f == "image":
+            url = url + "?%s"  % urllib.urlencode(params)
+            print url
+            return self._download_file(url=url,
+                                       save_path=saveFolder,
+                                       file_name=saveFile)
+        elif f == "kmz":
+            url = url + "?%s"  % urllib.urlencode(params)
+            return self._download_file(url=url,
+                                       save_path=saveFolder,
+                                       file_name=saveFile)
+    #----------------------------------------------------------------------
+    def query(self,
+              where="1=1",
+              out_fields="*",
+              timeFilter=None,
+              geometryFilter=None,
+              returnGeometry=True,
+              returnIDsOnly=False,
+              returnCountOnly=False,
+              pixelSize=None,
+              orderByFields=None,
+              returnDistinctValues=True,
+              outStatistics=None,
+              groupByFieldsForStatistics=None
+              ):
+        """ queries a feature service based on a sql statement
+            Inputs:
+               where - the selection sql statement
+               out_fields - the attribute fields to return
+               timeFilter - a TimeFilter object where either the start time
+                            or start and end time are defined to limit the
+                            search results for a given time.  The values in
+                            the timeFilter should be as UTC timestampes in
+                            milliseconds.  No checking occurs to see if they
+                            are in the right format.
+               geometryFilter - a GeometryFilter object to parse down a given
+                               query by another spatial dataset.
+               returnGeometry - true means a geometry will be returned,
+                                else just the attributes
+               returnIDsOnly - false is default.  True means only OBJECTIDs
+                               will be returned
+               returnCountOnly - if True, then an integer is returned only
+                                 based on the sql statement
+               pixelSize-Query visible rasters at a given pixel size. If
+                         pixelSize is not specified, rasters at all
+                         resolutions can be queried.
+               orderByFields-Order results by one or more field names. Use
+                             ASC or DESC for ascending or descending order,
+                             respectively
+               returnDistinctValues-  If true, returns distinct values
+                                    based on the fields specified in
+                                    outFields. This parameter applies only
+                                    if the supportsAdvancedQueries property
+                                    of the image service is true.
+               outStatistics- the definitions for one or more field-based
+                              statistics to be calculated.
+               groupByFieldsForStatistics-One or more field names using the
+                                         values that need to be grouped for
+                                         calculating the statistics.
+            Output:
+               A list of Feature Objects (default) or a path to the output featureclass if
+               returnFeatureClass is set to True.
+         """
+        params = {"f": "json",
+                  "where": where,
+                  "outFields": out_fields,
+                  "returnGeometry" : returnGeometry,
+                  "returnIdsOnly" : returnIDsOnly,
+                  "returnCountOnly" : returnCountOnly,
+                  }
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
+        if not timeFilter is None and \
+           isinstance(timeFilter, filters.TimeFilter):
+            params['time'] = timeFilter.filter
+        if not geometryFilter is None and \
+           isinstance(geometryFilter, filters.GeometryFilter):
+            gf = geometryFilter.filter
+            params['geometry'] = gf['geometry']
+            params['geometryType'] = gf['geometryType']
+            params['spatialRelationship'] = gf['spatialRel']
+            params['inSR'] = gf['inSR']
+        if pixelSize is not None:
+            params['pixelSize'] = pixelSize
+        if orderByFields is not None:
+            params['orderByFields'] = orderByFields
+        if returnDistinctValues is not None:
+            params['returnDistinctValues'] = returnDistinctValues
+
+        url = self._url + "/query"
+        return self._do_get(url=url, param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+
+
+
+
+
+

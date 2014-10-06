@@ -1,4 +1,4 @@
-from base import BaseRenderer
+from .._abstract.abstract import BaseRenderer
 import json
 
 ########################################################################

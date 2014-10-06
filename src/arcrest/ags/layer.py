@@ -1,6 +1,11 @@
-from base import BaseAGSServer
-import json
-import base
+from .._abstract.abstract import BaseAGSServer
+import json, os
+import uuid
+from ..security import security
+from .._abstract.abstract import DynamicData, DataSource
+from ..common.spatial import scratchGDB, scratchFolder, featureclass_to_json, json_to_featureclass
+from ..common import filters
+from ..common.general import _date_handler, _unicode_convert, Feature
 ########################################################################
 class FeatureLayer(BaseAGSServer):
     """
@@ -44,32 +49,36 @@ class FeatureLayer(BaseAGSServer):
     _isDataVersioned = None
     _ownershipBasedAccessControlForFeatures = None
     _useStandardizedQueries = None
+    _securityHandler = None
+    _supportsRollbackOnFailureParameter = None
+    _globalIdField = None
+    _syncCanReturnChanges = None
+    _allowGeometryUpdates = None
+    _objectIdField = None
+    _templates = None
+    _editFieldsInfo = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None,
-                 username=None, password=None, proxy_url=None, proxy_port=None):
+    def __init__(self, url, securityHandler=None,
+                 initialize=False,
+                 proxy_url=None,
+                 proxy_port=None):
         """Constructor"""
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         self._url = url
-        self_token_url = token_url
-        self._username = username
-        self._password = password
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                          proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
-        self.__init()
+        if securityHandler is not None and \
+           isinstance(securityHandler,
+                      security.AGSTokenSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
+        elif securityHandler is None:
+            pass
+        else:
+            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
+        if initialize:
+            self.__init()
     def __init(self):
         """ inializes the properties """
         params = {
@@ -77,7 +86,9 @@ class FeatureLayer(BaseAGSServer):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = self._do_get(self._url, params,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -85,7 +96,56 @@ class FeatureLayer(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implmented for layer.FeatureLayer."
+    #----------------------------------------------------------------------
+    @property
+    def supportsRollbackOnFailureParameter(self):
+        """ returns the value for the supportsRollbackOnFailureParameter """
+        if self._supportsRollbackOnFailureParameter is None:
+            self.__init()
+        return self._supportsRollbackOnFailureParameter
+    #----------------------------------------------------------------------
+    @property
+    def globalIdField(self):
+        """returns the global id field"""
+        if self._globalIdField is None:
+            self.__init()
+        return self._globalIdField
+    #----------------------------------------------------------------------
+    @property
+    def syncCanReturnChanges(self):
+        """ returns the sync can return changes """
+        if self._syncCanReturnChanges  is None:
+            self.__init()
+        return self._syncCanReturnChanges
+    #----------------------------------------------------------------------
+    @property
+    def allowGeometryUpdates(self):
+        """ returns the boolean value """
+        if self._allowGeometryUpdates is None:
+            self.__init()
+        return self._allowGeometryUpdates
+    #----------------------------------------------------------------------
+    @property
+    def objectIdField(self):
+        """ returns the object id field """
+        if self._objectIdField is None:
+            self.__init()
+        return self._objectIdField
+    #----------------------------------------------------------------------
+    @property
+    def templates(self):
+        """ returns the templates """
+        if self._templates is None:
+            self.__init()
+        return self._templates
+    #----------------------------------------------------------------------
+    @property
+    def editFieldsInfo(self):
+        """ returns the edit field information """
+        if self._editFieldsInfo is None:
+            self.__init()
+        return self._editFieldsInfo
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
@@ -311,34 +371,286 @@ class FeatureLayer(BaseAGSServer):
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
+    #----------------------------------------------------------------------
+    def addFeature(self, features,
+                   gdbVersion=None,
+                   rollbackOnFailure=True):
+        """ Adds a single feature to the service
+           Inputs:
+              feature - list of common.Feature object or a single
+                        common.Feature Object
+              gdbVersion - Geodatabase version to apply the edits
+              rollbackOnFailure - Optional parameter to specify if the
+                                  edits should be applied only if all
+                                  submitted edits succeed. If false, the
+                                  server will apply the edits that succeed
+                                  even if some of the submitted edits fail.
+                                  If true, the server will apply the edits
+                                  only if all edits succeed. The default
+                                  value is true.
+           Output:
+              JSON message as dictionary
+        """
+        url = self._url + "/addFeatures"
+        params = {
+            "f" : "json"
+        }
+        if self._token is not None:
+            params['token'] = self._token
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
+        if isinstance(rollbackOnFailure, bool):
+            params['rollbackOnFailure'] = rollbackOnFailure
+        if isinstance(features, list):
+            params['features'] = json.dumps([feature.asDictionary for feature in features],
+                                            default=_date_handler)
+        elif isinstance(features, Feature):
+            params['features'] = json.dumps([features.asDictionary],
+                                            default=_date_handler)
+        else:
+            return None
+        return self._do_post(url=url,
+                             param_dict=params, proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def deleteFeatures(self,
+                       objectIds="",
+                       where="",
+                       geometryFilter=None,
+                       gdbVersion=None,
+                       rollbackOnFailure=True
+                       ):
+        """ removes 1:n features based on a sql statement
+            Input:
+              objectIds - The object IDs of this layer/table to be deleted
+              where - A where clause for the query filter. Any legal SQL
+                      where clause operating on the fields in the layer is
+                      allowed. Features conforming to the specified where
+                      clause will be deleted.
+              geometryFilter - a filters.GeometryFilter object to limit
+                               deletion by a geometry.
+              gdbVersion - Geodatabase version to apply the edits. This
+                           parameter applies only if the isDataVersioned
+                           property of the layer is true
+              rollbackOnFailure - parameter to specify if the edits should
+                                  be applied only if all submitted edits
+                                  succeed. If false, the server will apply
+                                  the edits that succeed even if some of
+                                  the submitted edits fail. If true, the
+                                  server will apply the edits only if all
+                                  edits succeed. The default value is true.
+            Output:
+               JSON response as dictionary
+        """
+        dURL = self._url + "/deleteFeatures"
+        params = {
+            "f": "json",
+        }
+        if geometryFilter is not None and \
+           isinstance(geometryFilter, filters.GeometryFilter):
+            gfilter = geometryFilter.filter
+            params['geometry'] = gfilter['geometry']
+            params['geometryType'] = gfilter['geometryType']
+            params['inSR'] = gfilter['inSR']
+            params['spatialRel'] = gfilter['spatialRel']
+        if where is not None and \
+           where != "":
+            params['where'] = where
+        if objectIds is not None and \
+           objectIds != "":
+            params['objectIds'] = objectIds
+        if not self._token is None:
+            params['token'] = self._token
+        result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
+                               proxy_url=self._proxy_url)
+        self.__init()
+        return result
+    #----------------------------------------------------------------------
+    def applyEdits(self,
+                   addFeatures=[],
+                   updateFeatures=[],
+                   deleteFeatures=None,
+                   gdbVersion=None,
+                   rollbackOnFailure=True):
+        """
+           This operation adds, updates, and deletes features to the
+           associated feature layer or table in a single call.
+           Inputs:
+              addFeatures - The array of features to be added.  These
+                            features should be common.Feature objects
+              updateFeatures - The array of features to be updateded.
+                               These features should be common.Feature
+                               objects
+              deleteFeatures - string of OIDs to remove from service
+              gdbVersion - Geodatabase version to apply the edits.
+              rollbackOnFailure - Optional parameter to specify if the
+                                  edits should be applied only if all
+                                  submitted edits succeed. If false, the
+                                  server will apply the edits that succeed
+                                  even if some of the submitted edits fail.
+                                  If true, the server will apply the edits
+                                  only if all edits succeed. The default
+                                  value is true.
+           Output:
+              dictionary of messages
+        """
+        editURL = self._url + "/applyEdits"
+        params = {"f": "json"
+                  }
+        if self._token is not None:
+            params['token'] = self._token
+        if len(addFeatures) > 0 and \
+           isinstance(addFeatures[0], Feature):
+            params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
+                                        default=_date_handler)
+        if len(updateFeatures) > 0 and \
+           isinstance(updateFeatures[0], Feature):
+            params['updates'] = json.dumps([f.asDictionary for f in updateFeatures],
+                                           default=_date_handler)
+        if deleteFeatures is not None and \
+           isinstance(deleteFeatures, str):
+            params['deletes'] = deleteFeatures
+        return self._do_post(url=editURL, param_dict=params,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def updateFeature(self,
+                      features,
+                      gdbVersion=None,
+                      rollbackOnFailure=True):
+        """
+           updates an existing feature in a feature service layer
+           Input:
+              feature - feature object(s) to get updated.  A single feature
+                        or a list of feature objects can be passed
+           Output:
+              dictionary of result messages
+        """
+        params = {
+            "f" : "json",
+            "rollbackOnFailure" : rollbackOnFailure
+        }
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
+        if self._token is not None:
+            params['token'] = self._token
+        if isinstance(features, Feature):
+            params['features'] = json.dumps([features.asDictionary])
+        elif isinstance(features, list):
+            vals = []
+            for feature in features:
+                if isinstance(feature, Feature):
+                    vals.append(feature.asDictionary)
+            params['features'] = json.dumps(vals)
+        else:
+            return {'message' : "invalid inputs"}
+        updateURL = self._url + "/updateFeatures"
+        res = self._do_post(url=updateURL,
+                            param_dict=params, proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
+        return res
+    #----------------------------------------------------------------------
+    def query(self,
+              where="1=1",
+              out_fields="*",
+              timeFilter=None,
+              geometryFilter=None,
+              returnGeometry=True,
+              returnIDsOnly=False,
+              returnCountOnly=False,
+              returnFeatureClass=False,
+              out_fc=None):
+        """ queries a feature service based on a sql statement
+            Inputs:
+               where - the selection sql statement
+               out_fields - the attribute fields to return
+               timeFilter - a TimeFilter object where either the start time
+                            or start and end time are defined to limit the
+                            search results for a given time.  The values in
+                            the timeFilter should be as UTC timestampes in
+                            milliseconds.  No checking occurs to see if they
+                            are in the right format.
+               geometryFilter - a GeometryFilter object to parse down a given
+                               query by another spatial dataset.
+               returnGeometry - true means a geometry will be returned,
+                                else just the attributes
+               returnIDsOnly - false is default.  True means only OBJECTIDs
+                               will be returned
+               returnCountOnly - if True, then an integer is returned only
+                                 based on the sql statement
+               returnFeatureClass - Default False. If true, query will be
+                                    returned as feature class
+               out_fc - only valid if returnFeatureClass is set to True.
+                        Output location of query.
+            Output:
+               A list of Feature Objects (default) or a path to the output featureclass if
+               returnFeatureClass is set to True.
+         """
+        params = {"f": "json",
+                  "where": where,
+                  "outFields": out_fields,
+                  "returnGeometry" : returnGeometry,
+                  "returnIdsOnly" : returnIDsOnly,
+                  "returnCountOnly" : returnCountOnly,
+                  }
+        if not self._token is None:
+            params["token"] = self._token
+        if not timeFilter is None and \
+           isinstance(timeFilter, filters.TimeFilter):
+            params['time'] = timeFilter.filter
+        if not geometryFilter is None and \
+           isinstance(geometryFilter, filters.GeometryFilter):
+            gf = geometryFilter.filter
+            params['geometry'] = gf['geometry']
+            params['geometryType'] = gf['geometryType']
+            params['spatialRelationship'] = gf['spatialRel']
+            params['inSR'] = gf['inSR']
+        fURL = self._url + "/query"
+        results = self._do_get(fURL, params, proxy_port=self._proxy_port,
+                               proxy_url=self._proxy_url)
+        if 'error' in results:
+            raise ValueError (results)
+        if not returnCountOnly and not returnIDsOnly:
+            if returnFeatureClass:
+                json_text = json.dumps(results)
+                temp = scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
+                with open(temp, 'wb') as writer:
+                    writer.write(json_text)
+                    writer.flush()
+                del writer
+                fc = json_to_featureclass(json_file=temp,
+                                          out_fc=out_fc)
+                os.remove(temp)
+                return fc
+            else:
+                feats = []
+                for res in results['features']:
+                    feats.append(Feature(res))
+                return feats
+        else:
+            return results
+        return
+
 ########################################################################
 class GroupLayer(FeatureLayer):
     """ represents a group layer  """
+    _securityHandler = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None,
-                 username=None, password=None, proxy_url=None, proxy_port=None):
+    def __init__(self, url, securityHandler=None,
+                 proxy_url=None, proxy_port=None):
         """Constructor"""
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
         self._url = url
-        self_token_url = token_url
-        self._username = username
-        self._password = password
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
+        if securityHandler is not None and \
+           isinstance(securityHandler,
+                      security.AGSTokenSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
+        elif securityHandler is None:
+            pass
+        else:
+            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
         self.__init()
     def __init(self):
         """ inializes the properties """
@@ -347,7 +659,9 @@ class GroupLayer(FeatureLayer):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        json_dict = json.loads(self._do_get(self._url, params,
+                                            proxy_url=self._proxy_url,
+                                            proxy_port=self._proxy_port))
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -365,7 +679,7 @@ class RasterLayer(FeatureLayer):
     """Raster Layer is exactly like FeatureLayer object"""
     pass
 ########################################################################
-class DynamicMapLayer(base.DynamicData):
+class DynamicMapLayer(DynamicData):
     """ creates a dynamic map layer object
         A dynamic map layer refers to a layer in the current map service.
         If supported, use gdbVersion to specify an alternate geodatabase
@@ -396,7 +710,7 @@ class DynamicMapLayer(base.DynamicData):
 ########################################################################
 #TODO DYNAMICDATALAYER CLASS
 #http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Layer_source_object/02r30000019v000000/
-class DynamicDataLayer(base.DynamicData):
+class DynamicDataLayer(DynamicData):
     """
 
     """
@@ -406,7 +720,7 @@ class DynamicDataLayer(base.DynamicData):
     #----------------------------------------------------------------------
     def __init__(self, dataSource, fields=None):
         """Constructor"""
-        if isinstance(dataSource, base.DataSource):
+        if isinstance(dataSource, DataSource):
             self._dataSource = dataSource
         else:
             raise TypeError("Invalid datasource object")
@@ -441,7 +755,7 @@ class DynamicDataLayer(base.DynamicData):
     @dataSource.setter
     def dataSource(self, value):
         """ sets the datasource object """
-        if isinstance(value, base.DataSource):
+        if isinstance(value, DataSource):
             self._dataSource = value
         else:
             raise TypeError("value must be a DataSource object")
@@ -459,7 +773,7 @@ class DynamicDataLayer(base.DynamicData):
         else:
             raise TypeError("Input must be a list")
 ########################################################################
-class TableDataSource(base.DataSource):
+class TableDataSource(DataSource):
     """Table data source is a table, feature class, or raster that
        resides in a registered workspace (either a folder or geodatabase).
        In the case of a geodatabase, if versioned, use version to switch
@@ -531,7 +845,7 @@ class TableDataSource(base.DataSource):
         }
         return self._dict
 ########################################################################
-class RasterDataSource(base.DataSource):
+class RasterDataSource(DataSource):
     """
        Raster data source is a file-based raster that resides in a
        registered raster workspace.
@@ -589,7 +903,7 @@ class RasterDataSource(base.DataSource):
         }
         return self._dict
 ########################################################################
-class QueryTableDataSource(base.DataSource):
+class QueryTableDataSource(DataSource):
     """"""
     _type = "queryTable"
     _workspaceId = None
@@ -662,7 +976,7 @@ class QueryTableDataSource(base.DataSource):
             self._dict["geometryType"] = self._geometryType
         return self._dict
 ########################################################################
-class JoinTableDataSource(base.DataSource):
+class JoinTableDataSource(DataSource):
     """
         joinTable data source is the result of a join operation. Nested
         joins are supported. To use nested joins, set either

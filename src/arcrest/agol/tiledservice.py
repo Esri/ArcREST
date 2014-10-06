@@ -9,12 +9,14 @@
 
 """
 import json
-from base import BaseAGOLClass
+from .._abstract.abstract import BaseAGOLClass, BaseSecurityHandler
 import urlparse
 import urllib
 import os
 import json
-import common
+import types
+from ..security import security
+from ..common.general import _date_handler
 ########################################################################
 class TiledService(BaseAGOLClass):
     """
@@ -47,35 +49,24 @@ class TiledService(BaseAGOLClass):
     _minScale = None
     _server = None
     _tileServers = None
+    _securityHandler = None
+    _exportTilesAllowed = None
+    _maxExportTilesCount = None
+    _initialExtent = None
     #----------------------------------------------------------------------
-    def __init__(self, url,  token_url=None,
-                 username=None, password=None,
+    def __init__(self,
+                 url,
+                 securityHandler,
                  initialize=False,
-                 proxy_url=None, proxy_port=None):
+                 proxy_url=None,
+                 proxy_port=None):
         """Constructor"""
         self._url = url
-        self._username = username
-        self._password = password
-        self._token_url = token_url
+        if isinstance(securityHandler, BaseSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -97,10 +88,42 @@ class TiledService(BaseAGOLClass):
             else:
                 print k, " - attribute not implmented in tiled service."
     #----------------------------------------------------------------------
+    @property
+    def maxExportTilesCount(self):
+        """ returns the max export tiles count"""
+        if self._maxExportTilesCount is None:
+            self.__init()
+        return self._maxExportTilesCount
+    #----------------------------------------------------------------------
+    @property
+    def exportTilesAllowed(self):
+        """ export tiles allowed """
+        if self._exportTilesAllowed is None:
+            self.__init()
+        return self._exportTilesAllowed
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, BaseSecurityHandler):
+            if isinstance(value, security.AGOLTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+            elif isinstance(value, security.OAuthSecurityHandler):
+                self._token = value.token
+                self._securityHandler = value
+            else:
+                pass
+    #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
         return json.dumps(dict(self),
-                          default=common._date_handler)
+                          default=_date_handler)
     #----------------------------------------------------------------------
     def __iter__(self):
         """ iterator generator for public values/properties

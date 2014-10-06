@@ -1,9 +1,9 @@
-from base import BaseAGSServer
-from layer import FeatureLayer, TableLayer
-import filters
-import geometry
-import common
+from .._abstract.abstract import BaseAGSServer, DynamicData, BaseSecurityHandler
 import layer
+from ..common.general import Feature
+from layer import FeatureLayer, TableLayer, RasterLayer
+from ..common import filters, geometry
+from ..security import security
 ########################################################################
 class MapService(BaseAGSServer):
     """ contains information about a map service """
@@ -40,31 +40,25 @@ class MapService(BaseAGSServer):
     _timeInfo = None
     _maxExportTilesCount = None
     _hasVersionedData = None
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
-    def __init__(self, url, token_url=None, username=None, password=None,
-                 initialize=False, proxy_url=None, proxy_port=None):
+    def __init__(self, url, securityHandler=None,
+                 initialize=False, proxy_url=None,
+                 proxy_port=None):
         """Constructor"""
-        self._url = url 
-        self._token_url = token_url 
-        self._username = username
-        self._password = password
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
+        self._proxy_url= proxy_url
+        self._proxy_port = proxy_port
+        self._url = url
+        if securityHandler is not None and \
+           isinstance(securityHandler, security.AGSTokenSecurityHandler):
+            self._securityHandler = securityHandler
+            self._token = securityHandler.token
+        elif securityHandler is None:
+            pass
+        else:
+            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -76,7 +70,9 @@ class MapService(BaseAGSServer):
             param_dict = {"f": "json",
                           "token" : self._token
                           }
-        json_dict = self._do_get(self._url, param_dict)
+        json_dict = self._do_get(self._url, param_dict,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -84,11 +80,12 @@ class MapService(BaseAGSServer):
             if k == "tables":
                 self._tables = []
                 for tbl in v:
+                    url = self._url + "/%s" % tbl['id']
                     self._tables.append(
                         layer.TableLayer(url,
-                                         token_url=self._token_url,
-                                         username=self._username,
-                                         password=self._password)
+                                         securityHandler=self._securityHandler,
+                                         proxy_port=self._proxy_port,
+                                         proxy_url=self._proxy_url)
                     )
             elif k == "layers":
                 self._layers = []
@@ -98,23 +95,23 @@ class MapService(BaseAGSServer):
                     if layer_type == "Feature Layer":
                         self._layers.append(
                             layer.FeatureLayer(url,
-                                               token_url=self._token_url,
-                                               username=self._username,
-                                               password=self._password)
+                                               securityHandler=self._securityHandler,
+                                               proxy_port=self._proxy_port,
+                                               proxy_url=self._proxy_url)
                         )
                     elif layer_type == "Raster Layer":
                         self._layers.append(
                             layer.RasterLayer(url,
-                                               token_url=self._token_url,
-                                               username=self._username,
-                                               password=self._password)
+                                         securityHandler=self._securityHandler,
+                                         proxy_port=self._proxy_port,
+                                         proxy_url=self._proxy_url)
                         )
                     elif layer_type == "Group Layer":
                         self._layers.append(
                             layer.GroupLayer(url,
-                                             token_url=self._token_url,
-                                             username=self._username,
-                                             password=self._password)
+                                             securityHandler=self._securityHandler,
+                                             proxy_port=self._proxy_port,
+                                             proxy_url=self._proxy_url)
                         )
                     else:
                         print 'Type %s is not implemented' % layer_type
@@ -123,6 +120,24 @@ class MapService(BaseAGSServer):
 
             else:
                 print k, " is not implemented for mapservice."
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, BaseSecurityHandler):
+            if isinstance(value, security.AGSTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+            else:
+                pass
+        elif value is None:
+            self._securityHandler = None
+            self._token = None
     #----------------------------------------------------------------------
     @property
     def maxExportTilesCount(self):
@@ -385,7 +400,7 @@ class MapService(BaseAGSServer):
         res = self._do_get(url, params)
         qResults = []
         for r in res['results']:
-            qResults.append(common.Feature(r))
+            qResults.append(Feature(r))
         print 'stop'
         return qResults
     #----------------------------------------------------------------------
@@ -414,9 +429,11 @@ class MapService(BaseAGSServer):
                 "source" : dynamicLayer.asDictionary
             }
         }
-        return common.Feature(
+        return Feature(
             json_string=self._do_get(url=url,
-                                     param_dict=params)
+                                     param_dict=params,
+                                     proxy_port=self._proxy_port,
+                                     proxy_url=self._proxy_url)
         )
     #----------------------------------------------------------------------
     def identify(self,
@@ -589,7 +606,7 @@ class MapService(BaseAGSServer):
             if layerTimeOptions is not None:
                 params['layerTimeOptions'] = layerTimeOptions
             if dynamicLayers is not None and \
-               isinstance(dynamicLayers, base.DynamicData):
+               isinstance(dynamicLayers, DynamicData):
                 params['dynamicLayers'] = dynamicLayers.asDictionary
             if mapScale is not None:
                 params['mapScale'] = mapScale

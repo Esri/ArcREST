@@ -8,6 +8,14 @@ Subpackages
 
     arcrest.agol
     arcrest.ags
+    arcrest.common
+    arcrest.geometryservice
+    arcrest.manageagol
+    arcrest.manageags
+    arcrest.manageportal
+    arcrest.security
+    arcrest.web
+    arcrest.webmap
 
 Module contents
 ---------------

@@ -8,12 +8,18 @@
 
 
 """
-
+from .._abstract import abstract
+from ..security import security
 import types
-import common
-import filters
+from ..common import filters
+from ..common.geometry import SpatialReference
+from ..common.general import _date_handler, _unicode_convert, Feature
+from ..common.spatial import scratchFolder, scratchGDB, json_to_featureclass
+from ..common.spatial import get_OID_field, get_records_with_attachments
+from ..common.spatial import create_feature_layer, merge_feature_class
+from ..common.spatial import featureclass_to_json, create_feature_class
+from ..common.spatial import get_attachment_data
 import featureservice
-from base import BaseAGOLClass
 import os
 import json
 import math
@@ -21,7 +27,7 @@ import urlparse
 import mimetypes
 import uuid
 ########################################################################
-class FeatureLayer(BaseAGOLClass):
+class FeatureLayer(abstract.BaseAGOLClass):
     """
        This contains information about a feature service's layer.
     """
@@ -75,41 +81,33 @@ class FeatureLayer(BaseAGOLClass):
     _editingInfo = None
     _proxy_url = None
     _proxy_port = None
+    _securityHandler = None
     _supportsCalculate = None
     _supportsAttachmentsByUploadId = None
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 username=None,
-                 password=None,
-                 token_url=None,
+                 securityHandler=None,
                  initialize=False,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
         self._url = url
-        self._token_url = token_url
-        self._username = username
-        self._password = password
+
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
+        if securityHandler is not None and \
+           isinstance(securityHandler, abstract.BaseSecurityHandler):
+            if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
+                self._token = securityHandler.token
+                self._username = securityHandler.username
+                self._password = securityHandler._password
+                self._token_url = securityHandler.token_url
+                self._securityHandler = securityHandler
+            elif isinstance(securityHandler, security.OAuthSecurityHandler):
+                self._token = securityHandler.token
+                self._securityHandler = securityHandler
             else:
-                self._token = res[0]
-      
+                pass
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -133,13 +131,13 @@ class FeatureLayer(BaseAGOLClass):
                 print k, " - attribute not implmented in Feature Layer."
         self._parentLayer = featureservice.FeatureService(
             url=os.path.dirname(self._url),
-            token_url=self._token_url,
-            username=self._username,
-            password=self._password)
+            securityHandler=self._securityHandler,
+            proxy_port=self._proxy_port,
+            proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
-        return json.dumps(dict(self), default=common._date_handler)
+        return json.dumps(dict(self), default=_date_handler)
     #----------------------------------------------------------------------
     def __iter__(self):
         """ iterator generator for public values/properties
@@ -156,18 +154,18 @@ class FeatureLayer(BaseAGOLClass):
             yield (att, getattr(self, att))
     #----------------------------------------------------------------------
     @property
-    def supportsAttachmentsByUploadId(self):
-        """ returns the supports attachments by upload id """
-        if self._supportsAttachmentsByUploadId is None:
-            self.__init()
-        return self._supportsAttachmentsByUploadId
-    #----------------------------------------------------------------------
-    @property
     def supportsCalculate(self):
-        """ returns the supports calculate value """
+        """ returns the supports calculate values """
         if self._supportsCalculate is None:
             self.__init()
         return self._supportsCalculate
+    #----------------------------------------------------------------------
+    @property
+    def supportsAttachmentsByUploadId(self):
+        """ returns is supports attachments by uploads id """
+        if self._supportsAttachmentsByUploadId is None:
+            self.__init()
+        return self._supportsAttachmentsByUploadId
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):
@@ -475,6 +473,27 @@ class FeatureLayer(BaseAGOLClass):
             self.__init()
         return self._useStandardizedQueries
     #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, abstract.BaseSecurityHandler):
+            if isinstance(value, security.AGOLTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+                self._username = value.username
+                self._password = value._password
+                self._tokenurl = value.token_url
+            elif isinstance(value, security.OAuthSecurityHandler):
+                self._token = value.token
+                self._securityHandler = value
+            else:
+                pass
+    #----------------------------------------------------------------------
     def addAttachment(self, oid, file_path):
         """ Adds an attachment to a feature service
             Input:
@@ -569,12 +588,12 @@ class FeatureLayer(BaseAGOLClass):
         objectIdField = self.objectIdField
         geomType = self.geometryType
         wkid = self.parentLayer.spatialReference['wkid']
-        return common.create_feature_class(out_path,
-                                           out_name,
-                                           geomType,
-                                           wkid,
-                                           fields,
-                                           objectIdField)
+        return create_feature_class(out_path,
+                                    out_name,
+                                    geomType,
+                                    wkid,
+                                    fields,
+                                    objectIdField)
     def create_feature_template(self):
         """creates a feature template"""
         fields = self.fields
@@ -588,7 +607,7 @@ class FeatureLayer(BaseAGOLClass):
 
         feat_schema['attributes'] = att
         feat_schema['geometry'] = ''
-        return common.Feature(feat_schema)
+        return Feature(feat_schema)
 
     #----------------------------------------------------------------------
     def query(self,
@@ -654,19 +673,19 @@ class FeatureLayer(BaseAGOLClass):
         if not returnCountOnly and not returnIDsOnly:
             if returnFeatureClass:
                 json_text = json.dumps(results)
-                temp = common.scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
+                temp = scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
                 with open(temp, 'wb') as writer:
                     writer.write(json_text)
                     writer.flush()
                 del writer
-                fc = common.json_to_featureclass(json_file=temp,
-                                                   out_fc=out_fc)
+                fc = json_to_featureclass(json_file=temp,
+                                          out_fc=out_fc)
                 os.remove(temp)
                 return fc
             else:
                 feats = []
                 for res in results['features']:
-                    feats.append(common.Feature(res))
+                    feats.append(Feature(res))
                 return feats
         else:
             return results
@@ -753,7 +772,7 @@ class FeatureLayer(BaseAGOLClass):
         if definitionExpression is not None:
             params['definitionExpression'] = definitionExpression
         if outWKID is not None:
-            params['outSR'] = common.SpatialReference(outWKID).asDictionary
+            params['outSR'] = SpatialReference(outWKID).asDictionary
         if maxAllowableOffset is not None:
             params['maxAllowableOffset'] = maxAllowableOffset
         if geometryPrecision is not None:
@@ -835,13 +854,13 @@ class FeatureLayer(BaseAGOLClass):
                 sql = "%s >= %s and %s <= %s" % (OIDField, chunk[0],
                                                  OIDField, chunk[len(chunk) -1])
                 temp_base = "a" + uuid.uuid4().get_hex()[:6] + "a"
-                temp_fc = r"%s\%s" % (common.scratchGDB(), temp_base)
+                temp_fc = r"%s\%s" % (scratchGDB(), temp_base)
                 temp_fc = self.query(where=sql,
                                      returnFeatureClass=True,
                                      out_fc=temp_fc)
                 result_features.append(temp_fc)
-            return common.merge_feature_class(merges=result_features,
-                                              out_fc=out_path)
+            return merge_feature_class(merges=result_features,
+                                       out_fc=out_path)
     #----------------------------------------------------------------------
     def updateFeature(self,
                       features,
@@ -863,12 +882,12 @@ class FeatureLayer(BaseAGOLClass):
             params['gdbVersion'] = gdbVersion
         if self._token is not None:
             params['token'] = self._token
-        if isinstance(features, common.Feature):
+        if isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary])
         elif isinstance(features, list):
             vals = []
             for feature in features:
-                if isinstance(feature, common.Feature):
+                if isinstance(feature, Feature):
                     vals.append(feature.asDictionary)
             params['features'] = json.dumps(vals)
         else:
@@ -966,13 +985,13 @@ class FeatureLayer(BaseAGOLClass):
         if self._token is not None:
             params['token'] = self._token
         if len(addFeatures) > 0 and \
-           isinstance(addFeatures[0], common.Feature):
+           isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
-                                        default=common._date_handler)
+                                        default=_date_handler)
         if len(updateFeatures) > 0 and \
-           isinstance(updateFeatures[0], common.Feature):
+           isinstance(updateFeatures[0], Feature):
             params['updates'] = json.dumps([f.asDictionary for f in updateFeatures],
-                                           default=common._date_handler)
+                                           default=_date_handler)
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
@@ -1010,10 +1029,10 @@ class FeatureLayer(BaseAGOLClass):
             params['rollbackOnFailure'] = rollbackOnFailure
         if isinstance(features, list):
             params['features'] = json.dumps([feature.asDictionary for feature in features],
-                                            default=common._date_handler)
-        elif isinstance(features, common.Feature):
+                                            default=_date_handler)
+        elif isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
-                                            default=common._date_handler)
+                                            default=_date_handler)
         else:
             return None
         return self._do_post(url=url,
@@ -1043,7 +1062,7 @@ class FeatureLayer(BaseAGOLClass):
             uURL = self._url + "/addFeatures"
             max_chunk = 250
             js = self._unicode_convert(
-                common.featureclass_to_json(fc))
+                 featureclass_to_json(fc))
             js = js['features']
             if len(js) <= max_chunk:
                 bins = 1
@@ -1067,18 +1086,18 @@ class FeatureLayer(BaseAGOLClass):
                 del result
             return True, messages
         else:
-            oid_field = common.get_OID_field(fc)
-            OIDs = common.get_records_with_attachments(attachment_table=attachmentTable)
-            fl = common.create_feature_layer(fc, "%s not in ( %s )" % (oid_field, ",".join(OIDs)))
+            oid_field = get_OID_field(fc)
+            OIDs = get_records_with_attachments(attachment_table=attachmentTable)
+            fl = create_feature_layer(fc, "%s not in ( %s )" % (oid_field, ",".join(OIDs)))
             val, msgs = self.addFeatures(fl)
             messages.append(msgs)
             del fl
             for oid in OIDs:
-                fl = common.create_feature_layer(fc, "%s = %s" % (oid_field, oid), name="layer%s" % oid)
+                fl = create_feature_layer(fc, "%s = %s" % (oid_field, oid), name="layer%s" % oid)
                 val, msgs = self.addFeatures(fl)
                 for result in msgs[0]['addResults']:
                     oid_fs = result['objectId']
-                    sends = common.get_attachment_data(attachmentTable, sql="%s = %s" % (rel_object_field, oid))
+                    sends = get_attachment_data(attachmentTable, sql="%s = %s" % (rel_object_field, oid))
                     for s in sends:
                         messages.append(self.addAttachment(oid_fs, s['blob']))
                         del s

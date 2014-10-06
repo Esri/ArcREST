@@ -1,10 +1,5 @@
-""" package contructor
-.. moduleauthor:: Esri
+from featureservice import *
+from layer import *
+from tiledservice import *
 
-"""
-import common
-import admin
-import layer
-import featureservice
-import filters
-import base
+__version__ = "2.0.100"

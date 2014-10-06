@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.geometryservice package &mdash; ArcREST 2.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 2.0.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">ArcREST 2.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="arcrest-geometryservice-package">
+<h1>arcrest.geometryservice package<a class="headerlink" href="#arcrest-geometryservice-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-arcrest.geometryservice.geometryservice">
+<span id="arcrest-geometryservice-geometryservice-module"></span><h2>arcrest.geometryservice.geometryservice module<a class="headerlink" href="#module-arcrest.geometryservice.geometryservice" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService">
+<em class="property">class </em><tt class="descclassname">arcrest.geometryservice.geometryservice.</tt><tt class="descname">GeometryService</tt><big>(</big><em>url</em>, <em>securityHandler=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></tt></p>
+<p>A geometry service contains utility methods that provide access to
+sophisticated and frequently used geometric operations. An ArcGIS
+Server web site can only expose one geometry service with the static
+name &#8220;Geometry&#8221;.</p>
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.areasAndLengths">
+<tt class="descname">areasAndLengths</tt><big>(</big><em>polygons</em>, <em>lengthUnit</em>, <em>areaUnit</em>, <em>calculationType</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.areasAndLengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The areasAndLengths operation is performed on a geometry service
+resource. This operation calculates areas and perimeter lengths
+for each polygon specified in the input array.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>polygons - The array of polygons whose areas and lengths are</dt>
+<dd>to be computed.</dd>
+<dt>lengthUnit - The length unit in which the perimeters of</dt>
+<dd>polygons will be calculated. If calculationType
+is planar, then lengthUnit can be any esriUnits
+constant. If lengthUnit is not specified, the
+units are derived from sr. If calculationType is
+not planar, then lengthUnit must be a linear
+esriUnits constant, such as esriSRUnit_Meter or
+esriSRUnit_SurveyMile. If lengthUnit is not
+specified, the units are meters. For a list of
+valid units, see esriSRUnitType Constants and
+esriSRUnit2Type Constant.</dd>
+<dt>areaUnit - The area unit in which areas of polygons will be</dt>
+<dd>calculated. If calculationType is planar, then
+areaUnit can be any esriUnits constant. If
+areaUnit is not specified, the units are derived
+from sr. If calculationType is not planar, then
+areaUnit must be a linear esriUnits constant such
+as esriSRUnit_Meter or esriSRUnit_SurveyMile. If
+areaUnit is not specified, then the units are
+meters. For a list of valid units, see
+esriSRUnitType Constants and esriSRUnit2Type
+constant.
+The list of valid esriAreaUnits constants include,
+esriSquareInches | esriSquareFeet |
+esriSquareYards | esriAcres | esriSquareMiles |
+esriSquareMillimeters | esriSquareCentimeters |
+esriSquareDecimeters | esriSquareMeters | esriAres
+| esriHectares | esriSquareKilometers.</dd>
+<dt>calculationType -  The type defined for the area and length</dt>
+<dd><p class="first">calculation of the input geometries. The
+type can be one of the following values:
+planar - Planar measurements use 2D</p>
+<blockquote>
+<div>Euclidean distance to calculate
+area and length. This type should
+only be used if the area or
+length needs to be calculated in
+the given spatial reference.
+Otherwise, use preserveShape.</div></blockquote>
+<dl class="last docutils">
+<dt>geodesic - Use this type if you want to</dt>
+<dd>calculate an area or length using
+only the vertices of the polygon
+and define the lines between the
+points as geodesic segments
+independent of the actual shape
+of the polygon. A geodesic
+segment is the shortest path
+between two points on an ellipsoid.</dd>
+<dt>preserveShape - This type calculates the</dt>
+<dd>area or length of the geometry on
+the surface of the Earth
+ellipsoid. The shape of the
+geometry in its coordinate system
+is preserved.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.autoComplete">
+<tt class="descname">autoComplete</tt><big>(</big><em>polygons=</em>, <span class="optional">[</span><span class="optional">]</span><em>polylines=</em>, <span class="optional">[</span><span class="optional">]</span><em>sr=None</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.autoComplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>The autoComplete operation simplifies the process of
+constructing new polygons that are adjacent to other polygons.
+It constructs polygons that fill in the gaps between existing
+polygons and a set of polylines.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>polygons - array of Polygon objects
+polylines - list of Polyline objects
+sr - spatial reference of the input geometries WKID</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.buffer">
+<tt class="descname">buffer</tt><big>(</big><em>geometries</em>, <em>inSR</em>, <em>distances</em>, <em>units</em>, <em>outSR=None</em>, <em>bufferSR=None</em>, <em>unionResults=True</em>, <em>geodesic=True</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The buffer operation is performed on a geometry service resource
+The result of this operation is buffered polygons at the
+specified distances for the input geometry array. Options are
+available to union buffers and to use geodesic distance.</p>
+<p>Inputs:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.convexHull">
+<tt class="descname">convexHull</tt><big>(</big><em>geometries</em>, <em>sr=None</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.convexHull" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.cut">
+<tt class="descname">cut</tt><big>(</big><em>cutter</em>, <em>target</em>, <em>sr=None</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.density">
+<tt class="descname">density</tt><big>(</big><em>geometries</em>, <em>sr</em>, <em>maxSegmentLength</em>, <em>lengthUnit</em>, <em>geodesic=False</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.density" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.difference">
+<tt class="descname">difference</tt><big>(</big><em>geometries</em>, <em>sr</em>, <em>geometry</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.difference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.distance">
+<tt class="descname">distance</tt><big>(</big><em>sr</em>, <em>geometry1</em>, <em>geometry2</em>, <em>distanceUnit=''</em>, <em>geodesic=False</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.generalize">
+<tt class="descname">generalize</tt><big>(</big><em>sr</em>, <em>geometries</em>, <em>maxDeviation</em>, <em>deviationUnit</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.generalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.intersect">
+<tt class="descname">intersect</tt><big>(</big><em>sr</em>, <em>geometries</em>, <em>geometry</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.intersect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.labelPoints">
+<tt class="descname">labelPoints</tt><big>(</big><em>sr</em>, <em>polygons</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.labelPoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.lengths">
+<tt class="descname">lengths</tt><big>(</big><em>sr</em>, <em>polylines</em>, <em>lengthUnit</em>, <em>calculationType</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.lengths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.offset">
+<tt class="descname">offset</tt><big>(</big><em>geometries</em>, <em>offsetDistance</em>, <em>offsetUnit</em>, <em>offsetHow='esriGeometryOffsetRounded'</em>, <em>bevelRatio=10</em>, <em>simplifyResult=False</em>, <em>sr=None</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.project">
+<tt class="descname">project</tt><big>(</big><em>geometries</em>, <em>inSR</em>, <em>outSR</em>, <em>transformation=''</em>, <em>transformFoward=False</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.project" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.relation">
+<tt class="descname">relation</tt><big>(</big><em>geometries1</em>, <em>geometries2</em>, <em>sr</em>, <em>relation='esriGeometryRelationIntersection'</em>, <em>relationParam=''</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.relation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.reshape">
+<tt class="descname">reshape</tt><big>(</big><em>sr</em>, <em>target</em>, <em>reshaper</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.reshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.simplify">
+<tt class="descname">simplify</tt><big>(</big><em>sr</em>, <em>geometries</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.simplify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.trimExtend">
+<tt class="descname">trimExtend</tt><big>(</big><em>sr</em>, <em>polylines</em>, <em>trimExtendTo</em>, <em>extendHow=0</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.trimExtend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.geometryservice.geometryservice.GeometryService.union">
+<tt class="descname">union</tt><big>(</big><em>sr</em>, <em>geometries</em><big>)</big><a class="headerlink" href="#arcrest.geometryservice.geometryservice.GeometryService.union" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.geometryservice">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-arcrest.geometryservice" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">arcrest.geometryservice package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-arcrest.geometryservice.geometryservice">arcrest.geometryservice.geometryservice module</a></li>
+<li><a class="reference internal" href="#module-arcrest.geometryservice">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/arcrest.geometryservice.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">ArcREST 2.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Andrew Chapkowski, Mike Miller.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

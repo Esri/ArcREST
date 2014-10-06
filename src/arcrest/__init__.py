@@ -1,4 +1,12 @@
-import ags
 import agol
+import ags
+from security import *
+from common import *
+import _abstract
+import web
+import manageagol
+import manageags
+import manageportal
 #import webmap
-__version__ = "1.1.0"
+from geometryservice import *
+__version__ = "2.0.100"

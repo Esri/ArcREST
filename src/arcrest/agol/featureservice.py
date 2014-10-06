@@ -9,19 +9,20 @@
 
 """
 import types
-from base import BaseAGOLClass
 import layer as servicelayers
-import common
-from filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
-from base import Geometry
 import urlparse
 import urllib
 import os
 import json
 import mimetypes
+from ..security import security
+from .._abstract import abstract
+from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
+from ..common.general import _date_handler
+from ..common import geometry
 
 ########################################################################
-class FeatureService(BaseAGOLClass):
+class FeatureService(abstract.BaseAGOLClass):
     """ contains information about a feature service """
     _url = None
     _currentVersion = None
@@ -39,7 +40,6 @@ class FeatureService(BaseAGOLClass):
     _fullExtent = None
     _allowGeometryUpdates = None
     _units = None
-    _extractEnabled = None
     _syncEnabled = None
     _syncCapabilities = None
     _editorTrackingInfo = None
@@ -53,34 +53,29 @@ class FeatureService(BaseAGOLClass):
     _editingInfo = None
     _proxy_url = None
     _proxy_port = None
+    _securityHandler = None
     #----------------------------------------------------------------------
-    def __init__(self, url,  token_url=None, username=None, password=None,
+    def __init__(self,
+                 url,
+                 securityHandler=None,
                  initialize=False, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
-        self._username = username
-        self._password = password
-        self._token_url = token_url
+
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        if not username is None and \
-           not password is None and \
-           not username is "" and \
-           not password is "":
-            if not token_url is None:
-                res = self.generate_token(tokenURL=token_url,
-                                              proxy_port=proxy_port,
-                                            proxy_url=proxy_url)
-            else:   
-                res = self.generate_token(proxy_port=self._proxy_port,
-                                                       proxy_url=self._proxy_url)                
-            if res is None:
-                print "Token was not generated"
-            elif 'error' in res:
-                print res
-            else:
-                self._token = res[0]
-      
+        if securityHandler is not None and \
+           isinstance(securityHandler, abstract.BaseSecurityHandler):
+            if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
+                self._username = securityHandler.username
+                self._password = securityHandler._password
+                self._tokenurl = securityHandler.token_url
+                self._token = securityHandler.token
+                self._securityHandler = securityHandler
+            elif isinstance(securityHandler, security.OAuthSecurityHandler):
+                self._token = securityHandler.token
+                self._securityHandler = securityHandler
+
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -106,7 +101,7 @@ class FeatureService(BaseAGOLClass):
     def __str__(self):
         """ returns object as string """
         return json.dumps(dict(self),
-                          default=common._date_handler)
+                          default=_date_handler)
     #----------------------------------------------------------------------
     def __iter__(self):
         """ iterator generator for public values/properties
@@ -121,6 +116,27 @@ class FeatureService(BaseAGOLClass):
                       ]
         for att in attributes:
             yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ returns the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, abstract.BaseSecurityHandler):
+            if isinstance(value, security.AGOLTokenSecurityHandler):
+                self._securityHandler = value
+                self._token = value.token
+                self._username = value.username
+                self._password = value._password
+                self._tokenurl = value.token_url
+            elif isinstance(value, security.OAuthSecurityHandler):
+                self._token = value.token
+                self._securityHandler = value
+            else:
+                pass
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):
@@ -222,22 +238,6 @@ class FeatureService(BaseAGOLClass):
         return self._units
     #----------------------------------------------------------------------
     @property
-    def extractEnabled(self):
-        """ informs the user if sync of data can be performed """
-        if self._extractEnabled is None:
-            capabilities = self.capabilities
-            if capabilities is None:
-                self._extractEnabled = False                
-            else:
-
-                if 'Extract' in self.capabilities:
-                    self._extractEnabled = True
-                else:
-                    self._extractEnabled = False
-            
-        return self._extractEnabled
-    #----------------------------------------------------------------------  
-    @property
     def syncEnabled(self):
         """ informs the user if sync of data can be performed """
         if self._syncEnabled is None:
@@ -281,9 +281,9 @@ class FeatureService(BaseAGOLClass):
             for l in json_dict["layers"]:
                 self._layers.append(
                     servicelayers.FeatureLayer(url=self._url + "/%s" % l['id'],
-                                               username=self._username,
-                                               password=self._password,
-                                               token_url=self._token_url)
+                                               securityHandler=self._securityHandler,
+                                               proxy_port=self._proxy_port,
+                                               proxy_url=self._proxy_url)
                 )
     #----------------------------------------------------------------------
     def _getTables(self):
@@ -301,9 +301,9 @@ class FeatureService(BaseAGOLClass):
             for l in json_dict["tables"]:
                 self._tables.append(
                     servicelayers.TableLayer(url=self._url + "/%s" % l['id'],
-                                               username=self._username,
-                                               password=self._password,
-                                               token_url=self._token_url)
+                                               securityHandler=self._securityHandler,
+                                               proxy_port=self._proxy_port,
+                                               proxy_url=self._proxy_url)
                 )
     #----------------------------------------------------------------------
     @property
@@ -404,12 +404,15 @@ class FeatureService(BaseAGOLClass):
             params['geometry'] = gf['geometry']
             params['inSR'] = gf['inSR']
         if not outSR is None and \
-           isinstance(outSR, common.SpatialReference):
+           isinstance(outSR, geometry.SpatialReference):
             params['outSR'] = outSR.asDictionary
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
-        return self._do_get(url=qurl, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        return self._do_get(url=qurl,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def query_related_records(self,
                               objectIds,
@@ -492,7 +495,7 @@ class FeatureService(BaseAGOLClass):
         if definitionExpression is not None:
             params['definitionExpression'] = definitionExpression
         if outWKID is not None:
-            params['outSR'] = common.SpatialReference(outWKID).asDictionary
+            params['outSR'] =geometry.SpatialReference(outWKID).asDictionary
         if maxAllowableOffset is not None:
             params['maxAllowableOffset'] = maxAllowableOffset
         if geometryPrecision is not None:
@@ -553,19 +556,22 @@ class FeatureService(BaseAGOLClass):
     def createReplica(self,
                       replicaName,
                       layers,
+                      keep_replica=False,
                       layerQueries=None,
                       geometryFilter=None,
                       returnAttachments=False,
                       returnAttachmentDatabyURL=True,
-                      returnAsFeatureClass=None,
-                      outputFormat='FILEGDB',
+                      returnAsFeatureClass=False,
                       out_path=None
                       ):
         """ generates a replica
             Inputs:
                replicaName - string of replica name
                layers - layer id # as comma seperated string
-
+               keep_replica - if the replica does not have returnAsFeatureClass set to true,
+                              the feature service creates a permanent copy of the replica.
+                              If this is just a pull, then erase the replica in order to prevent
+                              build up of replicas.
                layerQueries - In addition to the layers and geometry parameters, the layerQueries
                               parameter can be used to further define what is replicated. This
                               parameter allows you to set properties on a per layer or per table
@@ -580,15 +586,13 @@ class FeatureService(BaseAGOLClass):
                returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
                                             attachment returned from createReplica. Otherwise,
                                             attachments are embedded in the response.
-               returnAsFeatureClass - Deprecated and replaced with outputFormat
-               outputFormat - [sqlite,filegdb,json] The types of features that can be return
-               out_path - Path where the replica will be saved.  If not provided, the url to the replica
-                                    will be returned.
+               returnAsFeatureClass - If a local copy is desired, set this parameter to True, else
+                                      the service will return information on how to download the
+                                      json file.
+               out_path - Path where the FGDB will be saved.  Only used with returnAsFeatureClass is
+                          True.
         """
-        if not returnAsFeatureClass is None:
-            print "ReturnAsFeatureClass has been replaced with outputFormat"
-        
-        if self.extractEnabled or self.syncEnabled:
+        if self.syncEnabled:
             url = self._url + "/createReplica"
             params = {
                 "f" : "json",
@@ -596,9 +600,7 @@ class FeatureService(BaseAGOLClass):
                 "layers": layers,
                 "returnAttachmentDatabyURL" : returnAttachmentDatabyURL,
                 "returnAttachments" : returnAttachments,
-                "async" : False,
-                "dataFormat": outputFormat
-                
+                "async" : False
             }
             if not self._token is None:
                 params["token"] = self._token
@@ -608,73 +610,28 @@ class FeatureService(BaseAGOLClass):
                 params['geometryType'] = gf['geometryType']
                 params['geometry'] = gf['geometry']
                 params['inSR'] = gf['inSR']
-            if outputFormat == 'filegdb':
-            
-              
+            if returnAsFeatureClass and \
+               out_path is not None:
+                if os.path.isdir(out_path) == False:
+                    os.makedirs(out_path)
+                params['dataFormat'] = "filegdb"
                 params['syncModel'] = 'none'
                 res = self._do_post(url=url, param_dict=params,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
                 if res.has_key("responseUrl"):
                     zipURL = res["responseUrl"]
-                    if not out_path is None:
-                        if os.path.isdir(out_path) == False:
-                            os.makedirs(out_path)                        
-                        dl_file = self._download_file(url=zipURL,
-                                            save_path=out_path,
-                                            file_name=os.path.basename(zipURL)
-                                            )
-                        
-                        existing_files = self._list_files(path=out_path + os.sep + "*.gdb")
-                        self._unzip_file(zip_file=dl_file, out_folder=out_path)
-                        os.remove(dl_file)              
-                        return list(set(self._list_files(path=out_path + os.sep + "*.gdb")) - set(existing_files)) 
-                    else:
-                        return zipURL
+                    dl_file = self._download_file(url=zipURL,
+                                        save_path=out_path,
+                                        file_name=os.path.basename(zipURL)
+                                        )
+                    self._unzip_file(zip_file=dl_file, out_folder=out_path)
+                    os.remove(dl_file)
+                    return self._list_files(path=out_path + os.sep + "*.gdb")
                 else:
-                    return res
-            elif self.syncEnabled == False:
-                params['syncModel'] = 'none'
-                
-                res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
-                if res.has_key("URL") or res.has_key("responseUrl"):
-                    if res.has_key("URL"):                    
-                        URL = res["URL"]
-                    else:
-                        URL = res["responseUrl"]
-                    if not out_path is None:
-                        if os.path.isdir(out_path) == False:
-                            os.makedirs(out_path)                                                
-                        dl_file = self._download_file(url=URL,
-                                            save_path=out_path,
-                                            file_name=os.path.basename(URL)
-                                            )
-    
-                        return dl_file 
-                    else:
-                        return URL  
-                else:
-                    return res            
+                    return None
             else:
-              
                 res = self._do_post(url=url, param_dict=params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
-                if res.has_key("URL") or res.has_key("responseUrl"):
-                    if res.has_key("URL"):                    
-                        URL = res["URL"]
-                    else:
-                        URL = res["responseUrl"]
-                    if not out_path is None:
-                        if os.path.isdir(out_path) == False:
-                            os.makedirs(out_path)                                                                        
-                        dl_file = self._download_file(url=URL,
-                                            save_path=out_path,
-                                            file_name=os.path.basename(URL)
-                                            )
-                            
-                        return dl_file 
-                    else:                  
-                        return URL                  
-                else:
-                    return res            
+                return res
 
         return "Not Supported"

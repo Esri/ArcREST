@@ -1,7 +1,7 @@
 """
    Contains all domain types
 """
-from base import BaseDomain
+from .._abstract.abstract import BaseDomain
 import json
 
 ########################################################################
@@ -33,11 +33,11 @@ class RangeDomain(BaseDomain):
     def domainName(self, value):
         """ sets the domain name """
         self._domainName = value
-    #----------------------------------------------------------------------
-    @property
-    def range(self):
-        """ gets the range value """
-        return self._range
+    ##----------------------------------------------------------------------
+    #@property
+    #def range(self):
+        #""" gets the range value """
+        #return self._range
     #----------------------------------------------------------------------
     @range.setter
     def range(self, value):
