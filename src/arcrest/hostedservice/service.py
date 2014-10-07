@@ -122,7 +122,15 @@ class Services(BaseAGOLClass):
         for k, v in res.iteritems():
             if k == "services":
                 for item in v:
-                    self._services.append(
+                    if 'type' in item and item['type'] == 'MapServer':
+                        self._services.append(
+                            AdminMapService(url=uURL + r"/%s/%s" % (item['name'],item['type']),
+                                            securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
+                            )
+                    else:
+                        self._services.append(
                         AdminFeatureService(url=uURL + r"/%s/%s" % (item['adminServiceInfo']['name'],
                                                                    item['adminServiceInfo']['type']),
                                             securityHandler=self._securityHandler,
@@ -143,8 +151,32 @@ class AdminMapService(BaseAGOLClass):
        administrative map service resource maintains a set of operations
        that manage the state and contents of the service.
     """
-    _token = None
+    _securityHandler = None
     _url = None
+    _initialExtent = None
+    _currentJob = None
+    _lodInfos = None
+    _id = None
+    _size = None
+    _tileInfo = None
+    _jobStatus = None
+    _access = None
+    _cacheExecutionStatus = None
+    _type = None
+    _status = None
+    _jobs = None
+    _sourceType = None
+    _fullExtent = None
+    _minScale = None
+    _count = None
+    _maxExportTilesCount = None
+    _name = None
+    _created = None
+    _maxScale = None
+    _modified = None
+    _serverId = None
+    _exportTilesAllowed = None
+    _urlService = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -176,23 +208,206 @@ class AdminMapService(BaseAGOLClass):
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
         for k,v in json_dict.iteritems():
-            if k in attributes:
+            if k == "url":
+                self._urlService = v
+
+            elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print "_%s = None" % k
+                #print k,  " - attribute not implmented. Please log an support request."
             del k, v
+    #----------------------------------------------------------------------
+    @property
+    def currentJob(self):
+        '''gets the currentJob'''
+        if self._currentJob is None:
+            self.__init()
+        return self._currentJob
+
+    #----------------------------------------------------------------------
+    @property
+    def lodInfos(self):
+        '''gets the lodInfos'''
+        if self._lodInfos is None:
+            self.__init()
+        return self._lodInfos
+
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        '''gets the id'''
+        if self._id is None:
+            self.__init()
+        return self._id
+
+    #----------------------------------------------------------------------
+    @property
+    def size(self):
+        '''gets the size'''
+        if self._size is None:
+            self.__init()
+        return self._size
+
+    #----------------------------------------------------------------------
+    @property
+    def tileInfo(self):
+        '''gets the tileInfo'''
+        if self._tileInfo is None:
+            self.__init()
+        return self._tileInfo
+
+    #----------------------------------------------------------------------
+    @property
+    def jobStatus(self):
+        '''gets the jobStatus'''
+        if self._jobStatus is None:
+            self.__init()
+        return self._jobStatus
+
+    #----------------------------------------------------------------------
+    @property
+    def access(self):
+        '''gets the access'''
+        if self._access is None:
+            self.__init()
+        return self._access
+
+    #----------------------------------------------------------------------
+    @property
+    def cacheExecutionStatus(self):
+        '''gets the cacheExecutionStatus'''
+        if self._cacheExecutionStatus is None:
+            self.__init()
+        return self._cacheExecutionStatus
+
+    #----------------------------------------------------------------------
+    @property
+    def type(self):
+        '''gets the type'''
+        if self._type is None:
+            self.__init()
+        return self._type
+
+    #----------------------------------------------------------------------
+    @property
+    def jobs(self):
+        '''gets the jobs'''
+        if self._jobs is None:
+            self.__init()
+        return self._jobs
+
+    #----------------------------------------------------------------------
+    @property
+    def sourceType(self):
+        '''gets the sourceType'''
+        if self._sourceType is None:
+            self.__init()
+        return self._sourceType
+
+    #----------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        '''gets the fullExtent'''
+        if self._fullExtent is None:
+            self.__init()
+        return self._fullExtent
+
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        '''gets the minScale'''
+        if self._minScale is None:
+            self.__init()
+        return self._minScale
+
+    #----------------------------------------------------------------------
+    @property
+    def count(self):
+        '''gets the count'''
+        if self._count is None:
+            self.__init()
+        return self._count
+
+    #----------------------------------------------------------------------
+    @property
+    def maxExportTilesCount(self):
+        '''gets the maxExportTilesCount'''
+        if self._maxExportTilesCount is None:
+            self.__init()
+        return self._maxExportTilesCount
+
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        '''gets the name'''
+        if self._name is None:
+            self.__init()
+        return self._name
+
+    #----------------------------------------------------------------------
+    @property
+    def created(self):
+        '''gets the created'''
+        if self._created is None:
+            self.__init()
+        return self._created
+
+    #----------------------------------------------------------------------
+    @property
+    def urlService(self):
+        '''gets the url'''
+        if self._urlService is None:
+            self.__init()
+        return self._urlService
+
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        '''gets the maxScale'''
+        if self._maxScale is None:
+            self.__init()
+        return self._maxScale
+
+    #----------------------------------------------------------------------
+    @property
+    def modified(self):
+        '''gets the modified'''
+        if self._modified is None:
+            self.__init()
+        return self._modified
+
+    #----------------------------------------------------------------------
+    @property
+    def serverId(self):
+        '''gets the serverId'''
+        if self._serverId is None:
+            self.__init()
+        return self._serverId
+
+    #----------------------------------------------------------------------
+    @property
+    def exportTilesAllowed(self):
+        '''gets the exportTilesAllowed'''
+        if self._exportTilesAllowed is None:
+            self.__init()
+        return self._exportTilesAllowed
+
+    #----------------------------------------------------------------------
+    @property
+    def initialExtent(self):
+        """gets the initialExtent"""
+        if self._initialExtent is None:
+            self.__init()
+        return self._initialExtent
+
     #----------------------------------------------------------------------
     @property
     def status(self):
         """ returns the service status """
-        uURL = self._url + "/status"
-        params = {
-            "token" : self._token,
-            "f" : "json"
-        }
-        return self._do_get(url=uURL, param_dict=params,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        if self._status is None:
+            self.__init()
+        return self._status
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -219,6 +434,7 @@ class AdminMapService(BaseAGOLClass):
 
         else:
             raise AttributeError("This object only accepts security.AGOLTokenSecurityHandler")
+
 ########################################################################
 class AdminFeatureService(BaseAGOLClass):
     """
