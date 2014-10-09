@@ -39,6 +39,8 @@ class BaseWebOperations(object):
     def _download_file(self, url, save_path, file_name, proxy_url=None, proxy_port=None):
         """ downloads a file """
         try:
+            if url.find("http://") > -1:
+                url = url.replace("http://", "https://")
             if proxy_url is not None:
                 if proxy_port is None:
                     proxy_port = 80
@@ -47,8 +49,21 @@ class BaseWebOperations(object):
                 proxy_support = urllib2.ProxyHandler(proxies)
                 opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=0),AGOLRedirectHandler())
                 urllib2.install_opener(opener)
+            else:
+                opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=0),AGOLRedirectHandler())
+                urllib2.install_opener(opener)
             file_name = file_name.split('?')[0]
             file_data = urllib2.urlopen(url)
+            file_data.getcode()
+            file_data.geturl()
+            if hasattr(file_data, "status") and \
+               (int(file_data.status) >= 300 and int(file_data.status) < 400):
+                self._download_file(url=file_data.geturl(),
+                                    save_path=save_path,
+                                    file_name=file_name,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
+                return save_path + os.sep + file_name
             total_size = int(file_data.info().getheader('Content-Length').strip())
             downloaded = 0
             CHUNK = 4096
@@ -108,9 +123,9 @@ class BaseWebOperations(object):
             proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
                        "https":"https://%s:%s" % (proxy_url, proxy_port)}
             proxy_support = urllib2.ProxyHandler(proxies)
-            opener = urllib2.build_opener(proxy_support)
+            opener = urllib2.build_opener(proxy_support, AGOLRedirectHandler())
         else:
-            opener = urllib2.build_opener()
+            opener = urllib2.build_opener(AGOLRedirectHandler())
         opener.addheaders = headers
         resp = opener.open(format_url)
         if resp.info().get('Content-Encoding') == 'gzip':

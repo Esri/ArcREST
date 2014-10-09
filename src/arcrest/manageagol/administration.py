@@ -18,7 +18,7 @@ class Administration(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
-                 securityHandler,
+                 securityHandler=None,
                  proxy_url=None,
                  proxy_port=None,
                  initialize=False):
@@ -31,11 +31,12 @@ class Administration(BaseAGOLClass):
 
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-        if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
-           isinstance(securityHandler, PortalTokenSecurityHandler):
-            self._token = securityHandler.token
-        else:
-            raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
+        if securityHandler is not None:
+            if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
+               isinstance(securityHandler, PortalTokenSecurityHandler):
+                self._token = securityHandler.token
+            else:
+                raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------
@@ -119,14 +120,16 @@ class Administration(BaseAGOLClass):
             url = self._url + "/search"
         else:
             url = self._url + "/rest/search"
+
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "q" : q,#quote_plus(q),
             "sortOrder" : sortOrder,
             "num" : num,
             "start" : start
         }
+        if self._securityHandler is not None:
+            params["token"] = self._securityHandler.token
         if sortField is not None:
             params['sortField'] = sortField
         if bbox is not None:

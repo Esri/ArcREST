@@ -1,7 +1,7 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 from parameters import ItemParameter, BaseParameters
-
+import urllib
 import urlparse
 import json
 import os
@@ -765,19 +765,30 @@ class Item(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def itemData(self, f="json"):
+    def itemData(self, f="json", filePath=None):
         """ returns data for an item on agol/portal
 
         Inputs:
            f - output format either zip of json
         """
+
         params = {
             "f" : f,
             "token" : self._securityHandler.token
         }
         url = self._baseUrl + "/%s/data" % self._itemId
-        return self._do_get(url, params, proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        if self.type.lower() in ["shapefile"]:
+            save_path = os.path.dirname(filePath)
+            file_name = os.path.basename(filePath)
+            url =  url + "?%s" % urllib.urlencode(params)
+            return self._download_file(url,
+                                       save_path=save_path,
+                                       file_name=file_name,
+                                       proxy_port=self._proxy_port,
+                                       proxy_url=self._proxy_url)
+        else:
+            return self._do_get(url, params, proxy_port=self._proxy_port,
+                                proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def itemInfoFile(self):
         """  """
@@ -1472,7 +1483,7 @@ class UserContent(BaseAGOLClass):
     def exportItem(self, title,
                    itemId,
                    exportFormat,
-                   exportParameters):
+                   exportParameters=None):
         """
         Exports a service item (POST only) to the specified output format.
         Available only to users with an organizational subscription.
@@ -1487,15 +1498,17 @@ class UserContent(BaseAGOLClass):
                               exported and the export parameters for each
                               layer.
         """
-        url = self._url + '/export'
+        url = self._baseUrl + '/%s/export' % self._securityHandler._username
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
             "title" : title,
             "itemId" : itemId,
             "exportFormat" : exportFormat,
-            "exportParameters" : json.dumps(exportParameters)
+
         }
+        if exportParameters is not None:
+            params["exportParameters"] = json.dumps(exportParameters)
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_port=self._proxy_port,
@@ -1595,6 +1608,36 @@ class UserContent(BaseAGOLClass):
                                  param_dict=params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def status(self, itemId, jobId, jobType=None):
+        """
+           Inquire about status when publishing an item, adding an item in
+           async mode, or adding with a multipart upload. "Partial" is
+           available for Add Item Multipart, when only a part is uploaded
+           and the item is not committed.
+
+           Input:
+              jobType The type of asynchronous job for which the status has
+                      to be checked. Default is none, which check the
+                      item's status.  This parameter is optional unless
+                      used with the operations listed below.
+                      Values: publish, generateFeatures, export,
+                              and createService
+              jobId - The job ID returned during publish, generateFeatures,
+                      export, and createService calls.
+        """
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "jobId" : jobId,
+            "jobType" : jobType
+        }
+        url = self._baseUrl + "/%s/items/%s/status" % (self._username, itemId)
+        #https://www.arcgis.com/sharing/rest/content/users/andrewchap/items/378aedf2c04740088722e538261e7c73/status
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
 
     #----------------------------------------------------------------------
     def shareItems(self, items, groups="", everyone=False,
