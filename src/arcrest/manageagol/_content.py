@@ -46,7 +46,7 @@ class Content(BaseAGOLClass):
                               proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
-    def getUserContent(self, username):
+    def getUserContent(self, username, folderId=None):
         """
         The user's content are items either in the home folder for the user
         e.g. /content/users/<username>, or in a subfolder of the home
@@ -61,6 +61,8 @@ class Content(BaseAGOLClass):
            username - name of user to query
         """
         url = self._url + "/users/%s" % username
+        if folderId is not None:
+            url += "/%s" % folderId
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
@@ -101,6 +103,8 @@ class Content(BaseAGOLClass):
                     proxy_url=self._proxy_url,
                     proxy_port=self._proxy_port,
                     initialize=False)
+
+
     #----------------------------------------------------------------------
     def usercontent(self, username):
         """
@@ -765,11 +769,14 @@ class Item(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def itemData(self, f="json", filePath=None):
+    def itemData(self, f="json", savePath=None):
         """ returns data for an item on agol/portal
 
         Inputs:
            f - output format either zip of json
+           savePath - location to save the file
+        Output:
+           either JSON/text or filepath
         """
 
         params = {
@@ -777,9 +784,26 @@ class Item(BaseAGOLClass):
             "token" : self._securityHandler.token
         }
         url = self._baseUrl + "/%s/data" % self._itemId
-        if self.type.lower() in ["shapefile"]:
-            save_path = os.path.dirname(filePath)
-            file_name = os.path.basename(filePath)
+        if self.type in ["Shapefile", "CityEngine Web Scene", "Web Scene", "KML",
+                         "Code Attachment", "Operations Dashboard Add In",
+                         "CSV", "CAD Drawing", "Service Definition",
+                         "Microsoft Word", "Microsoft Powerpoint",
+                         "Microsoft Excel", "PDF", "Image",
+                         "Visio Document", "iWork Keynote", "iWork Pages",
+                         "iWork Numbers", "Map Document", "Map Package",
+                         "Basemap Package", "Tile Package", "Project Package",
+                         "Task File", "ArcPad Package", "Explorer Map",
+                         "Globe Document", "Scene Document", "Published Map",
+                         "Map Template", "Windows Mobile Package", "Pro Map",
+                         "Layout", "Layer", "Layer Package",
+                         "Explorer Layer", "Geoprocessing Package", "Geoprocessing Sample",
+                         "Locator Package", "Rule Package", "Workflow Manager Package",
+                         "Desktop Application", "Desktop Application Template",
+                         "Code Sample", "Desktop Add In", "Explorer Add In"]:
+            if filePath is None:
+                raise AttributeError('savePath must be provided for a item of type: %s' % self.type)
+            if os.path.isdir(savePath) == False:
+                os.makedirs(savePath)
             url =  url + "?%s" % urllib.urlencode(params)
             return self._download_file(url,
                                        save_path=save_path,
