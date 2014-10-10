@@ -240,6 +240,8 @@ class BaseWebOperations(object):
             L.append('')
             if isinstance(value, bool):
                 L.append(json.dumps(value))
+            elif isinstance(value, list):
+                L.append(str(value))
             else:
                 L.append(value)
         for (key, value, filename) in files:

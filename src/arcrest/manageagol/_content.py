@@ -377,11 +377,11 @@ class Item(BaseAGOLClass):
         ip.accessInformation = self.accessInformation
         ip.culture = self.culture
         ip.description = self.description
-        ip.extent = self.extent
+        #ip.extent = self.extent
         ip.licenseInfo = self.licenseInfo
         ip.snippet = self.snippet
         ip.spatialReference = self.spatialReference
-        ip.tags = self.tags
+        ip.tags = ",".join(self.tags)
         ip.metadata = self._baseUrl.replace("http://", "https://") + \
             "/%s/info/metadata/metadata.xml?token=%s" % (self._itemId, self._securityHandler.token)
         if self.thumbnail is not None:
