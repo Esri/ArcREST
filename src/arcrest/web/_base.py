@@ -14,7 +14,7 @@ import mimetypes
 import httplib
 import mimetools
 from cStringIO import StringIO
-
+import re
 class AGOLRedirectHandler(urllib2.HTTPRedirectHandler):
     def http_error_301(self, req, fp, code, msg, headers):
         result = urllib2.HTTPRedirectHandler.http_error_301(
@@ -36,7 +36,7 @@ class BaseWebOperations(object):
     _referer_url = ""
     _useragent = "ArcREST"
     #----------------------------------------------------------------------
-    def _download_file(self, url, save_path, file_name, proxy_url=None, proxy_port=None):
+    def _download_file(self, url, save_path, file_name=None, proxy_url=None, proxy_port=None):
         """ downloads a file """
         try:
             if url.find("http://") > -1:
@@ -52,10 +52,17 @@ class BaseWebOperations(object):
             else:
                 opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=0),AGOLRedirectHandler())
                 urllib2.install_opener(opener)
-            file_name = file_name.split('?')[0]
             file_data = urllib2.urlopen(url)
             file_data.getcode()
             file_data.geturl()
+            if file_name is None:
+                url = file_data.geturl()
+                a = file_data.info().getheader('Content-Disposition')
+                if a is not None:
+                    a = a.strip()
+                    file_name = re.findall(r'filename=\"(.+?)\"', a)[0]
+                else:
+                    file_name = os.path.basename(file_data.geturl().split('?')[0])
             if hasattr(file_data, "status") and \
                (int(file_data.status) >= 300 and int(file_data.status) < 400):
                 self._download_file(url=file_data.geturl(),
@@ -67,14 +74,12 @@ class BaseWebOperations(object):
             total_size = int(file_data.info().getheader('Content-Length').strip())
             downloaded = 0
             CHUNK = 4096
-
             with open(save_path + os.sep + file_name, 'wb') as out_file:
                 while True:
                     chunk = file_data.read(CHUNK)
                     downloaded += len(chunk)
                     if not chunk: break
                     out_file.write(chunk)
-
             return save_path + os.sep + file_name
         except urllib2.HTTPError, e:
             print "HTTP Error:",e.code , url

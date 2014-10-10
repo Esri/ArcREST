@@ -370,6 +370,31 @@ class Item(BaseAGOLClass):
                 print k, " - attribute not implmented in the class _content.Item."
     #----------------------------------------------------------------------
     @property
+    def itemParameters(self):
+        """ returns the current Item's ItemParameter object """
+
+        ip = ItemParameter()
+        ip.accessInformation = self.accessInformation
+        ip.culture = self.culture
+        ip.description = self.description
+        ip.extent = self.extent
+        ip.licenseInfo = self.licenseInfo
+        ip.snippet = self.snippet
+        ip.spatialReference = self.spatialReference
+        ip.tags = self.tags
+        ip.metadata = self._baseUrl.replace("http://", "https://") + \
+            "/%s/info/metadata/metadata.xml?token=%s" % (self._itemId, self._securityHandler.token)
+        if self.thumbnail is not None:
+            ip.thumbnailurl = self._baseUrl.replace("http://", "https://") + \
+                "/%s/info/%s?token=%s" % (self._itemId,
+                                          self.thumbnail,
+                                          self._securityHandler.token)
+        ip.title = self.title
+        ip.type = self.type
+        ip.typeKeywords = self.typeKeywords
+        return ip
+    #----------------------------------------------------------------------
+    @property
     def itemId(self):
         """ get/set id passed by the user """
         return self._itemId
@@ -795,24 +820,26 @@ class Item(BaseAGOLClass):
                          "Task File", "ArcPad Package", "Explorer Map",
                          "Globe Document", "Scene Document", "Published Map",
                          "Map Template", "Windows Mobile Package", "Pro Map",
-                         "Layout", "Layer", "Layer Package",
+                         "Layout", "Layer", "Layer Package", "File Geodatabase",
                          "Explorer Layer", "Geoprocessing Package", "Geoprocessing Sample",
                          "Locator Package", "Rule Package", "Workflow Manager Package",
                          "Desktop Application", "Desktop Application Template",
                          "Code Sample", "Desktop Add In", "Explorer Add In"]:
-            if filePath is None:
+            if savePath is None:
                 raise AttributeError('savePath must be provided for a item of type: %s' % self.type)
             if os.path.isdir(savePath) == False:
                 os.makedirs(savePath)
             url =  url + "?%s" % urllib.urlencode(params)
             return self._download_file(url,
-                                       save_path=save_path,
-                                       file_name=file_name,
+                                       save_path=savePath,
+                                       file_name=None,
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
         else:
-            return self._do_get(url, params, proxy_port=self._proxy_port,
-                                proxy_url=self._proxy_url)
+            results =  self._do_get(url, params,
+                                    proxy_port=self._proxy_port,
+                                    proxy_url=self._proxy_url)
+            return results
     #----------------------------------------------------------------------
     def itemInfoFile(self):
         """  """
