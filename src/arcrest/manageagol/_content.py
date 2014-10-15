@@ -832,7 +832,7 @@ class Item(BaseAGOLClass):
             url =  url + "?%s" % urllib.urlencode(params)
             return self._download_file(url,
                                        save_path=savePath,
-                                       file_name=None,
+                                       file_name=self.name,
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
         else:
