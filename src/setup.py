@@ -10,6 +10,6 @@ setup(
     packages=['arcrest','arcrest/agol', 'arcrest/ags', 'arcrest/common',
               'arcrest/manageagol', 'arcrest/security', 'arcrest/web',
               'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
-              'arcrest/manageags', 'arcrest/manageportal'],
+              'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice'],
     package_dir={'':''}
     )

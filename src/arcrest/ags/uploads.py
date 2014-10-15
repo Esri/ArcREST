@@ -79,7 +79,7 @@ class Uploads(BaseAGSServer):
             params['description'] = str(description)
         url = self._url + "/upload"
         files = []
-        files.append(('itemFile', filePath, os.path.basename(filePath)))
+        files.append(('file', filePath, os.path.basename(filePath)))
         parsed = urlparse.urlparse(url)
         return self._post_multipart(host=parsed.hostname,
                                        selector=parsed.path,

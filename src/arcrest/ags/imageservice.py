@@ -642,6 +642,20 @@ class ImageService(BaseAGSServer):
         return self._do_get(url=url, param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def addRasters(self,
+                   minimumCellSizeFactor,
+                   maximumCellSizeFactor,
+                   rasterType,
+                   itemIdsorSerivceUrl,
+                   buildPyramids=False, buildThumbnail=False,
+                   attributes=None,
+                   geodataTransforms=None,
+                   geodataTransformApplyMethod=None
+                   ):
+        """"""
+        pass
+
 
 
 

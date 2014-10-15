@@ -7,6 +7,10 @@ import glob
 import mimetypes
 import os
 ########################################################################
+class BaseBookmark(object):
+    """ base Bookmark class """
+    pass
+########################################################################
 class BaseBaseMap(object):
     """base BaseMap object class"""
     pass
