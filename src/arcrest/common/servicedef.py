@@ -2,12 +2,14 @@ import os
 
 from xml.etree import ElementTree as ET
 
+import shutil
+
 import arcpy
 from arcpy import mapping
 from arcpy import env
 
 ########################################################################
-def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", description="None",folder_name=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',maxRecordCount=1000,server_type='MY_HOSTED_SERVICES'):
+def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=None,folder_name=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',maxRecordCount=1000,server_type='MY_HOSTED_SERVICES'):
     """
         converts an MXD to a service defenition
         Inputs:
@@ -33,13 +35,16 @@ def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", descript
     sdFolder = env.scratchFolder + os.sep + "sd"
     sddraft = sddraftFolder + os.sep + service_name + ".sddraft"
     sd = sdFolder + os.sep + "%s.sd" % service_name
-    mxd = self._prep_mxd(mxd)
+    mxd = _prep_mxd(mxd)
 
-    if service_name == "None":
+    res = {}
+    
+    if service_name is None:
         service_name = mxd.title.strip().replace(' ','_')
-    if tags == "None":
+    if tags is None:
         tags = mxd.tags.strip()
-    if description == "None":
+        
+    if description is None:
         description = mxd.description.strip()
 
     if os.path.isdir(sddraftFolder) == False:
@@ -49,7 +54,10 @@ def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", descript
         os.makedirs(sddraftFolder)
     if os.path.isfile(sddraft):
         os.remove(sddraft)
-        
+    
+    res['service_name'] = service_name
+    res['tags'] = tags
+    res['description'] = description
     analysis = mapping.CreateMapSDDraft(map_document=mxd, out_sddraft=sddraft,
                                        service_name=service_name, 
                                        server_type=server_type, 
@@ -59,7 +67,7 @@ def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", descript
                                        summary=description, 
                                        tags=tags)         
     
-    sddraft = self._modify_sddraft(sddraft=sddraft,capabilities=capabilities,maxRecordCount=maxRecordCount)
+    sddraft = _modify_sddraft(sddraft=sddraft,capabilities=capabilities,maxRecordCount=maxRecordCount)
     analysis = mapping.AnalyzeForSD(sddraft)
     if os.path.isdir(sdFolder):
         shutil.rmtree(sdFolder, ignore_errors=True)
@@ -69,7 +77,8 @@ def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", descript
     if analysis['errors'] == {}:
         # Stage the service
         arcpy.StageService_server(sddraft, sd)
-        return sd
+        res['servicedef'] = sd
+        return res
     else:
         # If the sddraft analysis contained errors, display them and quit.
         print analysis['errors']
@@ -77,7 +86,7 @@ def MXDtoFeatureServiceDef( mxd_path, service_name="None", tags="None", descript
     
 
 
-def _modify_sddraft(self, sddraft,capabilities,maxRecordCount='1000'):
+def _modify_sddraft(sddraft,capabilities,maxRecordCount='1000'):
     """ modifies the sddraft for agol publishing  
     """
 
@@ -135,3 +144,29 @@ def _modify_sddraft(self, sddraft,capabilities,maxRecordCount='1000'):
         doc.write(f, 'utf-8')
     del doc
     return newSDdraft
+
+#----------------------------------------------------------------------
+def _prep_mxd(mxd):
+    """ ensures the requires mxd properties are set to something """
+    changed = False
+    if mxd.author.strip() == "":
+        mxd.author = "NA"
+        changed = True
+    if mxd.credits.strip() == "":
+        mxd.credits = "NA"
+        changed = True
+    if mxd.description.strip() == "":
+        mxd.description = "NA"
+        changed = True
+    if mxd.summary.strip() == "":
+        mxd.summary = "NA"
+        changed = True
+    if mxd.tags.strip() == "":
+        mxd.tags = "NA"
+        changed = True
+    if mxd.title.strip() == "":
+        mxd.title = "NA"
+        changed = True
+    if changed == True:
+        mxd.save()
+    return mxd

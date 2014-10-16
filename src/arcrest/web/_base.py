@@ -222,7 +222,11 @@ class BaseWebOperations(object):
                 h.request('POST', selector, body, headers)
 
         resp_data = h.getresponse().read()
-        result = json.loads(resp_data)
+        try:
+            result = json.loads(resp_data)
+        except:
+            return None
+        
         if 'error' in result:
             if result['error']['message'] == 'Request not made over ssl':
                 return self._post_multipart(host=host, selector=selector, fields=fields,
@@ -230,7 +234,29 @@ class BaseWebOperations(object):
                                             proxy_url=proxy_url,proxy_port=proxy_port)
         return self._unicode_convert(result)
     #----------------------------------------------------------------------------------
+    
     def _encode_multipart_formdata(self, fields, files):
+        boundary = mimetools.choose_boundary()
+        buf = StringIO()
+        for (key, value) in fields.iteritems():
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"' % key)
+            buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
+        for (key, filepath, filename) in files:
+            if os.path.isfile(filepath):
+                buf.write('--%s\r\n' % boundary)
+                buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
+                buf.write('Content-Type: %s\r\n' % (self._get_content_type3(filename)))
+                file = open(filepath, "rb")
+                try:
+                    buf.write('\r\n' + file.read() + '\r\n')
+                finally:
+                    file.close()
+        buf.write('--' + boundary + '--\r\n\r\n')
+        buf = buf.getvalue()
+        content_type = 'multipart/form-data; boundary=%s' % boundary
+        return content_type, buf    
+    def _encode_multipart_formdataas(self, fields, files):
         LIMIT = mimetools.choose_boundary()
         CRLF = '\r\n'
         L = []
@@ -243,7 +269,7 @@ class BaseWebOperations(object):
             elif isinstance(value, list):
                 L.append(str(value))
             else:
-                L.append(value)
+                L.append(self._tostr(value))
         for (key, value, filename) in files:
             L.append('--' + LIMIT)
             L.append('Content-Disposition: form-data; name="%s"; filename="%s"' % (key, filename))
