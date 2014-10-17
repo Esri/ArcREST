@@ -74,6 +74,34 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getUserCommunity(self, username=None):
+        """
+        The user's community are items either in the home folder for the user
+        e.g. /content/users/<username>, or in a subfolder of the home
+        folder with the given folder ID. Multilevel folders are not
+        supported. You can also see the Quick reference topic for
+        additional information on this.
+        Items in a folder are stored by reference and are not physically in
+        a folder. Rather, they're stored as links to the original item, e.g.
+        /content/items/<itemId>.
+
+        Inputs:
+           username - name of user to query
+        """
+        if username is None:
+            username = self._securityHandler.username
+            
+        url = self._url + "community/users/%s" % username
+      
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_get(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)    
     #----------------------------------------------------------------------   
     def getFolderID(self, name, userContent=None):
             """
@@ -104,7 +132,7 @@ class Content(BaseAGOLClass):
             else:
                 return None  
     #----------------------------------------------------------------------
-    def getItemID(self,name, itemType=None,userContent=None,folderId=None,username=None):
+    def getItemID(self,title=None, name=None, itemType=None,userContent=None,folderId=None,username=None):
         """
            This function retrieves the item ID if the item exist
 
@@ -115,18 +143,51 @@ class Content(BaseAGOLClass):
               string - ID of item, none if item does not exist
         """
         itemID = None
-        if not name == None and not name == '':
-            if userContent is None:
-                userContent = self.getUserContent(username=username,folderId=folderId)
-            if 'items' in userContent:
-                items = userContent['items']
-                for item in items:
-                    if item['title'] == name and (itemType is None or item['type'] in itemType):
+        if  name == None and title == None:
+            raise AttributeError('Name or Title needs to be specified')
+    
+        if userContent is None:
+            userContent = self.getUserContent(username=username,folderId=folderId)
+        if 'items' in userContent:
+            items = userContent['items']
+            for item in items:
+                if title is None and not name is None:
+                    if item['name'] == name and (itemType is None or item['type'] in itemType):
+                        itemID = item['id']
+                        break                    
+                elif not title is None and name is None:
+                    if item['title'] == title and (itemType is None or item['type'] in itemType):
                         itemID = item['id']
                         break
-                del items
+                else:
+                    if item['name'] == name and item['title'] == title and (itemType is None or item['type'] in itemType):
+                        itemID = item['id']
+                        break                        
+    
+            del items
 
         return itemID            
+    #----------------------------------------------------------------------
+    def getGroupIDs(self, groupNames,communityInfo=None,username=None):
+        """
+           This function retrieves the group IDs
+        
+           Inputs:
+              group_names - tuple of group names
+        
+           Output:
+              dict - list of group IDs
+        """
+        group_ids=[]
+        if communityInfo is None:
+            communityInfo = self.getUserCommunityInfo(username=username)        
+        
+        if 'groups' in communityInfo:
+            for gp in communityInfo['groups']:
+                if gp['title'] in group_names:
+                    group_ids.append(gp['id'])
+        del communityInfo
+        return group_ids    
     #----------------------------------------------------------------------
     def groupContent(self, groupId):
         """
@@ -150,6 +211,7 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+   
     #----------------------------------------------------------------------
     def item(self, itemId):
         """ returns the Item class for a given item id """
@@ -160,7 +222,14 @@ class Content(BaseAGOLClass):
                     proxy_port=self._proxy_port,
                     initialize=False)
 
-
+    #----------------------------------------------------------------------
+    def userItem(self, itemId):
+        """ returns the Item class for a given item id """
+        return UserItems(itemId=itemId,
+                    url=self._url,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def usercontent(self, username=None):
         """
@@ -1036,22 +1105,24 @@ class UserItems(BaseAGOLClass):
     _proxy_port = None
 
     #----------------------------------------------------------------------
-    def __init__(self,
-                 username,
+    def __init__(self,  
                  itemId,
                  url,
-                 securityHanlder,
+                 securityHandler,
+                 username=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
 
+        if username is None:
+            username = securityHandler.username
         self._username = username
         self._itemId = itemId
         if url.lower().endswith("/users") == False:
-            self._baseUrl = url + "/users" % username
+            self._baseUrl = url + "/users/%s" % username
         else:
             self._baseUrl = url
-        self._securityHandler = securityHanlder
+        self._securityHandler = securityHandler
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
     #----------------------------------------------------------------------
@@ -1241,7 +1312,7 @@ class UserItems(BaseAGOLClass):
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def updateItem(self,
-                   itemParameter,
+                   itemParameters,
                    clearEmptyFields=False,
                    data=None,
                    metadata=None,
@@ -1250,7 +1321,7 @@ class UserItems(BaseAGOLClass):
         updates an item's properties using the ItemParameter class.
 
         Inputs:
-           itemParameter - property class to update
+           itemParameters - property class to update
            clearEmptyFields - boolean, cleans up empty values
            data - updates the file property of the service like a .sd file
         """
@@ -1262,20 +1333,20 @@ class UserItems(BaseAGOLClass):
             "clearEmptyFields": clearEmptyFields
         }
 
-        if isinstance(itemParameter, ItemParameter) == False:
-            raise AttributeError("itemParameter must be of type parameter.ItemParameter")
+        if isinstance(itemParameters, ItemParameter) == False:
+            raise AttributeError("itemParameters must be of type parameter.ItemParameter")
         keys_to_delete = ['id', 'owner', 'size', 'numComments',
                           'numRatings', 'avgRating', 'numViews' ]
-        dictItem = itemParameter.value
+        dictItem = itemParameters.value
         for key in keys_to_delete:
             if key in dictItem:
                 del dictItem[key]
 
-        for k,v in dictItem:
+        for key in dictItem:
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
                 files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-                del dictItem['thumbnail']
+                
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
             else:
@@ -1283,7 +1354,7 @@ class UserItems(BaseAGOLClass):
         if data is not None:
             files.append(('file', data, os.path.basename(data)))
 
-        url = self._baseUrl + "/%s/items/%s/update" % (self._username, self._itemId)
+        url = self._baseUrl + "/items/%s/update" % (self._itemId)
         parsed = urlparse.urlparse(url)
 
         res = self._post_multipart(host=parsed.hostname,
@@ -1726,7 +1797,14 @@ class UserContent(BaseAGOLClass):
                           "featureCollection", "fileGeodata"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
-        url = self._baseUrl + "/%s/publish" % self._username
+        
+        url = self._baseUrl
+        
+        #if folderID:
+            #url += '/' + folderID
+        
+        url = url + "/%s" % self._username
+        url = url + "/publish"
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
@@ -1735,7 +1813,8 @@ class UserContent(BaseAGOLClass):
         }
         if publishParameters is not None and \
            isinstance(publishParameters, BaseParameters):
-            params['publishParameters'] = publishParameters.value
+            params.update(publishParameters.value)
+           
         else:
             raise AttributeError("publishParameters in an invalid type")
         if itemId is not None:
@@ -1847,6 +1926,7 @@ class UserContent(BaseAGOLClass):
     def updateItem(self,
                    itemId,
                    updateItemParameters,
+                   folderId=None,                   
                    clearEmptyFields=True,
                    filePath=None,
                    url=None,
@@ -1869,7 +1949,14 @@ class UserContent(BaseAGOLClass):
            url - The URL of the item to be updated.
            text - The text content for the item to be updated.
         """
-        url = self._baseUrl + "/%s/items/%s/update" % (self._username, itemId)
+            
+        url = self._baseUrl + "/%s" % (self._username)
+        
+        
+        if folderId is not None:
+            url += '/' + folderId
+       
+        url = url + "/items/%s/update" % (itemId)
         files = []
         parsed = urlparse.urlparse(url)
         params = {

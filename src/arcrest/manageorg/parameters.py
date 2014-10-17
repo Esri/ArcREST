@@ -488,7 +488,7 @@ class ItemParameter(BaseParameters):
         """
         return self._overwrite
     #----------------------------------------------------------------------
-    @snippet.setter
+    @overwrite.setter
     def overwrite(self, value):
         """
         Snippet or summary for the item. Limit this brief descriptive text
@@ -1231,10 +1231,12 @@ class PublishSDParmaeters(BaseParameters):
     Required parameters to publish SD Parameters
     """
     _tags = None
+    _overwrite = False
     #----------------------------------------------------------------------
-    def __init__(self, tags):
+    def __init__(self, tags,overwrite=False):
         """Constructor"""
         self._tags = tags
+        self._overwrite = overwrite
     #----------------------------------------------------------------------
     @property
     def tags(self):
@@ -1250,6 +1252,30 @@ class PublishSDParmaeters(BaseParameters):
     @property
     def value(self):
         """ returns the parameter value """
-        return {
-            "tags" : self._tags
-        }
+        r = {}
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for a in attributes:
+            if a != "value":
+                val = getattr(self, a)
+                if val is not None:
+                    r[a] = val
+        return r
+    #----------------------------------------------------------------------
+    @property
+    def overwrite(self):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        return self._overwrite
+    #----------------------------------------------------------------------
+    @overwrite.setter
+    def overwrite(self, value):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        if self._overwrite != value:
+            self._overwrite = value    
