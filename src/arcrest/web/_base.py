@@ -111,13 +111,15 @@ class BaseWebOperations(object):
 
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
-    def _do_get(self, url, param_dict, header={}, proxy_url=None, proxy_port=None,compress=True):
+    def _do_get(self, url, param_dict, header=None, proxy_url=None, proxy_port=None,compress=True):
         """ performs a get operation """
         format_url = url + "?%s" % urllib.urlencode(param_dict)
 
         headers = [('Referer', self._referer_url),
                    ('User-Agent', self._useragent)]
-
+        if not header is None  :
+            headers.append(header)
+            
         if compress:
             headers.append(('Accept-encoding', 'gzip'))
         opener= None

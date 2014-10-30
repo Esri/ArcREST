@@ -35,6 +35,51 @@ class Community(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def getUserCommunity(self, username=None):
+            """
+            The user's community are items 
+    
+            Inputs:
+               username - name of user to query
+            """
+            if username is None:
+                username = self._securityHandler.username
+                
+            url = self._url + "/users/%s" % username
+          
+            params = {
+                "f" : "json",
+                "token" : self._securityHandler.token
+            }
+            return self._do_get(url=url,
+                                 header=("Accept-Encoding",""),                            
+                                 param_dict=params,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port,
+                                 compress=False)        
+    #----------------------------------------------------------------------
+          
+    def getGroupIDs(self, groupNames,communityInfo=None):
+        """
+           This function retrieves the group IDs
+        
+           Inputs:
+              group_names - tuple of group names
+        
+           Output:
+              dict - list of group IDs
+        """
+        group_ids=[]
+        if communityInfo is None:
+            communityInfo = self.getUserCommunity()        
+    
+        if 'groups' in communityInfo:
+            for gp in communityInfo['groups']:
+                if gp['title'] in groupNames:
+                    group_ids.append(gp['id'])
+        del communityInfo
+        return group_ids        
+    #----------------------------------------------------------------------
     def createGroup(self,
                     title,
                     tags,

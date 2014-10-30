@@ -74,34 +74,7 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def getUserCommunity(self, username=None):
-        """
-        The user's community are items either in the home folder for the user
-        e.g. /content/users/<username>, or in a subfolder of the home
-        folder with the given folder ID. Multilevel folders are not
-        supported. You can also see the Quick reference topic for
-        additional information on this.
-        Items in a folder are stored by reference and are not physically in
-        a folder. Rather, they're stored as links to the original item, e.g.
-        /content/items/<itemId>.
-
-        Inputs:
-           username - name of user to query
-        """
-        if username is None:
-            username = self._securityHandler.username
-            
-        url = self._url + "community/users/%s" % username
-      
-        params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
-        }
-        return self._do_get(url=url,
-                             param_dict=params,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)    
+    
     #----------------------------------------------------------------------   
     def getFolderID(self, name, userContent=None):
             """
@@ -167,27 +140,7 @@ class Content(BaseAGOLClass):
             del items
 
         return itemID            
-    #----------------------------------------------------------------------
-    def getGroupIDs(self, groupNames,communityInfo=None,username=None):
-        """
-           This function retrieves the group IDs
-        
-           Inputs:
-              group_names - tuple of group names
-        
-           Output:
-              dict - list of group IDs
-        """
-        group_ids=[]
-        if communityInfo is None:
-            communityInfo = self.getUserCommunityInfo(username=username)        
-        
-        if 'groups' in communityInfo:
-            for gp in communityInfo['groups']:
-                if gp['title'] in group_names:
-                    group_ids.append(gp['id'])
-        del communityInfo
-        return group_ids    
+  
     #----------------------------------------------------------------------
     def groupContent(self, groupId):
         """
@@ -222,14 +175,7 @@ class Content(BaseAGOLClass):
                     proxy_port=self._proxy_port,
                     initialize=False)
 
-    #----------------------------------------------------------------------
-    def userItem(self, itemId):
-        """ returns the Item class for a given item id """
-        return UserItems(itemId=itemId,
-                    url=self._url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+
     #----------------------------------------------------------------------
     def usercontent(self, username=None):
         """
@@ -1966,8 +1912,8 @@ class UserContent(BaseAGOLClass):
         }
         if updateItemParameters is not None:
             params.update(updateItemParameters.value)
-        if url is not None:
-            params['url'] = url
+        #if url is not None:  
+            #params['url'] = url
         if text is not None:
             params['text'] = text
         if filePath is not None and \

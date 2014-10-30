@@ -23,6 +23,7 @@ class Portals(BaseAGOLClass):
                  proxy_port):
         """Constructor"""
         if url.lower().find("/portals") < 0:
+            
             self._url = url + "/portals/%s" % portalId
             self._baseURL = url + "/portals"
         else:
