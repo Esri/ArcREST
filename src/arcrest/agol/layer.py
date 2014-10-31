@@ -154,6 +154,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
             yield (att, getattr(self, att))
     #----------------------------------------------------------------------
     @property
+    def url(self):
+        """ returns the url for the feature layer"""
+        return self._url        
+    #----------------------------------------------------------------------
+    @property
     def supportsCalculate(self):
         """ returns the supports calculate values """
         if self._supportsCalculate is None:
@@ -1061,8 +1066,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             bins = 1
             uURL = self._url + "/addFeatures"
             max_chunk = 250
-            js = self._unicode_convert(
-                 featureclass_to_json(fc))
+            js = json.loads(self._unicode_convert(
+                 featureclass_to_json(fc)))
+            if not 'features' in js:
+                return "No features in input data"
             js = js['features']
             if len(js) <= max_chunk:
                 bins = 1

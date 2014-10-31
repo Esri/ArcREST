@@ -305,6 +305,10 @@ class FeatureService(abstract.BaseAGOLClass):
                                                proxy_port=self._proxy_port,
                                                proxy_url=self._proxy_url)
                 )
+    @property
+    def url(self):
+        """ returns the url for the feature service"""
+        return self._url                 
     #----------------------------------------------------------------------
     @property
     def layers(self):
