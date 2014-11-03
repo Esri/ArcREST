@@ -258,7 +258,7 @@ class BaseWebOperations(object):
         buf = buf.getvalue()
         content_type = 'multipart/form-data; boundary=%s' % boundary
         return content_type, buf    
-    def _encode_multipart_formdataas(self, fields, files):
+    def _encode_multipart_formdataZip(self, fields, files):
         LIMIT = mimetools.choose_boundary()
         CRLF = '\r\n'
         L = []
