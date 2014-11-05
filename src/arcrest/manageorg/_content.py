@@ -1299,7 +1299,7 @@ class UserItems(BaseAGOLClass):
                 params[key] = dictItem[key]
         if data is not None:
             files.append(('file', data, os.path.basename(data)))
-
+        
         url = self._baseUrl + "/items/%s/update" % (self._itemId)
         parsed = urlparse.urlparse(url)
 

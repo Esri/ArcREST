@@ -167,6 +167,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _expires_in = None
     _proxy_url = None
     _proxy_port = None
+    _valid = True
+    _message = ""
     #----------------------------------------------------------------------
     def __init__(self, username, password, token_url=None,
                  proxy_url=None, proxy_port=None):
@@ -211,6 +213,17 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
+    #----------------------------------------------------------------------
+    
+    @property
+    def message(self):
+        """ returns any messages """
+        return self._message   
+    #----------------------------------------------------------------------
+    @property
+    def valid(self):
+        """ returns boolean wether handler is valid """
+        return self._valid
     #----------------------------------------------------------------------
     @property
     def org_url(self):
@@ -299,10 +312,16 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ returns the token for the site """
         if self._token is None or \
            datetime.datetime.now() >= self._token_expires_on:
-            self._generateForTokenSecurity(username=self._username,
+            result = self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
                                            referer=self._referer_url,
                                            tokenURL=self._token_url)
+            if 'error' in result:
+                self._valid = False
+                self._message = result
+            else:
+                self._valid = True
+                self._message = "Token Generated"
         return self._token
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
@@ -331,6 +350,9 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                               param_dict=query_dict,
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
+        if 'error' in token:
+            self._token = None
+            return token
         if token['expires'] > 86400:
             seconds = 86400
         else:
