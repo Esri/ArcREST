@@ -71,7 +71,7 @@ class GeometryService(abstract.BaseAGSServer):
                                  type can be one of the following values:
                                  planar - Planar measurements use 2D
                                           Euclidean distance to calculate
-                                          area and length. This type should
+                                          area and length. Th- should
                                           only be used if the area or
                                           length needs to be calculated in
                                           the given spatial reference.

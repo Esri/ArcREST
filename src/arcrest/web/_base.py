@@ -143,7 +143,14 @@ class BaseWebOperations(object):
             resp_data = resp.read()
         if resp_data == "" or resp_data == None or resp_data == 'null':
             return ""
-        result = json.loads(resp_data)
+        result = None
+        try:
+            result = json.loads(resp_data)
+        except Exception,e:
+            print e
+        if result is None:
+            return None
+        
         if 'error' in result:
             if result['error']['message'] == 'Request not made over ssl':
                 if url.startswith('http://'):
@@ -225,6 +232,7 @@ class BaseWebOperations(object):
 
         resp_data = h.getresponse().read()
         try:
+            
             result = json.loads(resp_data)
         except:
             return None
@@ -258,6 +266,7 @@ class BaseWebOperations(object):
         buf = buf.getvalue()
         content_type = 'multipart/form-data; boundary=%s' % boundary
         return content_type, buf    
+    
     def _encode_multipart_formdataZip(self, fields, files):
         LIMIT = mimetools.choose_boundary()
         CRLF = '\r\n'

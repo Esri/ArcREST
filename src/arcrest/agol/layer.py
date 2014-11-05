@@ -84,6 +84,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _securityHandler = None
     _supportsCalculate = None
     _supportsAttachmentsByUploadId = None
+    _editFieldsInfo = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -165,6 +166,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
             self.__init()
         return self._supportsCalculate
     #----------------------------------------------------------------------
+    
+    @property
+    def editFieldsInfo(self):
+        """ returns edit field info """
+        if self._editFieldsInfo is None:
+            self.__init()
+        return self._editFieldsInfo
+        #----------------------------------------------------------------------    
     @property
     def supportsAttachmentsByUploadId(self):
         """ returns is supports attachments by uploads id """
@@ -953,7 +962,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['token'] = self._token
         result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
-        self.__init()
+        
         return result
     #----------------------------------------------------------------------
     def applyEdits(self,
