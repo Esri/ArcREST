@@ -11,19 +11,34 @@ class Administration(BaseAGOLClass):
     """  Administers the AGOL/Portal Site """
     _securityHandler = None
     _url = None
-    _proxy_url = None
+    proxy_port = None
     _proxy_port = None
     _token = None
     _currentVersion = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 url,
+                 url=None,
                  securityHandler=None,
                  proxy_url=None,
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
         self._securityHandler = securityHandler
+        if url is None and not securityHandler is None:
+            url = securityHandler.org_url
+        if proxy_url is None and not securityHandler is None:
+            self._proxy_url = securityHandler.proxy_url             
+        if proxy_port is None and not securityHandler is None:
+            self._proxy_url = securityHandler.proxy_port                         
+            
+        if url is None or url == '':
+            raise AttributeError("URL or Security Hanlder needs to be specified")
+     
+        if url.lower().find("/sharing") > -1:
+            pass
+        else:
+            url = url + "/sharing"
+     
         if url.lower().find("/rest") > -1:
             self._url = url
         else:
@@ -219,6 +234,7 @@ class Administration(BaseAGOLClass):
                                     securityHandler=self._securityHandler,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
+ 
     #----------------------------------------------------------------------
     @property
     def content(self):

@@ -286,6 +286,7 @@ class ItemParameter(BaseParameters):
     _description = None
     _tags = None
     _snippet = None
+    _overwrite = False
     _extent = None
     _spatialReference = None
     _accessInformation = None
@@ -479,6 +480,23 @@ class ItemParameter(BaseParameters):
         if self._snippet != value:
             self._snippet = value
     #----------------------------------------------------------------------
+    @property
+    def overwrite(self):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        return self._overwrite
+    #----------------------------------------------------------------------
+    @overwrite.setter
+    def overwrite(self, value):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        if self._overwrite != value:
+            self._overwrite = value
+    #----------------------------------------------------------------------    
     @property
     def extent(self):
         """gets/sets the bounding rectangle of the item"""
@@ -1213,10 +1231,12 @@ class PublishSDParmaeters(BaseParameters):
     Required parameters to publish SD Parameters
     """
     _tags = None
+    _overwrite = False
     #----------------------------------------------------------------------
-    def __init__(self, tags):
+    def __init__(self, tags,overwrite=False):
         """Constructor"""
         self._tags = tags
+        self._overwrite = overwrite
     #----------------------------------------------------------------------
     @property
     def tags(self):
@@ -1232,6 +1252,30 @@ class PublishSDParmaeters(BaseParameters):
     @property
     def value(self):
         """ returns the parameter value """
-        return {
-            "tags" : self._tags
-        }
+        r = {}
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for a in attributes:
+            if a != "value":
+                val = getattr(self, a)
+                if val is not None:
+                    r[a] = val
+        return r
+    #----------------------------------------------------------------------
+    @property
+    def overwrite(self):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        return self._overwrite
+    #----------------------------------------------------------------------
+    @overwrite.setter
+    def overwrite(self, value):
+        """
+        Snippet or summary for the item. Limit this brief descriptive text
+        to 250 characters.
+        """
+        if self._overwrite != value:
+            self._overwrite = value    

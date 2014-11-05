@@ -46,7 +46,7 @@ class Content(BaseAGOLClass):
                               proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
-    def getUserContent(self, username, folderId=None):
+    def getUserContent(self, username=None, folderId=None):
         """
         The user's content are items either in the home folder for the user
         e.g. /content/users/<username>, or in a subfolder of the home
@@ -60,6 +60,9 @@ class Content(BaseAGOLClass):
         Inputs:
            username - name of user to query
         """
+        if username is None:
+            username = self._securityHandler.username
+            
         url = self._url + "/users/%s" % username
         if folderId is not None:
             url += "/%s" % folderId
@@ -71,6 +74,73 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    
+    #----------------------------------------------------------------------   
+    def getFolderID(self, name, userContent=None):
+            """
+               This function retrieves the folder ID and creates the folder if
+               it does not exist
+    
+               Inputs:
+                 name - the name of the folder
+                 userContent - a list of user contnet
+               Output:
+                  string - ID of folder, none if no foldername is specified
+            """
+            if not name == None and not name == '':
+                if userContent is None:
+                    userContent = self.getUserContent()
+                folderID = None
+                if 'folders' in userContent:
+                    folders = userContent['folders']
+    
+                    for folder in folders:
+                        if folder['title'] == name:
+                            folderID = folder['id']
+                            break
+                    del folders
+
+                return folderID
+    
+            else:
+                return None  
+    #----------------------------------------------------------------------
+    def getItemID(self,title=None, name=None, itemType=None,userContent=None,folderId=None,username=None):
+        """
+           This function retrieves the item ID if the item exist
+
+           Inputs:
+              name - the name of the item
+            userContent - a list of user contnet
+           Output:
+              string - ID of item, none if item does not exist
+        """
+        itemID = None
+        if  name == None and title == None:
+            raise AttributeError('Name or Title needs to be specified')
+    
+        if userContent is None:
+            userContent = self.getUserContent(username=username,folderId=folderId)
+        if 'items' in userContent:
+            items = userContent['items']
+            for item in items:
+                if title is None and not name is None:
+                    if item['name'] == name and (itemType is None or item['type'] in itemType):
+                        itemID = item['id']
+                        break                    
+                elif not title is None and name is None:
+                    if item['title'] == title and (itemType is None or item['type'] in itemType):
+                        itemID = item['id']
+                        break
+                else:
+                    if item['name'] == name and item['title'] == title and (itemType is None or item['type'] in itemType):
+                        itemID = item['id']
+                        break                        
+    
+            del items
+
+        return itemID            
+  
     #----------------------------------------------------------------------
     def groupContent(self, groupId):
         """
@@ -94,6 +164,7 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+   
     #----------------------------------------------------------------------
     def item(self, itemId):
         """ returns the Item class for a given item id """
@@ -106,7 +177,7 @@ class Content(BaseAGOLClass):
 
 
     #----------------------------------------------------------------------
-    def usercontent(self, username):
+    def usercontent(self, username=None):
         """
         returns the user content class for a given user
         """
@@ -115,25 +186,9 @@ class Content(BaseAGOLClass):
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def useritems(self, username):
-        """
-        A link to a user uploaded item along with the list of groups the
-        item is shared with. The item is not physically stored in the
-        user's folder but is stored as a link to the original item in the
-        item resource (/content/items/<itemId>). Access to the item via
-        this link is available only to the user.
-
-        Inputs:
-           username - name of the user account name
-        """
-        return UserItems(username=username,
-                         url=self._baseURL,
-                         securityHanlder=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
 
 
+    
 ########################################################################
 class FeatureContent(BaseAGOLClass):
     """
@@ -208,8 +263,6 @@ class FeatureContent(BaseAGOLClass):
         }
         fileType = "csv"
         params["fileType"] = fileType
-        if text is not None:
-            params['text'] = text
         if analyzeParameters is not None:
             params['analyzeParameters'] = analyzeParameters
 
@@ -991,28 +1044,44 @@ class UserItems(BaseAGOLClass):
     Helps manage a given owner's content
     """
     _username =  None
+    _itemId = None
     _baseUrl = None
     _securityHandler = None
     _proxy_url = None
     _proxy_port = None
 
     #----------------------------------------------------------------------
-    def __init__(self,
-                 username,
+    def __init__(self,  
+                 itemId,
                  url,
-                 securityHanlder,
+                 securityHandler,
+                 username=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
 
+        if username is None:
+            username = securityHandler.username
         self._username = username
+        self._itemId = itemId
         if url.lower().endswith("/users") == False:
-            self._baseUrl = url + "/users" % username
+            self._baseUrl = url + "/users/%s" % username
         else:
             self._baseUrl = url
-        self._securityHandler = securityHanlder
+        self._securityHandler = securityHandler
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
+    #----------------------------------------------------------------------
+    @property
+    def itemId(self):
+        """gets/sets the item id"""
+        return self._itemId
+    #----------------------------------------------------------------------
+    @itemId.setter
+    def itemId(self, value):
+        """gets/sets the item id"""
+        if self._itemId != value:
+            self._itemId = value
     #----------------------------------------------------------------------
     @property
     def username(self):
@@ -1025,30 +1094,26 @@ class UserItems(BaseAGOLClass):
         if self._username != value:
             self._username = value
     #----------------------------------------------------------------------
-    def deleteItem(self, itemId, folderId=None):
+    def deleteItem(self):
         """
         The Delete Item operation (POST only) removes both the item and its
         link from the user's folder by default. This operation is available
         to the user and to the administrator of the organization to which
         the user belongs.
 
-
         """
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/delete" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/delete" % (folderId, self._username, itemId)
+        url = self._baseUrl + "/%s/items/%s/delete" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def moveItem(self, itemId, folderId=None, folder="/"):
+    def moveItem(self, folder="/"):
         """
         The Move Item operation moves the item (link) from the current
         folder to the specified target folder. Moving an item link does not
@@ -1056,8 +1121,6 @@ class UserItems(BaseAGOLClass):
         /content/items/<itemId>.
 
         Inputs:
-           itemId - unique id of the item to move
-           folderId - if item is in a folder, then you must provide the Id
            folder - the destination folder ID for the item. If the item is
                     to be moved to the root folder, specify the value as /
                     (forward slash).
@@ -1071,34 +1134,24 @@ class UserItems(BaseAGOLClass):
             "token" : self._securityHandler.token,
             "folder" : folder
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/move" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/move" % (self._username, folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/move" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def protect(self, itemId, folderId=None):
+    def protect(self):
         """
         The Protect operation protects the items from deletion. This
         operation is available to the user and to the administrator of the
         organization to which the user belongs
-
-        Inputs:
-           itemId - unique id of the item
-           folderId - id of folder where content is located.
         """
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/protect" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/protect" % (self._username,folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/protect" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
@@ -1106,17 +1159,14 @@ class UserItems(BaseAGOLClass):
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def reassignItem(self,
-                     itemId,
                      targetUsername,
-                     targetFoldername,
-                     folderId=None):
+                     targetFoldername):
         """
         The Reassign Item operation allows the administrator of an
         organization to reassign a member's item to another member of the
         organization.
 
         Inputs:
-           itemId - unique id of the item
            targetUsername - The target username of the new owner of the
                             item
            targetFoldername - The destination folder for the item. If the
@@ -1124,7 +1174,6 @@ class UserItems(BaseAGOLClass):
                               specify the value as "/" (forward slash). If
                               the target folder doesn't exist, it will be
                               created automatically.
-           folderId - folder if of the item where it currently lives
         """
         params = {
             "f" : "json",
@@ -1132,10 +1181,7 @@ class UserItems(BaseAGOLClass):
             "targetUsername" : targetUsername,
             "targetFoldername" : targetFoldername
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/reassign" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/reassign" % (self._username, folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/reassign" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
@@ -1143,8 +1189,6 @@ class UserItems(BaseAGOLClass):
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def shareItem(self,
-                  itemId,
-                  folderId=None,
                   everyone=False,
                   org=False,
                   groups=""):
@@ -1168,41 +1212,30 @@ class UserItems(BaseAGOLClass):
         }
         if groups != "" and groups is not None:
             params['groups'] = groups
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/share" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/share" % (self._username, folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/share" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def unprotect(self,
-                  itemId,
-                  folderId=None):
+    def unprotect(self):
         """
         The Unprotect operation disables the item protection from deletion.
-        Inputs:
-           itemId - unique id of the item
-           folderId - id of the folder where the item lives
         """
         params = {
             "f": "json",
             "token" : self._securityHandler.token,
 
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/unprotect" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/unprotect" % (self._username, folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/unprotect" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def unshareItem(self, groups, itemId, folderId=None):
+    def unshareItem(self, groups):
         """
         Stops sharing the item with the specified list of groups. Available
         to the user and the administrator of the organization to which the
@@ -1210,8 +1243,6 @@ class UserItems(BaseAGOLClass):
 
         Inputs:
            groups - comma seperated list of group Ids
-           itemId - unique id of the item
-           folderId - id of the folder where the item lives
         """
         params = {
             "f": "json",
@@ -1219,10 +1250,7 @@ class UserItems(BaseAGOLClass):
             "groups": groups
 
         }
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/unshare" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/unshare" % (self._username, folderId, itemId)
+        url = self._baseUrl + "/%s/items/%s/unshare" % (self._username, self._itemId)
         return self._do_post(
             url = url,
             param_dict=params,
@@ -1230,9 +1258,7 @@ class UserItems(BaseAGOLClass):
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def updateItem(self,
-                   itemId,
-                   itemParameter,
-                   folderId=None,
+                   itemParameters,
                    clearEmptyFields=False,
                    data=None,
                    metadata=None,
@@ -1241,11 +1267,9 @@ class UserItems(BaseAGOLClass):
         updates an item's properties using the ItemParameter class.
 
         Inputs:
-           itemParameter - property class to update
+           itemParameters - property class to update
            clearEmptyFields - boolean, cleans up empty values
            data - updates the file property of the service like a .sd file
-           itemId - unique id of the item
-           folderId - id of the folder where the item lives
         """
         thumbnail = None
         files = []
@@ -1255,30 +1279,28 @@ class UserItems(BaseAGOLClass):
             "clearEmptyFields": clearEmptyFields
         }
 
-        if isinstance(itemParameter, ItemParameter) == False:
-            raise AttributeError("itemParameter must be of type parameter.ItemParameter")
+        if isinstance(itemParameters, ItemParameter) == False:
+            raise AttributeError("itemParameters must be of type parameter.ItemParameter")
         keys_to_delete = ['id', 'owner', 'size', 'numComments',
                           'numRatings', 'avgRating', 'numViews' ]
-        dictItem = itemParameter.value
+        dictItem = itemParameters.value
         for key in keys_to_delete:
             if key in dictItem:
                 del dictItem[key]
 
-        for key,v in dictItem.iteritems():
+        for key in dictItem:
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
                 files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-                del dictItem['thumbnail']
+                
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
             else:
                 params[key] = dictItem[key]
         if data is not None:
             files.append(('file', data, os.path.basename(data)))
-        if folderId is None:
-            url = self._baseUrl + "/%s/items/%s/update" % (self._username, itemId)
-        else:
-            url = self._baseUrl + "/%s/%s/items/%s/update" % (self._username, folderId, itemId)
+
+        url = self._baseUrl + "/items/%s/update" % (self._itemId)
         parsed = urlparse.urlparse(url)
 
         res = self._post_multipart(host=parsed.hostname,
@@ -1303,12 +1325,18 @@ class UserContent(BaseAGOLClass):
     _proxy_port = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 username,
                  url,
                  securityHandler,
+                 username=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
+        if username is None and not securityHandler is None:
+            username = securityHandler.username        
+       
+        if username is None or username == '':
+            raise AttributeError("Username is required")
+    
         self._username = username
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
@@ -1399,6 +1427,7 @@ class UserContent(BaseAGOLClass):
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
         res = self._unicode_convert(res)
+      
         return res
     #----------------------------------------------------------------------
     def addRelationship(self,
@@ -1532,6 +1561,45 @@ class UserContent(BaseAGOLClass):
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def deleteItem(self, item_id,folder=None,force_delete=False):
+        """ deletes an agol item by it's ID """
+    
+        url = '{}/content/users/{}'.format(self._baseUrl, self._username )
+        if folder:
+            url += '/' + folder
+    
+        url += '/items/{}/delete'.format(item_id)
+        params = {'f': 'json',
+                      'token': self._securityHandler.token}
+        jres = self._do_post(url=url,
+                             param_dict=params,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+        if 'error' in jres:
+            if force_delete:
+                dis_res = self.disableProtect(item_id,folder)
+                if 'success' in dis_res:
+                    return self.deleteItem(item_id=item_id,folder=folder,force_delete=False)
+                else:
+                    return jres
+        return jres    
+    #----------------------------------------------------------------------
+    def disableProtect(self, item_id,folder=None):
+        """ Disables an items protection """
+
+        url = '{}/content/users/{}'.format(self._baseUrl, self._username )
+        if folder:
+            url += '/' + folder
+
+        url += '/items/{}/unprotect'.format(item_id)
+        params = {'f': 'json',
+                      'token':self._securityHandler.token}
+        jres = self._do_post(url=url,
+                             param_dict=params,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+        return jres
+    #----------------------------------------------------------------------
     def deleteItems(self, items):
         """
         Deletes a batch of items owned or administered by the calling user.
@@ -1600,7 +1668,7 @@ class UserContent(BaseAGOLClass):
                               exported and the export parameters for each
                               layer.
         """
-        url = self._baseUrl + '/%s/export' % self._securityHandler.username
+        url = self._baseUrl + '/%s/export' % self._securityHandler._username
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
@@ -1675,7 +1743,14 @@ class UserContent(BaseAGOLClass):
                           "featureCollection", "fileGeodata"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
-        url = self._baseUrl + "/%s/publish" % self._username
+        
+        url = self._baseUrl
+        
+        #if folderID:
+            #url += '/' + folderID
+        
+        url = url + "/%s" % self._username
+        url = url + "/publish"
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
@@ -1684,7 +1759,8 @@ class UserContent(BaseAGOLClass):
         }
         if publishParameters is not None and \
            isinstance(publishParameters, BaseParameters):
-            params['publishParameters'] = publishParameters.value
+            params.update(publishParameters.value)
+           
         else:
             raise AttributeError("publishParameters in an invalid type")
         if itemId is not None:
@@ -1735,6 +1811,7 @@ class UserContent(BaseAGOLClass):
             "jobType" : jobType
         }
         url = self._baseUrl + "/%s/items/%s/status" % (self._username, itemId)
+        #https://www.arcgis.com/sharing/rest/content/users/andrewchap/items/378aedf2c04740088722e538261e7c73/status
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_port=self._proxy_port,
@@ -1795,6 +1872,7 @@ class UserContent(BaseAGOLClass):
     def updateItem(self,
                    itemId,
                    updateItemParameters,
+                   folderId=None,                   
                    clearEmptyFields=True,
                    filePath=None,
                    url=None,
@@ -1817,7 +1895,14 @@ class UserContent(BaseAGOLClass):
            url - The URL of the item to be updated.
            text - The text content for the item to be updated.
         """
-        url = self._baseUrl + "/%s/items/%s/update" % (self._username, itemId)
+            
+        url = self._baseUrl + "/%s" % (self._username)
+        
+        
+        if folderId is not None:
+            url += '/' + folderId
+       
+        url = url + "/items/%s/update" % (itemId)
         files = []
         parsed = urlparse.urlparse(url)
         params = {
@@ -1827,8 +1912,8 @@ class UserContent(BaseAGOLClass):
         }
         if updateItemParameters is not None:
             params.update(updateItemParameters.value)
-        if url is not None:
-            params['url'] = url
+        #if url is not None:  
+            #params['url'] = url
         if text is not None:
             params['text'] = text
         if filePath is not None and \

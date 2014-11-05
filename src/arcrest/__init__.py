@@ -4,7 +4,7 @@ from security import *
 from common import *
 import _abstract
 import web
-import manageagol
+import manageorg
 import manageags
 import manageportal
 import hostedservice
