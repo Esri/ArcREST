@@ -125,15 +125,15 @@ class Content(BaseAGOLClass):
             items = userContent['items']
             for item in items:
                 if title is None and not name is None:
-                    if item['name'] == name and (itemType is None or item['type'] in itemType):
+                    if item['name'] == name and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
                         break                    
                 elif not title is None and name is None:
-                    if item['title'] == title and (itemType is None or item['type'] in itemType):
+                    if item['title'] == title and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
                         break
                 else:
-                    if item['name'] == name and item['title'] == title and (itemType is None or item['type'] in itemType):
+                    if item['name'] == name and item['title'] == title and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
                         break                        
     
@@ -1895,6 +1895,28 @@ class UserContent(BaseAGOLClass):
            url - The URL of the item to be updated.
            text - The text content for the item to be updated.
         """
+        files = []
+    
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "clearEmptyFields" : clearEmptyFields
+        }
+        if updateItemParameters is not None:
+            params.update(updateItemParameters.value)
+        if url is not None:  
+            params['url'] = url
+        if text is not None:
+            params['text'] = text
+        
+        if filePath is not None and \
+           os.path.isfile(filePath):
+            files.append(('file', filePath, os.path.basename(filePath)))
+        if 'thumbnail' in params:
+            v = params['thumbnail']
+            del params['thumbnail']
+            files.append(('thumbnail', v, os.path.basename(v)))
+            
             
         url = self._baseUrl + "/%s" % (self._username)
         
@@ -1903,26 +1925,8 @@ class UserContent(BaseAGOLClass):
             url += '/' + folderId
        
         url = url + "/items/%s/update" % (itemId)
-        files = []
-        parsed = urlparse.urlparse(url)
-        params = {
-            "f" : "json",
-            "token" : self._securityHandler.token,
-            "clearEmptyFields" : clearEmptyFields
-        }
-        if updateItemParameters is not None:
-            params.update(updateItemParameters.value)
-        #if url is not None:  
-            #params['url'] = url
-        if text is not None:
-            params['text'] = text
-        if filePath is not None and \
-           os.path.isfile(filePath):
-            files.append(('file', filePath, os.path.basename(filePath)))
-        if 'thumbnail' in params:
-            v = params['thumbnail']
-            del params['thumbnail']
-            files.append(('thumbnail', v, os.path.basename(v)))
+       
+        parsed = urlparse.urlparse(url)        
         res = self._post_multipart(host=parsed.hostname,
                                            selector=parsed.path,
                                            files = files,
