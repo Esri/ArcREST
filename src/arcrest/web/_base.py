@@ -119,7 +119,7 @@ class BaseWebOperations(object):
                    ('User-Agent', self._useragent)]
         if not header is None  :
             headers.append(header)
-            
+
         if compress:
             headers.append(('Accept-encoding', 'gzip'))
         opener= None
@@ -150,7 +150,7 @@ class BaseWebOperations(object):
             print e
         if result is None:
             return None
-        
+
         if 'error' in result:
             if result['error']['message'] == 'Request not made over ssl':
                 if url.startswith('http://'):
@@ -232,11 +232,11 @@ class BaseWebOperations(object):
 
         resp_data = h.getresponse().read()
         try:
-            
+
             result = json.loads(resp_data)
         except:
             return None
-        
+
         if 'error' in result:
             if result['error']['message'] == 'Request not made over ssl':
                 return self._post_multipart(host=host, selector=selector, fields=fields,
@@ -244,7 +244,7 @@ class BaseWebOperations(object):
                                             proxy_url=proxy_url,proxy_port=proxy_port)
         return self._unicode_convert(result)
     #----------------------------------------------------------------------------------
-    
+
     def _encode_multipart_formdata(self, fields, files):
         boundary = mimetools.choose_boundary()
         buf = StringIO()
@@ -265,8 +265,8 @@ class BaseWebOperations(object):
         buf.write('--' + boundary + '--\r\n\r\n')
         buf = buf.getvalue()
         content_type = 'multipart/form-data; boundary=%s' % boundary
-        return content_type, buf    
-    
+        return content_type, buf
+
     def _encode_multipart_formdataZip(self, fields, files):
         LIMIT = mimetools.choose_boundary()
         CRLF = '\r\n'
