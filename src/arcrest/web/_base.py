@@ -88,8 +88,9 @@ class BaseWebOperations(object):
             print "URL Error:",e.reason , url
             return False
     #----------------------------------------------------------------------
-    def _do_post(self, url, param_dict, proxy_url=None, proxy_port=None):
+    def _do_post(self, url, param_dict, proxy_url=None, proxy_port=None, header={}):
         """ performs the POST operation and returns dictionary result """
+
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80
@@ -98,7 +99,7 @@ class BaseWebOperations(object):
             proxy_support = urllib2.ProxyHandler(proxies)
             opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=0))
             urllib2.install_opener(opener)
-        request = urllib2.Request(url, urllib.urlencode(param_dict))
+        request = urllib2.Request(url, urllib.urlencode(param_dict), headers=header)
         result = urllib2.urlopen(request).read()
         if result =="":
             return ""

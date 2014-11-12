@@ -5,7 +5,7 @@ import urllib
 import urlparse
 import json
 import os
-
+import mmap
 ########################################################################
 class Content(BaseAGOLClass):
     """
@@ -62,7 +62,7 @@ class Content(BaseAGOLClass):
         """
         if username is None:
             username = self._securityHandler.username
-            
+
         url = self._url + "/users/%s" % username
         if folderId is not None:
             url += "/%s" % folderId
@@ -74,13 +74,13 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-    
-    #----------------------------------------------------------------------   
+
+    #----------------------------------------------------------------------
     def getFolderID(self, name, userContent=None):
             """
                This function retrieves the folder ID and creates the folder if
                it does not exist
-    
+
                Inputs:
                  name - the name of the folder
                  userContent - a list of user contnet
@@ -93,7 +93,7 @@ class Content(BaseAGOLClass):
                 folderID = None
                 if 'folders' in userContent:
                     folders = userContent['folders']
-    
+
                     for folder in folders:
                         if folder['title'] == name:
                             folderID = folder['id']
@@ -101,9 +101,9 @@ class Content(BaseAGOLClass):
                     del folders
 
                 return folderID
-    
+
             else:
-                return None  
+                return None
     #----------------------------------------------------------------------
     def getItemID(self,title=None, name=None, itemType=None,userContent=None,folderId=None,username=None):
         """
@@ -118,7 +118,7 @@ class Content(BaseAGOLClass):
         itemID = None
         if  name == None and title == None:
             raise AttributeError('Name or Title needs to be specified')
-    
+
         if userContent is None:
             userContent = self.getUserContent(username=username,folderId=folderId)
         if 'items' in userContent:
@@ -127,7 +127,7 @@ class Content(BaseAGOLClass):
                 if title is None and not name is None:
                     if item['name'] == name and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
-                        break                    
+                        break
                 elif not title is None and name is None:
                     if item['title'] == title and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
@@ -135,12 +135,12 @@ class Content(BaseAGOLClass):
                 else:
                     if item['name'] == name and item['title'] == title and (itemType is None or item['type'] == itemType):
                         itemID = item['id']
-                        break                        
-    
+                        break
+
             del items
 
-        return itemID            
-  
+        return itemID
+
     #----------------------------------------------------------------------
     def groupContent(self, groupId):
         """
@@ -164,7 +164,7 @@ class Content(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-   
+
     #----------------------------------------------------------------------
     def item(self, itemId):
         """ returns the Item class for a given item id """
@@ -188,7 +188,7 @@ class Content(BaseAGOLClass):
                            proxy_port=self._proxy_port)
 
 
-    
+
 ########################################################################
 class FeatureContent(BaseAGOLClass):
     """
@@ -1051,7 +1051,7 @@ class UserItems(BaseAGOLClass):
     _proxy_port = None
 
     #----------------------------------------------------------------------
-    def __init__(self,  
+    def __init__(self,
                  itemId,
                  url,
                  securityHandler,
@@ -1292,14 +1292,14 @@ class UserItems(BaseAGOLClass):
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
                 files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-                
+
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
             else:
                 params[key] = dictItem[key]
         if data is not None:
             files.append(('file', data, os.path.basename(data)))
-        
+
         url = self._baseUrl + "/items/%s/update" % (self._itemId)
         parsed = urlparse.urlparse(url)
 
@@ -1332,11 +1332,11 @@ class UserContent(BaseAGOLClass):
                  proxy_port=None):
         """Constructor"""
         if username is None and not securityHandler is None:
-            username = securityHandler.username        
-       
+            username = securityHandler.username
+
         if username is None or username == '':
             raise AttributeError("Username is required")
-    
+
         self._username = username
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
@@ -1359,6 +1359,81 @@ class UserContent(BaseAGOLClass):
         if self._username != value:
             self._username = value
     #----------------------------------------------------------------------
+    def addByPart(self, filePath, itemId, folder=None):
+        """
+           Allows for large file uploads to be split into 50 MB chunks and
+           to be sent to AGOL/Portal.  This resolves an issue in Python,
+           where the multi-part POST runs out of memory.
+           To use this function, an addItem() must be run first and that
+           item id must be passed into this function.
+
+           Once the file is uploaded, a commit() must be performed on the
+           data to have all the parts merged together.
+
+           No item properties will be inherited from the initial AddItem()
+           call unless it is an sd file.  Therefore you must call
+           updateItem() on the recently updated item.
+
+           Example:
+              fp = r"c:\temp\big.zip"
+              #.... AGOL init stuff
+              #....
+              usercontent = agol.content.usercontent(username)
+              res = usercontent.addItem(itemParameters=None,
+                                  filePath=fp,
+                                  overwrite=True,
+                                  multipart=True)
+              res = usercontent.addByPart(filePath=fp, itemId=res['id'])
+              res = usercontent.commit(itemId)
+              usercontent.updateItem(itemId=res['id'],
+                                     updateItemParameters=ip)
+              # Item added and updated.
+           Inputs:
+              filePath - location of the file on disk
+              itemId - empty item added to AGOL/Portal
+              folder - folder id
+        """
+        params = {
+        "f" : "json",
+        "token" : self._securityHandler.token,
+        'itemType' : 'file'
+        }
+        url = self._baseUrl + "/%s" % self._username
+        url = url.replace("http://", "https://" )
+        if folder is not None:
+            url += '/' + folder
+        url += '/items/%s/addPart' % itemId
+        parsed = urlparse.urlparse(url)
+        with open(filePath, 'rb') as f:
+            mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+            size = 50000000
+            steps =  int(os.fstat(f.fileno()).st_size / size)
+            if steps % size > 0:
+                steps += 1
+            for i in range(steps):
+                files = []
+                tempFile = os.path.join(os.environ['TEMP'], "split.part%s" % i)
+                if os.path.isfile(tempFile):
+                    os.remove(tempFile)
+                with open(tempFile, 'wb') as writer:
+                    writer.write(mm.read(size))
+                    writer.flush()
+                    writer.close()
+                del writer
+                files.append(('file', tempFile, os.path.basename(tempFile)))
+                params['partNum'] = i + 1
+                res = self._post_multipart(host=parsed.hostname,
+                                              selector=parsed.path,
+                                              files = files,
+                                              fields=params,
+                                              port=parsed.port,
+                                              ssl=parsed.scheme.lower() == 'https',
+                                              proxy_port=self._proxy_port,
+                                              proxy_url=self._proxy_url)
+                os.remove(tempFile)
+            del mm
+        return res
+    #----------------------------------------------------------------------
     def addItem(self,
                 itemParameters,
                 filePath=None,
@@ -1370,15 +1445,17 @@ class UserContent(BaseAGOLClass):
                 originItemId=None,
                 destinationItemId=None,
                 serviceProxyParams=None,
-                metadata=None):
+                metadata=None,
+                multipart=False):
         """
+        Adds an item to ArcGIS Online or Portal.
+
         """
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
             "overwrite" : overwrite
         }
-        #"overwrite" : overwrite
         if itemParameters is not None:
             params.update(itemParameters.value)
         if url is not None:
@@ -1393,7 +1470,6 @@ class UserContent(BaseAGOLClass):
             params['destinationItemId'] = destinationItemId
         if serviceProxyParams is not None:
             params['serviceProxyParams'] = serviceProxyParams
-
         url = self._baseUrl + "/%s" % self._username
         url = url.replace("http://", "https://" )
         if folder is not None:
@@ -1401,33 +1477,57 @@ class UserContent(BaseAGOLClass):
         url += '/addItem'
         parsed = urlparse.urlparse(url)
         files = []
-        if filePath is not None and os.path.isfile(filePath):
-            files.append(('file', filePath, os.path.basename(filePath)))
+        if multipart:
+            params['multipart'] = multipart
             params["filename"] = os.path.basename(filePath)
-        if 'thumbnail' in params:
-            v = params['thumbnail']
-            del params['thumbnail']
-            files.append(('thumbnail', v, os.path.basename(v)))
-        if metadata is not None and os.path.isfile(metadata):
-            files.append(('metadata', metadata, 'metadata.xml'))
-        if len(files) < 1:
+            params['itemType'] = 'file'
             res = self._do_post(url,
                                 param_dict=params,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
+            if 'id' in res.keys():
+                itemId = res['id']
+                res = self.addByPart(filePath=filePath,
+                                     itemId=itemId,
+                                     folder=folder)
+                itemId = res['id']
+                res = self.commit(itemId=itemId, folderId=folder, wait=True)
+                itemId = res['itemId']
+                if itemParameters is not None:
+                    res = self.updateItem(itemId=itemId,
+                                          updateItemParameters=itemParameters)
+
+            return self._unicode_convert(res)
         else:
-            params['itemType'] = 'file'
-            params['async'] = False
-            res = self._post_multipart(host=parsed.hostname,
-                                       selector=parsed.path,
-                                       files = files,
-                                       fields=params,
-                                       port=parsed.port,
-                                       ssl=parsed.scheme.lower() == 'https',
-                                       proxy_port=self._proxy_port,
-                                       proxy_url=self._proxy_url)
-        res = self._unicode_convert(res)
-      
+            if filePath is not None and os.path.isfile(filePath):
+                files.append(('file', filePath, os.path.basename(filePath)))
+                params["filename"] = os.path.basename(filePath)
+            elif filePath is not None and multipart:
+                params["filename"] = os.path.basename(filePath)
+            if 'thumbnail' in params:
+                v = params['thumbnail']
+                del params['thumbnail']
+                files.append(('thumbnail', v, os.path.basename(v)))
+            if metadata is not None and os.path.isfile(metadata):
+                files.append(('metadata', metadata, 'metadata.xml'))
+            if len(files) < 1:
+                res = self._do_post(url,
+                                    param_dict=params,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
+            else:
+                params['itemType'] = 'file'
+                params['async'] = False
+                res = self._post_multipart(host=parsed.hostname,
+                                           selector=parsed.path,
+                                           files = files,
+                                           fields=params,
+                                           port=parsed.port,
+                                           ssl=parsed.scheme.lower() == 'https',
+                                           proxy_port=self._proxy_port,
+                                           proxy_url=self._proxy_url)
+            res = self._unicode_convert(res)
+
         return res
     #----------------------------------------------------------------------
     def addRelationship(self,
@@ -1477,7 +1577,7 @@ class UserContent(BaseAGOLClass):
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def commit(self, itemId):
+    def commit(self, itemId, folderId=None, wait=False):
         """
         Commit is called once all parts are uploaded during a multipart Add
         Item or Update Item operation. The parts are combined into a file,
@@ -1488,16 +1588,33 @@ class UserContent(BaseAGOLClass):
 
         Inputs:
            itemId - unique item id
+           folderId - folder id value, optional
+           wait - stops the thread and waits for the commit to finish or fail.
         """
-        url = self._baseUrl + "/%s/%s/commit" % (self._username, itemId)
+        if folderId is None:
+            url = self._baseUrl + "/%s/items/%s/commit" % (self._username, itemId)
+        else:
+            url = self._baseUrl + "/%s/%s/items/%s/commit" % (self._username, folderId, itemId)
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        return self._do_post(url=url,
-                             param_dict=params,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        if wait:
+            res = self._do_post(url=url,
+                                param_dict=params,
+                                proxy_port=self._proxy_port,
+                                proxy_url=self._proxy_url)
+            res = self.status(itemId=res['id'])
+            import time
+            while res['status'].lower() in ["partial", "processing"]:
+                time.sleep(5)
+                res = self.status(itemId=res['itemId'])
+            return res
+        else:
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def createFolder(self, name):
         """
@@ -1563,11 +1680,11 @@ class UserContent(BaseAGOLClass):
     #----------------------------------------------------------------------
     def deleteItem(self, item_id,folder=None,force_delete=False):
         """ deletes an agol item by it's ID """
-    
+
         url = '{}/content/users/{}'.format(self._baseUrl, self._username )
         if folder:
             url += '/' + folder
-    
+
         url += '/items/{}/delete'.format(item_id)
         params = {'f': 'json',
                       'token': self._securityHandler.token}
@@ -1582,7 +1699,7 @@ class UserContent(BaseAGOLClass):
                     return self.deleteItem(item_id=item_id,folder=folder,force_delete=False)
                 else:
                     return jres
-        return jres    
+        return jres
     #----------------------------------------------------------------------
     def disableProtect(self, item_id,folder=None):
         """ Disables an items protection """
@@ -1743,12 +1860,12 @@ class UserContent(BaseAGOLClass):
                           "featureCollection", "fileGeodata"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
-        
+
         url = self._baseUrl
-        
+
         #if folderID:
             #url += '/' + folderID
-        
+
         url = url + "/%s" % self._username
         url = url + "/publish"
         params = {
@@ -1760,7 +1877,7 @@ class UserContent(BaseAGOLClass):
         if publishParameters is not None and \
            isinstance(publishParameters, BaseParameters):
             params.update(publishParameters.value)
-           
+
         else:
             raise AttributeError("publishParameters in an invalid type")
         if itemId is not None:
@@ -1787,7 +1904,7 @@ class UserContent(BaseAGOLClass):
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def status(self, itemId, jobId, jobType=None):
+    def status(self, itemId, jobId=None, jobType=None):
         """
            Inquire about status when publishing an item, adding an item in
            async mode, or adding with a multipart upload. "Partial" is
@@ -1806,12 +1923,14 @@ class UserContent(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
-            "jobId" : jobId,
-            "jobType" : jobType
+            "token" : self._securityHandler.token
         }
+        if jobType is not None:
+            params['jobType'] = jobType
+        if jobId is not None:
+            params["jobId"] = jobId
         url = self._baseUrl + "/%s/items/%s/status" % (self._username, itemId)
-        #https://www.arcgis.com/sharing/rest/content/users/andrewchap/items/378aedf2c04740088722e538261e7c73/status
+        #https://www.arcgis.com/sharing/rest/content/users/andrewchap/items/04ebccc8736e409998157f195e8f30d6/status
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_port=self._proxy_port,
@@ -1872,7 +1991,7 @@ class UserContent(BaseAGOLClass):
     def updateItem(self,
                    itemId,
                    updateItemParameters,
-                   folderId=None,                   
+                   folderId=None,
                    clearEmptyFields=True,
                    filePath=None,
                    url=None,
@@ -1896,19 +2015,22 @@ class UserContent(BaseAGOLClass):
            text - The text content for the item to be updated.
         """
         files = []
-    
-        params = {
+        deParams = {
             "f" : "json",
-            "token" : self._securityHandler.token,
+            "token" : self._securityHandler.token
+        }
+        params = {
             "clearEmptyFields" : clearEmptyFields
         }
         if updateItemParameters is not None:
             params.update(updateItemParameters.value)
-        if url is not None:  
+        if "overwrite" in params.keys() and params['overwrite'] == False:
+            del params['overwrite']
+        if url is not None:
             params['url'] = url
         if text is not None:
             params['text'] = text
-        
+
         if filePath is not None and \
            os.path.isfile(filePath):
             files.append(('file', filePath, os.path.basename(filePath)))
@@ -1916,25 +2038,30 @@ class UserContent(BaseAGOLClass):
             v = params['thumbnail']
             del params['thumbnail']
             files.append(('thumbnail', v, os.path.basename(v)))
-            
-            
-        url = self._baseUrl + "/%s" % (self._username)
-        
-        
+        url = self._baseUrl.replace('/rest/', '/') + "/%s" % (self._username)
         if folderId is not None:
             url += '/' + folderId
-       
-        url = url + "/items/%s/update" % (itemId)
-       
-        parsed = urlparse.urlparse(url)        
-        res = self._post_multipart(host=parsed.hostname,
-                                           selector=parsed.path,
-                                           files = files,
-                                           fields=params,
-                                           port=parsed.port,
-                                           ssl=parsed.scheme.lower() == 'https',
-                                           proxy_port=self._proxy_port,
-                                           proxy_url=self._proxy_url)
+        url = url + "/items/%s/update?%s" % (itemId, urllib.urlencode(deParams))
+        #url = url.replace('https://', 'http://')
+        if filePath is not None:
+            parsed = urlparse.urlparse(url)
+            res = self._post_multipart(host=parsed.hostname,
+                                               selector=parsed.path,
+                                               files = files,
+                                               fields=params,
+                                               port=parsed.port,
+                                               ssl=parsed.scheme.lower() == 'https',
+                                               proxy_port=self._proxy_port,
+                                               proxy_url=self._proxy_url)
+        else:
+            header = {"Content-Type": "application/x-www-form-urlencoded",
+                      "Accept": "*/*",
+                      "User-Agent": "python-requests/2.2.1 CPython/2.7.5 Windows/7",
+                      }
+            res = self._do_post(url, param_dict=params,
+                                proxy_port=self._proxy_port,
+                                proxy_url=self._proxy_url,
+                                header=header)
         res = self._unicode_convert(res)
         return res
 
