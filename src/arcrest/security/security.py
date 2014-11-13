@@ -312,7 +312,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             result = self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
                                            referer=self._referer_url,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
             if 'error' in result:
                 self._valid = False
                 self._message = result
@@ -325,14 +325,14 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                                   username,
                                   password,
                                   referer=None,
-                                  tokenURL=None,
+                                  tokenUrl=None,
                                   expiration=None,
                                   proxy_url=None,
                                   proxy_port=None):
         """ generates a token for a feature service """
         if referer is None:
             referer = self._referer_url
-        if tokenURL is None:
+        if tokenUrl is None:
             tokenUrl  = self._token_url
 
         query_dict = {'username': self._username,
@@ -466,12 +466,12 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
            datetime.datetime.now() >= self._token_expires_on:
             self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
         return self._token
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
-                                  tokenURL, expiration=None):
+                                  tokenUrl, expiration=None):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
@@ -479,7 +479,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL, param_dict=query_dict,
+        token = self._do_post(url=tokenUrl, param_dict=query_dict,
                               proxy_port=self._proxy_port, proxy_url=self._proxy_url)
         if "token" not in token:
             self._token = None
@@ -505,8 +505,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     Inputs:
        username - name of the user
        password - password for user
-       baseOrgUrl - base organization URL
-                    ex: https://chronus.com/arcgis/sharing/rest
+       org_Url - base organization URL
+                    ex: https://chronus.com/arcgis/
        proxy_url - URL of the proxy
        proxy_port - proxy port
     """
@@ -527,12 +527,12 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     def __init__(self,
                  username,
                  password,
-                 orgUrl,
+                 org_url,
                  token_url=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
-        self._org_url = orgUrl
+        self._org_url = org_url
         self._username = username
         self._password = password
         
@@ -648,7 +648,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
            datetime.datetime.now() >= self._token_expires_on:
             result = self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
             if 'error' in result:
                 self._valid = False
                 self._message = result
@@ -659,7 +659,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
-                                  tokenURL, expiration=None):
+                                  tokenUrl, expiration=None):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
@@ -667,7 +667,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL,
+        token = self._do_post(url=tokenUrl,
                               param_dict=query_dict,
                               proxy_port=self._proxy_port,
                               proxy_url=self._proxy_url)
