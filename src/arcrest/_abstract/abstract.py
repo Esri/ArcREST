@@ -146,7 +146,7 @@ class BaseAGOLClass(_base.BaseWebOperations):
     _surl = "https://www.arcgis.com/sharing/rest"
     _referer_url = "https://www.arcgis.com"
     _useragent = "ArcREST"
-    _tokenurl = 'https://www.arcgis.com/sharing/rest/generateToken'
+    _token_url = 'https://www.arcgis.com/sharing/rest/generateToken'
     _proxy_url = None
     _proxy_port = None
     def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
@@ -167,9 +167,9 @@ class BaseAGOLClass(_base.BaseWebOperations):
             self._surl  =  self._url
 
         if token_url is None:
-            self._tokenurl = self._surl  + '/generateToken'
+            self._token_url = self._surl  + '/generateToken'
         else:
-            self._tokenurl = token_url
+            self._token_url = token_url
 
         if referer_url is None:
             if not self._org_url.startswith('http://'):

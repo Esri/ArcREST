@@ -501,7 +501,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 self._token = value.token
                 self._username = value.username
                 self._password = value._password
-                self._tokenurl = value.token_url
+                self._token_url = value.token_url
             elif isinstance(value, security.OAuthSecurityHandler):
                 self._token = value.token
                 self._securityHandler = value
