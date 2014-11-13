@@ -165,7 +165,7 @@ class Community(BaseAGOLClass):
                                        proxy_port=self._proxy_port)
             return res
         else:
-            return self._do_post(url=self._url + "/createGroup", param_dict=params,
+            return self._do_post(url=url, param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
     #----------------------------------------------------------------------

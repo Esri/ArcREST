@@ -483,6 +483,8 @@ class AdminFeatureService(BaseAGOLClass):
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
+        if 'rest/services' in url:
+            url = url.replace('rest/services', 'rest/admin/services')
         self._url = url
 
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
