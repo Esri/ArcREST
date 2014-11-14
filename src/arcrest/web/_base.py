@@ -2,16 +2,13 @@
    Base Class that all class that perform
    web operations will inherit from.
 """
-import time
 import gzip
 import os
 import urllib
 import urllib2
 import json
-import datetime
-import itertools
 import mimetypes
-import httplib
+#import httplib
 import mimetools
 from cStringIO import StringIO
 import re
@@ -35,6 +32,8 @@ class BaseWebOperations(object):
     _token = None
     _referer_url = ""
     _useragent = "ArcREST"
+    _proxy_url = None
+    _proxy_port = None
     #----------------------------------------------------------------------
     def _download_file(self, url, save_path, file_name=None, proxy_url=None, proxy_port=None):
         """ downloads a file """
@@ -209,41 +208,103 @@ class BaseWebOperations(object):
         """
         content_type, body = self._encode_multipart_formdata(fields, files)
 
-        headers = {
-            'content-type': content_type,
-            'content-length': str(len(body))
-        }
-
-        if proxy_url:
-            if ssl:
-                h = httplib.HTTPSConnection(proxy_url, proxy_port)
-
-                h.request('POST', 'https://' + host + selector, body, headers)
-
-            else:
-                h = httplib.HTTPConnection(proxy_url, proxy_port)
-                h.request('POST', 'http://' + host + selector, body, headers)
+        if ssl:
+            url = "https://%s%s" % (host, selector)
         else:
-            if ssl:
-                h = httplib.HTTPSConnection(host,port)
-                h.request('POST', selector, body, headers)
-            else:
-                h = httplib.HTTPConnection(host,port)
-                h.request('POST', selector, body, headers)
+            url = "http://%s%s" % (host, selector)
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=0))
+            urllib2.install_opener(opener)
+        request = urllib2.Request(url)
+        request.add_header('User-agent', 'ArcREST')
+        request.add_header('Content-type', content_type)
+        request.add_header('Content-length', len(body))
+        request.add_data(body)
+        result = urllib2.urlopen(request).read()
+        if result =="":
+            return ""
+        jres = json.loads(result)
+        if 'error' in jres:
+            if jres['error']['message'] == 'Request not made over ssl':
+                if url.startswith('http://'):
+                    url = url.replace('http://', 'https://')
+                    return self._post_multipart(host, selector,
+                                                fields, files,
+                                                ssl=True,port=port,
+                                                proxy_url=proxy_url,
+                                                proxy_port=proxy_port)
+        return self._unicode_convert(jres)
+    ##----------------------------------------------------------------------------------
+    #def _post_multipart_old(self, host, selector,
+                        #fields, files,
+                        #ssl=False,port=80,
+                        #proxy_url=None,proxy_port=None):
+        #""" performs a multi-post to AGOL, Portal, or AGS
+            #Inputs:
+               #host - string - root url (no http:// or https://)
+                   #ex: www.arcgis.com
+               #selector - string - everything after the host
+                   #ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
+               #fields - dictionary - additional parameters like token and format information
+               #files - tuple array- tuple with the file name type, filename, full path
+               #ssl - option to use SSL
+               #proxy_url - string - url to proxy server
+               #proxy_port - interger - port value if not on port 80
 
-        resp_data = h.getresponse().read()
-        try:
+            #Output:
+               #JSON response as dictionary
+            #Useage:
+               #import urlparse
+               #url = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0/10261291"
+               #parsed_url = urlparse.urlparse(url)
+               #params = {"f":"json"}
+               #print _post_multipart(host=parsed_url.hostname,
+                               #selector=parsed_url.path,
+                               #files=files,
+                               #fields=params
+                               #)
+        #"""
+        #content_type, body = self._encode_multipart_formdata(fields, files)
 
-            result = json.loads(resp_data)
-        except:
-            return None
+        #headers = {
+            #'content-type': content_type,
+            #'content-length': str(len(body))
+        #}
 
-        if 'error' in result:
-            if result['error']['message'] == 'Request not made over ssl':
-                return self._post_multipart(host=host, selector=selector, fields=fields,
-                                            files=files, ssl=True,port=port,
-                                            proxy_url=proxy_url,proxy_port=proxy_port)
-        return self._unicode_convert(result)
+        #if proxy_url:
+            #if ssl:
+                #h = httplib.HTTPSConnection(proxy_url, proxy_port)
+                #h.request('POST', 'https://' + host + selector, body, headers)
+
+            #else:
+                #h = httplib.HTTPConnection(proxy_url, proxy_port)
+                #h.request('POST', 'http://' + host + selector, body, headers)
+        #else:
+            #if ssl:
+                #h = httplib.HTTPSConnection(host,port)
+                #h.request('POST', selector, body, headers)
+            #else:
+                #h = httplib.HTTPConnection(host,port)
+                #h.request('POST', selector, body, headers)
+
+        #resp_data = h.getresponse().read()
+        #try:
+
+            #result = json.loads(resp_data)
+        #except:
+            #return None
+
+        #if 'error' in result:
+            #if result['error']['message'] == 'Request not made over ssl':
+                #return self._post_multipart(host=host, selector=selector, fields=fields,
+                                            #files=files, ssl=True,port=port,
+                                            #proxy_url=proxy_url,proxy_port=proxy_port)
+        #return self._unicode_convert(result)
     #----------------------------------------------------------------------------------
 
     def _encode_multipart_formdata(self, fields, files):

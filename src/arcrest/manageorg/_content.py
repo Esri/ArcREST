@@ -439,6 +439,7 @@ class Item(BaseAGOLClass):
                 print json_dict[k]
             else:
                 print k, " - attribute not implmented in the class _content.Item."
+            del k,v
     #----------------------------------------------------------------------
     @property
     def itemParameters(self):
@@ -1484,6 +1485,7 @@ class UserContent(BaseAGOLClass):
             "token" : self._securityHandler.token,
             "overwrite" : overwrite
         }
+        res = ""
         if itemParameters is not None:
             params.update(itemParameters.value)
         if url is not None:
@@ -1557,9 +1559,8 @@ class UserContent(BaseAGOLClass):
                                            ssl=parsed.scheme.lower() == 'https',
                                            proxy_port=self._proxy_port,
                                            proxy_url=self._proxy_url)
-            res = self._unicode_convert(res)
-
-        return res
+            return self._unicode_convert(res)
+        return self._unicode_convert(res)
     #----------------------------------------------------------------------
     def addRelationship(self,
                         originItemId,
