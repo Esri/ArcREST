@@ -1408,7 +1408,7 @@ class UserContent(BaseAGOLClass):
             mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
             size = 50000000
             steps =  int(os.fstat(f.fileno()).st_size / size)
-            if steps % size > 0:
+            if os.fstat(f.fileno()).st_size % size > 0:
                 steps += 1
             for i in range(steps):
                 files = []
@@ -1449,7 +1449,35 @@ class UserContent(BaseAGOLClass):
                 multipart=False):
         """
         Adds an item to ArcGIS Online or Portal.
+        Te Add Item operation (POST only) is used to upload an item file,
+        submit text content, or submit the item URL to the specified user
+        folder depending on documented items and item types. This operation
+        is available only to the specified user.
 
+        Inputs:
+           itemParameters - required except for when multipart = True or SD
+                            file. This contains all the information
+                            regarding type, tags, etc...
+           filePath - if updating the item's content
+           overwrite - if the item exists, it overwrites it
+           folder - id of the folder to place the item
+           url - The URL of the item to be submitted. The URL can be a URL
+                 to a service, a web mapping application, or any other
+                 content available at that URL.
+           text - The text content for the item to be submitted.
+           relationshipType - The type of relationship between the two
+                              items. See Relationship types for a complete
+                              listing of types.
+           originItemId - The item ID of the origin item of the
+                          relationship
+           destinationItemId - item ID of the destination item of the
+                               relationship.
+           serviceProxyParams -  JSON object that provides rate limiting
+                                 and referrer checks when accessing secured
+                                 services.
+           metadata - XML meta data file.
+           multipart - If true, the file is uploaded in multiple parts. Used
+                       for files over 100 MBs in size.
         """
         params = {
             "f" : "json",
@@ -1491,7 +1519,10 @@ class UserContent(BaseAGOLClass):
                                      itemId=itemId,
                                      folder=folder)
                 itemId = res['id']
-                res = self.commit(itemId=itemId, folderId=folder, wait=True)
+                res = self.commit(itemId=itemId, folderId=folder,
+                                  wait=True, additionalParams=\
+                                  {'type' : itemParameters.type }
+                                  )
                 itemId = res['itemId']
                 if itemParameters is not None:
                     res = self.updateItem(itemId=itemId,
@@ -1577,7 +1608,7 @@ class UserContent(BaseAGOLClass):
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def commit(self, itemId, folderId=None, wait=False):
+    def commit(self, itemId, folderId=None, wait=False, additionalParams={}):
         """
         Commit is called once all parts are uploaded during a multipart Add
         Item or Update Item operation. The parts are combined into a file,
@@ -1590,6 +1621,9 @@ class UserContent(BaseAGOLClass):
            itemId - unique item id
            folderId - folder id value, optional
            wait - stops the thread and waits for the commit to finish or fail.
+           additionalParams - optional key/value pair like
+                              type : "File Geodatabase". This is mainly used
+                              when multipart uploads occur.
         """
         if folderId is None:
             url = self._baseUrl + "/%s/items/%s/commit" % (self._username, itemId)
@@ -1599,6 +1633,8 @@ class UserContent(BaseAGOLClass):
             "f" : "json",
             "token" : self._securityHandler.token
         }
+        for key, value in additionalParams.iteritems():
+            params[key] = value
         if wait:
             res = self._do_post(url=url,
                                 param_dict=params,
@@ -1930,7 +1966,6 @@ class UserContent(BaseAGOLClass):
         if jobId is not None:
             params["jobId"] = jobId
         url = self._baseUrl + "/%s/items/%s/status" % (self._username, itemId)
-        #https://www.arcgis.com/sharing/rest/content/users/andrewchap/items/04ebccc8736e409998157f195e8f30d6/status
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_port=self._proxy_port,
@@ -2038,11 +2073,10 @@ class UserContent(BaseAGOLClass):
             v = params['thumbnail']
             del params['thumbnail']
             files.append(('thumbnail', v, os.path.basename(v)))
-        url = self._baseUrl.replace('/rest/', '/') + "/%s" % (self._username)
+        url = self._baseUrl + "/%s" % (self._username)#.replace('/rest/', '/')
         if folderId is not None:
             url += '/' + folderId
         url = url + "/items/%s/update?%s" % (itemId, urllib.urlencode(deParams))
-        #url = url.replace('https://', 'http://')
         if filePath is not None:
             parsed = urlparse.urlparse(url)
             res = self._post_multipart(host=parsed.hostname,
@@ -2064,20 +2098,3 @@ class UserContent(BaseAGOLClass):
                                 header=header)
         res = self._unicode_convert(res)
         return res
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
