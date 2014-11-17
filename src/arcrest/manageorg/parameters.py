@@ -276,6 +276,7 @@ class ItemParameter(BaseParameters):
        servicePassword - Set the password on a secure on-premise ArcGIS
                          Server service. It is valid on Map Services,
                          Feature Services, and Image Services only.
+       fileName - name of the file updating (optional)
     """
     _title = None
     _thumbnail = None
@@ -294,7 +295,7 @@ class ItemParameter(BaseParameters):
     _culture = None
     _serviceUsername = None
     _servicePassword = None
-
+    _filename = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -496,7 +497,7 @@ class ItemParameter(BaseParameters):
         """
         if self._overwrite != value:
             self._overwrite = value
-    #----------------------------------------------------------------------    
+    #----------------------------------------------------------------------
     @property
     def extent(self):
         """gets/sets the bounding rectangle of the item"""
@@ -589,6 +590,19 @@ class ItemParameter(BaseParameters):
         """
         if self._servicePassword != value:
             self._servicePassword = value
+    #----------------------------------------------------------------------
+    @property
+    def filename(self):
+        """gets/sets the file name"""
+        return self._filename
+    #----------------------------------------------------------------------
+    @filename.setter
+    def filename(self, value):
+        """"""
+        if value != self._filename:
+            self._filename = value
+
+
 ########################################################################
 class PublishCSVParameters(BaseParameters):
     """
@@ -1278,4 +1292,4 @@ class PublishSDParmaeters(BaseParameters):
         to 250 characters.
         """
         if self._overwrite != value:
-            self._overwrite = value    
+            self._overwrite = value
