@@ -2052,11 +2052,9 @@ class UserContent(BaseAGOLClass):
            text - The text content for the item to be updated.
         """
         files = []
-        deParams = {
-            "f" : "json",
-            "token" : self._securityHandler.token
-        }
         params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
             "clearEmptyFields" : clearEmptyFields
         }
         if updateItemParameters is not None:
@@ -2075,10 +2073,10 @@ class UserContent(BaseAGOLClass):
             v = params['thumbnail']
             del params['thumbnail']
             files.append(('thumbnail', v, os.path.basename(v)))
-        url = self._baseUrl + "/%s" % (self._username)#.replace('/rest/', '/')
+        url = self._baseUrl + "/%s" % (self._username)
         if folderId is not None:
             url += '/' + folderId
-        url = url + "/items/%s/update?%s" % (itemId, urllib.urlencode(deParams))
+        url = url + "/items/%s/update" % itemId
         if filePath is not None:
             parsed = urlparse.urlparse(url)
             res = self._post_multipart(host=parsed.hostname,
@@ -2092,7 +2090,7 @@ class UserContent(BaseAGOLClass):
         else:
             header = {"Content-Type": "application/x-www-form-urlencoded",
                       "Accept": "*/*",
-                      "User-Agent": "python-requests/2.2.1 CPython/2.7.5 Windows/7",
+                      "User-Agent": "ArcREST",
                       }
             res = self._do_post(url, param_dict=params,
                                 proxy_port=self._proxy_port,
