@@ -1521,6 +1521,7 @@ class UserContent(BaseAGOLClass):
                                      itemId=itemId,
                                      folder=folder)
                 itemId = res['id']
+                # need to pass 'type' on commit
                 res = self.commit(itemId=itemId, folderId=folder,
                                   wait=True, additionalParams=\
                                   {'type' : itemParameters.type }

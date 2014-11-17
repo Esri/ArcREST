@@ -239,74 +239,7 @@ class BaseWebOperations(object):
                                                 proxy_url=proxy_url,
                                                 proxy_port=proxy_port)
         return self._unicode_convert(jres)
-    ##----------------------------------------------------------------------------------
-    #def _post_multipart_old(self, host, selector,
-                        #fields, files,
-                        #ssl=False,port=80,
-                        #proxy_url=None,proxy_port=None):
-        #""" performs a multi-post to AGOL, Portal, or AGS
-            #Inputs:
-               #host - string - root url (no http:// or https://)
-                   #ex: www.arcgis.com
-               #selector - string - everything after the host
-                   #ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
-               #fields - dictionary - additional parameters like token and format information
-               #files - tuple array- tuple with the file name type, filename, full path
-               #ssl - option to use SSL
-               #proxy_url - string - url to proxy server
-               #proxy_port - interger - port value if not on port 80
-
-            #Output:
-               #JSON response as dictionary
-            #Useage:
-               #import urlparse
-               #url = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0/10261291"
-               #parsed_url = urlparse.urlparse(url)
-               #params = {"f":"json"}
-               #print _post_multipart(host=parsed_url.hostname,
-                               #selector=parsed_url.path,
-                               #files=files,
-                               #fields=params
-                               #)
-        #"""
-        #content_type, body = self._encode_multipart_formdata(fields, files)
-
-        #headers = {
-            #'content-type': content_type,
-            #'content-length': str(len(body))
-        #}
-
-        #if proxy_url:
-            #if ssl:
-                #h = httplib.HTTPSConnection(proxy_url, proxy_port)
-                #h.request('POST', 'https://' + host + selector, body, headers)
-
-            #else:
-                #h = httplib.HTTPConnection(proxy_url, proxy_port)
-                #h.request('POST', 'http://' + host + selector, body, headers)
-        #else:
-            #if ssl:
-                #h = httplib.HTTPSConnection(host,port)
-                #h.request('POST', selector, body, headers)
-            #else:
-                #h = httplib.HTTPConnection(host,port)
-                #h.request('POST', selector, body, headers)
-
-        #resp_data = h.getresponse().read()
-        #try:
-
-            #result = json.loads(resp_data)
-        #except:
-            #return None
-
-        #if 'error' in result:
-            #if result['error']['message'] == 'Request not made over ssl':
-                #return self._post_multipart(host=host, selector=selector, fields=fields,
-                                            #files=files, ssl=True,port=port,
-                                            #proxy_url=proxy_url,proxy_port=proxy_port)
-        #return self._unicode_convert(result)
     #----------------------------------------------------------------------------------
-
     def _encode_multipart_formdata(self, fields, files):
         boundary = mimetools.choose_boundary()
         buf = StringIO()
