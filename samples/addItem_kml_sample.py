@@ -26,7 +26,7 @@ if __name__ == "__main__":
     #   Provide the item parameters
     #
 
-    itemParams = arcrest.manageagol.ItemParameter()
+    itemParams = arcrest.manageorg.ItemParameter()
     itemParams.thumbnailurl = thumbnail_url
     itemParams.title = "KML FILE"
     itemParams.type = "KML"
