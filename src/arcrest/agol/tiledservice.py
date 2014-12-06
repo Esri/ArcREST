@@ -64,6 +64,8 @@ class TiledService(BaseAGOLClass):
         self._url = url
         if isinstance(securityHandler, BaseSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port

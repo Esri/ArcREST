@@ -21,6 +21,8 @@ class Community(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url        
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -165,7 +167,7 @@ class Community(BaseAGOLClass):
                                        proxy_port=self._proxy_port)
             return res
         else:
-            return self._do_post(url=self._url + "/createGroup", param_dict=params,
+            return self._do_post(url=url, param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -229,6 +231,8 @@ class Groups(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -655,6 +659,8 @@ class User(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------

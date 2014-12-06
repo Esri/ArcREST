@@ -29,6 +29,8 @@ class Content(BaseAGOLClass):
         else:
             self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -210,6 +212,8 @@ class FeatureContent(BaseAGOLClass):
         else:
             self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -415,6 +419,8 @@ class Item(BaseAGOLClass):
             self._baseUrl = url
         self._itemId = itemId
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -1070,6 +1076,8 @@ class UserItems(BaseAGOLClass):
         else:
             self._baseUrl = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
     #----------------------------------------------------------------------
@@ -1340,6 +1348,8 @@ class UserContent(BaseAGOLClass):
 
         self._username = username
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
 

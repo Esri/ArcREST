@@ -31,6 +31,8 @@ class Portals(BaseAGOLClass):
             self._baseURL = url
         self._portalId = portalId
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------

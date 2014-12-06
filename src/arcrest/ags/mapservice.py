@@ -54,6 +54,8 @@ class MapService(BaseAGSServer):
         if securityHandler is not None and \
            isinstance(securityHandler, security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         elif securityHandler is None:
             pass

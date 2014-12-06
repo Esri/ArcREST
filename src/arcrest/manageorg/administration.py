@@ -50,8 +50,10 @@ class Administration(BaseAGOLClass):
             if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
                isinstance(securityHandler, PortalTokenSecurityHandler):
                 self._token = securityHandler.token
+                self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
+               
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------

@@ -31,6 +31,8 @@ class GPService(BaseAGSServer):
         self._url = url
         if securityHandler is not None:
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -137,6 +139,8 @@ class GPTask(BaseAGSServer):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -277,6 +281,8 @@ class GPJob(BaseAGSServer):
         self._url = url
         if securityHandler is not None:
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:

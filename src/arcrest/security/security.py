@@ -153,9 +153,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _token = None
 
     _surl = None
-    _org_url ="https://www.arcgis.com"
+    _org_url ="http://www.arcgis.com"
     _url = "https://www.arcgis.com/sharing/rest"
-    _tokenurl = None
     _referer_url = None
 
     _username = None
@@ -170,17 +169,17 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _valid = True
     _message = ""
     #----------------------------------------------------------------------
-    def __init__(self, username, password, token_url=None,
+    def __init__(self, username, password,org_url ="https://www.arcgis.com", token_url=None,
                  proxy_url=None, proxy_port=None):
         """Constructor"""
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._org_url = org_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=600)
-        self._initURL(token_url=token_url,
-                      )
+        self._initURL(token_url=token_url)
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,
                 rest_url=None, token_url=None,
@@ -190,7 +189,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             if not org_url.startswith('http://') and not org_url.startswith('https://'):
                 org_url = 'http://' + org_url
             self._org_url = org_url
-
+        if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+            self._org_url = 'http://' + self._org_url
         if rest_url is not None:
             self._url = rest_url
         else:
@@ -202,9 +202,9 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._surl  =  self._url
 
         if token_url is None:
-            self._tokenurl = self._surl  + '/generateToken'
+            self._token_url = self._surl  + '/generateToken'
         else:
-            self._tokenurl = token_url
+            self._token_url = token_url
 
         if referer_url is None:
             if not self._org_url.startswith('http://'):
@@ -213,8 +213,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
-    #----------------------------------------------------------------------
-    
+    #---------------------------------------------------------------------- 
     @property
     def message(self):
         """ returns any messages """
@@ -308,6 +307,11 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         return self._token_created_on
     #----------------------------------------------------------------------
     @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url    
+    #----------------------------------------------------------------------
+    @property
     def token(self):
         """ returns the token for the site """
         if self._token is None or \
@@ -315,7 +319,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             result = self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
                                            referer=self._referer_url,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
             if 'error' in result:
                 self._valid = False
                 self._message = result
@@ -328,15 +332,15 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                                   username,
                                   password,
                                   referer=None,
-                                  tokenURL=None,
+                                  tokenUrl=None,
                                   expiration=None,
                                   proxy_url=None,
                                   proxy_port=None):
         """ generates a token for a feature service """
         if referer is None:
             referer = self._referer_url
-        if tokenURL is None:
-            tokenUrl  = self._tokenurl
+        if tokenUrl is None:
+            tokenUrl  = self._token_url
 
         query_dict = {'username': self._username,
                       'password': self._password,
@@ -469,12 +473,12 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
            datetime.datetime.now() >= self._token_expires_on:
             self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
         return self._token
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
-                                  tokenURL, expiration=None):
+                                  tokenUrl, expiration=None):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
@@ -482,7 +486,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL, param_dict=query_dict,
+        token = self._do_post(url=tokenUrl, param_dict=query_dict,
                               proxy_port=self._proxy_port, proxy_url=self._proxy_url)
         if "token" not in token:
             self._token = None
@@ -508,13 +512,14 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     Inputs:
        username - name of the user
        password - password for user
-       baseOrgUrl - base organization URL
-                    ex: https://chronus.com/arcgis/sharing/rest
+       org_Url - base organization URL
+                    ex: https://chronus.com/arcgis/
        proxy_url - URL of the proxy
        proxy_port - proxy port
     """
     _token = None
-    _baseOrgUrl = None
+    _org_url = None
+    _url = None
     _username = None
     _password = None
     _proxy_port = None
@@ -523,23 +528,61 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     _token_created_on = None
     _token_expires_on = None
     _expires_in = None
+    _valid = True
+    _message = ""    
     #----------------------------------------------------------------------
     def __init__(self,
                  username,
                  password,
-                 baseOrgUrl,
+                 org_url,
+                 token_url=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
-        if baseOrgUrl.lower().find("/rest") < 0:
-            baseOrgUrl += "/rest"
-        self._baseOrgUrl = baseOrgUrl
+        self._org_url = org_url
         self._username = username
         self._password = password
-        self._token_url = baseOrgUrl + "/generateToken"
+        
+        self._token_url = token_url
         self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._proxy_url = proxy_url  
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=300)
+        self._initURL()
+    #----------------------------------------------------------------------         
+            
+    def _initURL(self, referer_url=None):
+        """ sets proper URLs for Portal """
+        if self._org_url is not None and self._org_url != '':
+            if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+                self._org_url = 'https://' + self._org_url
+           
+       
+        self._url = self._org_url + "/sharing/rest"
+
+     
+        if self._token_url is None:
+            self._token_url = self._url  + '/generateToken'
+
+        if referer_url is None:
+            
+            self._referer_url = self._org_url
+        else:
+            self._referer_url = referer_url
+    #---------------------------------------------------------------------- 
+    @property
+    def message(self):
+        """ returns any messages """
+        return self._message   
+    #----------------------------------------------------------------------
+    @property
+    def valid(self):
+        """ returns boolean wether handler is valid """
+        return self._valid
+    #----------------------------------------------------------------------
+    @property
+    def org_url(self):
+        """ gets/sets the organization URL """
+        return self._org_url
     #----------------------------------------------------------------------
     @property
     def proxy_url(self):
@@ -606,18 +649,29 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         return self._token_created_on
     #----------------------------------------------------------------------
     @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url        
+    #----------------------------------------------------------------------
+    @property
     def token(self):
         """ returns the token for the site """
         if self._token is None or \
            datetime.datetime.now() >= self._token_expires_on:
-            self._generateForTokenSecurity(username=self._username,
+            result = self._generateForTokenSecurity(username=self._username,
                                            password=self._password,
-                                           tokenURL=self._token_url)
+                                           tokenUrl=self._token_url)
+            if 'error' in result:
+                self._valid = False
+                self._message = result
+            else:
+                self._valid = True
+                self._message = "Token Generated"            
         return self._token
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
-                                  tokenURL, expiration=None):
+                                  tokenUrl, expiration=None):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
@@ -625,16 +679,18 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenURL,
+        token = self._do_post(url=tokenUrl,
                               param_dict=query_dict,
                               proxy_port=self._proxy_port,
                               proxy_url=self._proxy_url)
-        if "token" not in token:
+        if 'error' in token:
             self._token = None
             self._token_created_on = None
             self._token_expires_on = None
             self._expires_in = None
-            return None
+
+            return token        
+       
         else:
             self._token = token['token']
             self._token_created_on = datetime.datetime.now()

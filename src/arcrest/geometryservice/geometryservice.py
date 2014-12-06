@@ -20,7 +20,9 @@ class GeometryService(abstract.BaseAGSServer):
     def __init__(self, url, securityHandler=None, proxy_url=None, proxy_port=None):
         """Constructor"""
         self._url = url
-        self._securityHandler = securityHandler # Supports AGSSecurityHandler and maybe AGOLHandler?
+        self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url   # Supports AGSSecurityHandler and maybe AGOLHandler?
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
