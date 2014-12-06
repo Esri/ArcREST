@@ -104,6 +104,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 self._password = securityHandler._password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
+                if not securityHandler is None:
+                    self._referer_url = securityHandler.referer_url  
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler

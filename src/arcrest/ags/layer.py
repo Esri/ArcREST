@@ -72,6 +72,8 @@ class FeatureLayer(BaseAGSServer):
            isinstance(securityHandler,
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
@@ -646,6 +648,8 @@ class GroupLayer(FeatureLayer):
            isinstance(securityHandler,
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         elif securityHandler is None:
             pass

@@ -41,6 +41,8 @@ class Services(BaseAGOLClass):
             if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
+                if not securityHandler is None:
+                    self._referer_url = securityHandler.referer_url  
             else:
                 raise AttributeError("Invalid Security Handler, " + \
                                      "only AGOLTokenSecurityHandler is accepted")
@@ -188,6 +190,8 @@ class AdminMapService(BaseAGOLClass):
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
             self._token = securityHandler.token
             self._securityHandler = securityHandler
+            if not securityHandler is None:
+                self._referer_url = securityHandler.referer_url  
         else:
             raise AttributeError("Security Handler must be security.AGOLTokenSecurityHandler")
         self._proxy_url = proxy_url
@@ -489,6 +493,8 @@ class AdminFeatureService(BaseAGOLClass):
 
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
             self._securityHandler = securityHandler
+            if not securityHandler is None:
+                self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         else:
             raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler")
@@ -932,7 +938,9 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self._proxy_port = proxy_port
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
             self._securityHandler = securityHandler
-            self._token = securityHandler.token
+            if not securityHandler is None:
+                self._referer_url = securityHandler.referer_url  
+                self._token = securityHandler.token
         else:
             raise AttributeError("This object only accepts security.AGOLTokenSecurityHandler as a security option")
         if initialize:

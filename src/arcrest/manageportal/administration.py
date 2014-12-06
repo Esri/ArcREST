@@ -29,6 +29,8 @@ class _Security(BaseAGOLClass):
             pass
         elif isinstance(securityHandler, PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
+            if not securityHandler is None:
+                self._referer_url = securityHandler.referer_url  
         else:
             raise AttributeError("Invalid Security Handle Type")
 
@@ -284,6 +286,8 @@ class _System(BaseAGOLClass):
             pass
         elif isinstance(securityHandler, PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         else:
             raise AttributeError("Invalid Security Handle Type")
 
@@ -679,6 +683,8 @@ class PortalAdministration(BaseAGOLClass):
             pass
         elif isinstance(securityHandler, PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         else:
             raise AttributeError("Invalid Security Handle Type")
 

@@ -153,7 +153,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _token = None
 
     _surl = None
-    _org_url ="https://www.arcgis.com"
+    _org_url ="http://www.arcgis.com"
     _url = "https://www.arcgis.com/sharing/rest"
     _referer_url = None
 
@@ -169,12 +169,13 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _valid = True
     _message = ""
     #----------------------------------------------------------------------
-    def __init__(self, username, password, token_url=None,
+    def __init__(self, username, password,org_url ="https://www.arcgis.com", token_url=None,
                  proxy_url=None, proxy_port=None):
         """Constructor"""
         self._username = username
         self._password = password
         self._token_url = token_url
+        self._org_url = org_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=600)
@@ -188,7 +189,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             if not org_url.startswith('http://') and not org_url.startswith('https://'):
                 org_url = 'http://' + org_url
             self._org_url = org_url
-
+        if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+            self._org_url = 'http://' + self._org_url
         if rest_url is not None:
             self._url = rest_url
         else:
@@ -303,6 +305,11 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     def tokenObtainedDate(self):
         """ returns when the token was generated """
         return self._token_created_on
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url    
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -640,6 +647,11 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     def tokenObtainedDate(self):
         """ returns when the token was generated """
         return self._token_created_on
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url        
     #----------------------------------------------------------------------
     @property
     def token(self):

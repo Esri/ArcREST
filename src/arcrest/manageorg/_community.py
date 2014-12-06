@@ -21,6 +21,8 @@ class Community(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url        
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -229,6 +231,8 @@ class Groups(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -655,6 +659,8 @@ class User(BaseAGOLClass):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------

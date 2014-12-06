@@ -76,6 +76,8 @@ class ImageService(BaseAGSServer):
            isinstance(securityHandler,
                       AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url  
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
