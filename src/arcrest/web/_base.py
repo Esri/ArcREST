@@ -89,16 +89,23 @@ class BaseWebOperations(object):
     #----------------------------------------------------------------------
     def _do_post(self, url, param_dict, proxy_url=None, proxy_port=None, header={}):
         """ performs the POST operation and returns dictionary result """
-
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80
             proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
                        "https":"https://%s:%s" % (proxy_url, proxy_port)}
             proxy_support = urllib2.ProxyHandler(proxies)
-            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=0))
-            urllib2.install_opener(opener)
-        request = urllib2.Request(url, urllib.urlencode(param_dict), headers=header)
+            opener = urllib2.build_opener(proxy_support, AGOLRedirectHandler())
+        else:
+            opener = urllib2.build_opener(AGOLRedirectHandler())
+        urllib2.install_opener(opener)
+      
+        headers = {'Referer': self._referer_url,
+                   'User-Agent': self._useragent}  
+        if len( header ) > 0 :
+            headers = dict(headers.items() + header.items())
+          
+        request = urllib2.Request(url, urllib.urlencode(param_dict), headers=headers)
         result = urllib2.urlopen(request).read()
         if result =="":
             return ""

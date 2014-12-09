@@ -26,6 +26,7 @@ import math
 import urlparse
 import mimetypes
 import uuid
+from urlparse import urlparse
 ########################################################################
 class FeatureLayer(abstract.BaseAGOLClass):
     """
@@ -85,6 +86,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _supportsCalculate = None
     _supportsAttachmentsByUploadId = None
     _editFieldsInfo = None
+    _serverURL = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -101,17 +103,22 @@ class FeatureLayer(abstract.BaseAGOLClass):
             if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
                 self._token = securityHandler.token
                 self._username = securityHandler.username
-                self._password = securityHandler._password
+                self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url  
             elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
-                self._token = securityHandler.token
+                parsedURL = urlparse(url=url)
+                pathParts = parsedURL.path.split('/')
+                self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
+                
+                self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
                 self._username = securityHandler.username
-                self._password = securityHandler._password
+                self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
-                self._referer_url = securityHandler.referer_url              
+                self._referer_url = securityHandler.referer_url
+                
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
@@ -968,6 +975,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['objectIds'] = objectIds
         if not self._token is None:
             params['token'] = self._token
+           
         result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
         
@@ -1131,7 +1139,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 del fl
                 del oid
             del OIDs
-            return True, messages
+            return messages
 
 
 ########################################################################
