@@ -20,7 +20,7 @@ from .._abstract import abstract
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 from ..common.general import _date_handler
 from ..common import geometry
-
+from urlparse import urlparse
 ########################################################################
 class FeatureService(abstract.BaseAGOLClass):
     """ contains information about a feature service """
@@ -54,6 +54,7 @@ class FeatureService(abstract.BaseAGOLClass):
     _proxy_url = None
     _proxy_port = None
     _securityHandler = None
+    _serverURL = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -72,8 +73,20 @@ class FeatureService(abstract.BaseAGOLClass):
                 self._token_url = securityHandler.token_url
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
-                if not securityHandler is None:
-                    self._referer_url = securityHandler.referer_url  
+               
+                self._referer_url = securityHandler.referer_url  
+            elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
+                parsedURL = urlparse(url=url)
+                pathParts = parsedURL.path.split('/')
+                self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
+                
+                self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
+                self._username = securityHandler.username
+                self._password = securityHandler.password
+                self._token_url = securityHandler.token_url
+                self._securityHandler = securityHandler
+                self._referer_url = securityHandler.referer_url
+            
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler

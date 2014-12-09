@@ -518,6 +518,11 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
        proxy_port - proxy port
     """
     _token = None
+    _server_token = None
+    _server_token_expires_on = None
+    _server_token_created_on = None
+    _server_expires_in = None    
+    _server_url = None
     _org_url = None
     _url = None
     _username = None
@@ -547,6 +552,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url  
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=300)
+       
         self._initURL()
     #----------------------------------------------------------------------         
             
@@ -668,6 +674,60 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._valid = True
                 self._message = "Token Generated"            
         return self._token
+    #----------------------------------------------------------------------
+    def servertoken(self,serverURL,referer):
+        """ returns the server token for the server """
+        if self._server_token is None or \
+           datetime.datetime.now() >= self._server_token_expires_on or \
+           self._server_url != serverURL:
+            self._server_url = serverURL
+            result = self._generateForServerTokenSecurity(serverURL=serverURL,
+                                                          referer=referer,
+                                                          token=self.token,
+                                                          tokenUrl=self._token_url)
+            if 'error' in result:
+                self._valid = False
+                self._message = result
+            else:
+                self._valid = True
+                self._message = "Server Token Generated"            
+        return self._server_token 
+    
+    #----------------------------------------------------------------------
+    def _generateForServerTokenSecurity(self,
+                                  serverURL,referer, token,tokenUrl,expiration=None):
+        """ generates a token for a feature service """
+        
+        query_dict = {'serverURL':serverURL,
+                      'token': token,
+                      'f': 'json',
+                      'request':'getToken',
+                      'referer':referer}
+        if expiration is not None:
+            query_dict['expiration'] = expiration
+        server_token = self._do_post(url=tokenUrl,
+                              param_dict=query_dict,
+                              proxy_port=self._proxy_port,
+                              proxy_url=self._proxy_url)
+        if 'error' in server_token:
+            self._server_token = None
+            self._server_token_created_on = None
+            self._server_token_expires_on = None
+            self._server_expires_in = None
+
+            return server_token        
+       
+        else:
+            self._server_token = server_token['token']
+            self._server_token_created_on = datetime.datetime.now()
+            if server_token['expires'] > 86400:
+                seconds = 86400
+            else:
+                seconds = int(server_token['expires'])
+            self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            self._server_expires_in = server_token['expires']
+            return server_token['token']
+
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
