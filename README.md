@@ -59,5 +59,5 @@ limitations under the License.
 A copy of the license is available in the repository's
 [LICENSE](LICENSE) file.
 
-[](Esri Tags: AGS AGOL ArcGIS Server ArcGIS Online Utilities ArcGISSolutions)
+[](Esri Tags: AGS AGOL ArcGIS Server ArcGIS Online Utilities Telecommunications ArcGISSolutions)
 [](Esri Language: Python)
