@@ -754,7 +754,7 @@ class AdminFeatureService(BaseAGOLClass):
         params = {
             "f" : "json",
             "token" : self._token,
-            "addToDefinition" : json_dict,
+            "addToDefinition" : json.dumps(json_dict),
             "async" : False
         }
         uURL = self._url + "/addToDefinition"
@@ -779,7 +779,7 @@ class AdminFeatureService(BaseAGOLClass):
         params = {
             "f" : "json",
             "token" : self._token,
-            "updateDefinition" : json_dict,
+            "updateDefinition" : json.dumps(json_dict),
             "async" : False
         }
         uURL = self._url + "/updateDefinition"
@@ -809,7 +809,7 @@ class AdminFeatureService(BaseAGOLClass):
         params = {
             "f" : "json",
             "token" : self._token,
-            "deleteFromDefinition" : json_dict,
+            "deleteFromDefinition" : json.dumps(json_dict),
             "async" : False
         }
         uURL = self._url + "/deleteFromDefinition"
