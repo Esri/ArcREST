@@ -65,6 +65,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _relationships = None
     _maxRecordCount = None
     _canModifyLayer = None
+    _supportsValidateSql = None
+    _supportsCoordinatesQuantization = None
     _supportsStatistics = None
     _supportsAdvancedQueries = None
     _hasLabels = None
@@ -172,7 +174,23 @@ class FeatureLayer(abstract.BaseAGOLClass):
     @property
     def url(self):
         """ returns the url for the feature layer"""
-        return self._url        
+        return self._url      
+    
+    #----------------------------------------------------------------------
+    @property
+    def supportsValidateSql(self):
+        """ returns the supports calculate values """
+        if self._supportsValidateSql is None:
+            self.__init()
+        return self._supportsValidateSql    
+
+    #----------------------------------------------------------------------
+    @property
+    def supportsCoordinatesQuantization(self):
+        """ returns the supports calculate values """
+        if self._supportsCoordinatesQuantization is None:
+            self.__init()
+        return self._supportsCoordinatesQuantization   
     #----------------------------------------------------------------------
     @property
     def supportsCalculate(self):
@@ -536,7 +554,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params = {'f':'json'}
             if not self._token is None:
                 params['token'] = self._token
-            parsed = urlparse.urlparse(attachURL)
+            parsed = urlparse(attachURL)
 
             files = []
             files.append(('attachment', file_path, os.path.basename(file_path)))
@@ -548,7 +566,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
-            return self._unicode_convert(json.loads(res))
+            return self._unicode_convert(res)
         else:
             return "Attachments are not supported for this feature service."
     #----------------------------------------------------------------------
@@ -586,7 +604,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         }
         if not self._token is None:
             params['token'] = self._token
-        parsed = urlparse.urlparse(url)
+        parsed = urlparse(url)
         port = parsed.port
         files = []
         files.append(('attachment', file_path, os.path.basename(file_path)))
@@ -598,7 +616,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                    ssl=parsed.scheme.lower() == 'https',
                                    proxy_port=self._proxy_port,
                                    proxy_url=self._proxy_url)
-        return self._unicode_convert(json.loads(res))
+        return self._unicode_convert(res)
     #----------------------------------------------------------------------
     def listAttachments(self, oid):
         """ list attachements for a given OBJECT ID """
@@ -1085,7 +1103,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
               boolean, add results message as list of dictionaries
 
         """
-        messages = []
+        messages = {'addResults':None}
         if attachmentTable is None:
             count = 0
             bins = 1
@@ -1093,9 +1111,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             max_chunk = 250
             js = json.loads(self._unicode_convert(
                  featureclass_to_json(fc)))
-            if not 'features' in js:
-                return "No features in input data"
+           
             js = js['features']
+            if len(js) == 0:
+                return {'addResults':None}
             if len(js) <= max_chunk:
                 bins = 1
             else:
@@ -1113,29 +1132,41 @@ class FeatureLayer(abstract.BaseAGOLClass):
                     params['token'] = self._token
                 result = self._do_post(url=uURL, param_dict=params, proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
-                messages.append(result)
+                messages.update(result)
+                
                 del params
                 del result
-            return True, messages
+            return messages
         else:
             oid_field = get_OID_field(fc)
             OIDs = get_records_with_attachments(attachment_table=attachmentTable)
             fl = create_feature_layer(fc, "%s not in ( %s )" % (oid_field, ",".join(OIDs)))
-            val, msgs = self.addFeatures(fl)
-            messages.append(msgs)
+            result = self.addFeatures(fl)
+            if result is not None:
+                messages.update(result)
+            #messages.append(msgs)
             del fl
             for oid in OIDs:
                 fl = create_feature_layer(fc, "%s = %s" % (oid_field, oid), name="layer%s" % oid)
-                val, msgs = self.addFeatures(fl)
-                for result in msgs[0]['addResults']:
+                msgs = self.addFeatures(fl)
+                for result in msgs['addResults']:
                     oid_fs = result['objectId']
                     sends = get_attachment_data(attachmentTable, sql="%s = %s" % (rel_object_field, oid))
+                    result['addAttachmentResults'] = []
                     for s in sends:
-                        messages.append(self.addAttachment(oid_fs, s['blob']))
+                        attRes = self.addAttachment(oid_fs, s['blob'])
+                     
+                        if 'addAttachmentResult' in attRes:
+                            attRes['addAttachmentResult']['AttachmentName'] = s['name']
+                            result['addAttachmentResults'].append(attRes['addAttachmentResult'])
+                        else:
+                            attRes['AttachmentName'] = s['name']
+                            result['addAttachmentResults'].append(attRes)                            
+                        #messages.append(self.addAttachment(oid_fs, s['blob']))
                         del s
                     del sends
                     del result
-                messages.append(msgs)
+                messages.update( msgs)
                 del fl
                 del oid
             del OIDs
