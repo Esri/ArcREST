@@ -73,7 +73,7 @@ class FeatureLayer(BaseAGSServer):
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
@@ -625,10 +625,7 @@ class FeatureLayer(BaseAGSServer):
                 os.remove(temp)
                 return fc
             else:
-                feats = []
-                for res in results['features']:
-                    feats.append(Feature(res))
-                return feats
+                return FeatureSet.fromJSON(json.dumps(results))
         else:
             return results
         return
@@ -649,7 +646,7 @@ class GroupLayer(FeatureLayer):
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass

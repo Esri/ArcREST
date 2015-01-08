@@ -19,6 +19,7 @@ from ..security import security
 from .._abstract import abstract
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 from ..common.general import _date_handler
+from ..common.general import FeatureSet
 from ..common import geometry
 from urlparse import urlparse
 ########################################################################
@@ -73,20 +74,20 @@ class FeatureService(abstract.BaseAGOLClass):
                 self._token_url = securityHandler.token_url
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
-               
-                self._referer_url = securityHandler.referer_url  
+
+                self._referer_url = securityHandler.referer_url
             elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
                 parsedURL = urlparse(url=url)
                 pathParts = parsedURL.path.split('/')
                 self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
-                
+
                 self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
                 self._username = securityHandler.username
                 self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url
-            
+
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
@@ -323,7 +324,7 @@ class FeatureService(abstract.BaseAGOLClass):
     @property
     def url(self):
         """ returns the url for the feature service"""
-        return self._url                 
+        return self._url
     #----------------------------------------------------------------------
     @property
     def layers(self):
@@ -428,10 +429,19 @@ class FeatureService(abstract.BaseAGOLClass):
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
-        return self._do_get(url=qurl,
+        res =  self._do_get(url=qurl,
                             param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
+        if returnIdsOnly == False and returnCountOnly == False:
+            if isinstance(res, str):
+                jd = json.loads(res)
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in jd['layers']]
+            elif isinstance(res, dict):
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in res['layers']]
+            else:
+                return res
+        return res
     #----------------------------------------------------------------------
     def query_related_records(self,
                               objectIds,

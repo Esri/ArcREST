@@ -3,6 +3,10 @@ import time
 import json
 import arcpy
 import copy
+import os
+import tempfile
+import uuid
+from spatial import json_to_featureclass
 from geometry import Point, MultiPoint, Polygon, Polyline
 from .._abstract.abstract import AbstractGeometry
 #from ..agol import featureservice as agolFeatureService
@@ -471,34 +475,186 @@ class MosaicRuleObject(object):
             }
         else:
             raise AttributeError("Invalid Mosaic Method")
+########################################################################
+class FeatureSet(object):
+    """
+    This featureSet contains Feature objects, including the values for the
+    fields requested by the user. For layers, if you request geometry
+    information, the geometry of each feature is also returned in the
+    featureSet. For tables, the featureSet does not include geometries.
+    If a spatialReference is not specified at the featureSet level, the
+    featureSet will assume the spatialReference of its first feature. If
+    the spatialReference of the first feature is also not specified, the
+    spatial reference will be UnknownCoordinateSystem.
+    """
+    _fields = None
+    _features = None
+    _hasZ = None
+    _hasM = None
+    _geometryType = None
+    _spatialReference = None
+    _objectIdFieldName = None
+    _globalIdFieldName = None
+    _displayFieldName = None
+    _allowedGeomTypes = ["esriGeometryPoint","esriGeometryMultipoint","esriGeometryPolyline",
+                         "esriGeometryPolygon","esriGeometryEnvelope"]
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 fields,
+                 features,
+                 hasZ=False,
+                 hasM=False,
+                 geometryType=None,
+                 spatialReference=None,
+                 displayFieldName=None,
+                 objectIdFieldName=None,
+                 globalIdFieldName=None):
+        """Constructor"""
+        self._fields = fields
+        self._features = features
+        self._hasZ = hasZ
+        self._hasM = hasM
+        self._geometryType = geometryType
+        self._spatialReference = spatialReference
+        self._displayFieldName = displayFieldName
+        self._objectIdFieldName = objectIdFieldName
+        self._globalIdFieldName = globalIdFieldName
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns object as dictionary"""
+        return {
+            "objectIdFieldName" : self._objectIdFieldName,
+            "displayFieldName" : self._displayFieldName,
+            "globalIdFieldName" : self._globalIdFieldName,
+            "geometryType" : self._geometryType,
+            "spatialReference" : self._spatialReference,
+            "hasZ" : self._hasZ,
+            "hasM" : self._hasM,
+            "fields" : self._fields,
+            "features" : [f.asDictionary for f in self._features]
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """featureset iterator on features in feature set"""
+        for feature in self._features:
+            yield feature
+    #----------------------------------------------------------------------
+    def __len__(self):
+        """returns the length of features in feature set"""
+        return len(self._features)
+    #----------------------------------------------------------------------
+    @staticmethod
+    def fromJSON(jsonValue):
+        """returns a featureset from a JSON string"""
+        jd = json.loads(jsonValue)
+        features = []
+        fields = jd['fields']
+        for feat in jd['features']:
+            features.append(Feature(feat))
+        return FeatureSet(fields,
+                          features,
+                          hasZ=jd['hasZ'] if 'hasZ' in jd else False,
+                          hasM=jd['hasM'] if 'hasM' in jd else False,
+                          geometryType=jd['geometryType'] if 'geometryType' in jd else None,
+                          objectIdFieldName=jd['objectIdFieldName'] if 'objectIdFieldName' in jd else None,
+                          globalIdFieldName=jd['globalIdFieldName'] if 'globalIdFieldName' in jd else None,
+                          displayFieldName=jd['displayFieldName'] if 'displayFieldName' in jd else None,
+                          spatialReference=jd['spatialReference'] if 'spatialReference' in jd else None)
+    #----------------------------------------------------------------------
+    @property
+    def fields(self):
+        """gets the featureset's fields"""
+        return self._fields
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """gets the featureset's spatial reference"""
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def hasZ(self):
+        """gets/sets the Z-property"""
+        return self._hasZ
+    #----------------------------------------------------------------------
+    @hasZ.setter
+    def hasZ(self, value):
+        """gets/sets the Z-property"""
+        if isinstance(value, bool):
+            self._hasZ = value
+    #----------------------------------------------------------------------
+    @property
+    def hasM(self):
+        """gets/set the M-property"""
+        return self._hasM
+    #----------------------------------------------------------------------
+    @hasM.setter
+    def hasM(self, value):
+        """gets/set the M-property"""
+        if isinstance(value, bool):
+            self._hasM = value
+    #----------------------------------------------------------------------
+    @property
+    def geometryType(self):
+        """gets/sets the geometry Type"""
+        return self._geometryType
+    #----------------------------------------------------------------------
+    @geometryType.setter
+    def geometryType(self, value):
+        """gets/sets the geometry Type"""
+        if value in self._allowedGeomTypes:
+            self._geometryType = value
+    #----------------------------------------------------------------------
+    @property
+    def objectIdFieldName(self):
+        """gets/sets the object id field"""
+        return self._objectIdFieldName
+    #----------------------------------------------------------------------
+    @objectIdFieldName.setter
+    def objectIdFieldName(self, value):
+        """gets/sets the object id field"""
+        self._objectIdFieldName = value
+    #----------------------------------------------------------------------
+    @property
+    def globalIdFieldName(self):
+        """gets/sets the globalIdFieldName"""
+        return self._globalIdFieldName
+    #----------------------------------------------------------------------
+    @globalIdFieldName.setter
+    def globalIdFieldName(self, value):
+        """gets/sets the globalIdFieldName"""
+        self._globalIdFieldName = value
+    #----------------------------------------------------------------------
+    @property
+    def displayFieldName(self):
+        """gets/sets the displayFieldName"""
+        return self._displayFieldName
+    #----------------------------------------------------------------------
+    @displayFieldName.setter
+    def displayFieldName(self, value):
+        """gets/sets the displayFieldName"""
+        self._displayFieldName = value
+    #----------------------------------------------------------------------
+    def save(self, saveLocation, outName):
+        """
+        Saves a featureset object to a feature class
+        Input:
+           saveLocation - output location of the data
+           outName - name of the table the data will be saved to
+        """
+        tempDir =  tempfile.gettempdir()
+        tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().get_hex())
+        with open(tempFile, 'wb') as writer:
+            writer.write(str(self))
+            writer.flush()
+            writer.close()
+        del writer
+        res = json_to_featureclass(json_file=tempFile,
+                                   out_fc=os.path.join(saveLocation, outName))
+        os.remove(tempFile)
+        return res

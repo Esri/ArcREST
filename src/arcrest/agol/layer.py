@@ -19,6 +19,7 @@ from ..common.spatial import get_OID_field, get_records_with_attachments
 from ..common.spatial import create_feature_layer, merge_feature_class
 from ..common.spatial import featureclass_to_json, create_feature_class
 from ..common.spatial import get_attachment_data
+from ..common.general import FeatureSet
 import featureservice
 import os
 import json
@@ -87,6 +88,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _supportsAttachmentsByUploadId = None
     _editFieldsInfo = None
     _serverURL = None
+    _supportsValidateSql = None
+    _supportsCoordinatesQuantization = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -106,19 +109,19 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
-                self._referer_url = securityHandler.referer_url  
+                self._referer_url = securityHandler.referer_url
             elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
                 parsedURL = urlparse(url=url)
                 pathParts = parsedURL.path.split('/')
                 self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
-                
+
                 self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
                 self._username = securityHandler.username
                 self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url
-                
+
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
@@ -172,7 +175,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
     @property
     def url(self):
         """ returns the url for the feature layer"""
-        return self._url        
+        return self._url
     #----------------------------------------------------------------------
     @property
     def supportsCalculate(self):
@@ -181,14 +184,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
             self.__init()
         return self._supportsCalculate
     #----------------------------------------------------------------------
-    
+
     @property
     def editFieldsInfo(self):
         """ returns edit field info """
         if self._editFieldsInfo is None:
             self.__init()
         return self._editFieldsInfo
-        #----------------------------------------------------------------------    
+        #----------------------------------------------------------------------
     @property
     def supportsAttachmentsByUploadId(self):
         """ returns is supports attachments by uploads id """
@@ -503,6 +506,16 @@ class FeatureLayer(abstract.BaseAGOLClass):
         return self._useStandardizedQueries
     #----------------------------------------------------------------------
     @property
+    def supportsValidateSql(self):
+        """returns the supports validate sql calls"""
+        return self._supportsValidateSql
+    #----------------------------------------------------------------------
+    @property
+    def supportsCoordinatesQuantization(self):
+        """gets the supports coordinates quantization value"""
+        return self._supportsCoordinatesQuantization
+    #----------------------------------------------------------------------
+    @property
     def securityHandler(self):
         """ gets the security handler """
         return self._securityHandler
@@ -712,10 +725,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 os.remove(temp)
                 return fc
             else:
-                feats = []
-                for res in results['features']:
-                    feats.append(Feature(res))
-                return feats
+                return FeatureSet.fromJSON(json.dumps(results))
         else:
             return results
         return
@@ -975,10 +985,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['objectIds'] = objectIds
         if not self._token is None:
             params['token'] = self._token
-           
+
         result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
-        
+
         return result
     #----------------------------------------------------------------------
     def applyEdits(self,

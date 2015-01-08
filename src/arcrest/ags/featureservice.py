@@ -49,7 +49,7 @@ class FeatureService(BaseAGSServer):
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
@@ -314,4 +314,15 @@ class FeatureService(BaseAGSServer):
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
-        return self._do_get(url=qurl, param_dict=params)
+
+        res = self._do_get(url=qurl, param_dict=params)
+        if returnIdsOnly == False and returnCountOnly == False:
+            if isinstance(res, str):
+                jd = json.loads(res)
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in jd['layers']]
+            elif isinstance(res, dict):
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in res['layers']]
+            else:
+                return res
+        return res
+
