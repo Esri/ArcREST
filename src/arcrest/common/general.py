@@ -538,7 +538,11 @@ class FeatureSet(object):
             "fields" : self._fields,
             "features" : [f.asDictionary for f in self._features]
         }
-
+    #----------------------------------------------------------------------
+    @property
+    def toJSON(self):
+        """converts the object to JSON"""
+        return json.dumps(self.value)
     #----------------------------------------------------------------------
     def __iter__(self):
         """featureset iterator on features in feature set"""
@@ -658,3 +662,9 @@ class FeatureSet(object):
                                    out_fc=os.path.join(saveLocation, outName))
         os.remove(tempFile)
         return res
+    #----------------------------------------------------------------------
+    @property
+    def features(self):
+        """gets the features in the FeatureSet"""
+        return self._features
+

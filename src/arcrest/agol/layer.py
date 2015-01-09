@@ -908,8 +908,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
         """
            updates an existing feature in a feature service layer
            Input:
-              feature - feature object(s) to get updated.  A single feature
-                        or a list of feature objects can be passed
+              feature - feature object(s) to get updated.  A single
+                        feature, a list of feature objects can be passed,
+                        or a FeatureSet object.
            Output:
               dictionary of result messages
         """
@@ -922,13 +923,22 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if self._token is not None:
             params['token'] = self._token
         if isinstance(features, Feature):
-            params['features'] = json.dumps([features.asDictionary])
+            params['features'] = json.dumps([features.asDictionary],
+                                            default=_date_handler
+                                            )
         elif isinstance(features, list):
             vals = []
             for feature in features:
                 if isinstance(feature, Feature):
                     vals.append(feature.asDictionary)
-            params['features'] = json.dumps(vals)
+            params['features'] = json.dumps(vals,
+                                            default=_date_handler
+                                            )
+        elif isinstance(features, FeatureSet):
+            params['features'] = json.dumps(
+                [feature.asDictionary for feature in features.features],
+                default=_date_handler
+            )
         else:
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
@@ -1044,7 +1054,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         """ Adds a single feature to the service
            Inputs:
               feature - list of common.Feature object or a single
-                        common.Feature Object
+                        common.Feature Object or a FeatureSet object
               gdbVersion - Geodatabase version to apply the edits
               rollbackOnFailure - Optional parameter to specify if the
                                   edits should be applied only if all
@@ -1072,6 +1082,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                             default=_date_handler)
         elif isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
+                                            default=_date_handler)
+        elif isinstance(features, FeatureSet):
+            params['features'] = json.dumps([feature.asDictionary for feature in feature.features],
                                             default=_date_handler)
         else:
             return None
@@ -1151,7 +1164,67 @@ class FeatureLayer(abstract.BaseAGOLClass):
             del OIDs
             return messages
 
+    #----------------------------------------------------------------------
+    def calculate(self, where, calcExpression, sqlFormat="standard"):
+        """
+        The calculate operation is performed on a feature service layer
+        resource. It updates the values of one or more fields in an
+        existing feature service layer based on SQL expressions or scalar
+        values. The calculate operation can only be used if the
+        supportsCalculate property of the layer is true.
+        Neither the Shape field nor system fields can be updated using
+        calculate. System fields include ObjectId and GlobalId.
+        See Calculate a field for more information on supported expressions
 
+        Inputs:
+           where - A where clause can be used to limit the updated records.
+                   Any legal SQL where clause operating on the fields in
+                   the layer is allowed.
+           calcExpression - The array of field/value info objects that
+                            contain the field or fields to update and their
+                            scalar values or SQL expression.  Allowed types
+                            are dictionary and list.  List must be a list
+                            of dictionary objects.
+                            Calculation Format is as follows:
+                               {"field" : "<field name>",
+                               "value" : "<value>"}
+           sqlFormat - The SQL format for the calcExpression. It can be
+                       either standard SQL92 (standard) or native SQL
+                       (native). The default is standard.
+                       Values: standard, native
+        Output:
+           JSON as string
+        Usage:
+        >>>sh = arcrest.AGOLTokenSecurityHandler("user", "pw")
+        >>>fl = arcrest.agol.FeatureLayer(url="someurl",
+                                     securityHandler=sh, initialize=True)
+        >>>print fl.calculate(where="OBJECTID < 2",
+                              calcExpression={"field": "ZONE",
+                                              "value" : "R1"})
+        {'updatedFeatureCount': 1, 'success': True}
+        """
+        url = self._url + "/calculate"
+        params = {
+            "f" : "json",
+            "where" : where,
+
+        }
+        if isinstance(calcExpression, dict):
+            params["calcExpression"] = json.dumps([calcExpression],
+                                                  default=_date_handler)
+        elif isinstance(calcExpression, list):
+            params["calcExpression"] = json.dumps(calcExpression,
+                                                  default=_date_handler)
+        if self._token is not None:
+            params['token'] = self._token
+        if sqlFormat.lower() in ['native', 'standard']:
+            params['sqlFormat'] = sqlFormat.lower()
+        else:
+            params['sqlFormat'] = "standard"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
 ########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""
