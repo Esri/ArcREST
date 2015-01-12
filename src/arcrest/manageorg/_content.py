@@ -213,7 +213,7 @@ class FeatureContent(BaseAGOLClass):
             self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -420,7 +420,7 @@ class Item(BaseAGOLClass):
         self._itemId = itemId
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -1077,7 +1077,7 @@ class UserItems(BaseAGOLClass):
             self._baseUrl = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
     #----------------------------------------------------------------------
@@ -1332,13 +1332,17 @@ class UserContent(BaseAGOLClass):
     _securityHandler = None
     _proxy_url = None
     _proxy_port = None
+    _currentFolder = None
+    _folders = None
+    _items = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
                  securityHandler,
-                 username=None,
+                 username,
                  proxy_url=None,
-                 proxy_port=None):
+                 proxy_port=None,
+                 initialize=False):
         """Constructor"""
         if username is None and not securityHandler is None:
             username = securityHandler.username
@@ -1349,7 +1353,7 @@ class UserContent(BaseAGOLClass):
         self._username = username
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
 
@@ -1359,6 +1363,27 @@ class UserContent(BaseAGOLClass):
         else:
             self._baseUrl = url
     #----------------------------------------------------------------------
+    def listUserContent(self, username, folderId=None):
+        """
+        Gets the user's content in the folder (if given)
+        If the folderId is None, the root content will be returned as a
+        dictionary object.
+        Input:
+           username - name of the user to look at it's content
+           folderId - unique folder Id
+        Output:
+           JSON object as dictionary
+        """
+        url = self._baseUrl + "/%s" % username
+        if folderId is not None:
+            url += "/%s" % folderId
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_get(url=url, param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
     @property
     def username(self):
         """gets/sets the username"""
@@ -1729,7 +1754,7 @@ class UserContent(BaseAGOLClass):
     def deleteItem(self, item_id,folder=None,force_delete=False):
         """ deletes an agol item by it's ID """
 
-        url = '{}/content/users/{}'.format(self._baseUrl, self._username )
+        url = '{}/{}'.format(self._baseUrl, self._username )
         if folder:
             url += '/' + folder
 
@@ -1752,7 +1777,7 @@ class UserContent(BaseAGOLClass):
     def disableProtect(self, item_id,folder=None):
         """ Disables an items protection """
 
-        url = '{}/content/users/{}'.format(self._baseUrl, self._username )
+        url = '{}/{}'.format(self._baseUrl, self._username )
         if folder:
             url += '/' + folder
 

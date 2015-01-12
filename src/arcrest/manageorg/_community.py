@@ -22,9 +22,29 @@ class Community(BaseAGOLClass):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url        
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
+    #----------------------------------------------------------------------
+    def checkUserName(self, username):
+        """
+        Checks if a username is able to be used.
+
+        Inputs:
+           username - name of user to create.
+        Output:
+           JSON as string
+        """
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "usernames" : username
+        }
+        url = self._url + "/checkUsernames"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def userInformation(self):
         """ returns information about the user """
@@ -39,48 +59,78 @@ class Community(BaseAGOLClass):
     #----------------------------------------------------------------------
     def getUserCommunity(self, username=None):
             """
-            The user's community are items 
-    
+            The user's community are items
+
             Inputs:
                username - name of user to query
             """
             if username is None:
                 username = self._securityHandler.username
-                
+
             url = self._url + "/users/%s" % username
-          
+
             params = {
                 "f" : "json",
                 "token" : self._securityHandler.token
             }
             return self._do_get(url=url,
-                                 header=("Accept-Encoding",""),                            
+                                 header=("Accept-Encoding",""),
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port,
-                                 compress=False)        
+                                 compress=False)
     #----------------------------------------------------------------------
-          
+    def groupSearch(self, q, start=1, num=10,
+                    sortField="title", sortOrder="asc"):
+        """
+        The Group Search operation searches for groups in the portal. The
+        search index is updated whenever groups and organizations are
+        created, updated, or deleted. There can be a lag between the time
+        that a group is updated and the time when it's reflected in the
+        search results. The results only contain groups that the user has
+        permission to access.
+        Inputs:
+           q - quest string to search
+           start - number of the first entry in response results. The
+                   default is 1
+           num - maximum number of results to return.  The maximum is 100.
+           sortField - field to sort by. Allowed values: title, owner or
+                       created.
+           sortOrder - Order of result values returned.  Values: asc or desc
+        """
+        params = {
+            "f" : "json",
+            "q" : q,
+            "num" : num,
+            "sortField" : sortField,
+            "sortOrder" : sortOrder
+        }
+        url = self._url + "/groups"
+        return self._do_post(url=url, param_dict=params,
+                            proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+
     def getGroupIDs(self, groupNames,communityInfo=None):
         """
            This function retrieves the group IDs
-        
+
            Inputs:
               group_names - tuple of group names
-        
+
            Output:
               dict - list of group IDs
         """
         group_ids=[]
         if communityInfo is None:
-            communityInfo = self.getUserCommunity()        
-    
+            communityInfo = self.getUserCommunity()
+
         if 'groups' in communityInfo:
             for gp in communityInfo['groups']:
                 if gp['title'] in groupNames:
                     group_ids.append(gp['id'])
         del communityInfo
-        return group_ids        
+        return group_ids
     #----------------------------------------------------------------------
     def createGroup(self,
                     title,
@@ -153,10 +203,9 @@ class Community(BaseAGOLClass):
         url = self._url + "/createGroup"
         parsed = urlparse.urlparse(url)
 
-
-        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
+            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
             res = self._post_multipart(host=parsed.hostname,
                                        port=parsed.port,
                                        selector=parsed.path,
@@ -232,7 +281,7 @@ class Groups(BaseAGOLClass):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -257,6 +306,34 @@ class Groups(BaseAGOLClass):
         }
         return self._do_post(url=self._url + "/%s/applications/%s/accept" % (groupId,
                                                                              username),
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def addUsersToGroups(self, users, groupID):
+        """
+        The operation to Add Users to Group (POST only) is available only
+        to the group administrators, including the owner, and to the
+        administrator of the organization if the user is a member. Both
+        users and admins can be added using this operation. This is useful
+        if you wish to add users directly within an organization without
+        requiring them to accept an invitation. For example, a member of an
+        organization can add only other organization members but not public
+        users.
+
+        Inputs:
+           users - comma seperates list of users to add to a group
+           groupID - Unique id of a group
+        Output:
+           A JSON array of usernames that were not added.
+        """
+        url = self._url + "/%s/addUsers" % groupID
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "users" : users,
+        }
+        return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -660,7 +737,7 @@ class User(BaseAGOLClass):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
