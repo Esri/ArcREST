@@ -16,7 +16,7 @@ if __name__ == "__main__":
                                                        password)
     #   Create the administration connection
     #
-    admin = arcrest.manageagol.Administration(url, securityHandler)
+    admin = arcrest.manageorg.Administration(url, securityHandler)
     #   Connect to the portal
     #
     portal = admin.portals(portalId)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     #   Provide the Publish parameters
     #
 
-    publishParameters = arcrest.manageagol.PublishSDParmaeters(tags=tags)
+    publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=tags)
     #   Enter in the username you wish to load the item to
     #
     usercontent = content.usercontent(username=username)
