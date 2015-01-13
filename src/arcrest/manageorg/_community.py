@@ -834,11 +834,11 @@ class User(BaseAGOLClass):
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        return self._do_get(
-            url = self._url + "/%s/delete" % username,
-            param_dict=params,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        url = self._url + "/%s/delete" % username
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def disable(self, username):
         """
