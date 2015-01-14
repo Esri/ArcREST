@@ -5,7 +5,7 @@ from ..security import security
 from .._abstract.abstract import DynamicData, DataSource
 from ..common.spatial import scratchGDB, scratchFolder, featureclass_to_json, json_to_featureclass
 from ..common import filters
-from ..common.general import _date_handler, _unicode_convert, Feature
+from ..common.general import _date_handler, _unicode_convert, Feature, FeatureSet
 ########################################################################
 class FeatureLayer(BaseAGSServer):
     """
@@ -73,7 +73,7 @@ class FeatureLayer(BaseAGSServer):
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
@@ -403,7 +403,8 @@ class FeatureLayer(BaseAGSServer):
             params['gdbVersion'] = gdbVersion
         if isinstance(rollbackOnFailure, bool):
             params['rollbackOnFailure'] = rollbackOnFailure
-        if isinstance(features, list):
+        if isinstance(features, list) or \
+           isinstance(features, FeatureSet):
             params['features'] = json.dumps([feature.asDictionary for feature in features],
                                             default=_date_handler)
         elif isinstance(features, Feature):
@@ -479,7 +480,9 @@ class FeatureLayer(BaseAGSServer):
            associated feature layer or table in a single call.
            Inputs:
               addFeatures - The array of features to be added.  These
-                            features should be common.Feature objects
+                            features should be common.general.Feature
+                            objects, or they should be a
+                            common.general.FeatureSet object.
               updateFeatures - The array of features to be updateded.
                                These features should be common.Feature
                                objects
@@ -503,6 +506,9 @@ class FeatureLayer(BaseAGSServer):
             params['token'] = self._token
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
+            params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
+                                        default=_date_handler)
+        elif isinstance(addFeatures, FeatureSet):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
                                         default=_date_handler)
         if len(updateFeatures) > 0 and \
@@ -544,6 +550,9 @@ class FeatureLayer(BaseAGSServer):
                 if isinstance(feature, Feature):
                     vals.append(feature.asDictionary)
             params['features'] = json.dumps(vals)
+        elif isinstance(features, FeatureSet):
+            params['features'] = json.dumps([f.asDictionary for f in features],
+                                            default=_date_handler)
         else:
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
@@ -625,14 +634,71 @@ class FeatureLayer(BaseAGSServer):
                 os.remove(temp)
                 return fc
             else:
-                feats = []
-                for res in results['features']:
-                    feats.append(Feature(res))
-                return feats
+                return FeatureSet.fromJSON(json.dumps(results))
         else:
             return results
         return
+    #----------------------------------------------------------------------
+    def calculate(self, where, calcExpression, sqlFormat="standard"):
+        """
+        The calculate operation is performed on a feature service layer
+        resource. It updates the values of one or more fields in an
+        existing feature service layer based on SQL expressions or scalar
+        values. The calculate operation can only be used if the
+        supportsCalculate property of the layer is true.
+        Neither the Shape field nor system fields can be updated using
+        calculate. System fields include ObjectId and GlobalId.
+        See Calculate a field for more information on supported expressions
 
+        Inputs:
+           where - A where clause can be used to limit the updated records.
+                   Any legal SQL where clause operating on the fields in
+                   the layer is allowed.
+           calcExpression - The array of field/value info objects that
+                            contain the field or fields to update and their
+                            scalar values or SQL expression.  Allowed types
+                            are dictionary and list.  List must be a list
+                            of dictionary objects.
+                            Calculation Format is as follows:
+                               {"field" : "<field name>",
+                               "value" : "<value>"}
+           sqlFormat - The SQL format for the calcExpression. It can be
+                       either standard SQL92 (standard) or native SQL
+                       (native). The default is standard.
+                       Values: standard, native
+        Output:
+           JSON as string
+        Usage:
+        >>>sh = arcrest.AGOLTokenSecurityHandler("user", "pw")
+        >>>fl = arcrest.agol.FeatureLayer(url="someurl",
+                                     securityHandler=sh, initialize=True)
+        >>>print fl.calculate(where="OBJECTID < 2",
+                              calcExpression={"field": "ZONE",
+                                              "value" : "R1"})
+        {'updatedFeatureCount': 1, 'success': True}
+        """
+        url = self._url + "/calculate"
+        params = {
+            "f" : "json",
+            "where" : where,
+
+        }
+        if isinstance(calcExpression, dict):
+            params["calcExpression"] = json.dumps([calcExpression],
+                                                  default=_date_handler)
+        elif isinstance(calcExpression, list):
+            params["calcExpression"] = json.dumps(calcExpression,
+                                                  default=_date_handler)
+        if self._token is not None:
+            params['token'] = self._token
+        if sqlFormat.lower() in ['native', 'standard']:
+            params['sqlFormat'] = sqlFormat.lower()
+        else:
+            params['sqlFormat'] = "standard"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
 ########################################################################
 class GroupLayer(FeatureLayer):
     """ represents a group layer  """
@@ -649,7 +715,7 @@ class GroupLayer(FeatureLayer):
                       security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass

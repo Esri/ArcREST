@@ -3,6 +3,126 @@ from .._abstract.abstract import BaseAGOLClass
 import os
 import urlparse
 import parameters
+import json
+########################################################################
+class UserInvite(object):
+    """
+    represents a user to invite to a user
+    """
+    _username = None
+    _password = None
+    _firstName = None
+    _lastName = None
+    _fullName = None
+    _email = None
+    _role = None
+    _allowedRole = ["account_publisher", "account_user", "account_admin"]
+    #----------------------------------------------------------------------
+    def __init__(self, username, password, firstName, lastName,
+                 email, role="account_user"):
+        """Constructor"""
+        self._username = username
+        self._password = password
+        self._firstName = firstName
+        self._lastName = lastName
+        self._fullName = firstName + " " + lastName
+        self._email = email
+        if role.lower() in self._allowedRole:
+            self._role = role
+        else:
+            raise AttributeError("Invalid Role: %s" % role)
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns object as dictionary"""
+        return {
+            "username": self._username,
+            "password": self._password,
+            "firstname": self._firstName,
+            "lastname": self._lastName,
+            "fullname":self.fullName,
+            "email":self._email,
+            "role":self.role
+        }
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """object as a string"""
+        return json.dumps(self.value)
+
+    #----------------------------------------------------------------------
+    @property
+    def firstName(self):
+        """gets/sets the first name"""
+        return self._firstName
+    #----------------------------------------------------------------------
+    @firstName.setter
+    def firstName(self, value):
+        """gets/sets the first name"""
+        if self._firstName != value:
+            self._firstName = value
+    #----------------------------------------------------------------------
+    @property
+    def lastName(self):
+        """gets/sets the last name"""
+        return self._lastName
+    #----------------------------------------------------------------------
+    @lastName.setter
+    def lastName(self, value):
+        """gets/sets the last name"""
+        if self._lastName != value:
+            self._lastName = value
+    #----------------------------------------------------------------------
+    @property
+    def email(self):
+        """gets/sets the email"""
+        return self._email
+    #----------------------------------------------------------------------
+    @email.setter
+    def email(self, value):
+        """gets/sets the email"""
+        if self._email != value:
+            self._email = value
+    #----------------------------------------------------------------------
+    @property
+    def password(self):
+        """gets/sets the password"""
+        return self._password
+    #----------------------------------------------------------------------
+    @password.setter
+    def password(self, value):
+        """gets/sets the password"""
+        if self._password != value:
+            self._password = value
+    #----------------------------------------------------------------------
+    @property
+    def username(self):
+        """gets/sets the user name"""
+        return self._username
+    #----------------------------------------------------------------------
+    @username.setter
+    def username(self, value):
+        """gets/sets the user name"""
+        if self._username != value:
+            self._username = value
+    #----------------------------------------------------------------------
+    @property
+    def role(self):
+        """gets/sets the role name"""
+        return self._role
+    #----------------------------------------------------------------------
+    @role.setter
+    def role(self, value):
+        """gets/sets the role name"""
+        if self._role != value and \
+           self._role.lower() in self._allowedRole:
+            self._role = value
+    #----------------------------------------------------------------------
+    @property
+    def fullName(self):
+        """gets the full name of the user"""
+        return self._firstName + " " + self._lastName
+
+
 ########################################################################
 class Portals(BaseAGOLClass):
     """
@@ -23,7 +143,7 @@ class Portals(BaseAGOLClass):
                  proxy_port):
         """Constructor"""
         if url.lower().find("/portals") < 0:
-            
+
             self._url = url + "/portals/%s" % portalId
             self._baseURL = url + "/portals"
         else:
@@ -32,7 +152,7 @@ class Portals(BaseAGOLClass):
         self._portalId = portalId
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -99,6 +219,31 @@ class Portals(BaseAGOLClass):
         }
         return self._do_get(url=url,
                              param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def inviteUser(self, invitationList, html, subject):
+        """Invites a user or users to a site.
+
+        Inputs:
+           invitationList - either an UserInvite object or a list of
+                            UserInvite object.
+           html - text of invite email with HTML formatting
+           subject - subject of email to send
+        """
+        url = self._baseURL + "/self/invite"
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "html" : html,
+            "subject" : subject
+        }
+        if isinstance(invitationList, UserInvite):
+            params['invitationList'] = {"invitations":[invitationList.value]}
+        elif isinstance(invitationList, list) and \
+             isinstance(invitationList[0], UserInvite):
+            params['invitationList'] = {"invitations":[iL.value for iL in invitationList]}
+        return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
