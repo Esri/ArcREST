@@ -482,6 +482,31 @@ class Groups(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def declineGroupApplication(self, groupId, username):
+        """
+        When a user applies to join a group, a group application is created
+        Group administrators can decline this application using the Decline
+        Group Application operation (POST only). This operation deletes the
+        application and creates a notification for the user indicating that
+        the user's group application was declined. The applying user will
+        not be added to the group. Available only to group owners and
+        admins.
+
+        Inputs:
+           groupId - unique Id of the group to join
+           username - name of user that will decline the invite
+
+        """
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_post(url=self._url + "/%s/applications/%s/decline" % (groupId,
+                                                                             username),
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def groupApplication(self, groupId, applicationUsername):
         """
         When an individual user applies to join a group, a group
