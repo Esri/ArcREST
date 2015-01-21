@@ -31,8 +31,8 @@ class ArcGISServerSite(BaseAGSServer):
         self._proxy_port = proxy_port
         self._url = url
         self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+        #if not securityHandler is None:
+        #    self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -196,7 +196,7 @@ class Security(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -685,8 +685,8 @@ class Services(BaseAGSServer):
         self._url = url
         self._currentURL = url
         self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+        #if not securityHandler is None:
+        #    self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -1028,7 +1028,7 @@ class Info(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -1126,8 +1126,8 @@ class Log(BaseAGSServer):
         self._proxy_url = proxy_url
         self._url = url
         self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+        #if not securityHandler is None:
+        #    self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -1275,7 +1275,7 @@ class Log(BaseAGSServer):
             params['startTime'] = startTime.strftime("%Y-%m-%dT%H:%M:%S")
         if endTime is not None and \
            isinstance(endTime, datetime):
-            params['startTime'] = endTime.strftime("%Y-%m-%dT%H:%M:%S")
+            params['endTime'] = endTime.strftime("%Y-%m-%dT%H:%M:%S")
         if level.upper() in allowed_levels:
             params['level'] = level
         if server != "*":
@@ -1355,7 +1355,7 @@ class AGSService(BaseAGSServer):
         self._currentURL = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self.__init()
     #----------------------------------------------------------------------
     def __init(self):
@@ -1616,7 +1616,7 @@ class Machines(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -1755,7 +1755,7 @@ class Machine(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._currentURL = url
         if initialize:
             self.__init()
@@ -1936,11 +1936,11 @@ class Data(BaseAGSServer):
         """
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
-        
+
     #----------------------------------------------------------------------
     @property
     def datastoreConfiguration(self):
@@ -2115,7 +2115,7 @@ class KML(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -2182,7 +2182,7 @@ class Uploads(BaseAGSServer):
             self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
