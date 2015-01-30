@@ -1930,7 +1930,7 @@ class UserContent(BaseAGOLClass):
         """
         _allowed_types = ["serviceDefinition", "shapefile", "csv",
                           "tilePackage", "featureService",
-                          "featureCollection", "fileGeodata"]
+                          "featureCollection", "fileGeodatabase"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
 
@@ -1949,7 +1949,7 @@ class UserContent(BaseAGOLClass):
         }
         if publishParameters is not None and \
            isinstance(publishParameters, BaseParameters):
-            params.update(publishParameters.value)
+            params['publishParameters'] = publishParameters.value
 
         else:
             raise AttributeError("publishParameters in an invalid type")

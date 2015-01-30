@@ -398,7 +398,7 @@ class UsageReport(BaseAGSServer):
             self.__init()
         return self._queries
     #----------------------------------------------------------------------
-    @queris.setter
+    @queries.setter
     def queries(self, value):
         """gets/sets the query values"""
         self._queries = value

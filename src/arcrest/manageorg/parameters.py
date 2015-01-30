@@ -136,7 +136,11 @@ class CreateServiceParameters(BaseParameters):
             val['xssPreventionInfo']['xssPreventionEnabled'] = self._xssPreventionEnabled
             val['xssPreventionInfo']['xssPreventionRule'] = self._xssPreventionRule
             val['xssPreventionInfo']['xssInputRule'] = self._xssInputRule
-        return json.dumps(val)
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
 ########################################################################
 class PortalParameters(BaseParameters):
     """
@@ -314,6 +318,10 @@ class ItemParameter(BaseParameters):
                 if val is not None:
                     r[a] = val
         return r
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
     #----------------------------------------------------------------------
     @property
     def title(self):
@@ -748,6 +756,10 @@ class PublishCSVParameters(BaseParameters):
                 val[k] = value
         return val
     #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
+    #----------------------------------------------------------------------
     @property
     def name(self):
         """
@@ -1026,7 +1038,11 @@ class PublishShapefileParameter(BaseParameters):
             value = getattr(self, "_" + k)
             if value is not None:
                 val[k] = value
-        return json.dumps(val)
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the object as string"""
+        return json.dumps(self.value)
 ########################################################################
 class PublishFeatureCollectionParameter(BaseParameters):
     """
@@ -1132,7 +1148,11 @@ class PublishFeatureCollectionParameter(BaseParameters):
             value = getattr(self, "_" + k)
             if value is not None:
                 val[k] = value
-        return json.dumps(val)
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        return json.dumps(self.value)
 ########################################################################
 class PublishFGDBParameter(BaseParameters):
     """
@@ -1238,7 +1258,12 @@ class PublishFGDBParameter(BaseParameters):
             value = getattr(self, "_" + k)
             if value is not None:
                 val[k] = value
-        return json.dumps(val)
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
+
 ########################################################################
 class PublishSDParmaeters(BaseParameters):
     """
@@ -1276,6 +1301,10 @@ class PublishSDParmaeters(BaseParameters):
                 if val is not None:
                     r[a] = val
         return r
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the object as string"""
+        return json.dumps(self.value)
     #----------------------------------------------------------------------
     @property
     def overwrite(self):
