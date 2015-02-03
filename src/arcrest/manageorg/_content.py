@@ -2112,7 +2112,7 @@ class UserContent(BaseAGOLClass):
         if folderId is not None:
             url += '/' + folderId
         url = url + "/items/%s/update" % itemId
-        if filePath is not None:
+        if len(files) > 0:
             parsed = urlparse.urlparse(url)
             res = self._post_multipart(host=parsed.hostname,
                                                selector=parsed.path,
