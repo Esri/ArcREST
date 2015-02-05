@@ -42,7 +42,7 @@ class Services(BaseAGOLClass):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
                 if not securityHandler is None:
-                    self._referer_url = securityHandler.referer_url  
+                    self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Invalid Security Handler, " + \
                                      "only AGOLTokenSecurityHandler is accepted")
@@ -120,7 +120,6 @@ class Services(BaseAGOLClass):
         res = self._do_get(url=uURL, param_dict=params,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
-
         for k, v in res.iteritems():
             if k == "services":
                 for item in v:
@@ -132,14 +131,14 @@ class Services(BaseAGOLClass):
                                            proxy_port=self._proxy_port)
                             )
                     else:
+                        surl = uURL + r"/%s/%s" % (item['adminServiceInfo']['name'],
+                                            item['adminServiceInfo']['type'])
                         self._services.append(
-                        AdminFeatureService(url=uURL + r"/%s/%s" % (item['adminServiceInfo']['name'],
-                                                                   item['adminServiceInfo']['type']),
-                                            securityHandler=self._securityHandler,
-                                            initialize=False,
-                                            proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
-                    )
+                            AdminFeatureService(url=surl,
+                                                securityHandler=self._securityHandler,
+                                                initialize=True,
+                                                proxy_url=self._proxy_url,
+                                                proxy_port=self._proxy_port))
         return self._services
 ########################################################################
 class AdminMapService(BaseAGOLClass):
@@ -191,7 +190,7 @@ class AdminMapService(BaseAGOLClass):
             self._token = securityHandler.token
             self._securityHandler = securityHandler
             if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url  
+                self._referer_url = securityHandler.referer_url
         else:
             raise AttributeError("Security Handler must be security.AGOLTokenSecurityHandler")
         self._proxy_url = proxy_url
@@ -480,6 +479,8 @@ class AdminFeatureService(BaseAGOLClass):
     _spatialReference = None
     _syncEnabled = None
     _dict = None
+    _json = None
+    _error = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -494,7 +495,7 @@ class AdminFeatureService(BaseAGOLClass):
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url  
+                self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         else:
             raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler")
@@ -515,6 +516,7 @@ class AdminFeatureService(BaseAGOLClass):
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._dict = json_dict
+        self._json = json.dumps(self._dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -535,6 +537,13 @@ class AdminFeatureService(BaseAGOLClass):
                 print k, " - attribute not implmented in AdminFeatureService."
     #----------------------------------------------------------------------
     @property
+    def error(self):
+        """gets the error message"""
+        if self._error is None:
+            self.__init()
+        return self._error
+    #----------------------------------------------------------------------
+    @property
     def securityHandler(self):
         """ returns the security handler """
         return self._securityHandler
@@ -548,6 +557,12 @@ class AdminFeatureService(BaseAGOLClass):
                 self._token = value.token
             else:
                 raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler")
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """return object as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     @property
     def status(self):
@@ -926,6 +941,11 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _supportsAttachmentsByUploadId = None
     _editingInfo = None
     _supportsCalculate = None
+    _supportsValidateSql = None
+    _supportsCoordinatesQuantization = None
+    _json = None
+    _json_dict = None
+    _error = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -939,12 +959,18 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url  
+                self._referer_url = securityHandler.referer_url
                 self._token = securityHandler.token
         else:
             raise AttributeError("This object only accepts security.AGOLTokenSecurityHandler as a security option")
         if initialize:
             self.__init()
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the object as a string"""
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
@@ -968,8 +994,11 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         }
         if self._token is not None:
             params['token'] = self._token
+
         json_dict = self._do_get(self._url, params, proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json = json.dumps(json_dict)
+        self._json_dict = json_dict
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -989,6 +1018,28 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         uURL = self._url + "/refresh"
         return self._do_get(url=uURL, param_dict=params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    @property
+    def supportsValidateSql(self):
+        """gets the support validate sql value"""
+        if self._supportsValidateSql is None:
+            self.__init()
+        return self._supportsValidateSql
+    #----------------------------------------------------------------------
+    @property
+    def error(self):
+        """returns error message if error occurs"""
+        if self._error is None:
+            self.__init()
+        return self._error
+    #----------------------------------------------------------------------
+    @property
+    def supportsCoordinatesQuantization(self):
+        """gets the supportsCoordinatesQuantization value"""
+        if self._supportsCoordinatesQuantization is None:
+            self.__init()
+        return self._supportsCoordinatesQuantization
+
     #----------------------------------------------------------------------
     @property
     def editFieldsInfo(self):
