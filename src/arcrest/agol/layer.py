@@ -20,6 +20,7 @@ from ..common.spatial import create_feature_layer, merge_feature_class
 from ..common.spatial import featureclass_to_json, create_feature_class
 from ..common.spatial import get_attachment_data
 from ..common.general import FeatureSet
+from ..hostedservice import AdminFeatureServiceLayer
 import featureservice
 import os
 import json
@@ -178,14 +179,30 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def url(self):
         """ returns the url for the feature layer"""
         return self._url
-    
+    #----------------------------------------------------------------------
+    @property
+    def administration(self):
+        """returns the hostservice object to manage the back-end functions"""
+        url = self._url
+        res = search("/rest/", url).span()
+        addText = "admin/"
+        part1 = url[:res[1]]
+        part2 = url[res[1]:]
+        adminURL = "%s%s%s" % (part1, addText, part2)
+
+        res = AdminFeatureServiceLayer(url=url,
+                                       securityHandler=self._securityHandler,
+                                       proxy_url=self._proxy_url,
+                                       proxy_port=self._proxy_port,
+                                       initialize=False)
+        return res
     #----------------------------------------------------------------------
     @property
     def supportsValidateSql(self):
         """ returns the supports calculate values """
         if self._supportsValidateSql is None:
             self.__init()
-        return self._supportsValidateSql    
+        return self._supportsValidateSql
 
     #----------------------------------------------------------------------
     @property
@@ -193,7 +210,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         """ returns the supports calculate values """
         if self._supportsCoordinatesQuantization is None:
             self.__init()
-        return self._supportsCoordinatesQuantization   
+        return self._supportsCoordinatesQuantization
     #----------------------------------------------------------------------
     @property
     def supportsCalculate(self):
@@ -202,7 +219,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             self.__init()
         return self._supportsCalculate
     #----------------------------------------------------------------------
-    
+
 
     @property
     def editFieldsInfo(self):
@@ -1135,7 +1152,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             max_chunk = 250
             js = json.loads(self._unicode_convert(
                  featureclass_to_json(fc)))
-           
+
             js = js['features']
             if len(js) == 0:
                 return {'addResults':None}
@@ -1157,7 +1174,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 result = self._do_post(url=uURL, param_dict=params, proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
                 messages.update(result)
-                
+
                 del params
                 del result
             return messages
@@ -1179,13 +1196,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
                     result['addAttachmentResults'] = []
                     for s in sends:
                         attRes = self.addAttachment(oid_fs, s['blob'])
-                     
+
                         if 'addAttachmentResult' in attRes:
                             attRes['addAttachmentResult']['AttachmentName'] = s['name']
                             result['addAttachmentResults'].append(attRes['addAttachmentResult'])
                         else:
                             attRes['AttachmentName'] = s['name']
-                            result['addAttachmentResults'].append(attRes)                            
+                            result['addAttachmentResults'].append(attRes)
                         #messages.append(self.addAttachment(oid_fs, s['blob']))
                         del s
                     del sends

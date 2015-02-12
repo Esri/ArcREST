@@ -1,5 +1,7 @@
 from .._abstract.abstract import BaseAGSServer
-import json, os
+import json
+import os
+from urlparse import urlparse
 import uuid
 from ..security import security
 from .._abstract.abstract import DynamicData, DataSource
@@ -415,6 +417,65 @@ class FeatureLayer(BaseAGSServer):
         return self._do_post(url=url,
                              param_dict=params, proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def addAttachments(self,
+                       featureId,
+                       attachment,
+                       gdbVersion=None,
+                       uploadId=None):
+        """
+        This operation adds an attachment to the associated feature (POST
+        only). The addAttachment operation is performed on a feature
+        service feature resource.
+        Since this request uploads a file, it must be a multipart request
+        pursuant to IETF RFC1867.
+        This operation is available only if the layer has advertised that
+        it has attachments. A layer has attachments if its hasAttachments
+        property is true.
+        See the Limiting upload file size and file types section under
+        Uploads to learn more about default file size and file type
+        limitations imposed on attachments.
+        The result of this operation is an array of edit result objects.
+        Each edit result indicates whether or not the edit was successful.
+        If successful, the objectId of the result is the ID of the new
+        attachment. If unsuccessful, it also includes an error code and
+        error description.
+        You can provide arguments to the addAttachment operation as defined
+        in the following parameters table:
+
+        Inputs:
+           attachment - The file to be uploaded as a new feature
+             attachment. The content type, size, and name of the attachment
+             will be derived from the uploaded file.
+           gdbVersion - Geodatabase version to apply the edits. This
+             parameter applies only if the isDataVersioned property of the
+             layer is true. If the gdbVersion parameter is not specified,
+             edits are made to the published map's version.
+           uploadId - This option was added to the July 2014 of ArcGIS
+             Online. It is not available with ArcGIS Server. The ID of the
+             attachment that has already been uploaded to the server. This
+             parameter only applies if the supportsAttachmentsByUploadId
+             property of the layer is true.
+        """
+        if self.hasAttachments == True:
+            url = self._url + "/%s/addAttachment" % featureId
+            params = {'f':'json'}
+            if not self._token is None:
+                params['token'] = self._token
+            parsed = urlparse(url)
+            files = []
+            files.append(('attachment', file_path, os.path.basename(file_path)))
+            res = self._post_multipart(host=parsed.hostname,
+                                       selector=parsed.path,
+                                       files=files,
+                                       fields=params,
+                                       port=parsed.port,
+                                       ssl=parsed.scheme.lower() == 'https',
+                                       proxy_url=self._proxy_url,
+                                       proxy_port=self._proxy_port)
+            return self._unicode_convert(res)
+        else:
+            return "Attachments are not supported for this feature service."
     #----------------------------------------------------------------------
     def deleteFeatures(self,
                        objectIds="",

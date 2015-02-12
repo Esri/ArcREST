@@ -3,15 +3,12 @@ from .._abstract.abstract import BaseAGOLClass
 import json
 from urllib import quote_plus
 import _community, _content, _marketplace, _portals, _oauth2
-
-
-
 ########################################################################
 class Administration(BaseAGOLClass):
     """  Administers the AGOL/Portal Site """
     _securityHandler = None
     _url = None
-    proxy_port = None
+    _proxy_url = None
     _proxy_port = None
     _token = None
     _currentVersion = None
@@ -227,7 +224,6 @@ class Administration(BaseAGOLClass):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port,
                             compress=False)
-
     #----------------------------------------------------------------------
     @property
     def community(self):
@@ -236,7 +232,6 @@ class Administration(BaseAGOLClass):
                                     securityHandler=self._securityHandler,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
-
     #----------------------------------------------------------------------
     @property
     def content(self):

@@ -37,6 +37,8 @@ class FeatureService(BaseAGSServer):
     _proxy_url = None
     _proxy_port = None
     _securityHandler = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False, proxy_url=None, proxy_port=None):
@@ -69,6 +71,8 @@ class FeatureService(BaseAGSServer):
         json_dict = self._do_get(self._url, param_dict,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(self._json_dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -77,6 +81,12 @@ class FeatureService(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for Feature Service."
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
@@ -325,4 +335,3 @@ class FeatureService(BaseAGSServer):
             else:
                 return res
         return res
-

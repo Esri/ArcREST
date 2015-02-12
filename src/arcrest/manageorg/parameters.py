@@ -3,6 +3,105 @@ from ..common.geometry import SpatialReference, Envelope
 import os
 import json
 ########################################################################
+class AnalyzeParameters(BaseParameters):
+    """
+    The analyzeParameters JSON object used to analyze a CSV file are
+    described below.
+
+    Inputs:
+       sourcelocale - The locale used for the geocoding service source.
+       geocodeServiceUrl - The URL of the geocoding service that supports
+                           batch geocoding.
+                           Note: ArcGIS for Portal 10.3 supports
+                           configuring multiple geocoding services. If the
+                           client application requires a specific locator,
+                           the URL of this service should be specified in
+                           this parameter.
+       sourcecountry - The two character country code associated with the
+                       geocoding service, default is "world".
+       sourcecountryhint - If first time analyzing, the hint is used. If
+                           source country is already specified than
+                           sourcecountry is used.
+    """
+    _sourcelocale = None
+    _geocodeServiceUrl = None
+    _sourcecountry = None
+    _sourcecountryhint = None
+
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 sourcelocale="en",
+                 geocodeServiceUrl=None,
+                 sourcecountry="world",
+                 sourcecountryhint=None):
+        """Constructor"""
+        self._sourcelocale = sourcelocale
+        self._geocodeServiceUrl = geocodeServiceUrl
+        self._sourcecountry = sourcecountry
+        self._sourcecountryhint = sourcecountryhint
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the object as a string"""
+        return json.dumps(self.value)
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns object as a dictionary"""
+        val = {}
+        if self.sourcelocale is not None:
+            val['sourcelocale'] = self.sourcelocale
+        if self.geocodeServiceUrl is not None:
+            val['geocodeServiceUrl'] = self.geocodeServiceUrl
+        if self.sourcecountry is not None:
+            val['sourcecountry'] = self.sourcecountry
+        if self.sourcecountryhint is not None:
+            val['sourcecountryhint'] = self.sourcecountryhint
+        return val
+    #----------------------------------------------------------------------
+    @property
+    def sourcelocale(self):
+        """gets/sets the locale for geocoding serouce source"""
+        return self._sourcelocale
+    #----------------------------------------------------------------------
+    @sourcelocale.setter
+    def sourcelocale(self, value):
+        """gets/sets the locale for geocoding serouce source"""
+        if self._sourcelocale != value:
+            self._sourcelocale = value
+    #----------------------------------------------------------------------
+    @property
+    def geocodeServiceUrl(self):
+        """gets/sets the geocodeServiceUrl"""
+        return self._geocodeServiceUrl
+    #----------------------------------------------------------------------
+    @geocodeServiceUrl.setter
+    def geocodeServiceUrl(self, value):
+        """gets/sets the geocodeServiceUrl"""
+        if self._geocodeServiceUrl != value:
+            self._geocodeServiceUrl = value
+    #----------------------------------------------------------------------
+    @property
+    def sourcecountry(self):
+        """gets/sets the sourcecountry"""
+        return self._sourcecountry
+    #----------------------------------------------------------------------
+    @sourcecountry.setter
+    def sourcecountry(self, value):
+        """gets/sets the sourcecountry"""
+        if self._sourcecountry != value:
+            self._sourcecountry = value
+    #----------------------------------------------------------------------
+    @property
+    def sourcecountryhint(self):
+        """gets/sets the sourcecountryhint"""
+        return self._sourcecountryhint
+    #----------------------------------------------------------------------
+    @sourcecountryhint.setter
+    def sourcecountryhint(self, value):
+        """gets/sets the sourcecountryhint"""
+        if self._sourcecountryhint != value:
+            self._sourcecountryhint = value
+########################################################################
 class CreateServiceParameters(BaseParameters):
     """
     The createParameters JSON object
@@ -127,7 +226,7 @@ class CreateServiceParameters(BaseParameters):
 
         }
         if self._initialExtent is not None:
-            val['initialExtent'] = self._initialExtent.value
+            val['initialExtent'] = self._initialExtent
         if self._supportedQueryFormats is not None:
             val['supportedQueryFormats'] = self._supportedQueryFormats
 
@@ -1164,9 +1263,10 @@ class PublishFGDBParameter(BaseParameters):
     _maxRecordCount = None
     _copyrightText = None
     _targetSR = None
+    _overwrite = False
     __allowed_keys = ['name', "description",
                       "maxRecordCount", "copyrightText",
-                      "layerInfo", "targetSR"]
+                      "layerInfo", "targetSR", "overwrite"]
     #----------------------------------------------------------------------
     def __init__(self,
                  name,
@@ -1174,7 +1274,8 @@ class PublishFGDBParameter(BaseParameters):
                  description="",
                  maxRecordCount=-1,
                  copyrightText="",
-                 targetSR=102100
+                 targetSR=102100,
+                 overwrite=False
                  ):
         """Constructor"""
         self._name = name
@@ -1183,6 +1284,18 @@ class PublishFGDBParameter(BaseParameters):
         self._maxRecordCount = maxRecordCount
         self._copyrightText = copyrightText
         self._targetSR = targetSR
+        self._overwrite = overwrite
+    #----------------------------------------------------------------------
+    @property
+    def overwrite(self):
+        """gets/sets the overwrite value"""
+        return self._overwrite
+    #----------------------------------------------------------------------
+    @overwrite.setter
+    def overwrite(self, value):
+        """gets/sets the overwrite value"""
+        if isinstance(value, bool):
+            self._overwrite = value
     #----------------------------------------------------------------------
     @property
     def name(self):

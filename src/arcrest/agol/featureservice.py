@@ -15,13 +15,17 @@ import urllib
 import os
 import json
 import mimetypes
+from urlparse import urlparse
+from re import search
+
 from ..security import security
 from .._abstract import abstract
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 from ..common.general import _date_handler
 from ..common.general import FeatureSet
 from ..common import geometry
-from urlparse import urlparse
+from ..hostedservice import AdminFeatureService
+
 ########################################################################
 class FeatureService(abstract.BaseAGOLClass):
     """ contains information about a feature service """
@@ -56,6 +60,8 @@ class FeatureService(abstract.BaseAGOLClass):
     _proxy_port = None
     _securityHandler = None
     _serverURL = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -105,6 +111,9 @@ class FeatureService(abstract.BaseAGOLClass):
                           }
         json_dict = self._do_get(self._url, param_dict,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        self._json_dict = json_dict
+        self._json = json.dumps(self._json_dict,
+                                default=_date_handler)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -116,8 +125,9 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
-        return json.dumps(dict(self),
-                          default=_date_handler)
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
         """ iterator generator for public values/properties
@@ -368,6 +378,23 @@ class FeatureService(abstract.BaseAGOLClass):
         if self._currentVersion is None:
             self.__init()
         return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def administration(self):
+        """returns the hostservice object to manage the back-end functions"""
+        url = self._url
+        res = search("/rest/", url).span()
+        addText = "admin/"
+        part1 = url[:res[1]]
+        part2 = url[res[1]:]
+        adminURL = "%s%s%s" % (part1, addText, part2)
+
+        res = AdminFeatureService(url=url,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port,
+                            initialize=False)
+        return res
     #----------------------------------------------------------------------
     @property
     def serviceDescription(self):

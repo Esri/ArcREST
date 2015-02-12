@@ -1,6 +1,6 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
-from parameters import ItemParameter, BaseParameters
+from parameters import ItemParameter, BaseParameters, AnalyzeParameters
 import urllib
 import urlparse
 import json
@@ -227,7 +227,7 @@ class FeatureContent(BaseAGOLClass):
                 filePath=None,
                 text=None,
                 fileType="csv",
-                analyzeParameters={}):
+                analyzeParameters=None):
         """
         The Analyze call helps a client analyze a CSV file prior to
         publishing or generating features using the Publish or Generate
@@ -256,7 +256,8 @@ class FeatureContent(BaseAGOLClass):
            file - The file to be analyzed.
            text - The text in the file to be analyzed.
            filetype - The type of input file.
-           analyzeParameters - A JSON object that provides geocoding information
+           analyzeParameters - A AnalyzeParameters object that provides
+                               geocoding information
         """
         files = []
         url = self._url + "/analyze"
@@ -267,8 +268,9 @@ class FeatureContent(BaseAGOLClass):
         }
         fileType = "csv"
         params["fileType"] = fileType
-        if analyzeParameters is not None:
-            params['analyzeParameters'] = analyzeParameters
+        if analyzeParameters is not None and\
+           isinstance(analyzeParameters, AnalyzeParameters):
+            params['analyzeParameters'] = analyzeParameters.value
 
         if os.path.isfile(filePath):
             params['text'] = open(filePath, 'rb').read()
@@ -1721,7 +1723,7 @@ class UserContent(BaseAGOLClass):
             "f" : "json",
             "token" : self._securityHandler.token,
             "outputType" : "featureService",
-            "createParameters" : val
+            "createParameters" : json.dumps(val)
         }
 
         return self._do_post(url=url,
@@ -1853,7 +1855,7 @@ class UserContent(BaseAGOLClass):
            title - name of export item
            itemId - id of the item to export
            exportFormat - out format. Values: Shapefile, CSV or File
-                          Geodatabase
+                          Geodatabase, Feature Collection, GeoJson
            exportParameters - A JSON object describing the layers to be
                               exported and the export parameters for each
                               layer.
@@ -1935,9 +1937,6 @@ class UserContent(BaseAGOLClass):
             raise AttributeError("Invalid fileType: %s" % fileType)
 
         url = self._baseUrl
-
-        #if folderID:
-            #url += '/' + folderID
 
         url = url + "/%s" % self._username
         url = url + "/publish"
@@ -2108,6 +2107,10 @@ class UserContent(BaseAGOLClass):
             v = params['thumbnail']
             del params['thumbnail']
             files.append(('thumbnail', v, os.path.basename(v)))
+        if 'metadata' in params:
+            v = params['metadata']
+            del params['metadata']
+            files.append(('metadata', v, os.path.basename(v)))
         url = self._baseUrl + "/%s" % (self._username)
         if folderId is not None:
             url += '/' + folderId
