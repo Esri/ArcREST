@@ -1975,8 +1975,6 @@ class UserContent(BaseAGOLClass):
            isinstance(publishParameters, BaseParameters):
             params['publishParameters'] = publishParameters.value
 
-        else:
-            raise AttributeError("publishParameters in an invalid type")
         if itemId is not None:
             params['itemId'] = itemId
         if text is not None and fileType.lower() == 'csv':
