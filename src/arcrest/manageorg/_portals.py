@@ -4,6 +4,433 @@ import os
 import urlparse
 import parameters
 import json
+import types
+########################################################################
+class PortalSelf(object):
+    """
+    represents the basic portal information from the portalSelf()
+    """
+    _portalSelfDict = None
+    _canSharePublic = None
+    _subscriptionInfo = None
+    _defaultExtent = None
+    _supportsHostedServices = None
+    _homePageFeaturedContentCount = None
+    _supportsOAuth = None
+    _portalName = None
+    _urlKey = None
+    _modified = None
+    _culture = None
+    _helpBase = None
+    _galleryTemplatesGroupQuery = None
+    _commentsEnabled = None
+    _databaseQuota = None
+    _id = None
+    _canSearchPublic = None
+    _customBaseUrl = None
+    _allSSL = None
+    _featuredGroupsId = None
+    _defaultBasemap = None
+    _created = None
+    _access = None
+    _httpPort = None
+    _isPortal = None
+    _canSignInArcGIS = None
+    _portalThumbnail = None
+    _httpsPort = None
+    _units = None
+    _canListPreProvisionedItems = None
+    _mfaEnabled = None
+    _featuredGroups = None
+    _thumbnail = None
+    _featuredItemsGroupQuery = None
+    _canSignInIDP = None
+    _storageUsage = None
+    _rotatorPanels = None
+    _description = None
+    _homePageFeaturedContent = None
+    _canProvisionDirectPurchase = None
+    _canListData = None
+    _ipCntryCode = None
+    _user = None
+    _helpMap = None
+    _colorSetsGroupQuery = None
+    _canListApps = None
+    _portalProperties = None
+    _portalHostname = None
+    _useStandardizedQuery = None
+    _stylesGroupQuery = None
+    _symbolSetsGroupQuery = None
+    _name = None
+    _storageQuota = None
+    _canShareBingPublic = None
+    _maxTokenExpirationMinutes = None
+    _layerTemplatesGroupQuery = None
+    _staticImagesUrl = None
+    _databaseUsage = None
+    _showHomePageDescription = None
+    _availableCredits = None
+    _helperServices = None
+    _templatesGroupQuery = None
+    _mfaAdmins = None
+    _basemapGalleryGroupQuery = None
+    _region = None
+    _portalMode = None
+    _json_dict = None
+    _json = None
+    #----------------------------------------------------------------------
+    def __init__(self, portalSelfDict):
+        """Constructor"""
+        self._json_dict = portalSelfDict
+        for k,v in portalSelfDict.iteritems():
+            try:
+                setattr(self, "_"+ k, v)
+            except:
+                print "Cannot set parameter %s" % k
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """"""
+        attributes = [attr for attr in dir(self)
+              if not attr.startswith('__') and \
+              not attr.startswith('_') and \
+              not isinstance(getattr(self, attr), (types.MethodType,
+                                                   types.BuiltinFunctionType,
+                                                   types.BuiltinMethodType)
+                             )
+              ]
+        for att in attributes:
+            yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """gets the object as a string"""
+        if self._json_dict is not None:
+            return json.dumps(self._json_dict)
+        return "{}"
+    #----------------------------------------------------------------------
+    @property
+    def canSharePublic(self):
+        """gets the can share public value"""
+        return self._canSharePublic
+    #----------------------------------------------------------------------
+    @property
+    def subscriptionInfo(self):
+        """returns the subscription information"""
+        return self._subscriptionInfo
+    #----------------------------------------------------------------------
+    @property
+    def defaultExtent(self):
+        """returns the default extent"""
+        return self._defaultExtent
+    #----------------------------------------------------------------------
+    @property
+    def supportsHostedServices(self):
+        """returns the support of hosted services"""
+        return self._supportsHostedServices
+    #----------------------------------------------------------------------
+    @property
+    def homePageFeaturedContentCount(self):
+        """returns the homePageFeaturedContentCount value"""
+        return self._homePageFeaturedContentCount
+    #----------------------------------------------------------------------
+    @property
+    def supportsOAuth(self):
+        """returns the supports OAuth value"""
+        return self._supportsOAuth
+    #----------------------------------------------------------------------
+    @property
+    def portalName(self):
+        """returns the portal name"""
+        return self._portalName
+    #----------------------------------------------------------------------
+    @property
+    def urlKey(self):
+        """returns the url key"""
+        return self._urlKey
+    #----------------------------------------------------------------------
+    @property
+    def modified(self):
+        """returns the modified value"""
+        return self._modified
+    #----------------------------------------------------------------------
+    @property
+    def culture(self):
+        """returns the culture value"""
+        return self._culture
+    #----------------------------------------------------------------------
+    @property
+    def helpBase(self):
+        """returns the helpBase value"""
+        return self._helpBase
+    #----------------------------------------------------------------------
+    @property
+    def galleryTemplatesGroupQuery(self):
+        """returns the value"""
+        return self._galleryTemplatesGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def commentsEnabled(self):
+        """returns the comments enable value"""
+        return self._commentsEnabled
+    #----------------------------------------------------------------------
+    @property
+    def databaseQuota(self):
+        """returns the database quota"""
+        return self._databaseQuota
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        """returns the portal id"""
+        return self._id
+    #----------------------------------------------------------------------
+    @property
+    def canSearchPublic(self):
+        """returns the can search public value"""
+        return self._canSearchPublic
+    #----------------------------------------------------------------------
+    @property
+    def customBaseUrl(self):
+        """returns the base url"""
+        return self._customBaseUrl
+    #----------------------------------------------------------------------
+    @property
+    def allSSL(self):
+        """gets the all SSL value"""
+        return self._allSSL
+    #----------------------------------------------------------------------
+    @property
+    def featuredGroupsId(self):
+        """returns the feature groups id"""
+        return self._featuredGroupsId
+    #----------------------------------------------------------------------
+    @property
+    def defaultBasemap(self):
+        """returns the default basemap"""
+        return self._defaultBasemap
+    #----------------------------------------------------------------------
+    @property
+    def created(self):
+        """returns the created date"""
+        return self._created
+    #----------------------------------------------------------------------
+    @property
+    def access(self):
+        """returns the access value"""
+        return self._access
+    #----------------------------------------------------------------------
+    @property
+    def httpPort(self):
+        """returns the http Port"""
+        return self._httpPort
+    #----------------------------------------------------------------------
+    @property
+    def isPortal(self):
+        """returns the isPortal value"""
+        return self._isPortal
+    #----------------------------------------------------------------------
+    @property
+    def canSignInArcGIS(self):
+        """returns the value"""
+        return self._canSignInArcGIS
+    #----------------------------------------------------------------------
+    @property
+    def portalThumbnail(self):
+        """returns the portal thumbnail"""
+        return self._portalThumbnail
+    #----------------------------------------------------------------------
+    @property
+    def httpsPort(self):
+        """returns the https port"""
+        return self._httpsPort
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        """returns the default units"""
+        return self._units
+    #----------------------------------------------------------------------
+    @property
+    def canListPreProvisionedItems(self):
+        """returns the value"""
+        return self._canListPreProvisionedItems
+    #----------------------------------------------------------------------
+    @property
+    def mfaEnabled(self):
+        """returns the mfe enabled value"""
+        return self._mfaEnabled
+    #----------------------------------------------------------------------
+    @property
+    def featureGroups(self):
+        """returns feature groups value"""
+        return self._featuredGroups
+    #----------------------------------------------------------------------
+    @property
+    def thumbnail(self):
+        """returns the thumbnail value"""
+        return self._thumbnail
+    #----------------------------------------------------------------------
+    @property
+    def featuredItemsGroupQuery(self):
+        """returns the feature Items group query"""
+        return self._featuredItemsGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def canSignInIDP(self):
+        """return can signin IDP"""
+        return self._canSignInIDP
+    #----------------------------------------------------------------------
+    @property
+    def storageUsage(self):
+        """returns the storage usage"""
+        return self._storageUsage
+    #----------------------------------------------------------------------
+    @property
+    def rotatorPanels(self):
+        """returns the rotator panels"""
+        return self._rotatorPanels
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """returns the portal description"""
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def homePageFeatureContent(self):
+        """return home page feature content"""
+        return self._homePageFeaturedContent
+    #----------------------------------------------------------------------
+    @property
+    def canProvisionDirectPurchase(self):
+        """returns the provision direct purchase"""
+        return self._canProvisionDirectPurchase
+    #----------------------------------------------------------------------
+    @property
+    def canListData(self):
+        """returns the canListData value"""
+        return self._canListData
+    #----------------------------------------------------------------------
+    @property
+    def ipCntryCode(self):
+        """returns the ip cntrycode"""
+        return self._ipCntryCode
+    #----------------------------------------------------------------------
+    @property
+    def user(self):
+        """returns the user value"""
+        return self._user
+    #----------------------------------------------------------------------
+    @property
+    def helpMap(self):
+        """returns the helpmap value"""
+        return self._helpMap
+    #----------------------------------------------------------------------
+    @property
+    def colorSetsGroupQuery(self):
+        """returns the colorsets group query"""
+        return self._colorSetsGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def canListApps(self):
+        """returns the can list apps value"""
+        return self._canListApps
+    #----------------------------------------------------------------------
+    @property
+    def portalProperties(self):
+        """returns the portal properties"""
+        return self._portalProperties
+    #----------------------------------------------------------------------
+    @property
+    def portalHostname(self):
+        """returns the portal hostname"""
+        return self._portalHostname
+    #----------------------------------------------------------------------
+    @property
+    def useStandardizedQuery(self):
+        """returns the user standardized query value"""
+        return self._useStandardizedQuery
+    #----------------------------------------------------------------------
+    @property
+    def stylesGroupQuery(self):
+        """returns the styles group query"""
+        return self._stylesGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def symbolSetsGroupQuery(self):
+        """returns the symbolsets group query"""
+        return self._symbolSetsGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """returns the portal name"""
+        return  self._name
+    #----------------------------------------------------------------------
+    @property
+    def storageQuota(self):
+        """returns the storageQuota value"""
+        return self._storageQuota
+    #----------------------------------------------------------------------
+    @property
+    def canShareBingPublic(self):
+        """returns the canShareBingPublic value"""
+        return self._canShareBingPublic
+    #----------------------------------------------------------------------
+    @property
+    def maxTokenExpirationMinutes(self):
+        """returns the maxTokenExpirationMinutes value"""
+        return self._maxTokenExpirationMinutes
+    #----------------------------------------------------------------------
+    @property
+    def layerTemplatesGroupQuery(self):
+        """returns the layerTemplatesGroupQuery value"""
+        return self._layerTemplatesGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def staticImagesUrl(self):
+        """returns the staticImagesUrl value"""
+        return self._staticImagesUrl
+    #----------------------------------------------------------------------
+    @property
+    def databaseUsage(self):
+        """returns the databaseUsage value"""
+        return self._databaseUsage
+    #----------------------------------------------------------------------
+    @property
+    def showHomePageDescription(self):
+        """returns the show home page description value"""
+        return self._showHomePageDescription
+    #----------------------------------------------------------------------
+    @property
+    def availableCredits(self):
+        """returns the available credits"""
+        return self._availableCredits
+    #----------------------------------------------------------------------
+    @property
+    def helperServices(self):
+        """returns the helper services"""
+        return self._helperServices
+    #----------------------------------------------------------------------
+    @property
+    def templatesGroupQuery(self):
+        """returns the templates group query"""
+        return self._templatesGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def mfaAdmins(self):
+        """returns the mfaAdmins value"""
+        return self._mfaAdmins
+    #----------------------------------------------------------------------
+    @property
+    def basemapGalleryGroupQuery(self):
+        """returns the basemap gallery group query"""
+        return self._basemapGalleryGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def region(self):
+        """returns the portal region value"""
+        return self._region
+    #----------------------------------------------------------------------
+    @property
+    def portalMode(self):
+        """returns the portal's mode"""
+        return self._portalMode
 ########################################################################
 class UserInvite(object):
     """
@@ -137,24 +564,39 @@ class Portals(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
-                 portalId,
-                 securityHandler,
-                 proxy_url,
-                 proxy_port):
+                 portalId=None,
+                 securityHandler=None,
+                 proxy_url=None,
+                 proxy_port=None):
         """Constructor"""
         if url.lower().find("/portals") < 0:
-
-            self._url = url + "/portals/%s" % portalId
-            self._baseURL = url + "/portals"
-        else:
-            self._url = url + "/%s" % portalId
-            self._baseURL = url
-        self._portalId = portalId
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
+            url = url + "/portals"
+        self._baseURL = url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
+        self._securityHandler = securityHandler
+        if portalId is not None:
+            self._portalId = portalId
+            self._url = url + "/%s" % portalId
+        else:
+            portalId = self._findPortalId()
+            self._portalId = portalId
+            self._url = url + "/%s" % portalId
+    #----------------------------------------------------------------------
+    def _findPortalId(self):
+        """gets the portal id for a site if not known."""
+        url = self._baseURL + "/self"
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        res = self._do_get(url=url, param_dict=params,
+                           proxy_port=self._proxy_port,
+                           proxy_url=self._proxy_url)
+        if res.has_key('id'):
+            return res['id']
+        else:
+            raise AttributeError("Invalid URL or token")
     #----------------------------------------------------------------------
     @property
     def portalRoot(self):
@@ -307,10 +749,12 @@ class Portals(BaseAGOLClass):
         if region is not None:
             params['region'] = region
 
-        return self._do_get(url=url,
+        res =  self._do_get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
+        ps = PortalSelf(res)
+        return ps
     #----------------------------------------------------------------------
     @property
     def regions(self):

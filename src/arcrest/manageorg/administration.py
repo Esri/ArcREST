@@ -261,7 +261,7 @@ class Administration(BaseAGOLClass):
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def portals(self, portalId):
+    def portals(self, portalId=None):
         """
         returns the portals class to allow portals mofications
         """

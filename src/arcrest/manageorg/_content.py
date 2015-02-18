@@ -1365,7 +1365,7 @@ class UserContent(BaseAGOLClass):
         else:
             self._baseUrl = url
     #----------------------------------------------------------------------
-    def listUserContent(self, username, folderId=None):
+    def listUserContent(self, username=None, folderId=None):
         """
         Gets the user's content in the folder (if given)
         If the folderId is None, the root content will be returned as a
@@ -1376,6 +1376,8 @@ class UserContent(BaseAGOLClass):
         Output:
            JSON object as dictionary
         """
+        if username is None:
+            username = self._username
         url = self._baseUrl + "/%s" % username
         if folderId is not None:
             url += "/%s" % folderId
