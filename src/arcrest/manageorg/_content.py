@@ -6,7 +6,7 @@ import urlparse
 import json
 import os
 import mmap
-from urlparse import urlparse
+
 from os.path import splitext, basename
 
 ########################################################################
@@ -652,7 +652,7 @@ class Item(BaseAGOLClass):
         if  self._thumbnail is not None:
             imgUrl = self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail
             
-            disassembled = urlparse(imgUrl)
+            disassembled = urlparse.urlparse(imgUrl)
             onlineFileName, file_ext = splitext(basename(disassembled.path))  
             fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
             result = self._download_file(self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail,
