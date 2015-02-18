@@ -6,6 +6,9 @@ import urlparse
 import json
 import os
 import mmap
+from urlparse import urlparse
+from os.path import splitext, basename
+
 ########################################################################
 class Content(BaseAGOLClass):
     """
@@ -640,6 +643,26 @@ class Item(BaseAGOLClass):
             self.__init()
         return self._thumbnail
     #----------------------------------------------------------------------
+   
+    def saveThumbnail(self,fileName,filePath):
+        """ URL to the thumbnail used for the item """
+        if self._thumbnail is None:
+            self.__init()
+        param_dict = {"token" : self._securityHandler.token}  
+        if  self._thumbnail is not None:
+            imgUrl = self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail
+            
+            disassembled = urlparse(imgUrl)
+            onlineFileName, file_ext = splitext(basename(disassembled.path))  
+            fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
+            result = self._download_file(self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail,
+                                save_path=filePath, file_name=fileNameSafe, param_dict=param_dict,
+                                proxy_url=None, 
+                                proxy_port=None)
+            return result
+        else:
+            return None
+    #----------------------------------------------------------------------
     @property
     def extent(self):
         """ bounding rectangle for the item in WGS84 """
@@ -1046,7 +1069,7 @@ class Item(BaseAGOLClass):
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
-
+  
 ########################################################################
 class UserItems(BaseAGOLClass):
     """

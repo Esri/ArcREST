@@ -35,7 +35,7 @@ class BaseWebOperations(object):
     _proxy_url = None
     _proxy_port = None
     #----------------------------------------------------------------------
-    def _download_file(self, url, save_path, file_name=None, proxy_url=None, proxy_port=None):
+    def _download_file(self, url, save_path, file_name=None, param_dict=None,proxy_url=None, proxy_port=None):
         """ downloads a file """
         try:
             if url.find("http://") > -1:
@@ -51,6 +51,11 @@ class BaseWebOperations(object):
             else:
                 opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=0),AGOLRedirectHandler())
                 urllib2.install_opener(opener)
+            
+          
+            if param_dict is not None:          
+                encoded_args = urllib.urlencode(param_dict)
+                url = url + '/?' + encoded_args
             file_data = urllib2.urlopen(url)
             file_data.getcode()
             file_data.geturl()
@@ -70,15 +75,20 @@ class BaseWebOperations(object):
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
                 return save_path + os.sep + file_name
-            total_size = int(file_data.info().getheader('Content-Length').strip())
-            downloaded = 0
-            CHUNK = 4096
-            with open(save_path + os.sep + file_name, 'wb') as out_file:
-                while True:
-                    chunk = file_data.read(CHUNK)
-                    downloaded += len(chunk)
-                    if not chunk: break
-                    out_file.write(chunk)
+            if (file_data.info().getheader('Content-Length')):
+                total_size = int(file_data.info().getheader('Content-Length').strip())
+                downloaded = 0
+                CHUNK = 4096
+                with open(save_path + os.sep + file_name, 'wb') as out_file:
+                    while True:
+                        chunk = file_data.read(CHUNK)
+                        downloaded += len(chunk)
+                        if not chunk: break
+                        out_file.write(chunk)
+            elif file_data.headers.maintype=='image':
+                with open(save_path + os.sep + file_name, 'wb') as out_file:
+                    buf = file_data.read()
+                    out_file.write(buf)       
             return save_path + os.sep + file_name
         except urllib2.HTTPError, e:
             print "HTTP Error:",e.code , url
