@@ -8,7 +8,6 @@ import urllib
 import urllib2
 import json
 import mimetypes
-#import httplib
 import mimetools
 from cStringIO import StringIO
 import re
@@ -51,9 +50,9 @@ class BaseWebOperations(object):
             else:
                 opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=0),AGOLRedirectHandler())
                 urllib2.install_opener(opener)
-            
-          
-            if param_dict is not None:          
+
+
+            if param_dict is not None:
                 encoded_args = urllib.urlencode(param_dict)
                 url = url + '/?' + encoded_args
             file_data = urllib2.urlopen(url)
@@ -88,7 +87,7 @@ class BaseWebOperations(object):
             elif file_data.headers.maintype=='image':
                 with open(save_path + os.sep + file_name, 'wb') as out_file:
                     buf = file_data.read()
-                    out_file.write(buf)       
+                    out_file.write(buf)
             return save_path + os.sep + file_name
         except urllib2.HTTPError, e:
             print "HTTP Error:",e.code , url
@@ -109,12 +108,12 @@ class BaseWebOperations(object):
         else:
             opener = urllib2.build_opener(AGOLRedirectHandler())
         urllib2.install_opener(opener)
-      
+
         headers = {'Referer': self._referer_url,
-                   'User-Agent': self._useragent}  
+                   'User-Agent': self._useragent}
         if len( header ) > 0 :
             headers = dict(headers.items() + header.items())
-          
+
         request = urllib2.Request(url, urllib.urlencode(param_dict), headers=headers)
         result = urllib2.urlopen(request).read()
         if result =="":

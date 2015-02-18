@@ -98,7 +98,6 @@ class Services(BaseAGSServer):
             self._webEncrypted = None
             self.__init()
             self._folderName = folder
-        print self._currentURL
     #----------------------------------------------------------------------
     @property
     def folders(self):
@@ -469,6 +468,7 @@ class AGSService(BaseAGSServer):
     _interceptor = None
     _provider = None
     _portalProperties = None
+    _jsonProperties = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -551,9 +551,19 @@ class AGSService(BaseAGSServer):
                    "allowedUploadFileTypes": self._allowedUploadFileTypes,
                    "properties": self._properties,
                    "extensions": [e.value for e in self.extensions],
-                   "datasets": self._datasets
+                   "datasets": self._datasets,
+
                    }
+            if self._jsonProperties is not None:
+                val["jsonProperties"] = self._jsonProperties
         return json.dumps(val)
+    #----------------------------------------------------------------------
+    def jsonProperties(self):
+        """returns the jsonProperties"""
+        if self._jsonProperties is None:
+            self.__init()
+        return self._jsonProperties
+
     #----------------------------------------------------------------------
     @property
     def portalProperties(self):
