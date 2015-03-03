@@ -46,6 +46,7 @@ class Community(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    @property
     def userInformation(self):
         """ returns information about the user """
         params = {
@@ -110,7 +111,6 @@ class Community(BaseAGOLClass):
                             proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-
     def getGroupIDs(self, groupNames,communityInfo=None):
         """
            This function retrieves the group IDs
