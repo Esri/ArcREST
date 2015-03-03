@@ -3,6 +3,7 @@ from .._abstract.abstract import BaseAGOLClass
 import json
 from urllib import quote_plus
 import _community, _content, _marketplace, _portals, _oauth2
+from ..hostedservice import Services
 ########################################################################
 class Administration(BaseAGOLClass):
     """  Administers the AGOL/Portal Site """
@@ -290,3 +291,13 @@ class Administration(BaseAGOLClass):
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def hostedServices(self, portalId=None):
+        """gets the object to manage site's hosted services"""
+        portal = self.portals()
+        url = "https://%s/%s/ArcGIS/rest/admin" % (portal.featureServers['https'][0], portal.portalId)
+        return Services(url=url,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
+

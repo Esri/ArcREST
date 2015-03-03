@@ -136,7 +136,7 @@ class Services(BaseAGOLClass):
                         self._services.append(
                             AdminFeatureService(url=surl,
                                                 securityHandler=self._securityHandler,
-                                                initialize=True,
+                                                initialize=False,
                                                 proxy_url=self._proxy_url,
                                                 proxy_port=self._proxy_port))
         return self._services

@@ -601,6 +601,36 @@ class Portals(BaseAGOLClass):
             raise AttributeError("Invalid URL or token")
     #----------------------------------------------------------------------
     @property
+    def portalId(self):
+        """gets the portal Id"""
+        if self._portalId is None:
+            self._findPortalId()
+        return self._portalId
+    #----------------------------------------------------------------------
+    @property
+    def urls(self):
+        """gets the hosting server information"""
+        if self._portalId is None:
+            self._findPortalId()
+        url = self._baseURL + "/%s/urls" % self._portalId
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_get(url=url, param_dict=params, proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def featureServers(self):
+        """gets the hosting feature AGS Server"""
+        return self.urls["urls"]['features']
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """gets the tile server base urls"""
+        return self.urls["urls"]['tiles']
+    #----------------------------------------------------------------------
+    @property
     def portalRoot(self):
         """ returns the base url without the portal id """
         return self._baseURL
