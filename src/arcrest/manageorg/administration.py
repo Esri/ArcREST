@@ -12,6 +12,8 @@ class Administration(BaseAGOLClass):
     _proxy_port = None
     _token = None
     _currentVersion = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url=None,
@@ -50,7 +52,6 @@ class Administration(BaseAGOLClass):
                 self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
-
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------
@@ -64,6 +65,8 @@ class Administration(BaseAGOLClass):
         json_dict = self._do_get(url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -71,7 +74,20 @@ class Administration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in Feature Layer."
+                print k, " - attribute not implmented in Administration class."
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        if self._json is None:
+            self.__init(url=self._url)
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns object as key/value pairs"""
+        if self._json_dict is None:
+            self.__init(url=self._url)
+        for k,v in self._json_dict.iteritems():
+            yield (k,v)
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
@@ -137,7 +153,7 @@ class Administration(BaseAGOLClass):
 
         params = {
             "f" : "json",
-            "q" : q,#quote_plus(q),
+            "q" : q,
             "sortOrder" : sortOrder,
             "num" : num,
             "start" : start
@@ -208,8 +224,7 @@ class Administration(BaseAGOLClass):
             url = self._url + "/rest/search"
         params = {
             "f" : "json",
-            #"token" : self._securityHandler.token,
-            "q" : q,#quote_plus(q),
+            "q" : q,
             "sortOrder" : sortOrder,
             "num" : num,
             "start" : start,

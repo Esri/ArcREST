@@ -521,6 +521,10 @@ class Envelope(abstract.AbstractGeometry):
 
         return template
     #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return self.asJSON
+    #----------------------------------------------------------------------
     @property
     def asJSON(self):
         """ returns a geometry as JSON """

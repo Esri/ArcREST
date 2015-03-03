@@ -411,6 +411,8 @@ class Item(BaseAGOLClass):
     _avgRating = None
     _numViews = None
     _type = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, itemId, url,
                  securityHandler,
@@ -433,13 +435,14 @@ class Item(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """
-
         param_dict = {"f": "json",
                       "token" : self._securityHandler.token
         }
         json_dict = self._do_get(self._baseUrl + "/%s" % self._itemId, param_dict,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
+        self._json = json.dumps(json_dict)
+        self._json_dict = json_dict
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -451,6 +454,20 @@ class Item(BaseAGOLClass):
             else:
                 print k, " - attribute not implmented in the class _content.Item."
             del k,v
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the object as json"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns iterable object for class"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield (k,v)
+
     #----------------------------------------------------------------------
     @property
     def itemParameters(self):
@@ -643,21 +660,21 @@ class Item(BaseAGOLClass):
             self.__init()
         return self._thumbnail
     #----------------------------------------------------------------------
-   
+
     def saveThumbnail(self,fileName,filePath):
         """ URL to the thumbnail used for the item """
         if self._thumbnail is None:
             self.__init()
-        param_dict = {"token" : self._securityHandler.token}  
+        param_dict = {"token" : self._securityHandler.token}
         if  self._thumbnail is not None:
             imgUrl = self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail
-            
+
             disassembled = urlparse.urlparse(imgUrl)
-            onlineFileName, file_ext = splitext(basename(disassembled.path))  
+            onlineFileName, file_ext = splitext(basename(disassembled.path))
             fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
             result = self._download_file(self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail,
                                 save_path=filePath, file_name=fileNameSafe, param_dict=param_dict,
-                                proxy_url=None, 
+                                proxy_url=None,
                                 proxy_port=None)
             return result
         else:
@@ -897,7 +914,7 @@ class Item(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def itemData(self, f="json", savePath=None):
+    def itemData(self, f=None, savePath=None):
         """ returns data for an item on agol/portal
 
         Inputs:
@@ -908,9 +925,12 @@ class Item(BaseAGOLClass):
         """
 
         params = {
-            "f" : f,
+
             "token" : self._securityHandler.token
         }
+        if f is not None and \
+           f.lower() in ['zip', 'json']:
+            params['f'] = f
         url = self._baseUrl + "/%s/data" % self._itemId
         if self.type in ["Shapefile", "CityEngine Web Scene", "Web Scene", "KML",
                          "Code Attachment", "Operations Dashboard Add In",
@@ -1069,7 +1089,7 @@ class Item(BaseAGOLClass):
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
-  
+
 ########################################################################
 class UserItems(BaseAGOLClass):
     """

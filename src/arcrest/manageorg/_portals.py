@@ -578,10 +578,12 @@ class Portals(BaseAGOLClass):
         if portalId is not None:
             self._portalId = portalId
             self._url = url + "/%s" % portalId
+            self._referer_url = securityHandler.referer_url
         else:
             portalId = self._findPortalId()
             self._portalId = portalId
             self._url = url + "/%s" % portalId
+            self._referer_url = securityHandler.referer_url
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""

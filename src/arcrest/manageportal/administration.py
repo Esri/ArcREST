@@ -29,7 +29,7 @@ class _Security(BaseAGOLClass):
             pass
         elif isinstance(securityHandler, PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
-
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
@@ -282,7 +282,7 @@ class _System(BaseAGOLClass):
             pass
         elif isinstance(securityHandler, PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
-
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
