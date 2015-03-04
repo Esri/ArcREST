@@ -391,6 +391,8 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
     _proxy_url = None
     _proxy_port = None
     _default_token_url = None
+    _referer_url = None
+    
     #----------------------------------------------------------------------
     def __init__(self, username, password, token_url,
                  proxy_url=None, proxy_port=None):
@@ -475,6 +477,11 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                                            password=self._password,
                                            tokenUrl=self._token_url)
         return self._token
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url        
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
