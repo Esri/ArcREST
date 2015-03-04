@@ -1991,10 +1991,11 @@ class UserContent(BaseAGOLClass):
             'fileType': fileType
 
         }
-        if publishParameters is not None and \
-           isinstance(publishParameters, BaseParameters):
-            params['publishParameters'] = publishParameters.value
-
+        #if publishParameters is not None and \
+           #isinstance(publishParameters, BaseParameters):
+            #params['publishParameters'] = publishParameters.value
+        if publishParameters is not None:
+            params.update(publishParameters.value)        
         if itemId is not None:
             params['itemId'] = itemId
         if text is not None and fileType.lower() == 'csv':
