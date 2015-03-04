@@ -576,7 +576,7 @@ class Portals(BaseAGOLClass):
         self._proxy_url = proxy_url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url        
+            self._referer_url = securityHandler.referer_url
         if portalId is not None:
             self._portalId = portalId
             self._url = url + "/%s" % portalId
@@ -625,11 +625,15 @@ class Portals(BaseAGOLClass):
     @property
     def featureServers(self):
         """gets the hosting feature AGS Server"""
+        if self.urls == {}:
+            return {}
         return self.urls["urls"]['features']
     #----------------------------------------------------------------------
     @property
     def tileServers(self):
         """gets the tile server base urls"""
+        if self.urls == {}:
+            return {}
         return self.urls["urls"]['tiles']
     #----------------------------------------------------------------------
     @property

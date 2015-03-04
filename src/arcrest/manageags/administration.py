@@ -326,15 +326,12 @@ class AGSAdministration(BaseAGSServer):
         """
         if self._resources is None:
             self.__init()
-        if "info" in self._resources:
-            url = self._url + "/info"
-            return _info.Info(url=url,
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port,
-                              initialize=True)
-        else:
-            return None
+        url = self._url + "/info"
+        return _info.Info(url=url,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port,
+                          initialize=True)
     #----------------------------------------------------------------------
     @property
     def clusters(self):
