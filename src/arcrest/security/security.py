@@ -2,7 +2,7 @@ import datetime
 from .._abstract import abstract
 _defaultTokenExpiration = 5 #Minutes
 ########################################################################
-class PortalServerSeucurityHandler(abstract.BaseSecurityHandler):
+class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
     """
     This service is designed to allow users manage a server from a Portal
     site credentials.  This means a user can get an ArcGIS Server Token
@@ -270,11 +270,11 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
-    #---------------------------------------------------------------------- 
+    #----------------------------------------------------------------------
     @property
     def message(self):
         """ returns any messages """
-        return self._message   
+        return self._message
     #----------------------------------------------------------------------
     @property
     def valid(self):
@@ -366,7 +366,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     @property
     def referer_url(self):
         """ returns when the token was generated """
-        return self._referer_url    
+        return self._referer_url
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -414,8 +414,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         if 'error' in token:
             self._token = None
             return token
-        
-        
+
+
         self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
             datetime.timedelta(seconds=1)
         #if token['expires'] > 86400:
@@ -453,7 +453,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
     _proxy_port = None
     _default_token_url = None
     _referer_url = None
-    
+
     #----------------------------------------------------------------------
     def __init__(self, username, password, token_url,
                  proxy_url=None, proxy_port=None):
@@ -542,7 +542,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
     @property
     def referer_url(self):
         """ returns when the token was generated """
-        return self._referer_url        
+        return self._referer_url
     #----------------------------------------------------------------------
     def _generateForTokenSecurity(self,
                                   username, password,
@@ -572,7 +572,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                 #seconds = int(token['expires'])
             #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
             self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
-                        datetime.timedelta(seconds=1)            
+                        datetime.timedelta(seconds=1)
             self._expires_in = token['expires']
             return token['token']
 ########################################################################
@@ -592,7 +592,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     _server_token = None
     _server_token_expires_on = None
     _server_token_created_on = None
-    _server_expires_in = None    
+    _server_expires_in = None
     _server_url = None
     _org_url = None
     _url = None
@@ -605,7 +605,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     _token_expires_on = None
     _expires_in = None
     _valid = True
-    _message = ""    
+    _message = ""
     #----------------------------------------------------------------------
     def __init__(self,
                  username,
@@ -618,38 +618,38 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._org_url = org_url
         self._username = username
         self._password = password
-        
+
         self._token_url = token_url
         self._proxy_port = proxy_port
-        self._proxy_url = proxy_url  
+        self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=300)
-       
+
         self._initURL()
-    #----------------------------------------------------------------------         
-            
+    #----------------------------------------------------------------------
+
     def _initURL(self, referer_url=None):
         """ sets proper URLs for Portal """
         if self._org_url is not None and self._org_url != '':
             if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
                 self._org_url = 'https://' + self._org_url
-           
-       
+
+
         self._url = self._org_url + "/sharing/rest"
 
-     
+
         if self._token_url is None:
             self._token_url = self._url  + '/generateToken'
 
         if referer_url is None:
-            
+
             self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
-    #---------------------------------------------------------------------- 
+    #----------------------------------------------------------------------
     @property
     def message(self):
         """ returns any messages """
-        return self._message   
+        return self._message
     #----------------------------------------------------------------------
     @property
     def valid(self):
@@ -728,7 +728,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     @property
     def referer_url(self):
         """ returns when the token was generated """
-        return self._referer_url        
+        return self._referer_url
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -743,7 +743,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._message = result
             else:
                 self._valid = True
-                self._message = "Token Generated"            
+                self._message = "Token Generated"
         return self._token
     #----------------------------------------------------------------------
     def servertoken(self,serverURL,referer):
@@ -761,14 +761,14 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._message = result
             else:
                 self._valid = True
-                self._message = "Server Token Generated"            
-        return self._server_token 
-    
+                self._message = "Server Token Generated"
+        return self._server_token
+
     #----------------------------------------------------------------------
     def _generateForServerTokenSecurity(self,
                                   serverURL,referer, token,tokenUrl,expiration=None):
         """ generates a token for a feature service """
-        
+
         query_dict = {'serverURL':serverURL,
                       'token': token,
                       'expiration':str(_defaultTokenExpiration),
@@ -787,8 +787,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._server_token_expires_on = None
             self._server_expires_in = None
 
-            return server_token        
-       
+            return server_token
+
         else:
             self._server_token = server_token['token']
             self._server_token_created_on = datetime.datetime.now()
@@ -798,7 +798,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                 #seconds = int(server_token['expires'])
             #self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
             self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
-                        datetime.timedelta(seconds=1)            
+                        datetime.timedelta(seconds=1)
             self._server_expires_in = server_token['expires']
             return server_token['token']
 
@@ -824,8 +824,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._token_expires_on = None
             self._expires_in = None
 
-            return token        
-       
+            return token
+
         else:
             self._token = token['token']
             self._token_created_on = datetime.datetime.now()
@@ -835,7 +835,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                 #seconds = int(token['expires'])
             #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
             self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
-                        datetime.timedelta(seconds=1)            
+                        datetime.timedelta(seconds=1)
             self._expires_in = token['expires']
             return token['token']
 

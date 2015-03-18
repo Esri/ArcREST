@@ -4,7 +4,7 @@ import json
 from urllib import quote_plus
 import _community, _content, _marketplace, _portals, _oauth2
 from ..hostedservice import Services
-from ..security import PortalServerSeucurityHandler
+from ..security import PortalServerSecurityHandler
 from ..manageags import AGSAdministration
 ########################################################################
 class Administration(BaseAGOLClass):
@@ -317,7 +317,7 @@ class Administration(BaseAGOLClass):
         else:
             for server in portal.servers['servers']:
                 url = server['adminUrl'] + "/admin"
-                sh = PortalServerSeucurityHandler(portalTokenHandler=self._securityHandler,
+                sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
                                                    serverUrl=url,
                                                    referer=server['name'].replace(":6080", ":6443")
                                                    )
