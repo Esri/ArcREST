@@ -790,9 +790,9 @@ class GroupLayer(FeatureLayer):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = json.loads(self._do_get(self._url, params,
+        json_dict = self._do_get(self._url, params,
                                             proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port))
+                                            proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
