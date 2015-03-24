@@ -5,6 +5,7 @@ from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
 import layer
 import json
+from ..common.general import FeatureSet
 from ..common.geometry import SpatialReference
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 ########################################################################

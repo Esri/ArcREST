@@ -55,7 +55,7 @@ class MapService(BaseAGSServer):
            isinstance(securityHandler, security.AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass
@@ -354,19 +354,20 @@ class MapService(BaseAGSServer):
         for k, v in res.iteritems():
             if k == "layers":
                 for val in v:
+
                     return_dict['layers'].append(
                         layer.FeatureLayer(url=self._url + "/%s" % val['id'],
-                                           token_url=self._token_url,
-                                           username=self._username,
-                                           password=self._password)
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
                     )
             elif k == "tables":
                 for val in v:
                     return_dict['tables'].append(
                         layer.TableLayer(url=self._url + "/%s" % val['id'],
-                                           token_url=self._token_url,
-                                           username=self._username,
-                                           password=self._password)
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
                     )
             del k,v
         return return_dict

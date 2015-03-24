@@ -28,6 +28,7 @@ import math
 import urlparse
 import mimetypes
 import uuid
+from re import search
 from urlparse import urlparse
 ########################################################################
 class FeatureLayer(abstract.BaseAGOLClass):
@@ -540,16 +541,6 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
-    #----------------------------------------------------------------------
-    @property
-    def supportsValidateSql(self):
-        """returns the supports validate sql calls"""
-        return self._supportsValidateSql
-    #----------------------------------------------------------------------
-    @property
-    def supportsCoordinatesQuantization(self):
-        """gets the supports coordinates quantization value"""
-        return self._supportsCoordinatesQuantization
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):

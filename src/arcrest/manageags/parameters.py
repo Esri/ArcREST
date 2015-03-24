@@ -81,7 +81,7 @@ class Extension(object):
     @allowedUploadFileTypes.setter
     def allowedUploadFileTypes(self, value):
         """gets/sets the allowedUploadFileTypes"""
-        self._allowedUploadFileTypes = allowedUploadFileTypes
+        self._allowedUploadFileTypes = value
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as JSON"""

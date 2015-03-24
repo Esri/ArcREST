@@ -32,7 +32,7 @@ class GPService(BaseAGSServer):
         if securityHandler is not None:
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -140,7 +140,7 @@ class GPTask(BaseAGSServer):
         self._url = url
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -282,7 +282,7 @@ class GPJob(BaseAGSServer):
         if securityHandler is not None:
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -838,7 +838,7 @@ class GPInputParameterInfo(object):
                     split = self._dict['dataType'].split(':')
                     self._defaultValue = GPMultiValue(json_dict=v, GPType=split[1])
                 if self._dict['dataType'] == "GPFeatureRecordSetLayer":
-                    self._defaultValue = GPFeatureRecordSetLayer(json_dict=v)
+                    self._defaultValue = GPFeatureRecordSetLayer(fc=v)
                 elif self._dict['dataType'] == "GPString":
                     self._defaultValue = GPString(v)
                 elif self._dict['dataType'] == "GPBoolean":
@@ -855,7 +855,7 @@ class GPInputParameterInfo(object):
                 elif self._dict['dataType'] == "GPDataFile":
                     self._defaultValue = GPDataFile(v)
                 elif self._dict['dataType'] == "GPRecordSet":
-                    self._defaultValue = GPRecordSet(json_dict=v)
+                    self._defaultValue = GPRecordSet(table=v)
             elif k in attributes:
                 setattr(self, "_"+ k, self._dict[k])
             else:

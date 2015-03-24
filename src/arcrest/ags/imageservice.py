@@ -2,7 +2,7 @@ from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
 from ..security.security import AGSTokenSecurityHandler
 from ..common.general import MosaicRuleObject, local_time_to_online
 import datetime, urllib
-
+from ..common import filters
 ########################################################################
 class ImageService(BaseAGSServer):
     """
@@ -77,7 +77,7 @@ class ImageService(BaseAGSServer):
                       AGSTokenSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         elif securityHandler is None:
             pass

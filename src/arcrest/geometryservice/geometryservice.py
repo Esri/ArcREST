@@ -371,7 +371,7 @@ class GeometryService(abstract.BaseAGSServer):
             for g in geometries:
                 if isinstance(g, Polyline):
                     template['geometryType'] = "esriGeometryPolyline"
-                elif isinstance(g, Polylgon):
+                elif isinstance(g, Polygon):
                     template['geometryType'] = "esriGeometryPolygon"
                 else:
                     raise AttributeError("Invalid geometry type")

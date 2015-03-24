@@ -42,7 +42,7 @@ class Clusters(BaseAGSServer):
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        json_dict = self._do_get(url=self._currentURL,
+        json_dict = self._do_get(url=self._url,
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -135,6 +135,7 @@ class Cluster(BaseAGSServer):
     _clusterName = None
     _clusterProtocol = None
     _configuredState = None
+    _configurationState = None
     _machineNames = None
     _clusters = None
     #----------------------------------------------------------------------
@@ -348,7 +349,7 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
-            "machineNames" : machineNames
+            "machineNames" : self._machineNames
         }
         return self._do_post(url=url,
                             param_dict=params,

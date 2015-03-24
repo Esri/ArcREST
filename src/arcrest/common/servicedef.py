@@ -21,11 +21,11 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
             capabilities - A Comma delimited list of feature service capabolities 'Query,Create,Update,Delete,Uploads,Editing,Sync'
             maxRecordCount - The max returned record count for the feature service
             server_type - The type of connection or publishing server
-                  Values: ARCGIS_SERVER | FROM_CONNECTION_FILE | SPATIAL_DATA_SERVER | MY_HOSTED_SERVICES 
+                  Values: ARCGIS_SERVER | FROM_CONNECTION_FILE | SPATIAL_DATA_SERVER | MY_HOSTED_SERVICES
         Output:
             Service Definition File - *.sd
-            
-    """        
+
+    """
     if not os.path.isabs(mxd_path):
         sciptPath = os.getcwd()
         mxd_path = os.path.join(sciptPath,mxd_path)
@@ -38,12 +38,12 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
     mxd = _prep_mxd(mxd)
 
     res = {}
-    
+
     if service_name is None:
         service_name = mxd.title.strip().replace(' ','_')
     if tags is None:
         tags = mxd.tags.strip()
-        
+
     if description is None:
         description = mxd.description.strip()
 
@@ -54,19 +54,19 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
         os.makedirs(sddraftFolder)
     if os.path.isfile(sddraft):
         os.remove(sddraft)
-    
+
     res['service_name'] = service_name
     res['tags'] = tags
     res['description'] = description
     analysis = mapping.CreateMapSDDraft(map_document=mxd, out_sddraft=sddraft,
-                                       service_name=service_name, 
-                                       server_type=server_type, 
-                                       connection_file_path=None, 
-                                       copy_data_to_server=False, 
-                                       folder_name=folder_name, 
-                                       summary=description, 
-                                       tags=tags)         
-    
+                                       service_name=service_name,
+                                       server_type=server_type,
+                                       connection_file_path=None,
+                                       copy_data_to_server=False,
+                                       folder_name=folder_name,
+                                       summary=description,
+                                       tags=tags)
+
     sddraft = _modify_sddraft(sddraft=sddraft,capabilities=capabilities,maxRecordCount=maxRecordCount)
     analysis = mapping.AnalyzeForSD(sddraft)
     if os.path.isdir(sdFolder):
@@ -82,12 +82,12 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
     else:
         # If the sddraft analysis contained errors, display them and quit.
         print analysis['errors']
-        return none
-    
+        return None
+
 
 
 def _modify_sddraft(sddraft,capabilities,maxRecordCount='1000'):
-    """ modifies the sddraft for agol publishing  
+    """ modifies the sddraft for agol publishing
     """
 
     doc = ET.parse(sddraft)

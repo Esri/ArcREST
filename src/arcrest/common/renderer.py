@@ -141,11 +141,6 @@ class UniqueValueRenderer(BaseRenderer):
         self._fieldDelimiter = fieldDelimiter
         self._uniqueValueInfos = []
     #----------------------------------------------------------------------
-    @property
-    def value(self):
-        """returns the object as a dictionary"""
-        return {}
-    #----------------------------------------------------------------------
     def __str__(self):
         """object as string"""
         return json.dumps(self.value)
@@ -288,10 +283,6 @@ class UniqueValueRenderer(BaseRenderer):
             "rotationType": self._rotationType,
             "rotationExpression": self._rotationExpression
         }
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        return json.dumps(self.value)
 ########################################################################
 class ClassBreakRenderer(BaseRenderer):
     """

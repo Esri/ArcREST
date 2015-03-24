@@ -98,6 +98,6 @@ class GeoDataService(BaseAGSServer):
     @property
     def versions(self):
         """returns a list of the versions"""
-        if self_versions is None:
+        if self._versions is None:
             self.__init()
         return self._versions

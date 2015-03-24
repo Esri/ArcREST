@@ -12,7 +12,7 @@ class MobileServiceLayer(BaseAGSServer):
     _securityHandler = None
     _json = None
     _json_dict = None
-
+    _display = None
     _drawingInfo = None
     _extent = None
     _canModifyLayer = None
