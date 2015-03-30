@@ -74,7 +74,7 @@ class GeometryFilter(BaseFilter):
     #----------------------------------------------------------------------
     def __init__(self, geomObject, spatialFilter="esriSpatialRelIntersects"):
         """Constructor"""
-        if isinstance(geomObject, ) and \
+        if isinstance(geomObject, AbstractGeometry) and \
            spatialFilter in self._allowedFilters:
             self._geomObject = geomObject
             self._spatialAction = spatialFilter
