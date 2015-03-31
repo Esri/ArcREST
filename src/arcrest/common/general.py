@@ -573,7 +573,10 @@ class FeatureSet(object):
         """returns a featureset from a JSON string"""
         jd = json.loads(jsonValue)
         features = []
-        fields = jd['fields']
+        if jd.has_key('fields'):
+            fields = jd['fields']
+        else:
+            fields = {'fields':[]}
         for feat in jd['features']:
             features.append(Feature(feat, jd['spatialReference']['latestWkid']))
         return FeatureSet(fields,
