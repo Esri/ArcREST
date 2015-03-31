@@ -3,8 +3,9 @@ import json
 import time
 import calendar
 import datetime
+from ..common.geometry import Polygon, Polyline, Point, MultiPoint
 from .._abstract.abstract import AbstractGeometry, BaseFilter
-
+import arcpy
 ########################################################################
 class LayerDefinitionFilter(BaseFilter):
     """
@@ -49,7 +50,7 @@ class LayerDefinitionFilter(BaseFilter):
 class GeometryFilter(BaseFilter):
     """ creates a geometry filter for queries
         Inputs:
-           geomObject - a common.Geometry object
+           geomObject - a common.Geometry or arcpy.Geometry object
            spatialFilter - The spatial relationship to be applied on the
                            input geometry while performing the query. The
                            supported spatial relationships include
@@ -74,12 +75,10 @@ class GeometryFilter(BaseFilter):
     #----------------------------------------------------------------------
     def __init__(self, geomObject, spatialFilter="esriSpatialRelIntersects"):
         """Constructor"""
-        if isinstance(geomObject, AbstractGeometry) and \
-           spatialFilter in self._allowedFilters:
-            self._geomObject = geomObject
+        self.geometry = geomObject
+        if spatialFilter in self._allowedFilters:
             self._spatialAction = spatialFilter
-            self._geomType = geomObject.type
-            self._spatialReference = geomObject.spatialReference
+            self._spatialReference = self.geometry.spatialReference
         else:
             raise AttributeError("geomObject must be a geometry object and "+ \
                                  "spatialFilter must be of value: " + \
@@ -112,18 +111,32 @@ class GeometryFilter(BaseFilter):
     @geometry.setter
     def geometry(self, geometry):
         """ sets the geometry value """
+
         if isinstance(geometry, AbstractGeometry):
             self._geomObject = geometry
+            self._geomType = geomObject.type
+        elif isinstance(geometry, arcpy.Polygon):
+            self._geomObject = Polygon(geometry, wkid=geometry.spatialReference.factoryCode)
+            self._geomType = "esriGeometryPolygon"
+        elif isinstance(geometry, arcpy.Point):
+            self._geomObject = Point(geometry, wkid=geometry.spatialReference.factoryCode)
+            self._geomType = "esriGeometryPoint"
+        elif isinstance(geometry, arcpy.Polyline):
+            self._geomObject = Polyline(geometry, wkid=geometry.spatialReference.factoryCode)
+            self._geomType = "esriGeometryPolyline"
+        elif isinstance(geometry, arcpy.Multipoint):
+            self._geomObject = MultiPoint(geometry, wkid=geometry.spatialReference.factoryCode)
+            self._geomType = "esriGeometryMultipoint"
         else:
-            raise AttributeError("geometry must be a common.Geometry object")
+            raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")
     #----------------------------------------------------------------------
     @property
     def filter(self):
         """ returns the key/value pair of a geometry filter """
         return {"geometryType":self.geometryType,
-                "geometry": self._geomObject.asDictionary,
+                "geometry": json.dumps(self._geomObject.asDictionary),
                 "spatialRel": self.spatialRelation,
-                "inSR" : self._geomObject.spatialReference}
+                "inSR" : self._geomObject.spatialReference['wkid']}
     #----------------------------------------------------------------------
 
 ########################################################################

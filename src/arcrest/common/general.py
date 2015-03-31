@@ -7,7 +7,7 @@ import os
 import tempfile
 import uuid
 from spatial import json_to_featureclass
-from geometry import Point, MultiPoint, Polygon, Polyline
+from geometry import Point, MultiPoint, Polygon, Polyline, SpatialReference
 from .._abstract.abstract import AbstractGeometry
 #from ..agol import featureservice as agolFeatureService
 #from ..agol import layer as agolLayer
@@ -68,16 +68,23 @@ class Feature(object):
     _geom = None
     _geomType = None
     _attributes = None
+    _wkid = None
     #----------------------------------------------------------------------
-    def __init__(self, json_string):
+    def __init__(self, json_string, wkid=None):
         """Constructor"""
+        self._wkid = wkid
         if type(json_string) is dict:
+            if not wkid is None:
+                json_string['geometry']['spatialReference']  = {"wkid" : wkid}
             self._json = json.dumps(json_string,
                                     default=_date_handler)
             self._dict = json_string
         elif type(json_string) is str:
             self._dict = json.loads(json_string)
-            self._json = json_string
+            if not wkid is None:
+                self._dict['geometry']['spatialReference']  = {"wkid" : wkid}
+            self._json = json.dumps(self._dict,
+                                    default=_date_handler)
         else:
             raise TypeError("Invalid Input, only dictionary or string allowed")
     #----------------------------------------------------------------------
@@ -171,6 +178,10 @@ class Feature(object):
     @property
     def geometry(self):
         """returns the feature geometry"""
+        if not self._wkid is None:
+            sr = arcpy.SpatialReference(self._wkid)
+        else:
+            sr = None
         if self._geom is None:
             if self._dict.has_key('feature'):
                 self._geom = arcpy.AsShape(self._dict['feature']['geometry'], esri_json=True)
@@ -564,7 +575,7 @@ class FeatureSet(object):
         features = []
         fields = jd['fields']
         for feat in jd['features']:
-            features.append(Feature(feat))
+            features.append(Feature(feat, jd['spatialReference']['latestWkid']))
         return FeatureSet(fields,
                           features,
                           hasZ=jd['hasZ'] if 'hasZ' in jd else False,
@@ -584,6 +595,17 @@ class FeatureSet(object):
     def spatialReference(self):
         """gets the featureset's spatial reference"""
         return self._spatialReference
+    #----------------------------------------------------------------------
+    @spatialReference.setter
+    def spatialReference(self, value):
+        """sets the featureset's spatial reference"""
+        if isinstance(value, SpatialReference):
+            self._spatialReference = value
+        elif isinstance(value, int):
+            self._spatialReference = SpatialReference(wkid=value)
+        elif isinstance(value, str) and \
+             str(value).isdigit():
+            self._spatialReference = SpatialReference(wkid=int(value))
     #----------------------------------------------------------------------
     @property
     def hasZ(self):
