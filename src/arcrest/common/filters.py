@@ -114,7 +114,7 @@ class GeometryFilter(BaseFilter):
 
         if isinstance(geometry, AbstractGeometry):
             self._geomObject = geometry
-            self._geomType = geomObject.type
+            self._geomType = geometry.type
         elif isinstance(geometry, arcpy.Polygon):
             self._geomObject = Polygon(geometry, wkid=geometry.spatialReference.factoryCode)
             self._geomType = "esriGeometryPolygon"
