@@ -730,10 +730,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if not geometryFilter is None and \
            isinstance(geometryFilter, filters.GeometryFilter):
             gf = geometryFilter.filter
-            params['geometry'] = json.dumps(gf['geometry'])
+            params['geometry'] = gf['geometry']
             params['geometryType'] = gf['geometryType']
-            params['spatialRelationship'] = json.dumps(gf['spatialRel'])
-            params['inSR'] = json.dumps(gf['inSR'])
+            params['spatialRelationship'] = gf['spatialRel']
+            params['inSR'] = gf['inSR']
         fURL = self._url + "/query"
         results = self._do_get(fURL, params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
