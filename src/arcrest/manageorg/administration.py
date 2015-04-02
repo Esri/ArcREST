@@ -1,4 +1,4 @@
-from ..security.security import AGOLTokenSecurityHandler, PortalTokenSecurityHandler
+from ..security.security import AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import json
 from urllib import quote_plus
@@ -50,7 +50,8 @@ class Administration(BaseAGOLClass):
         self._proxy_port = proxy_port
         if securityHandler is not None:
             if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
-               isinstance(securityHandler, PortalTokenSecurityHandler):
+               isinstance(securityHandler, PortalTokenSecurityHandler) or \
+               isinstance(securityHandler, OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._referer_url = securityHandler.referer_url
             else:

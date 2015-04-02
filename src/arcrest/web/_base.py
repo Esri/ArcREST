@@ -115,7 +115,12 @@ class BaseWebOperations(object):
             headers = dict(headers.items() + header.items())
 
         request = urllib2.Request(url, urllib.urlencode(param_dict), headers=headers)
-        result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
+        result = ""
+        try:
+        
+            result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
+        except urllib2.HTTPError,e:
+            return {'error':{'code':e.code}}
         #result = urllib2.urlopen(request).read()
         if result =="":
             return ""
