@@ -111,13 +111,13 @@ class BaseWebOperations(object):
 
         headers = {'Referer': self._referer_url,
                    'User-Agent': self._useragent}
-        if len( header ) > 0 :
+        if len(header) > 0 :
             headers = dict(headers.items() + header.items())
 
         request = urllib2.Request(url, urllib.urlencode(param_dict), headers=headers)
         result = ""
         try:
-        
+
             result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
         except urllib2.HTTPError,e:
             return {'error':{'code':e.code}}

@@ -679,22 +679,36 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._initURL()
     #----------------------------------------------------------------------
 
-    def _initURL(self, referer_url=None):
-        """ sets proper URLs for Portal """
-        if self._org_url is not None and self._org_url != '':
-            if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
-                self._org_url = 'https://' + self._org_url
+    def _initURL(self, org_url=None,
+                 rest_url=None, token_url=None,
+                 referer_url=None):
+        """ sets proper URLs for AGOL """
+        if org_url is not None and org_url != '':
+            if not org_url.startswith('http://') and not org_url.startswith('https://'):
+                org_url = 'http://' + org_url
+            self._org_url = org_url
+        if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+            self._org_url = 'http://' + self._org_url
+        if rest_url is not None:
+            self._url = rest_url
+        else:
+            self._url = self._org_url + "/sharing/rest"
 
+        if self._url.startswith('http://'):
+            self._surl = self._url.replace('http://', 'https://')
+        else:
+            self._surl  =  self._url
 
-        self._url = self._org_url + "/sharing/rest"
-
-
-        if self._token_url is None:
-            self._token_url = self._url  + '/generateToken'
+        if token_url is None:
+            self._token_url = self._surl  + '/generateToken'
+        else:
+            self._token_url = token_url
 
         if referer_url is None:
-
-            self._referer_url = self._org_url
+            if not self._org_url.startswith('http://'):
+                self._referer_url = self._org_url.replace('http://', 'https://')
+            else:
+                self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
     #----------------------------------------------------------------------
