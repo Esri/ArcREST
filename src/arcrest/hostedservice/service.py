@@ -492,13 +492,14 @@ class AdminFeatureService(BaseAGOLClass):
             url = url.replace('rest/services', 'rest/admin/services')
         self._url = url
 
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
+        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
+           isinstance(securityHandler, security.PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
                 self._referer_url = securityHandler.referer_url
             self._token = securityHandler.token
         else:
-            raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler")
+            raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler or security.PortalTokenSecurityHandler")
 
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
@@ -956,7 +957,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
+        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
+           isinstance(securityHandler, security.PortalTokenSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
                 self._referer_url = securityHandler.referer_url
