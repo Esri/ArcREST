@@ -48,8 +48,14 @@ class Extension(object):
     #----------------------------------------------------------------------
     @property
     def capabilities(self):
-        """gets the capabilities"""
+        """gets/sets the capabilities"""
         return self._capabilities
+    #----------------------------------------------------------------------
+    @capabilities.setter
+    def capabilities(self, value):
+        """gets/sets the capabilities"""
+        if self._capabilities != value:
+            self._capabilities = value
     #----------------------------------------------------------------------
     @property
     def enabled(self):
@@ -81,7 +87,7 @@ class Extension(object):
     @allowedUploadFileTypes.setter
     def allowedUploadFileTypes(self, value):
         """gets/sets the allowedUploadFileTypes"""
-        self._allowedUploadFileTypes = value
+        self._allowedUploadFileTypes = allowedUploadFileTypes
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as JSON"""

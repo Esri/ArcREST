@@ -273,6 +273,7 @@ class GPJob(BaseAGSServer):
     _results = None
     _jobStatus = None
     _inputs = None
+    _json = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  proxy_url=None, proxy_port=None,
@@ -288,6 +289,11 @@ class GPJob(BaseAGSServer):
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        self.__init()
+        return self._json
+    #----------------------------------------------------------------------
     def __init(self):
         """ initializes all the properties """
         params = {
@@ -296,6 +302,7 @@ class GPJob(BaseAGSServer):
         if self._securityHandler is not None:
             params['token'] = self._securityHandler.token
         json_dict = self._do_get(url=self._url, param_dict=params)
+        self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]

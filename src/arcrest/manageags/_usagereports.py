@@ -258,8 +258,8 @@ class UsageReports(BaseAGSServer):
             params["queries"] = [queries]
         elif isinstance(queries, list):
             params["queries"] = queries
-        if aggrgationInterval is not None:
-            params['aggregationInterval'] = aggrgationInterval
+        if aggregationInterval is not None:
+            params['aggregationInterval'] = aggregationInterval
         if since.lower() == "custom":
             params['to'] = toValue
             params['from'] = fromValue

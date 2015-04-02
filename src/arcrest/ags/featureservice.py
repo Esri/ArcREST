@@ -5,7 +5,6 @@ from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
 import layer
 import json
-from ..common.general import FeatureSet
 from ..common.geometry import SpatialReference
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 ########################################################################
@@ -49,7 +48,8 @@ class FeatureService(BaseAGSServer):
         self._url = url
         if securityHandler is not None and \
            isinstance(securityHandler,
-                      security.AGSTokenSecurityHandler):
+                      (security.AGSTokenSecurityHandler,
+                      security.PortalServerSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
@@ -82,6 +82,48 @@ class FeatureService(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for Feature Service."
+    #----------------------------------------------------------------------
+    @property
+    def itemInfo(self):
+        """gets the item's info"""
+        params = {
+            "f" : "json"
+        }
+        if not self._securityHandler is None:
+            params['token'] = self._securityHandler.token
+        url = self._url + "/info/iteminfo"
+        return self._do_get(url=url, param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def downloadThumbnail(self, outPath):
+        """downloads the items's thumbnail"""
+        url = self._url + "/info/thumbnail"
+        params = {
+
+        }
+        if not self._securityHandler is None:
+            params['token']  = self._securityHandler.token
+        return self._download_file(url=url,
+                            save_path=outPath,
+                            file_name=None,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def downloadMetadataFile(self, outPath):
+        """downloads the metadata file to a given path"""
+        fileName = "metadata.xml"
+        url = self._url + "/info/metadata"
+        params = {}
+        if not self._securityHandler is None:
+            params['token']  = self._securityHandler.token
+        return self._download_file(url=url,
+                                   save_path=outPath,
+                                   file_name=fileName,
+                                   param_dict=params,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as a string"""

@@ -61,6 +61,7 @@ class FeatureLayer(BaseAGSServer):
     _editFieldsInfo = None
     _proxy_url = None
     _proxy_port = None
+    _json = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False,
@@ -72,7 +73,8 @@ class FeatureLayer(BaseAGSServer):
         self._url = url
         if securityHandler is not None and \
            isinstance(securityHandler,
-                      security.AGSTokenSecurityHandler):
+                      (security.AGSTokenSecurityHandler,
+                       security.PortalServerSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
@@ -83,6 +85,13 @@ class FeatureLayer(BaseAGSServer):
             raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
         if initialize:
             self.__init()
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
     def __init(self):
         """ inializes the properties """
         params = {
@@ -93,6 +102,7 @@ class FeatureLayer(BaseAGSServer):
         json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
+        self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -464,7 +474,6 @@ class FeatureLayer(BaseAGSServer):
                 params['token'] = self._token
             parsed = urlparse(url)
             files = []
-            file_path = attachment
             files.append(('attachment', file_path, os.path.basename(file_path)))
             res = self._post_multipart(host=parsed.hostname,
                                        selector=parsed.path,
@@ -791,9 +800,9 @@ class GroupLayer(FeatureLayer):
         }
         if self._token is not None:
             params['token'] = self._token
-        json_dict = self._do_get(self._url, params,
+        json_dict = json.loads(self._do_get(self._url, params,
                                             proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
+                                            proxy_port=self._proxy_port))
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]

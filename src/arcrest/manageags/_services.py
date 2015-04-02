@@ -425,13 +425,13 @@ class Services(BaseAGSServer):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    @property
-    def extensions(self):
-        """
+    ##----------------------------------------------------------------------
+    #@property
+    #def extensions(self):
+        #"""
 
-        """
-        return
+        #"""
+        #return self._extentions
 
 ########################################################################
 class AGSService(BaseAGSServer):
@@ -518,6 +518,11 @@ class AGSService(BaseAGSServer):
                 print k, " - attribute not implmented."
             del k
             del v
+    #----------------------------------------------------------------------
+    def refreshProperties(self):
+        """refreshes the object's values by re-querying the service"""
+        self.__init()
+
     #----------------------------------------------------------------------
     def __str__(self):
         """returns a string of the object"""
