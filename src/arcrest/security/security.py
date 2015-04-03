@@ -1,5 +1,6 @@
 import datetime
 from .._abstract import abstract
+_defaultTokenExpiration = 5 #Minutes
 ########################################################################
 class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
     """
@@ -13,7 +14,7 @@ class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
     _serverUrl = None
     _referer = None
     _token = None
-    #----------------------------------------------------------------------
+    #
     def __init__(self,
                  portalTokenHandler,
                  serverUrl,
@@ -25,35 +26,30 @@ class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
             raise AttributeError("Invalid token handler")
         self._referer = referer
         self._serverUrl = serverUrl
-    #----------------------------------------------------------------------
+    #
     @property
     def token(self):
         """gets the AGS server token"""
         return self._portalTokenHandler.servertoken(
                 serverURL=self._serverUrl,
                 referer=self._referer)
-    #----------------------------------------------------------------------
+    #
     @property
     def serverUrl(self):
         """gets/sets the server url"""
         return self._serverUrl
-    #----------------------------------------------------------------------
+    #
     @serverUrl.setter
     def serverUrl(self, value):
         """gets/sets the server url"""
         if value.lower() != self._serverUrl.lower():
             self._serverUrl = value
-    #----------------------------------------------------------------------
+    #
     @property
     def referer(self):
         """gets/sets the referer object"""
         return self._referer
-    #----------------------------------------------------------------------
-    @property
-    def referer_url(self):
-        """gets the referer url (for older code)"""
-        return self._referer
-    #----------------------------------------------------------------------
+    #
     @referer.setter
     def referer(self, value):
         """gets/sets the referer object"""
@@ -74,8 +70,8 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
           OAuthSecurityHandler Class Object
     """
     _token = None
-    _default_token_url = "https://www.arcgis.com/sharing/oauth2/token"
-    _token_url = "https://www.arcgis.com/sharing/oauth2/token"
+    _default_token_url = "https://www.arcgis.com/sharing/rest/oauth2/token/"
+    _token_url = "https://www.arcgis.com/sharing/rest/oauth2/token/"
     _client_id = None
     _secret_id = None
     _token_created_on = None
@@ -84,15 +80,54 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
     _proxy_url = None
     _proxy_port = None
     #----------------------------------------------------------------------
-    def __init__(self, client_id, secret_id, token_url=None,
+    def __init__(self, client_id, secret_id, org_url,token_url=None,
                  proxy_url=None, proxy_port=None):
         """Constructor"""
         self._client_id = client_id
         self._secret_id = secret_id
         self._token_url = token_url
+        self._org_url = org_url
+       
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=600)
+        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
+        self._initURL(token_url=token_url)
+        
+    #----------------------------------------------------------------------
+    def _initURL(self, org_url=None,
+                 rest_url=None, token_url=None,
+                 referer_url=None):
+        """ sets proper URLs for AGOL """
+        if org_url is not None and org_url != '':
+            if not org_url.startswith('http://') and not org_url.startswith('https://'):
+                org_url = 'http://' + org_url
+            self._org_url = org_url
+        if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+            self._org_url = 'http://' + self._org_url
+        if rest_url is not None:
+            self._url = rest_url
+        else:
+            self._url = self._org_url + "/sharing/rest"
+
+        if self._url.startswith('http://'):
+            self._surl = self._url.replace('http://', 'https://')
+        else:
+            self._surl = self._url
+
+        if token_url is None:
+            self._token_url = self._surl + "/oauth2/token"
+        else:
+            self._token_url = token_url
+
+        if referer_url is None:
+            if not self._org_url.startswith('http://'):
+                self._referer_url = self._org_url.replace('http://', 'https://')
+            else:
+                self._referer_url = self._org_url
+        else:
+            self._referer_url = referer_url
+
+   
     #----------------------------------------------------------------------
     @property
     def proxy_url(self):
@@ -114,6 +149,17 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
         """ sets the proxy port """
         if isinstance(value, int):
             self._proxy_port = value
+    #----------------------------------------------------------------------
+    @property
+    def org_url(self):
+        """ gets/sets the organization URL """
+        return self._org_url 
+    #----------------------------------------------------------------------    
+    
+    @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url
     #----------------------------------------------------------------------
     @property
     def token(self):
@@ -178,16 +224,18 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
         """ generates a token based on the OAuth security model """
         grant_type="client_credentials"
         if token_url is None:
-            token_url = "https://www.arcgis.com/sharing/oauth2/token"
+            token_url = "https://www.arcgis.com/sharing/rest/oauth2/token"
         params = {
             "client_id" : client_id,
             "client_secret" : secret_id,
             "grant_type":grant_type,
             "f" : "json"
         }
-        token = self._do_get(url=token_url, param_dict=params,
-                             proxy_port=self._proxy_port, proxy_url=self._proxy_url)
-
+        token = self._do_post(url=token_url,
+                              param_dict=params,
+                              proxy_port=self._proxy_port,
+                              proxy_url=self._proxy_url)        
+  
         if 'access_token' in token:
             self._token = token['access_token']
             self._expires_in = token['expires_in']
@@ -239,7 +287,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._org_url = org_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=600)
+        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
         self._initURL(token_url=token_url)
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,
@@ -405,7 +453,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         query_dict = {'username': self._username,
                       'password': self._password,
-                      'expiration': str(60),
+                      'expiration': str(_defaultTokenExpiration),
                       'referer': referer,
                       'f': 'json'}
         if expiration is not None:
@@ -418,12 +466,16 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         if 'error' in token:
             self._token = None
             return token
-        if token['expires'] > 86400:
-            seconds = 86400
-        else:
-            seconds = int(token['expires'])
-        self._token_expires_on = self._token_created_on + \
-            datetime.timedelta(seconds=seconds)
+
+
+        self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
+            datetime.timedelta(seconds=1)
+        #if token['expires'] > 86400:
+            #seconds = 86400
+        #else:
+            #seconds = int(token['expires'])
+        #self._token_expires_on = self._token_created_on + \
+            #datetime.timedelta(seconds=seconds)
         if "token" not in token:
             self._token = None
             return None
@@ -463,7 +515,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._token_url = token_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=600)
+        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
     #----------------------------------------------------------------------
     @property
     def proxy_url(self):
@@ -550,6 +602,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
+                      'expiration': str(_defaultTokenExpiration),
                       'client': 'requestip',
                       'f': 'json'}
         if expiration is not None:
@@ -565,11 +618,13 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._token = token['token']
             self._token_created_on = datetime.datetime.now()
-            if token['expires'] > 86400:
-                seconds = 86400
-            else:
-                seconds = int(token['expires'])
-            self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            #if token['expires'] > 86400:
+                #seconds = 86400
+            #else:
+                #seconds = int(token['expires'])
+            #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
+                        datetime.timedelta(seconds=1)
             self._expires_in = token['expires']
             return token['token']
 ########################################################################
@@ -619,27 +674,41 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._token_url = token_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=300)
+        self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
 
         self._initURL()
     #----------------------------------------------------------------------
 
-    def _initURL(self, referer_url=None):
-        """ sets proper URLs for Portal """
-        if self._org_url is not None and self._org_url != '':
-            if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
-                self._org_url = 'https://' + self._org_url
+    def _initURL(self, org_url=None,
+                 rest_url=None, token_url=None,
+                 referer_url=None):
+        """ sets proper URLs for AGOL """
+        if org_url is not None and org_url != '':
+            if not org_url.startswith('http://') and not org_url.startswith('https://'):
+                org_url = 'http://' + org_url
+            self._org_url = org_url
+        if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
+            self._org_url = 'http://' + self._org_url
+        if rest_url is not None:
+            self._url = rest_url
+        else:
+            self._url = self._org_url + "/sharing/rest"
 
+        if self._url.startswith('http://'):
+            self._surl = self._url.replace('http://', 'https://')
+        else:
+            self._surl  =  self._url
 
-        self._url = self._org_url + "/sharing/rest"
-
-
-        if self._token_url is None:
-            self._token_url = self._url  + '/generateToken'
+        if token_url is None:
+            self._token_url = self._surl  + '/generateToken'
+        else:
+            self._token_url = token_url
 
         if referer_url is None:
-
-            self._referer_url = self._org_url
+            if not self._org_url.startswith('http://'):
+                self._referer_url = self._org_url.replace('http://', 'https://')
+            else:
+                self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
     #----------------------------------------------------------------------
@@ -768,6 +837,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         query_dict = {'serverURL':serverURL,
                       'token': token,
+                      'expiration':str(_defaultTokenExpiration),
                       'f': 'json',
                       'request':'getToken',
                       'referer':referer}
@@ -788,11 +858,13 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._server_token = server_token['token']
             self._server_token_created_on = datetime.datetime.now()
-            if server_token['expires'] > 86400:
-                seconds = 86400
-            else:
-                seconds = int(server_token['expires'])
-            self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            #if server_token['expires'] > 86400:
+                #seconds = 86400
+            #else:
+                #seconds = int(server_token['expires'])
+            #self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
+                        datetime.timedelta(seconds=1)
             self._server_expires_in = server_token['expires']
             return server_token['token']
 
@@ -803,6 +875,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ generates a token for a feature service """
         query_dict = {'username': username,
                       'password': password,
+                      'expiration':str(_defaultTokenExpiration),
                       'client': 'requestip',
                       'f': 'json'}
         if expiration is not None:
@@ -822,11 +895,13 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._token = token['token']
             self._token_created_on = datetime.datetime.now()
-            if token['expires'] > 86400:
-                seconds = 86400
-            else:
-                seconds = int(token['expires'])
-            self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            #if token['expires'] > 86400:
+                #seconds = 86400
+            #else:
+                #seconds = int(token['expires'])
+            #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
+            self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
+                        datetime.timedelta(seconds=1)
             self._expires_in = token['expires']
             return token['token']
 
