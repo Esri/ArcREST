@@ -883,40 +883,7 @@ class MapService(BaseAGSServer):
             params['token'] = self._securityHandler.token
         if isinstance(areaOfInterest, Polygon):
             geom = areaOfInterest.asDictionary()
-            feature_template = {
-                "geometry" :geom,
-
-                "attributes" : {
-                  "OID" : 1,
-                }
-              }
-            template = {
-                "displayFieldName": "",
-                "geometryType": "esriGeometryPolygon",
-                "spatialReference": {
-                 "wkid": 4326,
-                 "latestWkid": 4326
-                },
-                "fields": [
-                 {
-                  "name": "OID",
-                  "type": "esriFieldTypeOID",
-                  "alias": "OID"
-                 },
-                 {
-                  "name": "updateGeom_Length",
-                  "type": "esriFieldTypeDouble",
-                  "alias": "updateGeom_Length"
-                 },
-                 {
-                  "name": "updateGeom_Area",
-                  "type": "esriFieldTypeDouble",
-                  "alias": "updateGeom_Area"
-                 }
-                ],
-                "features": [feature_template],
-                "exceededTransferLimit": False
-               }
+            template = { "features": [geom]}
             params["areaOfInterest"] = template
         if async == True:
             return self._do_get(url=url, param_dict=params,
