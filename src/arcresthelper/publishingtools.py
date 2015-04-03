@@ -1,25 +1,5 @@
-
-
-dateTimeFormat = '%Y-%m-%d %H:%M'
-
-import arcrest
-from arcrest.agol import FeatureLayer
-from arcrest.agol import FeatureService
-from arcrest.hostedservice import AdminFeatureService
-import datetime
-import json
-import os
-import common as Common
-
-import time
-import gc
-import arcpy
-
-class ArcRestHelperError(Exception):
-    """ raised when error occurs in utility module functions """
-    pass
-
-class publishingtools():
+from _abstract import abstract
+class publishingtools(abstract.baseToolsClass):
     _username = None
     _password = None
     _org_url = None

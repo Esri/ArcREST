@@ -10,10 +10,9 @@ import traceback
 from urlparse import urlparse
 import gc
 
-class CommonError(Exception):
+class ArcRestHelperError(Exception):
     """ raised when error occurs in utility module functions """
     pass
-
 #----------------------------------------------------------------------  
 def noneToValue(value,newValue):
     if value is None:
@@ -84,7 +83,7 @@ def random_int_generator(maxrange):
         return random.randint(0,maxrange)
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "random_int_generator",
                     "line": line,
                     "filename":  filename,
@@ -142,7 +141,7 @@ def online_time_to_string(value,timeFormat):
         return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "online_time_to_string",
                     "line": line,
                     "filename":  filename,
@@ -181,7 +180,7 @@ def init_config_json(config_file):
             return None
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "init_config_json",
                     "line": line,
                     "filename":  filename,
@@ -203,7 +202,7 @@ def write_config_json(config_file, data):
             json.dump(data, outfile)  
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "init_config_json",
                     "line": line,
                     "filename":  filename,
@@ -243,7 +242,7 @@ def find_replace_string(obj,find,replace):
         
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "find_replace_string",
                     "line": line,
                     "filename":  filename,
