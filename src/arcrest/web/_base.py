@@ -37,8 +37,8 @@ class BaseWebOperations(object):
     def _download_file(self, url, save_path, file_name=None, param_dict=None,proxy_url=None, proxy_port=None):
         """ downloads a file """
         try:
-            if url.find("http://") > -1:
-                url = url.replace("http://", "https://")
+            #if url.find("http://") > -1:
+            #    url = url.replace("http://", "https://")
             if proxy_url is not None:
                 if proxy_port is None:
                     proxy_port = 80

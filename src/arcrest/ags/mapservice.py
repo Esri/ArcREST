@@ -776,7 +776,7 @@ class MapService(BaseAGSServer):
                 if status in ['esriJobFailed',
                               'esriJobCancelling',
                               'esriJobCancelled']:
-                    return None
+                    return gpJob.messages
                 else:
                     time.sleep(5)
                     status = gpJob.jobStatus
