@@ -474,7 +474,7 @@ class FeatureLayer(BaseAGSServer):
                 params['token'] = self._token
             parsed = urlparse(url)
             files = []
-            files.append(('attachment', file_path, os.path.basename(file_path)))
+            files.append(('attachment', attachment, os.path.basename(attachment)))
             res = self._post_multipart(host=parsed.hostname,
                                        selector=parsed.path,
                                        files=files,

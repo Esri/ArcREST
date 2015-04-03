@@ -421,17 +421,17 @@ class MapService(BaseAGSServer):
                 for val in v:
                     return_dict['layers'].append(
                         layer.FeatureLayer(url=self._url + "/%s" % val['id'],
-                                           token_url=self._token_url,
-                                           username=self._username,
-                                           password=self._password)
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
                     )
             elif k == "tables":
                 for val in v:
                     return_dict['tables'].append(
                         layer.TableLayer(url=self._url + "/%s" % val['id'],
-                                           token_url=self._token_url,
-                                           username=self._username,
-                                           password=self._password)
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
                     )
             del k,v
         return return_dict
@@ -915,7 +915,7 @@ class MapService(BaseAGSServer):
                  }
                 ],
                 "features": [feature_template],
-                "exceededTransferLimit": false
+                "exceededTransferLimit": False
                }
             params["areaOfInterest"] = template
         if async == True:

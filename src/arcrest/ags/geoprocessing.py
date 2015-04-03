@@ -843,7 +843,7 @@ class GPInputParameterInfo(object):
             if k == "defaultValue":
                 if len(self._dict['dataType'].split(':')) > 1:
                     split = self._dict['dataType'].split(':')
-                    self._defaultValue = GPMultiValue(json_dict=v, GPType=split[1])
+                    self._defaultValue = GPMultiValue(values=v)
                 if self._dict['dataType'] == "GPFeatureRecordSetLayer":
                     self._defaultValue = GPFeatureRecordSetLayer(fc=v)
                 elif self._dict['dataType'] == "GPString":

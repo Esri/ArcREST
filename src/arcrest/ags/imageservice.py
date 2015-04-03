@@ -3,6 +3,7 @@ from ..security.security import AGSTokenSecurityHandler
 from ..common.general import MosaicRuleObject, local_time_to_online
 import datetime, urllib
 from ..common import filters
+from ..security import security
 ########################################################################
 class ImageService(BaseAGSServer):
     """

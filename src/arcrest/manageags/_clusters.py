@@ -42,7 +42,7 @@ class Clusters(BaseAGSServer):
             "f" : "json",
             "token" : self._securityHandler.token
         }
-        json_dict = self._do_get(url=self._currentURL,
+        json_dict = self._do_get(url=self._url,
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -136,6 +136,7 @@ class Cluster(BaseAGSServer):
     _clusterProtocol = None
     _configuredState = None
     _machineNames = None
+    _configurationState = None
     _clusters = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler, proxy_url=None, proxy_port=None,
@@ -335,7 +336,8 @@ class Cluster(BaseAGSServer):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def removeMachinesFromCluster(self):
+    def removeMachinesFromCluster(self,
+                                  machineNames):
         """
         Removes server machines from the cluster. The server machines are
         returned back to the pool of registered server machines.

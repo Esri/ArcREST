@@ -1,6 +1,6 @@
 from .._abstract.abstract import BaseAGSServer
 from datetime import datetime
-import csv
+import csv, json
 ########################################################################
 class Log(BaseAGSServer):
     """ Log of a server """

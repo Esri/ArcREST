@@ -6,6 +6,7 @@ from ..security import security
 import layer
 import json
 from ..common.geometry import SpatialReference
+from ..common.general import FeatureSet
 from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 ########################################################################
 class FeatureService(BaseAGSServer):

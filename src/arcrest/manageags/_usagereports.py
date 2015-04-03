@@ -145,7 +145,7 @@ class UsageReports(BaseAGSServer):
                           since="LAST_DAY",
                           fromValue=None,
                           toValue=None,
-                          aggrgationInterval=None
+                          aggregationInterval=None
                           ):
         """
         Creates a new usage report. A usage report is created by submitting
