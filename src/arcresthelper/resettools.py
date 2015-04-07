@@ -1,70 +1,36 @@
 
 from _abstract import abstract
 
+dateTimeFormat = '%Y-%m-%d %H:%M'
+import arcrest
+from arcrest.agol import FeatureLayer
+from arcrest.agol import FeatureService
+from arcrest.hostedservice import AdminFeatureService
+import datetime, time
+import json
+import os
+import common 
+import gc
+#----------------------------------------------------------------------
+def trace():
+    """
+        trace finds the line, the filename
+        and error message and returns it
+        to the user
+    """
+    import traceback, inspect
+    tb = sys.exc_info()[2]
+    tbinfo = traceback.format_tb(tb)[0]
+    filename = inspect.getfile(inspect.currentframe())
+    # script name + line number
+    line = tbinfo.split(", ")[1]
+    # Get Python syntax error
+    #
+    synerror = traceback.format_exc().splitlines()[-1]
+    return line, filename, synerror
+
 class resetTools(abstract.baseToolsClass):
-    _username = None
-    _password = None
-    _org_url = None
-    _proxy_url = None
-    _proxy_port = None
-    _token_url = None
-    _securityHandler = None
-    _valid = True
-    _message = ""
-    #----------------------------------------------------------------------
-    def __init__(self,
-                 username,
-                 password,
-                 org_url=None,
-                 token_url = None,
-                 proxy_url=None,
-                 proxy_port=None):
-
-        """Constructor"""
-        self._org_url = org_url
-        self._username = username
-        self._password = password
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
-        self._token_url = token_url
-        if self._org_url is None or self._org_url =='':
-            self._org_url = 'http://www.arcgis.com'
-        if self._org_url is None or '.arcgis.com' in  self._org_url:
-            self._securityHandler = arcrest.AGOLTokenSecurityHandler(username=self._username,
-                                                              password=self._password,
-                                                              org_url=self._org_url,
-                                                              token_url=self._token_url,
-                                                              proxy_url=self._proxy_url,
-                                                              proxy_port=self._proxy_port)
-        else:
-
-            self._securityHandler = arcrest.PortalTokenSecurityHandler(username=self._username,
-                                                              password=self._password,
-                                                              org_url=self._org_url,
-                                                              proxy_url=self._proxy_url,
-                                                              proxy_port=self._proxy_port)
-
-    #----------------------------------------------------------------------
-    def dispose(self):
-        self._username = None
-        self._password = None
-        self._org_url = None
-        self._proxy_url = None
-        self._proxy_port = None
-        self._token_url = None
-        self._securityHandler = None
-        self._valid = None
-        self._message = None
-
-        del self._username
-        del self._password
-        del self._org_url
-        del self._proxy_url
-        del self._proxy_port
-        del self._token_url
-        del self._securityHandler
-        del self._valid
-        del self._message
+  
     #----------------------------------------------------------------------
     def removeUserData(self,users=None):
         admin = None
@@ -97,7 +63,7 @@ class resetTools(abstract.baseToolsClass):
 
                             print adminusercontent.deleteFolder(folderId=userItem['id'])
         except arcpy.ExecuteError:
-            line, filename, synerror = Common.trace()
+            line, filename, synerror = trace()
             raise ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
@@ -107,7 +73,7 @@ class resetTools(abstract.baseToolsClass):
                                         }
                                         )
         except:
-            line, filename, synerror = Common.trace()
+            line, filename, synerror = trace()
             raise ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
@@ -172,7 +138,7 @@ class resetTools(abstract.baseToolsClass):
                         print "No Groups Found"
 
         except arcpy.ExecuteError:
-            line, filename, synerror = Common.trace()
+            line, filename, synerror = trace()
             raise ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
@@ -182,7 +148,7 @@ class resetTools(abstract.baseToolsClass):
                                         }
                                         )
         except:
-            line, filename, synerror = Common.trace()
+            line, filename, synerror = trace()
             raise ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,

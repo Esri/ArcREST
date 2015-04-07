@@ -410,6 +410,7 @@ class Item(BaseAGOLClass):
     _numRatings = None
     _avgRating = None
     _numViews = None
+    _orgId = None
     _type = None
     _json = None
     _json_dict = None
@@ -819,6 +820,12 @@ class Item(BaseAGOLClass):
         if self._numViews is None:
             self.__init()
         return self._numViews
+    @property
+    def orgId(self):
+        """ organization ID of the item """
+        if self._orgId is None:
+            self.__init()
+        return self._orgId    
     #----------------------------------------------------------------------
     def addComment(self, comment):
         """ adds a comment to a given item.  Must be authenticated """

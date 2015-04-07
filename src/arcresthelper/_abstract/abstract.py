@@ -14,6 +14,7 @@ import gc
 
 ########################################################################
 class baseToolsClass(object):
+
      #----------------------------------------------------------------------
     def __init__(self,
                  username,
@@ -32,41 +33,52 @@ class baseToolsClass(object):
         self._token_url = token_url
         if self._org_url is None or self._org_url =='':
             self._org_url = 'http://www.arcgis.com'
-        if self._org_url is None or '.arcgis.com' in self._org_url:
-            self._securityHandler = arcrest.AGOLTokenSecurityHandler(username=self._username,
-                                                              password=self._password,
-                                                              org_url=self._org_url,
-                                                              token_url=self._token_url,
-                                                              proxy_url=self._proxy_url,
-                                                              proxy_port=self._proxy_port)
-            token = self._securityHandler.token
-            #if 'error' in self._securityHandler.message and token is None:
-                #if self._securityHandler.message['error']['code'] == 400:
+        if self._username == "" or self._password == "":
+            self._message = "No username or password, no security handler generated"
+            self._valid = True
+        else:        
+            if self._org_url is None or '.arcgis.com' in self._org_url:
+                self._securityHandler = arcrest.AGOLTokenSecurityHandler(username=self._username,
+                                                                  password=self._password,
+                                                                  org_url=self._org_url,
+                                                                  token_url=self._token_url,
+                                                                  proxy_url=self._proxy_url,
+                                                                  proxy_port=self._proxy_port)
+                token = self._securityHandler.token
+          
 
-                    #self._securityHandler = arcrest.OAuthSecurityHandler(client_id='',
-                                                                         #secret_id='',
-                                                                         #org_url=self._org_url,
-                                                                         #proxy_url=self._proxy_url,
-                                                                         #proxy_port=self._proxy_port)
-                    #token = self._securityHandler.token
-        else:
-
-            self._securityHandler = arcrest.PortalTokenSecurityHandler(username=self._username,
-                                                              password=self._password,
-                                                              org_url=self._org_url,
-                                                              proxy_url=self._proxy_url,
-                                                              proxy_port=self._proxy_port)
-            token = self._securityHandler.token
-            #if 'error' in self._securityHandler.message and token is None:
-                #if self._securityHandler.message['error']== 401:
-
-                    #self._securityHandler = arcrest.OAuthSecurityHandler(client_id='s5CKlHcJoNSm07TP',
-                                                                           #secret_id='6015feb0f44c4a5fa00e1e9486de8c48',
-                                                                           #org_url=self._org_url,
-                                                                           #proxy_url=self._proxy_url,
-                                                                           #proxy_port=self._proxy_port)
-                    #token = self._securityHandler.token
-
+                    #if self._securityHandler.message['error']['code'] == 400:
+    
+                        #self._securityHandler = arcrest.OAuthSecurityHandler(client_id='',
+                                                                             #secret_id='',
+                                                                             #org_url=self._org_url,
+                                                                             #proxy_url=self._proxy_url,
+                                                                             #proxy_port=self._proxy_port)
+                        #token = self._securityHandler.token
+            else:
+    
+                self._securityHandler = arcrest.PortalTokenSecurityHandler(username=self._username,
+                                                                  password=self._password,
+                                                                  org_url=self._org_url,
+                                                                  proxy_url=self._proxy_url,
+                                                                  proxy_port=self._proxy_port)
+                token = self._securityHandler.token
+                #if 'error' in self._securityHandler.message and token is None:
+                    #if self._securityHandler.message['error']== 401:
+    
+                        #self._securityHandler = arcrest.OAuthSecurityHandler(client_id='s5CKlHcJoNSm07TP',
+                                                                               #secret_id='6015feb0f44c4a5fa00e1e9486de8c48',
+                                                                               #org_url=self._org_url,
+                                                                               #proxy_url=self._proxy_url,
+                                                                               #proxy_port=self._proxy_port)
+                        #token = self._securityHandler.token
+            if 'error' in self._securityHandler.message and token is None:
+                self._message = self._securityHandler.message
+                self._valid = False
+        
+            else:
+                self._message = self._securityHandler.message
+                self._valid = True            
     #----------------------------------------------------------------------
     def dispose(self):
         self._username = None
@@ -94,7 +106,17 @@ class baseToolsClass(object):
         """ returns any messages """
         return self._message
     #----------------------------------------------------------------------
+    @message.setter    
+    def message(self,message):
+        """ returns any messages """
+        self._message = message
+    #----------------------------------------------------------------------
     @property
     def valid(self):
         """ returns boolean wether handler is valid """
-        return self._valid
+        return self._valid 
+    #----------------------------------------------------------------------
+    @valid.setter   
+    def valid(self,valid):
+        """ returns boolean wether handler is valid """
+        self._valid = valid

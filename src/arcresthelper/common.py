@@ -1,14 +1,32 @@
 import os
 import sys
 import json
-import inspect
+
 import random
 import string
 import datetime
 import time
-import traceback
+
 from urlparse import urlparse
 import gc
+
+#----------------------------------------------------------------------
+def trace():
+    """
+        trace finds the line, the filename
+        and error message and returns it
+        to the user
+    """
+    import traceback, inspect
+    tb = sys.exc_info()[2]
+    tbinfo = traceback.format_tb(tb)[0]
+    filename = inspect.getfile(inspect.currentframe())
+    # script name + line number
+    line = tbinfo.split(", ")[1]
+    # Get Python syntax error
+    #
+    synerror = traceback.format_exc().splitlines()[-1]
+    return line, filename, synerror
 
 class ArcRestHelperError(Exception):
     """ raised when error occurs in utility module functions """
@@ -303,22 +321,5 @@ class Tee(object):
     def write(self, obj):
         for f in self.files:
             f.write(obj)
-
-#----------------------------------------------------------------------
-def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
-    """
-    tb = sys.exc_info()[2]
-    tbinfo = traceback.format_tb(tb)[0]
-    filename = inspect.getfile( inspect.currentframe() )
-    # script name + line number
-    line = tbinfo.split(", ")[1]
-    # Get Python syntax error
-    #
-    synerror = traceback.format_exc().splitlines()[-1]
-    return line, filename, synerror
 
 
