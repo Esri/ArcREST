@@ -1,0 +1,1664 @@
+[
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423249034000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1537,
+                41.78
+            ],
+            [
+                -88.1431,
+                41.785
+            ]
+        ],
+        "guid": null,
+        "id": "7bb6267cd484457896013fb740de64ac",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272200000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 4,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": "./icons\\2PublicationView.png",
+        "title": "2:PublicationView",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423265910000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1709,
+                41.7728
+            ],
+            [
+                -88.1656,
+                41.7753
+            ]
+        ],
+        "guid": null,
+        "id": "cce5582d41f84dbb9bc2d6079b30d3b8",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423272229000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 1,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": "./icons\\3InventoryChange.png",
+        "title": "3:Inventory_Change",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423271403000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.1663,
+                41.7648
+            ],
+            [
+                -88.1451,
+                41.7749
+            ]
+        ],
+        "guid": null,
+        "id": "46c898a9a5ed4c97890ccd0ec0f28316",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1423358305000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 15,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "demo",
+        "spatialReference": null,
+        "tags": [
+            "demo"
+        ],
+        "thumbnail": null,
+        "title": "4:RelatedInspection",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Offline",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": null,
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1423248109000,
+        "culture": "en-us",
+        "description": null,
+        "documentation": null,
+        "extent": [
+            [
+                -88.162,
+                41.7752
+            ],
+            [
+                -88.1408,
+                41.7853
+            ]
+        ],
+        "guid": null,
+        "id": "73d684e497e341328b2ae6145d9dc730",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1424456183000,
+        "name": null,
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 28,
+        "owner": "MikeSolutions",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "Demo",
+        "spatialReference": null,
+        "tags": [
+            "Demo"
+        ],
+        "thumbnail": null,
+        "title": "1:ProdEditingDemo",
+        "type": "Web Map",
+        "typeKeywords": [
+            "ArcGIS Online",
+            "Collector",
+            "Data Editing",
+            "Explorer Web Map",
+            "Map",
+            "Online Map",
+            "Web Map"
+        ],
+        "url": null
+    },
+    {
+        "access": "org",
+        "accessInformation": "Esri., Inc.",
+        "appCategories": [],
+        "avgRating": 0,
+        "banner": null,
+        "created": 1425503957000,
+        "culture": "en-us",
+        "description": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "documentation": null,
+        "extent": [
+            [
+                -180,
+                -90
+            ],
+            [
+                180,
+                90
+            ]
+        ],
+        "guid": null,
+        "id": "c33bea5b130b458bb48a6329df57d81e",
+        "industries": [],
+        "languages": [],
+        "largeThumbnail": null,
+        "licenseInfo": null,
+        "listed": false,
+        "modified": 1426110645000,
+        "name": "DemoStagedService",
+        "numComments": 0,
+        "numRatings": 0,
+        "numViews": 0,
+        "owner": "SolutionsPres",
+        "properties": null,
+        "screenshots": [],
+        "size": -1,
+        "snippet": "This map contains a layer with customers whose water consumption is greater than 50000 units.  The data is updated daily.",
+        "spatialReference": "NAD_1983_HARN_StatePlane_Illinois_East_FIPS_1201",
+        "tags": [
+            "CIS",
+            "High",
+            "Customers"
+        ],
+        "thumbnail": "./icons\\DemoStagedService.png",
+        "title": "DemoStagedService",
+        "type": "Feature Service",
+        "typeKeywords": [
+            "ArcGIS Server",
+            "Data",
+            "Feature Access",
+            "Feature Service",
+            "Service",
+            "Singlelayer",
+            "Hosted Service"
+        ],
+        "url": "http://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/DemoStagedService/FeatureServer"
+    }
+]
