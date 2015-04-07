@@ -46,8 +46,8 @@ def main(*argv):
 ##        dataToAppend = argv[5]
 ##        toggleEditCapabilities = argv[6]
 
-        userName = "MikeSolutions"
-        password = 'double1pa'
+        userName = ""
+        password = ''
         org_url = 'www.arcgis.com'
         fsId = 'db2decf77abd4386976e33a8e5b5279a'
         layerName ='Logger Area'
