@@ -1,5 +1,5 @@
 from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler
+from ..security.security import AGSTokenSecurityHandler, PortalServerSecurityHandler
 from ..common.general import MosaicRuleObject, local_time_to_online
 import datetime, urllib
 from ..common import filters
@@ -13,6 +13,8 @@ class ImageService(BaseAGSServer):
        the fly. An image service supports accessing both the mosaicked
        image and its catalog, as well as individual rasters in the catalog.
     """
+    _proxy_url = None
+    _proxy_port = None
     _maxDownloadSizeLimit = None
     _meanValues = None
     _initialExtent = None
@@ -68,11 +70,18 @@ class ImageService(BaseAGSServer):
     _tileInfo = None
     _singleFusedMapCache = None
     _securityHandler = None
+    _hasMultidimensions = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
+    def __init__(self,
+                 url,
+                 securityHandler=None,
+                 proxy_url=None,
+                 proxy_port=None,
                  initialize=False):
         """Constructor"""
         self._url = url
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
         if securityHandler is not None and \
            isinstance(securityHandler,
                       (security.AGSTokenSecurityHandler,
@@ -80,7 +89,6 @@ class ImageService(BaseAGSServer):
             self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
-            self._token = securityHandler.token
         elif securityHandler is None:
             pass
         else:
@@ -93,9 +101,11 @@ class ImageService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        if self._token is not None:
-            params['token'] = self._token
-        json_dict = self._do_get(self._url, params)
+        if self._securityHandler is not None:
+            params['token'] = self.securityHandler.token
+        json_dict = self._do_get(self._url, params,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -106,6 +116,13 @@ class ImageService(BaseAGSServer):
                 print k, " - attribute not implmented for Image Service."
     #----------------------------------------------------------------------
     @property
+    def hasMultidimensions(self):
+        """returns the hasMultidimensions property"""
+        if self._hasMultidimensions is None:
+            self.__init()
+        return self._hasMultidimensions
+    #----------------------------------------------------------------------
+    @property
     def securityHandler(self):
         """ gets the security handler """
         return self._securityHandler
@@ -114,7 +131,8 @@ class ImageService(BaseAGSServer):
     def securityHandler(self, value):
         """ sets the security handler """
         if isinstance(value, BaseSecurityHandler):
-            if isinstance(value, AGSTokenSecurityHandler):
+            if isinstance(value, (AGSTokenSecurityHandler,
+                                  PortalServerSecurityHandler)):
                 self._securityHandler = value
                 self._token = value.token
             else:
@@ -648,21 +666,156 @@ class ImageService(BaseAGSServer):
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def addRasters(self,
-                   minimumCellSizeFactor,
-                   maximumCellSizeFactor,
-                   rasterType,
-                   itemIdsorSerivceUrl,
-                   buildPyramids=False, buildThumbnail=False,
-                   attributes=None,
-                   geodataTransforms=None,
-                   geodataTransformApplyMethod=None
-                   ):
-        """"""
-        pass
+            rasterType,
+            itemIds=None,
+            serviceUrl=None,
+            computeStatistics=False,
+            buildPyramids=False,
+            buildThumbnail=False,
+            minimumCellSizeFactor=None,
+            maximumCellSizeFactor=None,
+            attributes=None,
+            geodataTransforms=None,
+            geodataTransformApplyMethod="esriGeodataTransformApplyAppend"
+            ):
+        """
+        This operation is supported at 10.1 and later.
+        The Add Rasters operation is performed on an image service resource.
+        The Add Rasters operation adds new rasters to an image service
+        (POST only).
+        The added rasters can either be uploaded items, using the itemIds
+        parameter, or published services, using the serviceUrl parameter.
+        If itemIds is specified, uploaded rasters are copied to the image
+        service's dynamic image workspace location; if the serviceUrl is
+        specified, the image service adds the URL to the mosaic dataset—no
+        raster files are copied. The serviceUrl is required input for the
+        following raster types: Image Service, Map Service, WCS, and WMS.
 
+        Inputs:
 
-
-
-
+        itemIds - The upload items (raster files) to be added. Either
+         itemIds or serviceUrl is needed to perform this operation.
+            Syntax: itemIds=<itemId1>,<itemId2>
+            Example: itemIds=ib740c7bb-e5d0-4156-9cea-12fa7d3a472c,
+                             ib740c7bb-e2d0-4106-9fea-12fa7d3a482c
+        serviceUrl - The URL of the service to be added. The image service
+         will add this URL to the mosaic dataset. Either itemIds or
+         serviceUrl is needed to perform this operation. The service URL is
+         required for the following raster types: Image Service, Map
+         Service, WCS, and WMS.
+            Example: serviceUrl=http://myserver/arcgis/services/Portland/ImageServer
+        rasterType - The type of raster files being added. Raster types
+         define the metadata and processing template for raster files to be
+         added. Allowed values are listed in image service resource.
+            Example: Raster Dataset | CADRG/ECRG | CIB | DTED | Image Service | Map Service | NITF | WCS | WMS
+        computeStatistics - If true, statistics for the rasters will be
+         computed. The default is false.
+            Values: false | true
+        buildPyramids - If true, builds pyramids for the rasters. The
+         default is false.
+                Values: false | true
+        buildThumbnail	 - If true, generates a thumbnail for the rasters.
+         The default is false.
+                Values: false | true
+        minimumCellSizeFactor - The factor (times raster resolution) used
+         to populate the MinPS field (maximum cell size above which the
+         raster is visible).
+                Syntax: minimumCellSizeFactor=<minimumCellSizeFactor>
+                Example: minimumCellSizeFactor=0.1
+        maximumCellSizeFactor - The factor (times raster resolution) used
+         to populate MaxPS field (maximum cell size below which raster is
+         visible).
+                Syntax: maximumCellSizeFactor=<maximumCellSizeFactor>
+                Example: maximumCellSizeFactor=10
+        attributes - Any attribute for the added rasters.
+                Syntax:
+                {
+                  "<name1>" : <value1>,
+                  "<name2>" : <value2>
+                }
+                Example:
+                {
+                  "MinPS": 0,
+                  "MaxPS": 20;
+                  "Year" : 2002,
+                  "State" : "Florida"
+                }
+        geodataTransforms - The geodata transformations applied on the
+         added rasters. A geodata transformation is a mathematical model
+         that performs a geometric transformation on a raster; it defines
+         how the pixels will be transformed when displayed or accessed.
+         Polynomial, projective, identity, and other transformations are
+         available. The geodata transformations are applied to the dataset
+         that is added.
+                Syntax:
+                [
+                {
+                  "geodataTransform" : "<geodataTransformName1>",
+                  "geodataTransformArguments" : {<geodataTransformArguments1>}
+                  },
+                  {
+                  "geodataTransform" : "<geodataTransformName2>",
+                  "geodataTransformArguments" : {<geodataTransformArguments2>}
+                  }
+                ]
+         The syntax of the geodataTransformArguments property varies based
+         on the specified geodataTransform name. See Geodata Transformations
+         documentation for more details.
+        geodataTransformApplyMethod - This parameter defines how to apply
+         the provided geodataTransform. The default is
+         esriGeodataTransformApplyAppend.
+                Values: esriGeodataTransformApplyAppend |
+                esriGeodataTransformApplyReplace |
+                esriGeodataTransformApplyOverwrite
+        """
+        url = self._url + "/add"
+        params = {
+            "f" : "json"
+        }
+        if not self._securityHandler is None:
+            params['token'] = self._securityHandler.token
+        if itemIds is None and serviceUrl is None:
+            raise Exception("An itemId or serviceUrl must be provided")
+        if isinstance(itemIds, str):
+            itemIds = [itemIds]
+        if isinstance(serviceUrl, str):
+            serviceUrl = [serviceUrl]
+        params['geodataTransformApplyMethod'] = geodataTransformApplyMethod
+        params['rasterType'] = rasterType
+        params['buildPyramids'] = buildPyramids
+        params['buildThumbnail'] = buildThumbnail
+        params['minimumCellSizeFactor'] = minimumCellSizeFactor
+        params['computeStatistics'] = computeStatistics
+        params['maximumCellSizeFactor'] = maximumCellSizeFactor
+        params['attributes'] = attributes
+        params['geodataTransforms'] = geodataTransforms
+        if not itemIds is None:
+            params['itemIds'] = itemIds
+        if not serviceUrl is None:
+            params['serviceUrl'] = serviceUrl
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def colormap(self):
+        """
+        The colormap resource returns RGB color representation of pixel
+        values. This resource is supported if the hasColormap property of
+        the service is true.
+        """
+        if self.hasColormap:
+            url = self._url + "/colormap"
+            params = {
+                "f" : "json"
+            }
+            if not self._securityHandler is None:
+                params['token'] = self._securityHandler.token
+            return self._do_get(url=url,
+                                param_dict=params,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+        else:
+            return None
 
 

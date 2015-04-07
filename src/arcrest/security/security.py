@@ -87,12 +87,12 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
         self._secret_id = secret_id
         self._token_url = token_url
         self._org_url = org_url
-       
+
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
         self._initURL(token_url=token_url)
-        
+
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,
                  rest_url=None, token_url=None,
@@ -127,7 +127,7 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._referer_url = referer_url
 
-   
+
     #----------------------------------------------------------------------
     @property
     def proxy_url(self):
@@ -153,9 +153,9 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
     @property
     def org_url(self):
         """ gets/sets the organization URL """
-        return self._org_url 
-    #----------------------------------------------------------------------    
-    
+        return self._org_url
+    #----------------------------------------------------------------------
+
     @property
     def referer_url(self):
         """ returns when the token was generated """
@@ -234,8 +234,8 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
         token = self._do_post(url=token_url,
                               param_dict=params,
                               proxy_port=self._proxy_port,
-                              proxy_url=self._proxy_url)        
-  
+                              proxy_url=self._proxy_url)
+
         if 'access_token' in token:
             self._token = token['access_token']
             self._expires_in = token['expires_in']
@@ -623,8 +623,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
             #else:
                 #seconds = int(token['expires'])
             #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
-            self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
-                        datetime.timedelta(seconds=1)
+            self._token_expires_on = datetime.datetime.fromtimestamp(int(token['expires']) /1000) - datetime.timedelta(seconds=1)
             self._expires_in = token['expires']
             return token['token']
 ########################################################################
