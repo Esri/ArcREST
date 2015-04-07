@@ -18,7 +18,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys 
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -74,7 +74,7 @@ class orgtools(abstract.baseToolsClass):
                             results.append(res)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "shareItemsToGroup",
                         "line": line,
                         "filename":  filename,
@@ -84,7 +84,7 @@ class orgtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "shareItemsToGroup",
                         "line": line,
                         "filename":  filename,
@@ -144,7 +144,7 @@ class orgtools(abstract.baseToolsClass):
             return items
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "getGroupContent",
                         "line": line,
                         "filename":  filename,
@@ -190,7 +190,7 @@ class orgtools(abstract.baseToolsClass):
                                sortOrder="asc")
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "getGroupContent",
                         "line": line,
                         "filename":  filename,
@@ -229,7 +229,7 @@ class orgtools(abstract.baseToolsClass):
             return item.saveThumbnail(fileName=fileName,filePath=filePath)
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "getThumbnailForItem",
                         "line": line,
                         "filename":  filename,
@@ -270,7 +270,7 @@ class orgtools(abstract.baseToolsClass):
                         thumbnail=thumbnail)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "createGroup",
                         "line": line,
                         "filename":  filename,
@@ -280,7 +280,7 @@ class orgtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "createGroup",
                         "line": line,
                         "filename":  filename,

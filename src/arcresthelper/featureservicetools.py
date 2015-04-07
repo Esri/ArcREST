@@ -18,7 +18,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys 
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -79,7 +79,7 @@ class featureservicetools(abstract.baseToolsClass):
             return None
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetFeatureService",
                         "line": line,
                         "filename":  filename,
@@ -89,7 +89,7 @@ class featureservicetools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetFeatureService",
                         "line": line,
                         "filename":  filename,
@@ -114,7 +114,7 @@ class featureservicetools(abstract.baseToolsClass):
             return self.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=returnURLOnly)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetLayerFromFeatureServiceByURL",
                         "line": line,
                         "filename":  filename,
@@ -124,7 +124,7 @@ class featureservicetools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetLayerFromFeatureServiceByURL",
                         "line": line,
                         "filename":  filename,
@@ -165,7 +165,7 @@ class featureservicetools(abstract.baseToolsClass):
             return None
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetLayerFromFeatureService",
                         "line": line,
                         "filename":  filename,
@@ -175,7 +175,7 @@ class featureservicetools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "GetLayerFromFeatureService",
                         "line": line,
                         "filename":  filename,
@@ -204,7 +204,7 @@ class featureservicetools(abstract.baseToolsClass):
             return fl.addFeatures(fc=pathToFeatureClass)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "AddFeaturesToFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -214,7 +214,7 @@ class featureservicetools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "AddFeaturesToFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -237,7 +237,7 @@ class featureservicetools(abstract.baseToolsClass):
             return fl.deleteFeatures(where=sql)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -247,7 +247,7 @@ class featureservicetools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,

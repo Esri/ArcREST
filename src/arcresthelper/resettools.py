@@ -18,7 +18,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys 
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -64,7 +64,7 @@ class resetTools(abstract.baseToolsClass):
                             print adminusercontent.deleteFolder(folderId=userItem['id'])
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -74,7 +74,7 @@ class resetTools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -139,7 +139,7 @@ class resetTools(abstract.baseToolsClass):
 
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,
@@ -149,7 +149,7 @@ class resetTools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "DeleteFeaturesFromFeatureLayer",
                         "line": line,
                         "filename":  filename,
