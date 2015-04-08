@@ -687,7 +687,7 @@ class ImageService(BaseAGSServer):
         parameter, or published services, using the serviceUrl parameter.
         If itemIds is specified, uploaded rasters are copied to the image
         service's dynamic image workspace location; if the serviceUrl is
-        specified, the image service adds the URL to the mosaic dataset—no
+        specified, the image service adds the URL to the mosaic dataset no
         raster files are copied. The serviceUrl is required input for the
         following raster types: Image Service, Map Service, WCS, and WMS.
 

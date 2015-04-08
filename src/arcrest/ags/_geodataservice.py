@@ -1,5 +1,5 @@
 from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler
+from ..security.security import AGSTokenSecurityHandler, PortalServerSecurityHandler
 import json, types
 ########################################################################
 class GeoDataService(BaseAGSServer):

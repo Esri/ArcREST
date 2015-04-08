@@ -62,6 +62,7 @@ class FeatureLayer(BaseAGSServer):
     _proxy_url = None
     _proxy_port = None
     _json = None
+    _advancedQueryCapabilities = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False,
@@ -111,6 +112,13 @@ class FeatureLayer(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for layer.FeatureLayer."
+    #----------------------------------------------------------------------
+    @property
+    def advancedQueryCapabilities(self):
+        """returns the advancedQueryCapabilities property"""
+        if self._advancedQueryCapabilities is None:
+            self.__init()
+        return self._advancedQueryCapabilities
     #----------------------------------------------------------------------
     @property
     def supportsRollbackOnFailureParameter(self):
