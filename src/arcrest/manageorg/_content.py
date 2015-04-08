@@ -825,7 +825,7 @@ class Item(BaseAGOLClass):
         """ organization ID of the item """
         if self._orgId is None:
             self.__init()
-        return self._orgId    
+        return self._orgId
     #----------------------------------------------------------------------
     def addComment(self, comment):
         """ adds a comment to a given item.  Must be authenticated """
@@ -954,7 +954,10 @@ class Item(BaseAGOLClass):
                          "Explorer Layer", "Geoprocessing Package", "Geoprocessing Sample",
                          "Locator Package", "Rule Package", "Workflow Manager Package",
                          "Desktop Application", "Desktop Application Template",
-                         "Code Sample", "Desktop Add In", "Explorer Add In"]:
+                         "Code Sample", "Desktop Add In", "Explorer Add In",
+                         "ArcGIS Desktop Add-In", "ArcGIS Explorer Add-In",
+                         "ArcGIS Explorer application configuration", "ArcGIS Explorer document",
+                         ]:
             if savePath is None:
                 raise AttributeError('savePath must be provided for a item of type: %s' % self.type)
             if os.path.isdir(savePath) == False:
@@ -2002,7 +2005,7 @@ class UserContent(BaseAGOLClass):
            #isinstance(publishParameters, BaseParameters):
             #params['publishParameters'] = publishParameters.value
         if publishParameters is not None:
-            params.update(publishParameters.value)        
+            params.update(publishParameters.value)
         if itemId is not None:
             params['itemId'] = itemId
         if text is not None and fileType.lower() == 'csv':
