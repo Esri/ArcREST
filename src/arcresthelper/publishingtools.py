@@ -800,7 +800,8 @@ class publishingtools(abstract.baseToolsClass):
             service_name = service_name.replace('{Date}',datestring)
 
             service_name_safe = service_name.replace(' ','_')
-            service_name_safe = service_name_safe.replace(':','-')
+            service_name_safe = service_name_safe.replace(':','_')
+            service_name_safe = service_name_safe.replace('-','_')
 
             if os.path.exists(path=mxd) == False:
                 raise ValueError("MXD does not exit")
