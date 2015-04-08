@@ -309,7 +309,12 @@ class publishingtools(abstract.baseToolsClass):
 
                 opLayers = webmap_data['operationalLayers']
                 for opLayer in opLayers:
+                    currentID = opLayer['id']
+                   
                     opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                    if 'applicationProperties' in webmap_data:
+                        webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                  
                     resultMap['Layers'].append({"Name":opLayer['title'],"ID":opLayer['id']})
 
 
@@ -317,8 +322,13 @@ class publishingtools(abstract.baseToolsClass):
 
                     opLayers = webmap_data['tables']
                     for opLayer in opLayers:
+                        currentID = opLayer['id']
+                    
                         opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
-                        resultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
+                        if 'applicationProperties' in webmap_data:
+                            webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                                           
+                        esultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
 
 
             name = config['Title']
@@ -644,6 +654,7 @@ class publishingtools(abstract.baseToolsClass):
         """
         fs = None
         res = None
+        resItm = None
         try:
             res = []
             if isinstance(fs_config, list):
@@ -660,7 +671,7 @@ class publishingtools(abstract.baseToolsClass):
                         print "%s created" % resItm['FSInfo']['serviceurl']
                         res.append(resItm)
                     else:
-                        print str(resFS)
+                        print str(resItm['FSInfo'])
                 
             else:
                 if fs_config.has_key('ReplaceTag'):
@@ -675,7 +686,7 @@ class publishingtools(abstract.baseToolsClass):
                     print "%s created" % resItm['FSInfo']['serviceurl']
                     res.append(resItm)
                 else:
-                    print str(resFS)              
+                    print str(resItm['FSInfo'])              
        
             return res
         except arcpy.ExecuteError:
@@ -699,10 +710,10 @@ class publishingtools(abstract.baseToolsClass):
                                         )
 
         finally:
-            resFS = None
+            resItm = None
             fs = None
 
-            del resFS
+            del resItm
             del fs
 
             gc.collect()
