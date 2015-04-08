@@ -7,7 +7,7 @@ setup(
     url='www.github.com/Esri/ArcREST',
     name='ArcREST',
     version='2.1.100',
-    packages=['arcresthelper',
+    packages=['arcresthelper','arcresthelper/_abstract',
               'arcrest','arcrest/agol', 'arcrest/ags', 'arcrest/common',
               'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
               'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',

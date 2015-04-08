@@ -11,6 +11,7 @@ import os
 import common 
 import gc
 import arcpy
+
 #----------------------------------------------------------------------
 def trace():
     """
@@ -18,7 +19,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys 
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -96,7 +97,7 @@ class publishingtools(abstract.baseToolsClass):
             return map_results
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishMap",
                         "line": line,
                         "filename":  filename,
@@ -106,7 +107,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishMap",
                         "line": line,
                         "filename":  filename,
@@ -308,7 +309,12 @@ class publishingtools(abstract.baseToolsClass):
 
                 opLayers = webmap_data['operationalLayers']
                 for opLayer in opLayers:
+                    currentID = opLayer['id']
+                   
                     opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                    if 'applicationProperties' in webmap_data:
+                        webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                  
                     resultMap['Layers'].append({"Name":opLayer['title'],"ID":opLayer['id']})
 
 
@@ -316,8 +322,13 @@ class publishingtools(abstract.baseToolsClass):
 
                     opLayers = webmap_data['tables']
                     for opLayer in opLayers:
+                        currentID = opLayer['id']
+                    
                         opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
-                        resultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
+                        if 'applicationProperties' in webmap_data:
+                            webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                                           
+                        esultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
 
 
             name = config['Title']
@@ -415,7 +426,7 @@ class publishingtools(abstract.baseToolsClass):
 
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishMap",
                         "line": line,
                         "filename":  filename,
@@ -425,7 +436,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishMap",
                         "line": line,
                         "filename":  filename,
@@ -577,16 +588,16 @@ class publishingtools(abstract.baseToolsClass):
                 map_results.append(itemInfo)
                 if not itemInfo is None:
                     if not 'error' in itemInfo['MapInfo']['Results']:
-                        print "            %s webmap created" % itemInfo['MapInfo']['Name']
+                        print "%s webmap created" % itemInfo['MapInfo']['Name']
                     else:
-                        print "            " + str(itemInfo['MapInfo']['Results'])
+                        print str(itemInfo['MapInfo']['Results'])
                 else:
-                    print "            Map not created"
+                    print "Map not created"
 
                 return map_results
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishedCombinedWebMap",
                         "line": line,
                         "filename":  filename,
@@ -596,7 +607,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishedCombinedWebMap",
                         "line": line,
                         "filename":  filename,
@@ -643,6 +654,7 @@ class publishingtools(abstract.baseToolsClass):
         """
         fs = None
         res = None
+        resItm = None
         try:
             res = []
             if isinstance(fs_config, list):
@@ -659,7 +671,7 @@ class publishingtools(abstract.baseToolsClass):
                         print "%s created" % resItm['FSInfo']['serviceurl']
                         res.append(resItm)
                     else:
-                        print str(resFS)
+                        print str(resItm['FSInfo'])
                 
             else:
                 if fs_config.has_key('ReplaceTag'):
@@ -674,12 +686,12 @@ class publishingtools(abstract.baseToolsClass):
                     print "%s created" % resItm['FSInfo']['serviceurl']
                     res.append(resItm)
                 else:
-                    print str(resFS)              
+                    print str(resItm['FSInfo'])              
        
             return res
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishFsFromMXD",
                         "line": line,
                         "filename":  filename,
@@ -689,7 +701,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishFsFromMXD",
                         "line": line,
                         "filename":  filename,
@@ -698,10 +710,10 @@ class publishingtools(abstract.baseToolsClass):
                                         )
 
         finally:
-            resFS = None
+            resItm = None
             fs = None
 
-            del resFS
+            del resItm
             del fs
 
             gc.collect()
@@ -1008,7 +1020,7 @@ class publishingtools(abstract.baseToolsClass):
                 return resultSD
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishFsFromConfig",
                         "line": line,
                         "filename":  filename,
@@ -1018,7 +1030,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishFsFromConfig",
                         "line": line,
                         "filename":  filename,
@@ -1184,7 +1196,7 @@ class publishingtools(abstract.baseToolsClass):
             return itemInfo
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishAppLogic",
                         "line": line,
                         "filename":  filename,
@@ -1194,7 +1206,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishAppLogic",
                         "line": line,
                         "filename":  filename,
@@ -1230,7 +1242,7 @@ class publishingtools(abstract.baseToolsClass):
             return app_results
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishApp",
                         "line": line,
                         "filename":  filename,
@@ -1240,7 +1252,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "publishApp",
                         "line": line,
                         "filename":  filename,
@@ -1427,7 +1439,7 @@ class publishingtools(abstract.baseToolsClass):
 
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishApp",
                         "line": line,
                         "filename":  filename,
@@ -1437,7 +1449,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishApp",
                         "line": line,
                         "filename":  filename,
@@ -1727,7 +1739,7 @@ class publishingtools(abstract.baseToolsClass):
             return resultApp
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishDashboard",
                         "line": line,
                         "filename":  filename,
@@ -1737,7 +1749,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "_publishDashboard",
                         "line": line,
                         "filename":  filename,
@@ -1903,7 +1915,7 @@ class publishingtools(abstract.baseToolsClass):
             return fsRes
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "updateFeatureService",
                         "line": line,
                         "filename":  filename,
@@ -1913,7 +1925,7 @@ class publishingtools(abstract.baseToolsClass):
                                         )
         except:
             line, filename, synerror = trace()
-            raise ArcRestHelperError({
+            raise common.ArcRestHelperError({
                         "function": "updateFeatureService",
                         "line": line,
                         "filename":  filename,
