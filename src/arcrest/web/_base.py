@@ -110,7 +110,8 @@ class BaseWebOperations(object):
         urllib2.install_opener(opener)
 
         headers = {'Referer': self._referer_url,
-                   'User-Agent': self._useragent}
+                   'User-Agent': self._useragent,
+                   'Accept-Encoding': ''}
         if len(header) > 0 :
             headers = dict(headers.items() + header.items())
 
