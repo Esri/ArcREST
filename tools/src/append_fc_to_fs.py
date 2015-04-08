@@ -12,8 +12,24 @@ import os
 import sys
 import arcpy
 
-from arcpyhelper import ArcRestHelper
-from arcpyhelper import Common
+from arcresthelper import featureservicetools
+from arcresthelper import common
+def trace():
+    """
+        trace finds the line, the filename
+        and error message and returns it
+        to the user
+    """
+    import traceback, inspect
+    tb = sys.exc_info()[2]
+    tbinfo = traceback.format_tb(tb)[0]
+    filename = inspect.getfile(inspect.currentframe())
+    # script name + line number
+    line = tbinfo.split(", ")[1]
+    # Get Python syntax error
+    #
+    synerror = traceback.format_exc().splitlines()[-1]
+    return line, filename, synerror
 
 def outputPrinter(message,typeOfMessage='message'):
     if typeOfMessage == "error":
@@ -31,88 +47,75 @@ def main(*argv):
     fsId = None
     layerName = None
     dataToAppend = None
-    arh = None
+    fst = None
     fs = None
     results = None
     fl = None
     existingDef= None
     try:
 
-##        userName = argv[0]
-##        password = argv[1]
-##        org_url = argv[2]
-##        fsId = argv[3]
-##        layerName = argv[4]
-##        dataToAppend = argv[5]
-##        toggleEditCapabilities = argv[6]
+        userName = argv[0]
+        password = argv[1]
+        org_url = argv[2]
+        fsId = argv[3]
+        layerName = argv[4]
+        dataToAppend = argv[5]
+        toggleEditCapabilities = argv[6]
 
-        userName = ""
-        password = ''
-        org_url = 'www.arcgis.com'
-        fsId = 'db2decf77abd4386976e33a8e5b5279a'
-        layerName ='Logger Area'
-        dataToAppend = r'C:\temp\test.shp'
-        toggleEditCapabilities = 'False'
 
         if arcpy.Exists(dataset=dataToAppend) == False:
             outputPrinter(message="Data layer not found: %" % dataToAppend)
         else:
-            arh = ArcRestHelper.featureservicetools(username = userName, password=password,org_url=org_url,
+            fst = featureservicetools.featureservicetools(username = userName, password=password,org_url=org_url,
                                                        token_url=None,
                                                        proxy_url=None,
                                                        proxy_port=None)
-            if not arh is None:
+            if fst.valid:
                 outputPrinter(message="Security handler created")
 
-                fs = arh.GetFeatureService(itemId=fsId,returnURLOnly=False)
+                fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
 
-                if arh.valid:
-                    outputPrinter("Logged in successful")
-                    if not fs is None:
-                        if toggleEditCapabilities == 'True':
-                            existingDef = arh.EnableEditingOnService(url=fs.url)
-                        fl = arh.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
-                        if not fl is None:
-                            results = fl.addFeatures(fc=dataToAppend)
+                if not fs is None:
+                    if toggleEditCapabilities == 'True':
+                        existingDef = fst.EnableEditingOnService(url=fs.url)
+                    fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
+                    if not fl is None:
+                        results = fl.addFeatures(fc=dataToAppend)
 
-                            if 'error' in results:
-                                outputPrinter(message="Error in response from server: " % results['error'],typeOfMessage='error')
-                                arcpy.SetParameterAsText(6, "false")
-
-                            else:
-                                outputPrinter (message="%s features added" % len(results['addResults']) )
-                                if toggleEditCapabilities == 'True':
-                                    existingDef = arh.EnableEditingOnService(url=fs.url,definition = existingDef)
-                                arcpy.SetParameterAsText(6, "true")
+                        if 'error' in results:
+                            outputPrinter(message="Error in response from server: " % results['error'],typeOfMessage='error')
+                            arcpy.SetParameterAsText(6, "false")
 
                         else:
-                            outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
-                            arcpy.SetParameterAsText(6, "false")
+                            outputPrinter (message="%s features added" % len(results['addResults']) )
+                            if toggleEditCapabilities == 'True':
+                                existingDef = fst.EnableEditingOnService(url=fs.url,definition = existingDef)
+                            arcpy.SetParameterAsText(6, "true")
+
                     else:
-                        outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
+                        outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
                         arcpy.SetParameterAsText(6, "false")
                 else:
-                    outputPrinter(arh.message,typeOfMessage='error')
+                    outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
                     arcpy.SetParameterAsText(6, "false")
-
-
             else:
-                outputPrinter(message="Security handler not created, exiting")
+                outputPrinter(fst.message,typeOfMessage='error')
                 arcpy.SetParameterAsText(6, "false")
 
 
+
     except arcpy.ExecuteError:
-        line, filename, synerror = Common.trace()
+        line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
         arcpy.SetParameterAsText(6, "false")
-    except (Common.CommonError,ArcRestHelper.ArcRestHelperError),e:
+    except (common.ArcRestHelperError),e:
         outputPrinter(message=e,typeOfMessage='error')
         arcpy.SetParameterAsText(6, "false")
     except:
-        line, filename, synerror = Common.trace()
+        line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
@@ -125,7 +128,7 @@ def main(*argv):
         fsId = None
         layerName = None
         dataToAppend = None
-        arh = None
+        fst = None
         fs = None
         results = None
         fl = None
@@ -137,7 +140,7 @@ def main(*argv):
         del fsId
         del layerName
         del dataToAppend
-        del arh
+        del fst
         del fs
         del results
         del fl

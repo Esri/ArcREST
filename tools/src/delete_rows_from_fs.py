@@ -12,9 +12,24 @@ import os
 import sys
 import arcpy
 
-from arcpyhelper import ArcRestHelper
-from arcpyhelper import Common
-
+from arcresthelper import featureservicetools
+from arcresthelper import common
+def trace():
+    """
+        trace finds the line, the filename
+        and error message and returns it
+        to the user
+    """
+    import traceback, inspect
+    tb = sys.exc_info()[2]
+    tbinfo = traceback.format_tb(tb)[0]
+    filename = inspect.getfile(inspect.currentframe())
+    # script name + line number
+    line = tbinfo.split(", ")[1]
+    # Get Python syntax error
+    #
+    synerror = traceback.format_exc().splitlines()[-1]
+    return line, filename, synerror
 def outputPrinter(message,typeOfMessage='message'):
     if typeOfMessage == "error":
         arcpy.AddError(message=message)
@@ -32,7 +47,7 @@ def main(*argv):
     layerName = None
     layerName = None
     sql = None 
-    arh = None
+    fst = None
     fs = None
     results = None
     fl = None 
@@ -46,24 +61,24 @@ def main(*argv):
         layerNames = argv[4]
         sql = argv[5]
         toggleEditCapabilities = argv[6] 
-        
-        arh = ArcRestHelper.featureservicetools(username = userName, password=password,org_url=org_url,
+  
+        fst = featureservicetools.featureservicetools(username = userName, password=password,org_url=org_url,
                                                       token_url=None, 
                                                       proxy_url=None, 
                                                       proxy_port=None)                    
-        if not arh is None:
+        if not fst is None:
             outputPrinter(message="Security handler created")
                     
-            fs = arh.GetFeatureService(itemId=fsId,returnURLOnly=False)
+            fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
                    
-            if arh.valid:
+            if fst.valid:
                                
                 outputPrinter("Logged in successful")        
                 if not fs is None:        
                     if toggleEditCapabilities:          
-                        existingDef = arh.EnableEditingOnService(url=fs.url)                         
+                        existingDef = fst.EnableEditingOnService(url=fs.url)                         
                     for layerName in layerNames.split(','):        
-                        fl = arh.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
+                        fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                         if not fl is None:
                             outputPrinter(message="Attempting to delete features matching this query: %s " % sql)
                             results = fl.deleteFeatures(where=sql)       
@@ -76,7 +91,7 @@ def main(*argv):
                             else:
                                 outputPrinter (message="%s features deleted" % len(results['deleteResults']) )
                                 if toggleEditCapabilities:          
-                                    existingDef = arh.EnableEditingOnService(url=fs.url)                                
+                                    existingDef = fst.EnableEditingOnService(url=fs.url)                                
                                 arcpy.SetParameterAsText(6, "true")
                         else:
                             outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')                            
@@ -87,7 +102,7 @@ def main(*argv):
                     arcpy.SetParameterAsText(6, "false")
               
             else:
-                outputPrinter(arh.message,typeOfMessage='error')   
+                outputPrinter(fst.message,typeOfMessage='error')   
                 arcpy.SetParameterAsText(6, "false")
                 
             
@@ -96,17 +111,17 @@ def main(*argv):
             arcpy.SetParameterAsText(6, "false")
                 
     except arcpy.ExecuteError:
-        line, filename, synerror = Common.trace()
+        line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
         arcpy.SetParameterAsText(6, "false")
-    except (Common.CommonError,ArcRestHelper.ArcRestHelperError),e:
-        outputPrinter(message=e,typeOfMessage='error')   
+    except (common.ArcRestHelperError),e:
+        outputPrinter(message=e,typeOfMessage='error')
         arcpy.SetParameterAsText(6, "false")
     except:
-        line, filename, synerror = Common.trace()
+        line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
@@ -120,7 +135,7 @@ def main(*argv):
         layerNames = None
         layerName = None
         sql = None 
-        arh = None
+        fst = None
         fs = None
         results = None
         fl = None
@@ -133,7 +148,7 @@ def main(*argv):
         del layerNames
         del layerName
         del sql 
-        del arh
+        del fst
         del fs
         del results
         del fl 
