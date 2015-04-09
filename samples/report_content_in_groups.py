@@ -26,17 +26,14 @@ def trace():
 if __name__ == "__main__":
     username = "<username>"
     password = "<password>"
-    url = "<portal or AGOL url>"
+    url = "<Feature Service URL on AGOL>"
     groups = "<[groups, group1]>"
     outputlocation = "<Location to store the results>"
     outputfilename = "<outputfilename.json>"
-    fileName = os.path.join(outputlocation,outputfilename)
-    iconPath = os.path.join(outputlocation,"icons")  
     
     try:
 
-        if not os.path.exists(iconPath):
-            os.makedirs(iconPath)                            
+                            
         groups = []
         orgt = orgtools.orgtools(username = username, password=password,org_url=url,
                                  token_url=None, 
@@ -45,7 +42,10 @@ if __name__ == "__main__":
 
 
         if orgt.valid:
-                                               
+            fileName = os.path.join(outputlocation,outputfilename)
+            iconPath = os.path.join(outputlocation,"icons")  
+            if not os.path.exists(iconPath):
+                os.makedirs(iconPath)                                                    
             file = io.open(fileName, "w", encoding='utf-8')                                               
             for groupName in searchgroups:
                 results = orgt.getGroupContent(groupName=groupName)  
