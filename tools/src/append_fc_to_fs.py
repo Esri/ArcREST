@@ -76,7 +76,7 @@ def main(*argv):
                 fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
 
                 if not fs is None:
-                    if toggleEditCapabilities == 'True':
+                    if str(toggleEditCapabilities).upper() == 'TRUE':
                         existingDef = fst.EnableEditingOnService(url=fs.url)
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
