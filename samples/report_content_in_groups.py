@@ -26,7 +26,7 @@ def trace():
 if __name__ == "__main__":
     username = "<username>"
     password = "<password>"
-    url = "<Feature Service URL on AGOL>"
+    url = "<portal or AGOL url>"
     groups = "<[groups, group1]>"
     outputlocation = "<Location to store the results>"
     outputfilename = "<outputfilename.json>"

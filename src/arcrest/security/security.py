@@ -95,7 +95,7 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
 
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,
-                 rest_url=None, token_url=None,
+                 token_url=None,
                  referer_url=None):
         """ sets proper URLs for AGOL """
         if org_url is not None and org_url != '':
@@ -104,8 +104,9 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-        if rest_url is not None:
-            self._url = rest_url
+        
+        if self._org_url.lower().find('/sharing/rest') > -1:
+            self._url = self._org_url
         else:
             self._url = self._org_url + "/sharing/rest"
 
@@ -291,7 +292,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._initURL(org_url=org_url,token_url=token_url)
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,
-                rest_url=None, token_url=None,
+                 token_url=None,
                 referer_url=None):
         """ sets proper URLs for AGOL """
         if org_url is not None and org_url != '':
@@ -300,8 +301,9 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-        if rest_url is not None:
-            self._url = rest_url
+        
+        if self._org_url.lower().find('/sharing/rest') > -1:
+            self._url = self._org_url
         else:
             self._url = self._org_url + "/sharing/rest"
 
@@ -685,12 +687,12 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
 
-        self._initURL(org_url=org_url, rest_url=None, token_url=token_url,
+        self._initURL(org_url=org_url, token_url=token_url,
                      referer_url=None)
     #----------------------------------------------------------------------
 
     def _initURL(self, org_url=None,
-                 rest_url=None, token_url=None,
+                 token_url=None,
                  referer_url=None):
         """ sets proper URLs for AGOL """
         if org_url is not None and org_url != '':
@@ -699,13 +701,11 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-        if rest_url is not None:
-            self._url = rest_url
+    
+        if self._org_url.lower().find('/sharing/rest') > -1:
+            self._url = self._org_url
         else:
-            if self._org_url.lower().find('/sharing/rest') > -1:
-                self._url = self._org_url
-            else:
-                self._url = self._org_url + "/sharing/rest"
+            self._url = self._org_url + "/sharing/rest"
 
         if self._url.startswith('http://'):
             self._surl = self._url.replace('http://', 'https://')

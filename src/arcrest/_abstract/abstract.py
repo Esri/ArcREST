@@ -149,15 +149,15 @@ class BaseAGOLClass(_base.BaseWebOperations):
     _token_url = 'https://www.arcgis.com/sharing/rest/generateToken'
     _proxy_url = None
     _proxy_port = None
-    def initURL(self,org_url=None, rest_url=None,token_url=None,referer_url=None):
+    def initURL(self,org_url=None, token_url=None,referer_url=None):
 
         if org_url is not None and org_url != '':
             if not org_url.startswith('http://') and not org_url.startswith('https://'):
                 org_url = 'http://' + org_url
             self._org_url = org_url
-
-        if rest_url is not None:
-            self._url = rest_url
+        
+        if self._org_url.lower().find('/sharing/rest') > -1:
+            self._url = self._org_url
         else:
             self._url = self._org_url + "/sharing/rest"
 
