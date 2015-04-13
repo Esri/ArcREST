@@ -228,7 +228,7 @@ class BaseWebOperations(object):
                                 json=None,
                                 proxies=proxies,
                                 headers=headers,
-                                verify=False).content
+                                verify=True).content
         jres = json.loads(content)
         if 'error' in jres:
             if jres['error']['message'] == 'Request not made over ssl':
@@ -263,7 +263,7 @@ class BaseWebOperations(object):
                                params=param_dict,
                                proxies=proxies,
                                headers=headers,
-                               verify=False).content
+                               verify=True).content
         jres = json.loads(content)
         if 'error' in jres:
             if jres['error']['message'] == 'Request not made over ssl':
