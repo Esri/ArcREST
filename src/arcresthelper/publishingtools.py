@@ -667,7 +667,7 @@ class publishingtools(abstract.baseToolsClass):
 
                     resItm['FSInfo'] = self._publishFSfromConfig(config=fs)
                     
-                    if 'serviceurl' in resItm['FSInfo']:
+                    if not resItm['FSInfo'] is None and 'serviceurl' in resItm['FSInfo']:
                         print "%s created" % resItm['FSInfo']['serviceurl']
                         res.append(resItm)
                     else:
@@ -770,14 +770,17 @@ class publishingtools(abstract.baseToolsClass):
             org = config['ShareOrg']
             groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
             if config.has_key('EnableEditTracking'):
+                print "enableEditTracking parameter has been deprecated, please add a definition section to the config"                
                 enableEditTracking = config['EnableEditTracking']
             else:
-                print "Please add an EnableEditTracking parameter to your feature service section"
+                #print "Please add an EnableEditTracking parameter to your feature service section"
                 enableEditTracking = False
             folderName = config['Folder']
             thumbnail = config['Thumbnail']
 
             if 'Capabilities' in config:
+                print "Capabilities parameter has been deprecated, please add a definition section to the config"
+                
                 capabilities = config['Capabilities']
             if 'Definition' in config:
                 definition = config['Definition']
@@ -885,16 +888,21 @@ class publishingtools(abstract.baseToolsClass):
                     if len(resultFS['services']) > 0:
 
                         if 'error' in resultFS['services'][0]:
-                            print "            Overwrite failed, attempting to delete, then recreate"
-
-                            q = "title:\""+ service_name + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
+                            print "Overwrite failed, attempting to delete, then recreate"
+                            if  self._securityHandler is None or self._securityHandler.username is None:
+                                q = "title:\""+ service_name + "\" AND type:\"" + "Feature Service" + "\""
+                            else:
+                                q = "title:\""+ service_name + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
                             items = admin.query(q=q, bbox=None, start=1, num=10, sortField=None,
                                        sortOrder="asc")
                             if items['total'] >= 1:
                                 itemID = items['results'][0]['id']
 
                             else:
-                                q = "title:\""+ service_name_safe + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
+                                if self._securityHandler is None or self._securityHandler.username is None:
+                                    q = "title:\""+ service_name_safe + "\" AND type:\"" + "Feature Service" + "\""
+                                else:
+                                    q = "title:\""+ service_name_safe + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
                                 items = admin.query(q=q, bbox=None, start=1, num=10, sortField=None,
                                                                       sortOrder="asc")
                                 if items['total'] >= 1:
@@ -908,9 +916,9 @@ class publishingtools(abstract.baseToolsClass):
                                 if 'error' in delres:
                                     print delres
                                     return delres
-                                print "            Delete successful"
+                                print "Delete successful"
                             else:
-                                print "            Item cannot be found"
+                                print "Item cannot be found"
 
                             resultFS = adminusercontent.publishItem(
                                            fileType="serviceDefinition",
@@ -926,7 +934,7 @@ class publishingtools(abstract.baseToolsClass):
                                                          jobId=resultFS['services'][0]['jobId'],
                                                          jobType='publish')
                         if 'error' in status:
-                            print  "            %s" % status
+                            print  "%s" % status
                         elif 'status' in status:
                             while status['status'] == 'processing' or status['status'] == 'partial':
                                 time.sleep(.5)
@@ -936,13 +944,13 @@ class publishingtools(abstract.baseToolsClass):
                                 if 'error' in status:
                                     print status
                             if status['status'] == 'failed':
-                                print "            Overwrite failed, attempting to delete, then recreate"
+                                print "Publishing failed, attempting to delete, then recreate"
 
                                 delres=adminusercontent.deleteItems(items=resultFS['services'][0]['serviceItemId'])
                                 if 'error' in delres:
                                     print delres
                                     return delres
-                                print "            Delete successful"
+                                print "Delete successful"
 
                                 resultFS = adminusercontent.publishItem(
                                                 fileType="serviceDefinition",
@@ -979,7 +987,7 @@ class publishingtools(abstract.baseToolsClass):
                                 adminFS = AdminFeatureService(url=resultFS['services'][0]['serviceurl'], securityHandler=self._securityHandler)
 
                                 if enableEditTracking == True or str(enableEditTracking).upper() == 'TRUE':
-
+                                 
                                     json_dict = {'editorTrackingInfo':{}}
                                     json_dict['editorTrackingInfo']['allowOthersToDelete'] = True
                                     json_dict['editorTrackingInfo']['allowOthersToUpdate'] = True
@@ -996,11 +1004,29 @@ class publishingtools(abstract.baseToolsClass):
                                     json_dict['editFieldsInfo']['creatorField'] = ""
                                     json_dict['editFieldsInfo']['editDateField'] = ""
                                     json_dict['editFieldsInfo']['editorField'] = ""
+                                    #layUpdateResult = adminFS.addToDefinition(json_dict=json_dict)
+                                    #if 'error' in layUpdateResult:
+                                        #resultFS['services'][0]['messages'] = resultFS['services'][0]['serviceurl'] + "|" + layUpdateResult['error']                                            
+
                                     layers = adminFS.layers
+                                    tables = adminFS.tables
                                     for layer in layers:
-                                        layUpdateResult = layer.addToDefinition(json_dict=json_dict)
-                                        if 'error' in layUpdateResult:
-                                            resultFS['services'][0]['messages'] = resultFS['services'][0]['messages'] + "|" + layUpdateResult['error']
+                                        if layer.canModifyLayer is None or layer.canModifyLayer == True:
+                                            if layer.editFieldsInfo is None:
+                                                layUpdateResult = layer.addToDefinition(json_dict=json_dict)
+                                                if 'error' in layUpdateResult:
+                                                   
+                                                    layUpdateResult['error']['layerid'] = layer.id
+                                                    resultFS['services'][0]['messages'] = layUpdateResult['error']
+                                    if not tables is None:
+                                        for layer in tables:
+                                            if layer.canModifyLayer is None or layer.canModifyLayer == True:
+                                                if layer.editFieldsInfo is None:
+                                                    layUpdateResult = layer.addToDefinition(json_dict=json_dict)
+                                                    if 'error' in layUpdateResult:
+                                                       
+                                                        layUpdateResult['error']['layerid'] = layer.id
+                                                        resultFS['services'][0]['messages'] = layUpdateResult['error']                                        
 
 
                                 if definition is not None:
@@ -1010,7 +1036,8 @@ class publishingtools(abstract.baseToolsClass):
 
                                 resultFS['services'][0]['folderId'] = folderId
                                 return resultFS['services'][0]
-
+                            else:
+                                return status
                         else:
                             return status
                     else:
