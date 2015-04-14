@@ -104,7 +104,7 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-        
+
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -301,7 +301,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-        
+
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -701,7 +701,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = org_url
         if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
             self._org_url = 'http://' + self._org_url
-    
+
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -839,7 +839,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     def servertoken(self,serverURL,referer):
         """ returns the server token for the server """
         if self._server_token is None or \
-           datetime.datetime.now() >= self._server_token_expires_on or \
+           datetime.datetime.now() >= self._token_expires_on or \
            self._server_url != serverURL:
             self._server_url = serverURL
             result = self._generateForServerTokenSecurity(serverURL=serverURL,
@@ -887,9 +887,10 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             #else:
                 #seconds = int(server_token['expires'])
             #self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
-            self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
+            self._token_expires_on = datetime.datetime.fromtimestamp(int(server_token['expires']) /1000) - \
                         datetime.timedelta(seconds=1)
             self._server_expires_in = server_token['expires']
+            self._server_token_expires_on = server_token['expires']
             return server_token['token']
 
     #----------------------------------------------------------------------

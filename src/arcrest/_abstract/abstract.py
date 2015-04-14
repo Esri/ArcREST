@@ -6,6 +6,9 @@ import calendar
 import glob
 import mimetypes
 import os
+class BaseGeoEnrichment(_base.BaseWebOperations):
+    """ base geoenrichment class """
+    pass
 ########################################################################
 class BaseBookmark(object):
     """ base Bookmark class """
@@ -155,7 +158,7 @@ class BaseAGOLClass(_base.BaseWebOperations):
             if not org_url.startswith('http://') and not org_url.startswith('https://'):
                 org_url = 'http://' + org_url
             self._org_url = org_url
-        
+
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:

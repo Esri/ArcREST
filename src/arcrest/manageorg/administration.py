@@ -327,6 +327,6 @@ class Administration(BaseAGOLClass):
                                       securityHandler=sh,
                                       proxy_url=self._proxy_url,
                                       proxy_port=self._proxy_port,
-                                      initialize=True)
+                                      initialize=False)
                     )
             return services
