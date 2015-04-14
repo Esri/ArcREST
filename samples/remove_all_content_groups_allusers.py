@@ -36,8 +36,8 @@ if __name__ == "__main__":
             #users = {'users':[{'username':cred_info['Username']}]}
             #arh.removeUserData(users=users)
             #arh.removeUserGroups(users=users
-            arh.removeUserData()
-            arh.removeUserGroups()                
+            rst.removeUserData()
+            rst.removeUserGroups()                
     except:
         line, filename, synerror = trace()
         print("error on line: %s" % line)

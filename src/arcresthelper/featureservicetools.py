@@ -77,16 +77,7 @@ class featureservicetools(abstract.baseToolsClass):
                        url=item.url,
                        securityHandler=self._securityHandler)
             return None
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "GetFeatureService",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -112,16 +103,7 @@ class featureservicetools(abstract.baseToolsClass):
                     securityHandler=self._securityHandler)
 
             return self.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=returnURLOnly)
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "GetLayerFromFeatureServiceByURL",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -163,16 +145,7 @@ class featureservicetools(abstract.baseToolsClass):
                     else:
                         return table
             return None
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "GetLayerFromFeatureService",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+      
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -202,16 +175,7 @@ class featureservicetools(abstract.baseToolsClass):
                    url=url,
                    securityHandler=self._securityHandler)
             return fl.addFeatures(fc=pathToFeatureClass)
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "AddFeaturesToFeatureLayer",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+       
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -233,18 +197,9 @@ class featureservicetools(abstract.baseToolsClass):
         try:
             fl = FeatureLayer(
                    url=url,
-                   securityHandler=self._securityHandler,)
+                   securityHandler=self._securityHandler)
             return fl.deleteFeatures(where=sql)
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+       
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

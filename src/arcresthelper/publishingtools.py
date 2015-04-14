@@ -4,6 +4,8 @@ dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
 from arcrest.agol import FeatureLayer
 from arcrest.agol import FeatureService
+import featureservicetools
+
 from arcrest.hostedservice import AdminFeatureService
 import datetime, time
 import json
@@ -1216,11 +1218,11 @@ class publishingtools(abstract.baseToolsClass):
 
             if not itemInfo['AppInfo']  is None:
                 if not 'error' in itemInfo['AppInfo']['Results'] :
-                    print "            %s app created" % itemInfo['AppInfo']['Name']
+                    print "%s app created" % itemInfo['AppInfo']['Name']
                 else:
-                    print "            " + str(itemInfo['AppInfo']['Results'])
+                    print str(itemInfo['AppInfo']['Results'])
             else:
-                print "            " + "App was not created"
+                print "App was not created"
             return itemInfo
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
@@ -1894,7 +1896,12 @@ class publishingtools(abstract.baseToolsClass):
         try:
 
             fsRes = []
-            fst = featureservicetools(securityHandler=self._securityHandler)
+            fst = featureservicetools.featureservicetools(username=self._username,
+                                                          password=self._password,
+                                                          org_url=self._org_url,
+                                                          proxy_url=self._proxy_url,
+                                                          proxy_port=self._proxy_port,
+                                                          token_url=self._token_url)
 
 
             if isinstance(efs_config, list):
@@ -1906,18 +1913,18 @@ class publishingtools(abstract.baseToolsClass):
                         if str(ext_service['DeleteInfo']['Delete']).upper() == "TRUE":
                             resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=ext_service['DeleteInfo']['DeleteSQL'])
                             if not 'error' in resItm['DeleteDetails'] :
-                                print "            Delete Successful: %s" % fURL
+                                print "Delete Successful: %s" % fURL
                             else:
-                                print "            " + str(resItm['DeleteDetails'])
+                                print  str(resItm['DeleteDetails'])
 
                     resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = ext_service['FeatureClass'])
 
                     fsRes.append(resItm)
 
                     if not 'error' in resItm['AddDetails']:
-                        print "            Add Successful: %s " % fURL
+                        print "Add Successful: %s " % fURL
                     else:
-                        print "            " + str(resItm['AddDetails'])
+                        print str(resItm['AddDetails'])
 
             else:
                 resItm={"DeleteDetails": None,"AddDetails":None}

@@ -414,6 +414,7 @@ class Item(BaseAGOLClass):
     _type = None
     _json = None
     _json_dict = None
+    _sourceUrl = None
     #----------------------------------------------------------------------
     def __init__(self, itemId, url,
                  securityHandler,
@@ -661,7 +662,13 @@ class Item(BaseAGOLClass):
             self.__init()
         return self._thumbnail
     #----------------------------------------------------------------------
-
+    @property
+    def sourceUrl(self):
+        """ Source url for this item """
+        if self._sourceUrl is None:
+            self.__init()
+        return self._sourceUrl
+    #----------------------------------------------------------------------
     def saveThumbnail(self,fileName,filePath):
         """ URL to the thumbnail used for the item """
         if self._thumbnail is None:
