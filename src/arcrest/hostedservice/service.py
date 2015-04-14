@@ -463,6 +463,8 @@ class AdminFeatureService(BaseAGOLClass):
     _initialExtent = None
     _copyrightText = None
     _layers = None
+    _tables = None
+    _enableZDefaults = None
     _syncCapabilities = None
     _capabilities = None
     _currentVersion = None
@@ -530,9 +532,21 @@ class AdminFeatureService(BaseAGOLClass):
                                                   securityHandler=self._securityHandler,
                                                   proxy_port=self._proxy_port,
                                                   proxy_url=self._proxy_url)
+                    fl.loadAttributes(json_dict = lyr)
                     self._layers.append(fl)
                     del fl
                     del lyr
+            elif k == "tables":
+                self._tables = []
+                for lyr in v:              
+                    fl = AdminFeatureServiceLayer(url=self._url + "/%s" % lyr['id'],
+                                                  securityHandler=self._securityHandler,
+                                                  proxy_port=self._proxy_port,
+                                                  proxy_url=self._proxy_url)
+                    fl.loadAttributes(json_dict = lyr)
+                    self._tables.append(fl)
+                    del fl
+                    del lyr                
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -744,6 +758,21 @@ class AdminFeatureService(BaseAGOLClass):
         return self._layers
     #----------------------------------------------------------------------
     @property
+    def tables(self):
+        """ returns the layers for a service """
+        if self._tables is None:
+            self.__init()
+        return self._tables  
+    #----------------------------------------------------------------------
+    @property
+    def enableZDefaults(self):
+        """ returns the layers for a service """
+        if self._enableZDefaults is None:
+            self.__init()
+        return self._enableZDefaults      
+    
+    #----------------------------------------------------------------------
+    @property
     def asDictionary(self):
         """ returns the feature service as a dictionary object """
         if self._dict is None:
@@ -939,7 +968,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _hasLabels = None
     _canScaleSymbols = None
     _ownershipBasedAccessControlForFeatures = None
-    _useStandardizedQueries = None
+    _adminLayerInfo = None
     _supportsAttachmentsByUploadId = None
     _editingInfo = None
     _supportsCalculate = None
@@ -948,6 +977,12 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _json = None
     _json_dict = None
     _error = None
+    _adminLayerInfo = None
+    _syncCanReturnChanges = None
+    _dateFieldsTimeReference = None
+    _enableZDefaults = None
+    _ogcGeometryType = None    
+    _exceedsLimitFactor = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1002,15 +1037,18 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
                                  proxy_url=self._proxy_url)
         self._json = json.dumps(json_dict)
         self._json_dict = json_dict
+        self.loadAttributes(json_dict=json_dict)
+    #----------------------------------------------------------------------
+    def loadAttributes(self,json_dict):
         attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
+                     if not attr.startswith('__') and \
+                     not attr.startswith('_')]
         for k,v in json_dict.iteritems():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented AdminFeatureServiceLayer."
-            del k, v
+            del k, v          
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -1370,6 +1408,43 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
+    #----------------------------------------------------------------------
+    @property
+    def adminLayerInfo(self):
+        if self._adminLayerInfo is None:
+            self.__init()
+        return self._adminLayerInfo
+    #----------------------------------------------------------------------
+    @property
+    def syncCanReturnChanges(self):
+        if self._syncCanReturnChanges is None:
+            self.__init()
+        return self._syncCanReturnChanges
+    #----------------------------------------------------------------------
+    @property
+    def dateFieldsTimeReference(self):
+        if self._dateFieldsTimeReference is None:
+            self.__init()
+        return self._dateFieldsTimeReference
+    #----------------------------------------------------------------------
+    @property
+    def enableZDefaults(self):
+        if self._enableZDefaults is None:
+            self.__init()
+        return self._enableZDefaults
+    #----------------------------------------------------------------------
+    @property
+    def ogcGeometryType(self):
+        if self._ogcGeometryType is None:
+            self.__init()
+        return self._ogcGeometryType
+    #----------------------------------------------------------------------
+    @property
+    def exceedsLimitFactor(self):
+        if self._exceedsLimitFactor is None:
+            self.__init()
+        return self._exceedsLimitFactor
+    
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """

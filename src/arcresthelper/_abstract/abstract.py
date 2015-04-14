@@ -14,8 +14,14 @@ import gc
 
 ########################################################################
 class baseToolsClass(object):
-
-     #----------------------------------------------------------------------
+    _org_url = None
+    _username = None
+    _password = None
+    _proxy_url = None
+    _proxy_port = None
+    _token_url = None
+    _securityHandler = None
+    #----------------------------------------------------------------------
     def __init__(self,
                  username,
                  password,
@@ -31,6 +37,7 @@ class baseToolsClass(object):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._token_url = token_url
+       
         if self._org_url is None or self._org_url =='':
             self._org_url = 'http://www.arcgis.com'
         if self._username == "" or self._password == "":
