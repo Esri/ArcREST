@@ -455,8 +455,7 @@ class BaseWebOperations(object):
     #----------------------------------------------------------------------
     def _do_get_stnd(self, url, param_dict, header=None, proxy_url=None, proxy_port=None,compress=True):
         """ performs a get operation """
-        format_url = url + "?%s" % urllib.urlencode(param_dict)
-
+       
         headers = [('Referer', self._referer_url),
                    ('User-Agent', self._useragent)]
         if not header is None  :
@@ -476,7 +475,14 @@ class BaseWebOperations(object):
         else:
             opener = urllib2.build_opener(AGOLRedirectHandler())
         opener.addheaders = headers
-        resp = opener.open(format_url)
+        if len(str(urllib.urlencode(param_dict))) + len(url)> 1999:
+            resp = opener.open(url, data=urllib.urlencode(param_dict))
+
+        else:
+            format_url = url + "?%s" % urllib.urlencode(param_dict)
+            
+            resp = opener.open(format_url)
+                
         if resp.info().get('Content-Encoding') == 'gzip':
             buf = StringIO(resp.read())
             f = gzip.GzipFile(fileobj=buf)
