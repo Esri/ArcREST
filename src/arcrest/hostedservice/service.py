@@ -46,7 +46,7 @@ class Services(BaseAGOLClass):
                     self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Invalid Security Handler, " + \
-                                     "only AGOLTokenSecurityHandler is accepted")
+                                     "only AGOLTokenSecurityHandler and PortalTokenSecurityHandler is accepted")
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

@@ -54,3 +54,8 @@ if __name__ == "__main__":
         itemDataPath = exportItem.itemData(f=None, savePath=savePath)
         uc.deleteItem(item_id=exportItemId)
         print itemDataPath
+    except:
+        line, filename, synerror = trace()
+        print("error on line: %s" % line)
+        print("error in file name: %s" % filename)
+        print("with error message: %s" % synerror)
