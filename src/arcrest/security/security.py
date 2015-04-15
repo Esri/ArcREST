@@ -705,9 +705,11 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
+            self._org_url = str(self._org_url).replace('/sharing/rest','')
         else:
             self._url = self._org_url + "/sharing/rest"
-
+       
+            
         if self._url.startswith('http://'):
             self._surl = self._url.replace('http://', 'https://')
         else:
