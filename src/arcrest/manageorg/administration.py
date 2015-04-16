@@ -310,12 +310,11 @@ class Administration(BaseAGOLClass):
         urls = portal.urls
         services = []
         if urls != {}:
-
             for https in portal.tileServers['https']:
                 if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
                     url = "https://%s/tiles/%s/arcgis/rest/admin" % (https, portalId)
                     if url.endswith(r'/services') == False:
-                        url = url #+ r"/services"
+                        url = url
                 else:
                     url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
                 services.append(Services(url=url,
@@ -359,7 +358,7 @@ class Administration(BaseAGOLClass):
                         url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
                     elif isinstance(self._securityHandler, PortalTokenSecurityHandler):
                         url = "%s/admin" % https
-            
+
                     services.append(Services(url=url,
                                              securityHandler=self._securityHandler,
                                              proxy_url=self._proxy_url,
