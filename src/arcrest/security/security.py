@@ -482,6 +482,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
             datetime.timedelta(seconds=1)
+        
         #if token['expires'] > 86400:
             #seconds = 86400
         #else:
@@ -636,7 +637,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                 #seconds = int(token['expires'])
             #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
             self._token_expires_on = datetime.datetime.fromtimestamp(int(token['expires']) /1000) - datetime.timedelta(seconds=1)
-            self._expires_in = token['expires']
+            self._expires_in = (self._token_expires_on - self._token_created_on).total_seconds()
             return token['token']
 ########################################################################
 class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
@@ -704,9 +705,11 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
+            self._org_url = str(self._org_url).replace('/sharing/rest','')
         else:
             self._url = self._org_url + "/sharing/rest"
-
+       
+            
         if self._url.startswith('http://'):
             self._surl = self._url.replace('http://', 'https://')
         else:
@@ -838,8 +841,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     #----------------------------------------------------------------------
     def servertoken(self,serverURL,referer):
         """ returns the server token for the server """
-        if self._server_token is None or \
-           datetime.datetime.now() >= self._token_expires_on or \
+        if self._server_token is None or self._server_token_expires_on is None or \
+           datetime.datetime.now() >= self._server_token_expires_on or \
            self._server_url != serverURL:
             self._server_url = serverURL
             result = self._generateForServerTokenSecurity(serverURL=serverURL,
@@ -882,15 +885,10 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._server_token = server_token['token']
             self._server_token_created_on = datetime.datetime.now()
-            #if server_token['expires'] > 86400:
-                #seconds = 86400
-            #else:
-                #seconds = int(server_token['expires'])
-            #self._server_token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
-            self._token_expires_on = datetime.datetime.fromtimestamp(int(server_token['expires']) /1000) - \
-                        datetime.timedelta(seconds=1)
-            self._server_expires_in = server_token['expires']
-            self._server_token_expires_on = server_token['expires']
+        
+            self._server_token_expires_on = datetime.datetime.fromtimestamp(server_token['expires'] /1000) - \
+                datetime.timedelta(seconds=1)
+            self._server_expires_in = (self._server_token_expires_on - self._server_token_created_on).total_seconds()
             return server_token['token']
 
     #----------------------------------------------------------------------
@@ -927,6 +925,6 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             #self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=seconds)
             self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
                         datetime.timedelta(seconds=1)
-            self._expires_in = token['expires']
+            self._expires_in = (self._token_expires_on - self._token_created_on).total_seconds()
             return token['token']
 

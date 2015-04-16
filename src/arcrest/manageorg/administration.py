@@ -353,11 +353,19 @@ class Administration(BaseAGOLClass):
         services = []
         if urls != {}:
             for https in portal.featureServers['https']:
-                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-                services.append(Services(url=url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port))
+                #url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                if self._securityHandler is not None:
+                    if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
+                        url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                    elif isinstance(self._securityHandler, PortalTokenSecurityHandler):
+                        url = "%s/admin" % https
+            
+                    services.append(Services(url=url,
+                                             securityHandler=self._securityHandler,
+                                             proxy_url=self._proxy_url,
+                                             proxy_port=self._proxy_port))
+                else:
+                    print "Security Handler is not set"
             return services
         else:
             for server in portal.servers['servers']:

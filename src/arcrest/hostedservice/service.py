@@ -49,7 +49,7 @@ class Services(BaseAGOLClass):
                     self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Invalid Security Handler, " + \
-                                     "only AGOLTokenSecurityHandler is accepted")
+                                     "only AGOLTokenSecurityHandler and PortalTokenSecurityHandler is accepted")
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -146,26 +146,49 @@ class Services(BaseAGOLClass):
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
         for k, v in res.iteritems():
-            if k == "services":
+            if k == "foldersDetail":
                 for item in v:
-                    if 'type' in item and item['type'] == 'MapServer':
-                        self._services.append(
-                            AdminMapService(url=uURL + r"/%s/%s" % (item['name'],item['type']),
+                    if 'isDefault' in item and item['isDefault'] == False:
+                        fURL = self._url + "/services/" + item['folderName']
+                        resFolder = self._do_get(url=fURL, param_dict=params,
+                                           proxy_port=self._proxy_port,
+                                           proxy_url=self._proxy_url)
+                        for k1, v1 in resFolder.iteritems():
+                            if k1 == "services":
+                                self._checkservice(k1,v1,fURL)
+            elif k == "services":
+                self._checkservice(k,v,uURL)
+        return self._services
+
+    def _checkservice(self,k,v,url):
+        for item in v:
+            if 'type' in item and item['type'] == 'MapServer':
+                if item.has_key('name') == True:
+                    name = item['name']
+                elif item.has_key('serviceName') == True:
+                    name = item['serviceName']
+                    self._services.append(
+                    AdminMapService(url=url + r"/%s/%s" % (name,item['type']),
                                             securityHandler=self._securityHandler,
                                            proxy_url=self._proxy_url,
                                            proxy_port=self._proxy_port,
                                            initialize=True)
                             )
-                    else:
-                        surl = uURL + r"/%s/%s" % (item['adminServiceInfo']['name'],
-                                            item['adminServiceInfo']['type'])
+            elif 'type' in item and item['type'] == 'FeatureServer':
+                if item.has_key('adminServiceInfo') == True:
+                    name = item['adminServiceInfo']['name']
+                    typefs = item['adminServiceInfo']['type']
+                elif item.has_key('serviceName') == True:
+                    name = item['serviceName']
+                    typefs = item['type']
+                surl = url + r"/%s/%s" % (name,
+                                           typefs)
                         self._services.append(
                             AdminFeatureService(url=surl,
                                                 securityHandler=self._securityHandler,
                                                 initialize=False,
                                                 proxy_url=self._proxy_url,
                                                 proxy_port=self._proxy_port))
-        return self._services
 ########################################################################
 class AdminMapService(BaseAGOLClass):
     """
@@ -212,7 +235,8 @@ class AdminMapService(BaseAGOLClass):
                  proxy_port=None):
         """Constructor"""
         self._url = url
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
+        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
+           isinstance(securityHandler, security.PortalTokenSecurityHandler):
             self._token = securityHandler.token
             self._securityHandler = securityHandler
             if not securityHandler is None:

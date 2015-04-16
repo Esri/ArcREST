@@ -13,7 +13,8 @@ import os
 import common 
 import gc
 import arcpy
-
+from urlparse import urlparse
+from urlparse import urlsplit
 #----------------------------------------------------------------------
 def trace():
     """
@@ -189,6 +190,7 @@ class publishingtools(abstract.baseToolsClass):
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
 
             update_service = config['UpdateService']
+            update_service = 'FALSE'
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             adminusercontent = admin.content.usercontent()
             resultMap = {'Layers':[],'Tables':[],'Results':None}
@@ -312,7 +314,13 @@ class publishingtools(abstract.baseToolsClass):
                 opLayers = webmap_data['operationalLayers']
                 for opLayer in opLayers:
                     currentID = opLayer['id']
-                   
+                    #if isinstance(self._securityHandler,arcrest.security.PortalTokenSecurityHandler):
+                        #pars = urlparse(url=opLayer['url'], scheme='', allow_fragments=True)
+                        #path = str(pars.path).split("/")
+                        #adurl = pars.scheme + "://" + pars.netloc + "/" + path[1] + "/admin"
+                        #agolServices = arcrest.hostedservice.Services(url = adurl, securityHandler=self._securityHandler)
+                        #for service in agolServices.services:
+                            #pass                       
                     opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
                     if 'applicationProperties' in webmap_data:
                         webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
@@ -330,7 +338,7 @@ class publishingtools(abstract.baseToolsClass):
                         if 'applicationProperties' in webmap_data:
                             webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
                                            
-                        esultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
+                        resultMap['Tables'].append({"Name":opLayer['title'],"ID":opLayer['id']})
 
 
             name = config['Title']
@@ -1456,9 +1464,13 @@ class publishingtools(abstract.baseToolsClass):
                 updateParams.title = name
                 portal = admin.portals()
                 url = url.replace("{AppID}",resultApp['Results']['id'])
-                portalProp = portal.portalProperties
-                url = url.replace("{OrgURL}", portalProp['urlKey'] + '.' + portalProp['customBaseUrl'])
-
+                portalself = portal.portalSelf()
+                if portalself.urlKey is None or portalself.customBaseUrl is None:
+                    parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                    url = url.replace("{OrgURL}",parsedURL.netloc + parsedURL.path)
+                else:
+                    url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
+            
                 updateResults = adminusercontent.updateItem(itemId=resultApp['Results']['id'],
                                                             url=url,
                                                             updateItemParameters=updateParams,
