@@ -25,6 +25,9 @@ class Services(BaseAGOLClass):
     _proxy_url = None
     _securityHandler = None
     _services = None
+    _folders = None
+    _description = None
+    _folderName = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -67,8 +70,29 @@ class Services(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implmented in hostedservice.Services."
             del k, v
+    #----------------------------------------------------------------------
+    @property
+    def folders(self):
+        """returns the service folders"""
+        if self._folders is None:
+            self.__init()
+        return self._folders
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """returns the description property"""
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def folderName(self):
+        """returns the folder name"""
+        if self._folderName is None:
+            self.__init()
+        return self._folderName
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
@@ -129,7 +153,8 @@ class Services(BaseAGOLClass):
                             AdminMapService(url=uURL + r"/%s/%s" % (item['name'],item['type']),
                                             securityHandler=self._securityHandler,
                                            proxy_url=self._proxy_url,
-                                           proxy_port=self._proxy_port)
+                                           proxy_port=self._proxy_port,
+                                           initialize=True)
                             )
                     else:
                         surl = uURL + r"/%s/%s" % (item['adminServiceInfo']['name'],
@@ -218,8 +243,7 @@ class AdminMapService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print "_%s = None" % k
-                #print k,  " - attribute not implmented. Please log an support request."
+                print k,  " - attribute not implmented. Please log an support request."
             del k, v
     #----------------------------------------------------------------------
     @property
@@ -438,6 +462,100 @@ class AdminMapService(BaseAGOLClass):
 
         else:
             raise AttributeError("This object only accepts security.AGOLTokenSecurityHandler")
+    #----------------------------------------------------------------------
+    def refresh(self, serviceDefinition=True):
+        """
+        The refresh operation refreshes a service, which clears the web
+        server cache for the service.
+        """
+        url = url + "/MapServer/refresh"
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "serviceDefinition" : serviceDefinition
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def cancelJob(self, jobId):
+        """
+        The cancel job operation supports cancelling a job while update
+        tiles is running from a hosted feature service. The result of this
+        operation is a response indicating success or failure with error
+        code and description.
+
+        Inputs:
+           jobId - jobId to cancel
+        """
+        url = url + "/jobs/%s/cancel" % jobId
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def jobStatistics(self, jobId):
+        """
+        The delete job operation supports deleting a job from a hosted map
+        service. The result of this operation is a response indicating
+        success or failure with error code and description.
+
+        """
+        url = url + "/jobs/%s" % jobId
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def editTileService(self,
+                        serviceDefinition=None,
+                        minScale=None,
+                        maxScale=None,
+                        sourceItemId=None,
+                        exportTilesAllowed=False,
+                        maxExportTileCount=100000):
+        """
+        This post operation updates a Tile Service's properties
+
+        Inputs:
+           serviceDefinition - updates a service definition
+           minScale - sets the services minimum scale for caching
+           maxScale - sets the service's maximum scale for caching
+           sourceItemId - The Source Item ID is the GeoWarehouse Item ID of the map service
+           exportTilesAllowed - sets the value to let users export tiles
+           maxExportTileCount - sets the maximum amount of tiles to be exported
+             from a single call.
+        """
+        params = {
+            "token" : self._securityHandler.token,
+            "f" : "json",
+        }
+        if not serviceDefinition is None:
+            params["serviceDefinition"] = serviceDefinition
+        if not minScale is None:
+            params['minScale'] = float(minScale)
+        if not maxScale is None:
+            params['maxScale'] = float(maxScale)
+        if not sourceItemId is None:
+            params["sourceItemId"] = sourceItemId
+        if not exportTilesAllowed is None:
+            params["exportTilesAllowed"] = exportTilesAllowed
+        if not maxExportTileCount is None:
+            params["maxExportTileCount"] = int(maxExportTileCount)
+        url = self._url + "/edit"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=proxy_url,
+                             proxy_port=proxy_port)
 
 ########################################################################
 class AdminFeatureService(BaseAGOLClass):
@@ -538,7 +656,7 @@ class AdminFeatureService(BaseAGOLClass):
                     del lyr
             elif k == "tables":
                 self._tables = []
-                for lyr in v:              
+                for lyr in v:
                     fl = AdminFeatureServiceLayer(url=self._url + "/%s" % lyr['id'],
                                                   securityHandler=self._securityHandler,
                                                   proxy_port=self._proxy_port,
@@ -546,7 +664,7 @@ class AdminFeatureService(BaseAGOLClass):
                     fl.loadAttributes(json_dict = lyr)
                     self._tables.append(fl)
                     del fl
-                    del lyr                
+                    del lyr
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -762,15 +880,15 @@ class AdminFeatureService(BaseAGOLClass):
         """ returns the layers for a service """
         if self._tables is None:
             self.__init()
-        return self._tables  
+        return self._tables
     #----------------------------------------------------------------------
     @property
     def enableZDefaults(self):
         """ returns the layers for a service """
         if self._enableZDefaults is None:
             self.__init()
-        return self._enableZDefaults      
-    
+        return self._enableZDefaults
+
     #----------------------------------------------------------------------
     @property
     def asDictionary(self):
@@ -981,7 +1099,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _syncCanReturnChanges = None
     _dateFieldsTimeReference = None
     _enableZDefaults = None
-    _ogcGeometryType = None    
+    _ogcGeometryType = None
     _exceedsLimitFactor = None
     #----------------------------------------------------------------------
     def __init__(self, url,
@@ -1048,7 +1166,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implmented AdminFeatureServiceLayer."
-            del k, v          
+            del k, v
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes a service """
@@ -1444,7 +1562,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self._exceedsLimitFactor is None:
             self.__init()
         return self._exceedsLimitFactor
-    
+
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """
