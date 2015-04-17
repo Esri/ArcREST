@@ -21,6 +21,7 @@ class baseToolsClass(object):
     _proxy_port = None
     _token_url = None
     _securityHandler = None
+    _featureServiceFieldCase = None
     #----------------------------------------------------------------------
     def __init__(self,
                  username,
@@ -70,6 +71,32 @@ class baseToolsClass(object):
                                                                   proxy_url=self._proxy_url,
                                                                   proxy_port=self._proxy_port)
                 token = self._securityHandler.token
+               
+                admin = arcrest.manageorg.Administration(url=self._org_url,
+                                                         securityHandler=self._securityHandler)
+              
+                hostingServers = admin.hostingServers()    
+                for hostingServer in hostingServers:
+                    serData = hostingServer.data
+                    serData
+                    dataItems = serData.rootDataItems
+                    if 'rootItems' in dataItems:
+                        for rootItem in dataItems['rootItems']:
+                            if rootItem == '/enterpriseDatabases':
+                                rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
+                                if not rootItems is None and 'items' in rootItems:
+                                    for item in rootItems['items']:
+                                        if 'info' in item:
+                                            if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
+                                                conStrDic = {}
+                                                conStr = item['info']['connectionString'].split(";")
+                                                for conStrValue in conStr:
+                                                    spltval = conStrValue.split("=")
+                                                    conStrDic[spltval[0]] = spltval[1]
+                                                if 'DBCLIENT' in conStrDic:
+                                                    if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
+                                                        self._featureServiceFieldCase = 'lower'
+                                             
                 #if 'error' in self._securityHandler.message and token is None:
                     #if self._securityHandler.message['error']== 401:
     
