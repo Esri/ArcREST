@@ -1,20 +1,19 @@
-from _abstract import abstract
+from arcresthelper._abstract import abstract
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
-from arcrest.agol import FeatureLayer
-from arcrest.agol import FeatureService
-import featureservicetools
+
+import arcresthelper.featureservicetools as featureservicetools 
 
 from arcrest.hostedservice import AdminFeatureService
 import datetime, time
 import json
 import os
-import common 
+import arcresthelper.common as common
 import gc
 import arcpy
 from urlparse import urlparse
-from urlparse import urlsplit
+
 #----------------------------------------------------------------------
 def trace():
     """
@@ -69,6 +68,8 @@ class publishingtools(abstract.baseToolsClass):
                                         replaceItem['ReplaceString'] = fs['FSInfo']['serviceurl']
                                         replaceItem['ItemID'] = fs['FSInfo']['serviceItemId']
                                         replaceItem['ItemFolder'] = fs['FSInfo']['folderId']
+                                        if 'convertCase' in fs['FSInfo']:
+                                            replaceItem['convertCase'] = fs['FSInfo']['convertCase']
                                     elif replaceItem.has_key('ItemID'):
                                         if replaceItem.has_key('ItemFolder') == False:
 
@@ -267,11 +268,36 @@ class publishingtools(abstract.baseToolsClass):
 
                                 opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
                                 if replaceItem.has_key('ItemID'):
-                                        opLayer['itemId'] = replaceItem['ItemID']
+                                    opLayer['itemId'] = replaceItem['ItemID']
                                 else:
                                     opLayer['itemId'] = None
                                     #opLayer['itemId'] = get_guid()
-
+                                if replaceItem.has_key('convertCase'):
+                                    if replaceItem['convertCase'] == 'lower':
+                                       
+                                        if opLayer.has_key("popupInfo"):
+                                                
+                                            if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
+                                                for chart in opLayer['popupInfo']['mediaInfos']:
+                                                    if 'value' in chart:
+                                                        if 'normalizeField' in chart and not chart['normalizeField'] is None:
+                                                            chart['normalizeField'] = chart['normalizeField'].lower()
+                                                        if 'fields' in chart['value']:
+                                                            
+                                                            for i in range(len(chart['value']['fields'])):
+                                                                chart['value']['fields'] = str(chart['value']['fields']).lower()
+                                            if opLayer['popupInfo'].has_key("fieldInfos"):
+                                                          
+                                                for field in opLayer['popupInfo']['fieldInfos']:
+                                                    newFld = str(field['fieldName']).lower()
+                                                    if 'description' in opLayer['popupInfo']:
+                                                        opLayer['popupInfo']['description'] = common.find_replace(obj = opLayer['popupInfo']['description'], 
+                                                                           find = "{" + field['fieldName'] + "}", 
+                                                                           replace = "{" + newFld + "}")
+                                                    
+                                                                            
+                                                                                                    
+                                                    field['fieldName'] = newFld
                                 if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
                                     layers = []
                                     item = admin.content.item(itemId = replaceItem['ItemID'])
@@ -1045,6 +1071,8 @@ class publishingtools(abstract.baseToolsClass):
                                         resultFS['services'][0]['messages'] = enableResults
 
                                 resultFS['services'][0]['folderId'] = folderId
+                                resultFS['services'][0]['convertCase'] = self._featureServiceFieldCase
+                                
                                 return resultFS['services'][0]
                             else:
                                 return status

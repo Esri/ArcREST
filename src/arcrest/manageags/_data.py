@@ -97,7 +97,7 @@ class Data(BaseAGSServer):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def findDataItems(self, parentPath, ancestorPath=None,
+    def findDataItems(self, parentPath=None, ancestorPath=None,
                       type=None, id=None):
         """
            You can use this operation to search through the various data
@@ -113,9 +113,10 @@ class Data(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
-            "parentPath" : parentPath
+            "token" : self._securityHandler.token
         }
+        if parentPath is not None:
+            params['parentPath'] = parentPath        
         if ancestorPath is not None:
             params['ancestorPath'] = ancestorPath
         if type is not None:
@@ -307,3 +308,4 @@ class Data(BaseAGSServer):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+   
