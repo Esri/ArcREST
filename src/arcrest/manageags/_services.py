@@ -758,6 +758,18 @@ class AGSService(BaseAGSServer):
         self.stop_service()
         self.start_service()
         return {'status': 'success'}
+    #----------------------------------------------------------------------
+    def delete_service(self):
+        """deletes a service from arcgis server"""
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        uURL = self._url + "/delete"
+        return self._do_post(url=uURL, param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     @property
     def status(self):
         """ returns the status of the service """

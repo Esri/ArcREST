@@ -295,6 +295,49 @@ class Administration(BaseAGOLClass):
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def tileServers(self, portalId=None):
+        """
+          Returns the objects to manage site's tile hosted services/servers. It returns
+          AGSAdministration object if the site is Portal and it returns a
+          hostedservice.Services object if it is AGOL.
+
+          Input:
+            portalId - organization ID for the site.
+        """
+        portal = self.portals()
+        if portalId is None:
+            portalId = portal.portalId
+        urls = portal.urls
+        services = []
+        if urls != {}:
+            for https in portal.tileServers['https']:
+                if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
+                    url = "https://%s/tiles/%s/arcgis/rest/admin" % (https, portalId)
+                    if url.endswith(r'/services') == False:
+                        url = url
+                else:
+                    url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                services.append(Services(url=url,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port))
+            return services
+        else:
+            for server in portal.servers['servers']:
+                url = server['adminUrl'] + "/admin"
+                sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                                                 serverUrl=url,
+                                                 referer=server['name'].replace(":6080", ":6443")
+                                                 )
+                services.append(
+                    AGSAdministration(url=url,
+                                      securityHandler=sh,
+                                      proxy_url=self._proxy_url,
+                                      proxy_port=self._proxy_port,
+                                      initialize=False)
+                )
+            return services
+    #----------------------------------------------------------------------
     def hostingServers(self, portalId=None):
         """
           Returns the objects to manage site's hosted services. It returns
@@ -315,7 +358,7 @@ class Administration(BaseAGOLClass):
                         url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
                     elif isinstance(self._securityHandler, PortalTokenSecurityHandler):
                         url = "%s/admin" % https
-            
+
                     services.append(Services(url=url,
                                              securityHandler=self._securityHandler,
                                              proxy_url=self._proxy_url,
