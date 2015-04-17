@@ -183,12 +183,12 @@ class Services(BaseAGOLClass):
                     typefs = item['type']
                 surl = url + r"/%s/%s" % (name,
                                            typefs)
-                        self._services.append(
-                            AdminFeatureService(url=surl,
-                                                securityHandler=self._securityHandler,
-                                                initialize=False,
-                                                proxy_url=self._proxy_url,
-                                                proxy_port=self._proxy_port))
+                self._services.append(
+                    AdminFeatureService(url=surl,
+                                        securityHandler=self._securityHandler,
+                                        initialize=False,
+                                        proxy_url=self._proxy_url,
+                                        proxy_port=self._proxy_port))
 ########################################################################
 class AdminMapService(BaseAGOLClass):
     """
