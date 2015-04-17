@@ -460,17 +460,7 @@ class AdminMapService(BaseAGOLClass):
         if self._status is None:
             self.__init()
         return self._status
-    #----------------------------------------------------------------------
-    def refresh(self):
-        """ refreshes a service """
-        params = {
-            "f" : "json",
-            "token" : self._token
-        }
-        uURL = self._url + "/refresh"
-        return self._do_get(url=uURL, param_dict=params,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+   
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
@@ -492,13 +482,13 @@ class AdminMapService(BaseAGOLClass):
         The refresh operation refreshes a service, which clears the web
         server cache for the service.
         """
-        url = url + "/MapServer/refresh"
+        url = self._url + "/MapServer/refresh"
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
             "serviceDefinition" : serviceDefinition
         }
-        return self._do_post(url=url,
+        return self._do_post(url=self._url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -513,7 +503,7 @@ class AdminMapService(BaseAGOLClass):
         Inputs:
            jobId - jobId to cancel
         """
-        url = url + "/jobs/%s/cancel" % jobId
+        url = self._url + "/jobs/%s/cancel" % jobId
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
@@ -530,7 +520,7 @@ class AdminMapService(BaseAGOLClass):
         success or failure with error code and description.
 
         """
-        url = url + "/jobs/%s" % jobId
+        url = self._url + "/jobs/%s" % jobId
         params = {
             "f" : "json",
             "token" : self._securityHandler.token
@@ -578,8 +568,8 @@ class AdminMapService(BaseAGOLClass):
         url = self._url + "/edit"
         return self._do_post(url=url,
                              param_dict=params,
-                             proxy_url=proxy_url,
-                             proxy_port=proxy_port)
+                             proxy_url=self._securityHandler.proxy_url,
+                             proxy_port=self._securityHandler.proxy_port)
 
 ########################################################################
 class AdminFeatureService(BaseAGOLClass):
@@ -1125,6 +1115,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _enableZDefaults = None
     _ogcGeometryType = None
     _exceedsLimitFactor = None
+    _useStandardizedQueries = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
