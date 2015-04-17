@@ -11,6 +11,8 @@ setup(
               'arcrest','arcrest/agol', 'arcrest/ags', 'arcrest/common',
               'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
               'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
-              'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice'],
+              'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
+              'arcrest/enrichment'],
+    package_data = {'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},
     package_dir={'':''}
     )

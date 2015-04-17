@@ -10,4 +10,5 @@ import manageportal
 import hostedservice
 #import webmap
 from geometryservice import *
+from enrichment import GeoEnrichment
 __version__ = "2.0.120a"
