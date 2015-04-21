@@ -1,6 +1,7 @@
 from ..common.geometry import Point, Polygon, Envelope, SpatialReference
 from .. import AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseGeoEnrichment
+from ..manageorg import Administration
 import json
 import csv
 import os
@@ -30,6 +31,11 @@ class GeoEnrichment(BaseGeoEnrichment):
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
+        admin = Administration(securityHandler=securityHandler,
+                               proxy_url=proxy_url,
+                               proxy_port=proxy_port)
+        self._base_url = admin.portals().portalSelf().helperServices['geoenrichment']['url']
+        del admin
         self._securityHandler = securityHanlder
         self._countryCodeFile = os.path.join(os.path.dirname(__file__),
                                              "__countrycodes.csv")

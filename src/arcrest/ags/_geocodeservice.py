@@ -370,7 +370,7 @@ class GeocodeService(BaseAGSServer):
              the user types, the suggest operation performs a text search,
              which is a redundant part of the overall search that the
              findAddressCandidates operation can also perform. The user
-             chooses a place name or type—narrowing the results to a
+             chooses a place name or type-narrowing the results to a
              specific record. The results from suggest include text and
              magicKey values that contain the information the user chose;
              passing these values from suggest into findAddressCandidates

@@ -380,7 +380,6 @@ class GPJob(BaseAGSServer):
         }
         if self._securityHandler is not None:
             params['token'] = self._securityHandler.token
-
         return self._do_get(url=paramURL,
                             param_dict=params,
                             proxy_url=self._proxy_url,
