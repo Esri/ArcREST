@@ -14,6 +14,13 @@ import gc
 import arcpy
 from urlparse import urlparse
 
+try:
+    import pyparsing
+    pyparsingInstall = True
+    from arcresthelper import select_parser
+except:
+    pyparsingInstall = False
+    
 #----------------------------------------------------------------------
 def trace():
     """
@@ -197,6 +204,7 @@ class publishingtools(abstract.baseToolsClass):
             resultMap = {'Layers':[],'Tables':[],'Results':None}
 
             with open(itemJson) as json_data:
+                layersInfo= {}
                 try:
                     webmap_data = json.load(json_data)
                 except:
@@ -213,6 +221,7 @@ class publishingtools(abstract.baseToolsClass):
                             if webmap_data.has_key('tables'):
                                 opLayers = webmap_data['tables']
                                 for opLayer in opLayers:
+                                    layerInfo= {}
                                     if replaceItem['SearchString'] in opLayer['url']:
 
                                         opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
@@ -221,7 +230,37 @@ class publishingtools(abstract.baseToolsClass):
                                         else:
                                             opLayer['itemId'] = None
                                             #opLayer['itemId'] = get_guid()
-
+                                        if replaceItem.has_key('convertCase'):
+                                            if replaceItem['convertCase'] == 'lower':
+                                                layerInfo = {}
+                                               
+                                                layerInfo['convertCase'] = replaceItem['convertCase']
+                                                layerInfo['fields'] = []
+                                                if opLayer.has_key("popupInfo"):
+                                        
+                                                    if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
+                                                        for chart in opLayer['popupInfo']['mediaInfos']:
+                                                            if 'value' in chart:
+                                                                if 'normalizeField' in chart and not chart['normalizeField'] is None:
+                                                                    chart['normalizeField'] = chart['normalizeField'].lower()
+                                                                if 'fields' in chart['value']:
+                                        
+                                                                    for i in range(len(chart['value']['fields'])):
+                                                                        chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
+                                                    if opLayer['popupInfo'].has_key("fieldInfos"):
+                                        
+                                                        for field in opLayer['popupInfo']['fieldInfos']:
+                                                            newFld = str(field['fieldName']).lower()
+                                                            if 'description' in opLayer['popupInfo']:
+                                                                opLayer['popupInfo']['description'] = common.find_replace(obj = opLayer['popupInfo']['description'], 
+                                                                                                                          find = "{" + field['fieldName'] + "}", 
+                                                                                                                          replace = "{" + newFld + "}")
+                                        
+                                        
+                                                            layerInfo['fields'].append({"PublishName":field['fieldName'],
+                                                                                        'ConvertName':newFld})                                                
+                                                            field['fieldName'] = newFld
+                                                layersInfo[opLayer['id']] = layerInfo
                                         if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
                                             layers = []
                                             item = admin.content.item(itemId = replaceItem['ItemID'])
@@ -264,6 +303,7 @@ class publishingtools(abstract.baseToolsClass):
 
                         opLayers = webmap_data['operationalLayers']
                         for opLayer in opLayers:
+                            layerInfo= {}
                             if replaceItem['SearchString'] in opLayer['url']:
 
                                 opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
@@ -274,18 +314,23 @@ class publishingtools(abstract.baseToolsClass):
                                     #opLayer['itemId'] = get_guid()
                                 if replaceItem.has_key('convertCase'):
                                     if replaceItem['convertCase'] == 'lower':
-                                       
+                                        layerInfo = {}
+                                        
+                                        layerInfo['convertCase'] = replaceItem['convertCase']
+                                        layerInfo['fields'] = []
                                         if opLayer.has_key("popupInfo"):
                                                 
                                             if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
-                                                for chart in opLayer['popupInfo']['mediaInfos']:
+                                                for k in range(len(opLayer['popupInfo']['mediaInfos'])):
+                                                    chart = opLayer['popupInfo']['mediaInfos'][k]
                                                     if 'value' in chart:
                                                         if 'normalizeField' in chart and not chart['normalizeField'] is None:
                                                             chart['normalizeField'] = chart['normalizeField'].lower()
                                                         if 'fields' in chart['value']:
                                                             
                                                             for i in range(len(chart['value']['fields'])):
-                                                                chart['value']['fields'] = str(chart['value']['fields']).lower()
+                                                                chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
+                                                        opLayer['popupInfo']['mediaInfos'][k] = chart
                                             if opLayer['popupInfo'].has_key("fieldInfos"):
                                                           
                                                 for field in opLayer['popupInfo']['fieldInfos']:
@@ -296,8 +341,11 @@ class publishingtools(abstract.baseToolsClass):
                                                                            replace = "{" + newFld + "}")
                                                     
                                                                             
-                                                                                                    
+                                                    layerInfo['fields'].append({"PublishName":field['fieldName'],
+                                                                                'ConvertName':newFld})                                                
                                                     field['fieldName'] = newFld
+                                        layersInfo[opLayer['id']] = layerInfo
+                                          
                                 if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
                                     layers = []
                                     item = admin.content.item(itemId = replaceItem['ItemID'])
@@ -338,6 +386,7 @@ class publishingtools(abstract.baseToolsClass):
                                             print updateResults
 
                 opLayers = webmap_data['operationalLayers']
+                resultMap['Layers'] = {}
                 for opLayer in opLayers:
                     currentID = opLayer['id']
                     #if isinstance(self._securityHandler,arcrest.security.PortalTokenSecurityHandler):
@@ -349,9 +398,38 @@ class publishingtools(abstract.baseToolsClass):
                             #pass                       
                     opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
                     if 'applicationProperties' in webmap_data:
-                        webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
-                  
-                    resultMap['Layers'].append({"Name":opLayer['title'],"ID":opLayer['id']})
+                        if 'viewing' in webmap_data['applicationProperties'] and \
+                           not webmap_data['applicationProperties']['viewing'] is None:                    
+                            if 'search' in webmap_data['applicationProperties']['viewing'] and \
+                                not webmap_data['applicationProperties']['viewing']['search'] is None:
+                                if 'layers' in webmap_data['applicationProperties']['viewing']['search'] and \
+                                    not webmap_data['applicationProperties']['viewing']['search']['layers'] is None: 
+                                        
+                                    for k in range(len(webmap_data['applicationProperties']['viewing']['search']['layers'])):
+                                        searchlayer =  webmap_data['applicationProperties']['viewing']['search']['layers'][k]                                  
+                                        if searchlayer['id'] == currentID:
+                                            searchlayer['id'] = opLayer['id']
+                                            if 'fields' in searchlayer and \
+                                               not searchlayer['fields'] is None:                                       
+                                                for i in range(len(searchlayer['fields'])):
+                                                    
+                                                    searchlayer['fields'][i]['Name'] = str(searchlayer['fields'][i]['Name']).lower() 
+                                            if 'field' in searchlayer and \
+                                               not searchlayer['field'] is None:                                       
+                                                searchlayer['field']['name'] = searchlayer['field']['name'].lower() 
+                                                                                                 
+                                            webmap_data['applicationProperties']['viewing']['search']['layers'][k] = searchlayer
+                                            
+                    #if 'applicationProperties' in webmap_data:
+                        #webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                    
+                    resultLayer = {"Name":opLayer['title'],
+                                  "ID":opLayer['id']
+                                  } 
+                    
+                    if currentID in layersInfo:
+                        resultLayer['FieldInfo'] = layersInfo[currentID]
+                    resultMap['Layers'][currentID] = resultLayer
 
 
                 if webmap_data.has_key('tables'):
@@ -1212,10 +1290,12 @@ class publishingtools(abstract.baseToolsClass):
 
                     for mapDet in map_info:
                         if mapDet.has_key('ReplaceTag'):
-                            if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and replaceItem['ReplaceType'] == 'Map':
+                            if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
+                               replaceItem['ReplaceType'] == 'Map':
 
                                 replaceItem['ItemID'] = mapDet['MapInfo']['Results']['id']
                                 replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
+                                replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
                             elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
                                 repInfo = replaceItem['ReplaceString'].split("|")
                                 if len(repInfo) == 2:
@@ -1268,8 +1348,9 @@ class publishingtools(abstract.baseToolsClass):
                         "filename":  filename,
                         "synerror": synerror,
                         "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+                                        } )
+        except common.ArcRestHelperError, e:
+            raise e                                               
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -1316,6 +1397,8 @@ class publishingtools(abstract.baseToolsClass):
                         "arcpyError": arcpy.GetMessages(2),
                                         }
                                         )
+        except (common.ArcRestHelperError), e:
+            raise e        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -1690,6 +1773,8 @@ class publishingtools(abstract.baseToolsClass):
 
                             if 'operationalLayers' in response:
                                 for opLayer in response['operationalLayers']:
+                                    #if 'LayerInfo' in replaceItem:
+                                        #for layers in replaceItem['LayerInfo']:                                    
                                     layerNamesID[opLayer['title']] = opLayer['id']
                                     layerIDs.append(opLayer['id'])
                             if 'tables' in response:
@@ -1698,6 +1783,7 @@ class publishingtools(abstract.baseToolsClass):
                                     tableIDs.append(opLayer['id'])
 
                             widgets = itemData['widgets']
+                            dataSourceIDToFields = {}
                             for widget in widgets:
 
                                 if widget.has_key('mapId'):
@@ -1709,11 +1795,56 @@ class publishingtools(abstract.baseToolsClass):
                                                     mapTool['layerIds'] = layerIDs
                                         if widget.has_key('dataSources'):
                                             for dataSource in widget['dataSources']:
+                                                
                                                 if dataSource.has_key('layerId'):
-                                                    if layerNamesID.has_key(dataSource['name']):
+                                                    if 'LayerInfo' in replaceItem:
+                                                        if dataSource['layerId'] in replaceItem['LayerInfo']:
+                                                            layerIDSwitch.append({"OrigID":dataSource['layerId'],
+                                                                                  "NewID":replaceItem['LayerInfo'][dataSource['layerId']]['ID']})
+                                                                                  #'FieldInfo':replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']})
+                                                            
+                                                            dataSourceIDToFields[dataSource['id']] = {'NewID': replaceItem['LayerInfo'][dataSource['layerId']]['ID'],
+                                                                                                      'FieldInfo': replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']}
+                                                            dataSource['layerId'] = replaceItem['LayerInfo'][dataSource['layerId']]['ID']
+                                                    elif layerNamesID.has_key(dataSource['name']):
                                                         layerIDSwitch.append({"OrigID":dataSource['layerId'],"NewID":layerNamesID[dataSource['name']] })
                                                         dataSource['layerId'] = layerNamesID[dataSource['name']]
+                                            for dataSource in widget['dataSources']:
+         
+                                                if dataSource.has_key('filter'):
+                                                    if dataSource['parentDataSourceId'] in dataSourceIDToFields:
+                                                        if 'whereClause' in dataSource['filter']:
+                                                            whercla = str(dataSource['filter']['whereClause'])
+                                                            if pyparsingInstall:
+                                                                try:
+                                                                    selectResults = select_parser.select_stmt.parseString("select * from xyzzy where " + whercla)
+                                                                   
+                                                                    whereElements = list(selectResults['where_expr'])
+                                                                    for h in range(len(whereElements)):
+                                                                        for field in dataSourceIDToFields[dataSource['parentDataSourceId']]['FieldInfo']['fields']:
+                                                                            if whereElements[h] == field['PublishName']:
+                                                                                whereElements[h] = field['ConvertName']
+                                                                                #whercla = whercla.replace(
+                                                                                    #old=field['PublishName'], 
+                                                                                    #new=field['ConvertName'])   
+                                                                    dataSource['filter']['whereClause'] = " ".join(whereElements)
+                                                                except select_parser.ParseException, pe:
+                                                                    for field in dataSourceIDToFields[dataSource['parentDataSourceId']]['FieldInfo']['fields']:
+                                                                        if whercla.contains(field['PublishName']):
+                                                                            whercla = whercla.replace(
+                                                                                old=field['PublishName'], 
+                                                                                new=field['ConvertName'])
 
+                                                                                                                                  
+                                                            else:
+                                                                
+                                                                for field in dataSourceIDToFields[dataSource['parentDataSourceId']]['FieldInfo']['fields']:
+                                                                    if whercla.contains(field['PublishName']):
+                                                                        whercla = whercla.replace(
+                                                                                       old=field['PublishName'], 
+                                                                                       new=field['ConvertName'])
+                                                                    
+                                                                               
 
 
             configFileAsString = json.dumps(itemData)
