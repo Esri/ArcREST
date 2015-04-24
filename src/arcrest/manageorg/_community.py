@@ -81,7 +81,8 @@ class Community(BaseAGOLClass):
                                  proxy_port=self._proxy_port,
                                  compress=False)
     #----------------------------------------------------------------------
-    def groupSearch(self, q, start=1, num=10,
+    def groupSearch(self, q, t=None,
+                    start=1, num=10,
                     sortField="title", sortOrder="asc"):
         """
         The Group Search operation searches for groups in the portal. The
@@ -91,7 +92,8 @@ class Community(BaseAGOLClass):
         search results. The results only contain groups that the user has
         permission to access.
         Inputs:
-           q - quest string to search
+           q - query string to search
+           t - type search
            start - number of the first entry in response results. The
                    default is 1
            num - maximum number of results to return.  The maximum is 100.
@@ -103,13 +105,21 @@ class Community(BaseAGOLClass):
             "f" : "json",
             "q" : q,
             "num" : num,
-            "sortField" : sortField,
-            "sortOrder" : sortOrder
+            "start" : start
         }
+        if not self._securityHandler is None:
+            params['token'] = self._securityHandler.token
+        if not t is None:
+            params['t'] = t
+        if not sortField is None:
+            params['sortField'] = sortField
+        if not sortOrder is None:
+            params['sortOrder'] = sortOrder
         url = self._url + "/groups"
-        return self._do_post(url=url, param_dict=params,
-                            proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def getGroupIDs(self, groupNames,communityInfo=None):
         """
