@@ -196,8 +196,6 @@ class publishingtools(abstract.baseToolsClass):
             itemJson = config['ItemJSON']
             if os.path.exists(itemJson) == False:
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
-
-            update_service = config['UpdateService']
             update_service = 'FALSE'
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             adminusercontent = admin.content.usercontent()
