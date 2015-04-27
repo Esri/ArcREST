@@ -6,10 +6,18 @@ import parameters
 import json
 import types
 ########################################################################
-class PortalSelf(object):
+class PortalSelf(BaseAGOLClass):
     """
     represents the basic portal information from the portalSelf()
     """
+    _json = None
+    _url = None
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
+    _culture = None
+    _region = None
+    #
     _portalSelfDict = None
     _canSharePublic = None
     _subscriptionInfo = None
@@ -68,6 +76,7 @@ class PortalSelf(object):
     _layerTemplatesGroupQuery = None
     _staticImagesUrl = None
     _databaseUsage = None
+    _homePageFeaturedContent = None
     _showHomePageDescription = None
     _availableCredits = None
     _helperServices = None
@@ -79,14 +88,49 @@ class PortalSelf(object):
     _json_dict = None
     _json = None
     #----------------------------------------------------------------------
-    def __init__(self, portalSelfDict):
+    def __init__(self, culture,
+                 region,
+                 url,
+                 securityHandler,
+                 proxy_url=None,
+                 proxy_port=None,
+                 initialize=False):#portalSelfDict):
         """Constructor"""
-        self._json_dict = portalSelfDict
-        for k,v in portalSelfDict.iteritems():
-            try:
-                setattr(self, "_"+ k, v)
-            except:
-                print "Cannot set parameter %s" % k
+        self._culture = culture
+        self._region = region
+        self._url = url
+        self._securityHandler = securityHandler
+        proxy_url = self._proxy_url
+        proxy_port = self._proxy_port
+
+        self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ populates the object information """
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        if not self._culture is None:
+            params['culture'] = self._culture
+        if not self._region is None:
+            params['region'] = self._region
+
+        json_dict = self._do_get(url=self._url,
+                                 param_dict=params,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        self._json = json.dumps(json_dict)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implmented."
+            del k
+            del v
     #----------------------------------------------------------------------
     def __iter__(self):
         """"""
@@ -106,6 +150,20 @@ class PortalSelf(object):
         if self._json_dict is not None:
             return json.dumps(self._json_dict)
         return "{}"
+    #----------------------------------------------------------------------
+    @property
+    def featuredGroups(self):
+        """returns the featured groups property"""
+        if self._featuredGroups is None:
+            self.__init()
+        return self._featuredGroups
+    #----------------------------------------------------------------------
+    @property
+    def homePageFeaturedContent(self):
+        """returns the homePageFeaturedContent property"""
+        if self._homePageFeaturedContent is None:
+            self.__init()
+        return self._homePageFeaturedContent
     #----------------------------------------------------------------------
     @property
     def canSharePublic(self):
@@ -777,21 +835,12 @@ class Portals(BaseAGOLClass):
            region - the region code of the calling client.
         """
         url = self._url + "/self"
-        params = {
-            "f" : "json",
-            "token" : self._securityHandler.token,
-
-        }
-        if culture is not None:
-            params['culture'] = culture
-        if region is not None:
-            params['region'] = region
-
-        res =  self._do_get(url=url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-        ps = PortalSelf(res)
+        ps = PortalSelf(culture=culture,
+                        region=region,
+                        url=url,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)#PortalSelf(res)
         return ps
     #----------------------------------------------------------------------
     @property
@@ -1084,8 +1133,12 @@ class Portals(BaseAGOLClass):
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-        #----------------------------------------------------------------------
-    def users(self, start=1, num=10):
+    #----------------------------------------------------------------------
+    def users(self,
+              start=1,
+              num=10,
+              sortField="fullName",
+              sortOrder="asc"):
         """
         Lists all the members of the organization. The start and num paging
         parameters are supported.
@@ -1102,6 +1155,8 @@ class Portals(BaseAGOLClass):
                  The default value is 10, and the maximum allowed value is
                  100.The start parameter, along with the num parameter, can
                  be used to paginate the search results.
+           sortField - field to sort on
+           sortOrder - asc or desc on the sortField
         """
         url = self._url + "/users"
         params = {
@@ -1110,27 +1165,34 @@ class Portals(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
+        if not sortField is None:
+            params['sortField'] = sortField
+        if not sortOrder is None:
+            params['sortOrder'] = sortOrder
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def roles(self,
+              start=1,
+              num=100):
+        """
+           lists the custom roles on the AGOL/Portal site
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+           Input:
+              start - default 1
+              num - 100 - number of roles to return
+        """
+        url = self._url.replace(self._portalId, "") + "self/roles"
+        params = {
+            "f" : "json",
+            "start" : start,
+            "num" : num
+        }
+        if not self._securityHandler is None:
+            params['token'] = self._securityHandler.token
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)

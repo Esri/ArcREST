@@ -102,6 +102,7 @@ class Administration(BaseAGOLClass):
     #----------------------------------------------------------------------
     def query(self,
               q,
+              t=None,
               bbox=None,
               start=1,
               num=10,
@@ -121,6 +122,7 @@ class Administration(BaseAGOLClass):
 
         Inputs:
            q - The query string used to search
+           t - type of content to search for.
            bbox - The bounding box for a spatial search defined as minx,
                   miny, maxx, or maxy. Search requires q, bbox, or both.
                   Spatial search is an overlaps/intersects function of the
@@ -162,6 +164,8 @@ class Administration(BaseAGOLClass):
             "num" : num,
             "start" : start
         }
+        if not t is None:
+            params['t'] = t
         if self._securityHandler is not None:
             params["token"] = self._securityHandler.token
         if sortField is not None:
