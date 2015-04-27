@@ -42,7 +42,7 @@ def trace():
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
 
-def publishreport(configFiles,globalLoginInfo,combinedApp=None,log_file=None,dateTimeFormat=None):
+def publishfromconfig(configFiles,globalLoginInfo,combinedApp=None,log_file=None,dateTimeFormat=None):
     publishTools = None
     log = None
     webmaps = None
@@ -79,10 +79,11 @@ def publishreport(configFiles,globalLoginInfo,combinedApp=None,log_file=None,dat
                 cred_info = loginInfo['Credentials']
                 print "Credentials loaded"        
         if cred_info is None:
-            print "Credentials not found"        
+            print "Credentials not found"  
+            cred_info = {}
             cred_info['Username'] = ''
             cred_info['Password'] = ''
-            cred_info['Orgurl'] = 'www.arcgis.com'
+            cred_info['Orgurl'] = 'http://www.arcgis.com'
         print "-----Portal Credentials complete-----" 
             
         
@@ -101,17 +102,9 @@ def publishreport(configFiles,globalLoginInfo,combinedApp=None,log_file=None,dat
                         # are modified so they can point to the local temp location.
                      
                         if 'RunReport' in reportConfig and (str(reportConfig['RunReport']).upper() =="TRUE" or str(reportConfig['RunReport']).upper() =="YES"):
-                            print " "
+                            reportConfig = ReportTools.reportDataPrep(reportConfig)
+                            
                             print "-----Report Section Starting-----"  
-                                                     
-                            if ('ExportDataLocally' in reportConfig) & (reportConfig["ExportDataLocally"].upper() == "YES"):
-                                reportConfig = ReportTools.exportDataForReport(reportConfig = reportConfig) 
-                            if ('PreProcessingTasks' in reportConfig):
-                                if (reportConfig["PreProcessingTasks"]):
-                                    processDict = {"Databases":[{"PostProcesses":reportConfig["PreProcessingTasks"]}]}
-                                    prepData = DataPrep.DataPrep(configFilePath=processDict)
-                                    prepData.CopyData()
-                                  
                             startTime = datetime.datetime.now()
                             print "Processing reports in config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))                                                               
                             ReportTools.create_report_layers_using_config(config=reportConfig)                   
