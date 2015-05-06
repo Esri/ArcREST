@@ -1,4 +1,5 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from ..common.general import local_time_to_online,online_time_to_string
 from .._abstract.abstract import BaseAGOLClass
 import os
 import urlparse
@@ -1192,6 +1193,51 @@ class Portals(BaseAGOLClass):
         }
         if not self._securityHandler is None:
             params['token'] = self._securityHandler.token
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def usage(self,
+              startTime,
+              endTime,
+              vars,
+              period="1d",
+              groupby=None
+              ):
+        """
+        returns the usage statistics value
+        """
+        url = self._url + "/usage"
+        startTime = int(local_time_to_online(dt=startTime)/ 1000)
+        print startTime
+        print "1429660800000"
+        endTime = int(local_time_to_online(dt=endTime) /1000)
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "vars" : vars,
+            "startTime" : "%s000" % startTime,
+            "endTime" : "%s000" % endTime,
+            "period" : period
+        }
+        if not groupby is None:
+            params['groupby'] = groupby
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def cost(self):
+        """
+        returns the cost values for a given portal
+        """
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token
+        }
+        url = self._url + "/cost" #% (self.portalId, )
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
