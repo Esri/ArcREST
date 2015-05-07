@@ -75,7 +75,8 @@ class Feature(object):
         self._wkid = wkid
         if type(json_string) is dict:
             if not wkid is None:
-                json_string['geometry']['spatialReference']  = {"wkid" : wkid}
+                if 'geometry' in json_string and 'spatialReference' in json_string['geometry']:
+                    json_string['geometry']['spatialReference']  = {"wkid" : wkid}
             self._json = json.dumps(json_string,
                                     default=_date_handler)
             self._dict = json_string
