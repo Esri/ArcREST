@@ -1,6 +1,8 @@
 from .._abstract.abstract import BaseAGSServer
 from parameters import Extension
+import os
 import json
+import tempfile
 ########################################################################
 class Services(BaseAGSServer):
     """ returns information about the services on AGS """
@@ -803,6 +805,7 @@ class AGSService(BaseAGSServer):
         return self._do_get(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     @property
     def iteminfo(self):
         """ returns the item information """
@@ -814,6 +817,31 @@ class AGSService(BaseAGSServer):
         return self._do_get(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+
+    def serviceManifest(self, fileType="json"):
+        """
+        The service manifest resource documents the data and other
+        resources that define the service origins and power the service.
+        This resource will tell you underlying databases and their location
+        along with other supplementary files that make up the service.
+
+        Inputs:
+           fileType - this can be json or xml.  json return the
+            manifest.json file.  xml returns the manifest.xml file.
+
+
+        """
+
+        url = self._url + "/iteminfo/manifest/manifest.%s" % fileType
+        params = {
+            "token" : self._securityHandler.token
+        }
+        f = self._download_file(url=url, save_path=tempfile.gettempdir(),
+                            file_name=os.path.basename(url), param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+        return open(f, 'r').read()
     #----------------------------------------------------------------------
     def addPermission(self, principal, isAllowed=True):
         """
