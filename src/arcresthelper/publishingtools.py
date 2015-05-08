@@ -1,4 +1,5 @@
 from arcresthelper._abstract import abstract
+import re as re
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
@@ -115,7 +116,9 @@ class publishingtools(abstract.baseToolsClass):
                         "synerror": synerror,
                         "arcpyError": arcpy.GetMessages(2),
                                         }
-                                        )
+                                       )
+        except common.ArcRestHelperError,e:
+            raise e
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -234,6 +237,18 @@ class publishingtools(abstract.baseToolsClass):
                                                
                                                 layerInfo['convertCase'] = replaceItem['convertCase']
                                                 layerInfo['fields'] = []
+                                                if opLayer.has_key("layerDefinition"):
+                                                    if opLayer["layerDefinition"].has_key('drawingInfo'):
+                                                        if opLayer["layerDefinition"]['drawingInfo'].has_key('labelingInfo'):
+                                                            
+                                                            lblInfo = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
+                                                            if 'labelExpressionInfo' in lblInfo:
+                                                                if 'value' in lblInfo['labelExpressionInfo']:
+                                                                   
+                                                                    result = re.findall(r"\w+{*}", lblInfo['labelExpressionInfo']['value'])
+                                                                    if len(result)>0:
+                                                                        pass
+                                                                    
                                                 if opLayer.has_key("popupInfo"):
                                         
                                                     if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
@@ -299,50 +314,75 @@ class publishingtools(abstract.baseToolsClass):
                                                 if 'error' in updateResults:
                                                     print updateResults
 
-                        opLayers = webmap_data['operationalLayers']
-                        for opLayer in opLayers:
-                            layerInfo= {}
-                            if replaceItem['SearchString'] in opLayer['url']:
-
-                                opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
-                                if replaceItem.has_key('ItemID'):
-                                    opLayer['itemId'] = replaceItem['ItemID']
-                                else:
-                                    opLayer['itemId'] = None
-                                    #opLayer['itemId'] = get_guid()
-                                if replaceItem.has_key('convertCase'):
-                                    if replaceItem['convertCase'] == 'lower':
-                                        layerInfo = {}
-                                        
-                                        layerInfo['convertCase'] = replaceItem['convertCase']
-                                        layerInfo['fields'] = []
-                                        if opLayer.has_key("popupInfo"):
+                            opLayers = webmap_data['operationalLayers']
+                            for opLayer in opLayers:
+                                layerInfo= {}
+                                if replaceItem['SearchString'] in opLayer['url']:
+    
+                                    opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
+                                    if replaceItem.has_key('ItemID'):
+                                        opLayer['itemId'] = replaceItem['ItemID']
+                                    else:
+                                        opLayer['itemId'] = None
+                                        #opLayer['itemId'] = get_guid()
+                                    if replaceItem.has_key('convertCase'):
+                                        if replaceItem['convertCase'] == 'lower':
+                                            layerInfo = {}
+                                            
+                                            layerInfo['convertCase'] = replaceItem['convertCase']
+                                            layerInfo['fields'] = []
+                                            if opLayer.has_key("layerDefinition"):
                                                 
-                                            if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
-                                                for k in range(len(opLayer['popupInfo']['mediaInfos'])):
-                                                    chart = opLayer['popupInfo']['mediaInfos'][k]
-                                                    if 'value' in chart:
-                                                        if 'normalizeField' in chart and not chart['normalizeField'] is None:
-                                                            chart['normalizeField'] = chart['normalizeField'].lower()
-                                                        if 'fields' in chart['value']:
-                                                            
-                                                            for i in range(len(chart['value']['fields'])):
-                                                                chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
-                                                        opLayer['popupInfo']['mediaInfos'][k] = chart
-                                            if opLayer['popupInfo'].has_key("fieldInfos"):
-                                                          
-                                                for field in opLayer['popupInfo']['fieldInfos']:
-                                                    newFld = str(field['fieldName']).lower()
-                                                    if 'description' in opLayer['popupInfo']:
-                                                        opLayer['popupInfo']['description'] = common.find_replace(obj = opLayer['popupInfo']['description'], 
-                                                                           find = "{" + field['fieldName'] + "}", 
-                                                                           replace = "{" + newFld + "}")
+                                                if opLayer["layerDefinition"].has_key('drawingInfo'):
+                                                    if opLayer["layerDefinition"]['drawingInfo'].has_key('renderer'):
+                                                        if 'field1' in opLayer["layerDefinition"]['drawingInfo']['renderer']:
+                                                            opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'] = opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'].lower()                                                
+                                                    if opLayer["layerDefinition"]['drawingInfo'].has_key('labelingInfo'):
+                                            
+                                                        lblInfos = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
+                                                        if len(lblInfos) > 0:
+                                                            for lblInfo in lblInfos:
+                                                                if 'labelExpression' in lblInfo:
+                                                                    result = re.findall(r"\[.*\]", lblInfo['labelExpression'])
+                                                                    if len(result)>0:
+                                                                        for res in result:
+                                                                            lblInfo['labelExpression'] = str(lblInfo['labelExpression']).replace(res,str(res).lower())
+                                                                    
+                                                                if 'labelExpressionInfo' in lblInfo:
+                                                                    if 'value' in lblInfo['labelExpressionInfo']:
+                                                                      
+                                                                        result = re.findall(r"{.*}", lblInfo['labelExpressionInfo']['value'])
+                                                                        if len(result)>0:
+                                                                            for res in result:
+                                                                                lblInfo['labelExpressionInfo']['value'] = str(lblInfo['labelExpressionInfo']['value']).replace(res,str(res).lower())
+                                                                                                                    
+                                            if opLayer.has_key("popupInfo"):
                                                     
-                                                                            
-                                                    layerInfo['fields'].append({"PublishName":field['fieldName'],
-                                                                                'ConvertName':newFld})                                                
-                                                    field['fieldName'] = newFld
-                                        layersInfo[opLayer['id']] = layerInfo
+                                                if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
+                                                    for k in range(len(opLayer['popupInfo']['mediaInfos'])):
+                                                        chart = opLayer['popupInfo']['mediaInfos'][k]
+                                                        if 'value' in chart:
+                                                            if 'normalizeField' in chart and not chart['normalizeField'] is None:
+                                                                chart['normalizeField'] = chart['normalizeField'].lower()
+                                                            if 'fields' in chart['value']:
+                                                                
+                                                                for i in range(len(chart['value']['fields'])):
+                                                                    chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
+                                                            opLayer['popupInfo']['mediaInfos'][k] = chart
+                                                if opLayer['popupInfo'].has_key("fieldInfos"):
+                                                              
+                                                    for field in opLayer['popupInfo']['fieldInfos']:
+                                                        newFld = str(field['fieldName']).lower()
+                                                        if 'description' in opLayer['popupInfo']:
+                                                            opLayer['popupInfo']['description'] = common.find_replace(obj = opLayer['popupInfo']['description'], 
+                                                                               find = "{" + field['fieldName'] + "}", 
+                                                                               replace = "{" + newFld + "}")
+                                                        
+                                                                                
+                                                        layerInfo['fields'].append({"PublishName":field['fieldName'],
+                                                                                    'ConvertName':newFld})                                                
+                                                        field['fieldName'] = newFld
+                                            layersInfo[opLayer['id']] = layerInfo
                                           
                                 if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
                                     layers = []

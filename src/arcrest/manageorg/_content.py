@@ -2168,6 +2168,10 @@ class UserContent(BaseAGOLClass):
             v = params['thumbnail']
             del params['thumbnail']
             files.append(('thumbnail', v, os.path.basename(v)))
+        if 'largeThumbnail' in params:
+            v = params['largeThumbnail']
+            del params['largeThumbnail']
+            files.append(('largeThumbnail', v, os.path.basename(v)))            
         if 'metadata' in params:
             v = params['metadata']
             del params['metadata']

@@ -4,7 +4,7 @@
 
 """
 import arcrest
-
+from arcrest.security import AGOLTokenSecurityHandler
 def trace():
     """
         trace finds the line, the filename
