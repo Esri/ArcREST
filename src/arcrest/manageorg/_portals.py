@@ -1139,7 +1139,8 @@ class Portals(BaseAGOLClass):
               start=1,
               num=10,
               sortField="fullName",
-              sortOrder="asc"):
+              sortOrder="asc",
+              role=None):
         """
         Lists all the members of the organization. The start and num paging
         parameters are supported.
@@ -1158,6 +1159,7 @@ class Portals(BaseAGOLClass):
                  be used to paginate the search results.
            sortField - field to sort on
            sortOrder - asc or desc on the sortField
+           role - name of the role or role id to search
         """
         url = self._url + "/users"
         params = {
@@ -1166,6 +1168,8 @@ class Portals(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
+        if not role is None:
+            params['role'] = role
         if not sortField is None:
             params['sortField'] = sortField
         if not sortOrder is None:
