@@ -238,16 +238,30 @@ class publishingtools(abstract.baseToolsClass):
                                                 layerInfo['convertCase'] = replaceItem['convertCase']
                                                 layerInfo['fields'] = []
                                                 if opLayer.has_key("layerDefinition"):
+                                            
                                                     if opLayer["layerDefinition"].has_key('drawingInfo'):
+                                                        if opLayer["layerDefinition"]['drawingInfo'].has_key('renderer'):
+                                                            if 'field1' in opLayer["layerDefinition"]['drawingInfo']['renderer']:
+                                                                opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'] = opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'].lower()                                                
                                                         if opLayer["layerDefinition"]['drawingInfo'].has_key('labelingInfo'):
-                                                            
-                                                            lblInfo = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
-                                                            if 'labelExpressionInfo' in lblInfo:
-                                                                if 'value' in lblInfo['labelExpressionInfo']:
-                                                                   
-                                                                    result = re.findall(r"\w+{*}", lblInfo['labelExpressionInfo']['value'])
-                                                                    if len(result)>0:
-                                                                        pass
+                                            
+                                                            lblInfos = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
+                                                            if len(lblInfos) > 0:
+                                                                for lblInfo in lblInfos:
+                                                                    if 'labelExpression' in lblInfo:
+                                                                        result = re.findall(r"\[.*\]", lblInfo['labelExpression'])
+                                                                        if len(result)>0:
+                                                                            for res in result:
+                                                                                lblInfo['labelExpression'] = str(lblInfo['labelExpression']).replace(res,str(res).lower())
+                                            
+                                                                    if 'labelExpressionInfo' in lblInfo:
+                                                                        if 'value' in lblInfo['labelExpressionInfo']:
+                                            
+                                                                            result = re.findall(r"{.*}", lblInfo['labelExpressionInfo']['value'])
+                                                                            if len(result)>0:
+                                                                                for res in result:
+                                                                                    lblInfo['labelExpressionInfo']['value'] = str(lblInfo['labelExpressionInfo']['value']).replace(res,str(res).lower())
+
                                                                     
                                                 if opLayer.has_key("popupInfo"):
                                         
@@ -1338,9 +1352,9 @@ class publishingtools(abstract.baseToolsClass):
                                 repInfo = replaceItem['ReplaceString'].split("|")
                                 if len(repInfo) == 2:
                                     if repInfo[0] == mapDet['ReplaceTag']:
-                                        for lay in  mapDet['MapInfo']['Layers']:
-                                            if lay["Name"] == repInfo[1]:
-                                                replaceItem['ReplaceString'] = lay["ID"]
+                                        for key,value in mapDet['MapInfo']['Layers'].iteritems():
+                                            if value["Name"] == repInfo[1]:
+                                                replaceItem['ReplaceString'] = value["ID"]
 
                             elif replaceItem.has_key('ItemID'):
                                 if replaceItem.has_key('ItemFolder') == False:

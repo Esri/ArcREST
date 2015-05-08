@@ -61,8 +61,7 @@ def main(*argv):
         layerName = argv[4]
         dataToAppend = argv[5]
         toggleEditCapabilities = argv[6]
-
-
+       
         if arcpy.Exists(dataset=dataToAppend) == False:
             outputPrinter(message="Data layer not found: %" % dataToAppend)
         else:
@@ -83,7 +82,7 @@ def main(*argv):
                         results = fl.addFeatures(fc=dataToAppend)
 
                         if 'error' in results:
-                            outputPrinter(message="Error in response from server: " % results['error'],typeOfMessage='error')
+                            outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
                             arcpy.SetParameterAsText(6, "false")
 
                         else:

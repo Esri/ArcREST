@@ -147,7 +147,7 @@ class BaseAGOLClass(_base.BaseWebOperations):
     _org_url ="http://www.arcgis.com"
     _url = "http://www.arcgis.com/sharing/rest"
     _surl = "https://www.arcgis.com/sharing/rest"
-    _referer_url = "https://www.arcgis.com"
+    _referer_url = "http://www.arcgis.com"
     _useragent = "ArcREST"
     _token_url = 'https://www.arcgis.com/sharing/rest/generateToken'
     _proxy_url = None
