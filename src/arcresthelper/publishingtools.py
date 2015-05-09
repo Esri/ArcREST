@@ -865,6 +865,8 @@ class publishingtools(abstract.baseToolsClass):
                         "arcpyError": arcpy.GetMessages(2),
                                         }
                                         )
+        except common.ArcRestHelperError,e:
+            raise e
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -1855,8 +1857,8 @@ class publishingtools(abstract.baseToolsClass):
                                                                                   "NewID":replaceItem['LayerInfo'][dataSource['layerId']]['ID']})
                                                                                   #'FieldInfo':replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']})
                                                             
-                                                            dataSourceIDToFields[dataSource['id']] = {'NewID': replaceItem['LayerInfo'][dataSource['layerId']]['ID'],
-                                                                                                      'FieldInfo': replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']}
+                                                            #dataSourceIDToFields[dataSource['id']] = {'NewID': replaceItem['LayerInfo'][dataSource['layerId']]['ID'],
+                                                                                                      #'FieldInfo': replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']}
                                                             dataSource['layerId'] = replaceItem['LayerInfo'][dataSource['layerId']]['ID']
                                                     elif layerNamesID.has_key(dataSource['name']):
                                                         layerIDSwitch.append({"OrigID":dataSource['layerId'],"NewID":layerNamesID[dataSource['name']] })
@@ -2181,6 +2183,8 @@ class publishingtools(abstract.baseToolsClass):
                         "arcpyError": arcpy.GetMessages(2),
                                         }
                                         )
+        except common.ArcRestHelperError,e:
+            raise e
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

@@ -429,7 +429,6 @@ class BaseWebOperations(object):
         urllib2.install_opener(opener)
 
         headers = {'Referer': self._referer_url,
-                   'Origin':  self._referer_url,
                    'User-Agent': self._useragent,
                    'Accept-Encoding': ''}
         if len(header) > 0 :
