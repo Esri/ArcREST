@@ -63,6 +63,13 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
        Inputs:
           client_id - OAuth client key
           secret_id - OAuth secret key
+          org_url - The url of that ArcGIS Organization.  This url is
+           composed on the machine name and the instance name of the portal.
+           For example:  http://myportal.mycompany.com/portal for a Portal
+            for ArcGIS Server instance.
+             - http://www.arcgis.com for ArcGIS Online
+             - http://myOnlineOrg.maps.arcgis.com for ArcGIS Online, but the
+               unique url for your org
           token_url - optional - url to where the token is obtained
           proxy_url - optional - proxy url as a string
           proxy_port - optional - proxy port as integer
@@ -253,6 +260,13 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     """ handles ArcGIS Online Token Base Security
         username - required - username to access AGOL services
         password - required - password for username above
+        org_url - The url of that ArcGIS Organization.  This url is
+         composed on the machine name and the instance name of the portal.
+         For example:  http://myportal.mycompany.com/portal for a Portal
+         for ArcGIS Server instance.
+          - http://www.arcgis.com for ArcGIS Online
+          - http://myOnlineOrg.maps.arcgis.com for ArcGIS Online, but the
+            unique url for your org
         token_url - optional - if URL is different than default AGOL token
                     url, then enter it here for AGOL token service.
         proxy_url - optional - if proxy is required to access internet, the
@@ -279,7 +293,11 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _valid = True
     _message = ""
     #----------------------------------------------------------------------
-    def __init__(self, username, password,org_url ="https://www.arcgis.com", token_url=None,
+    def __init__(self,
+                 username,
+                 password,
+                 org_url ="https://www.arcgis.com",
+                 token_url=None,
                  proxy_url=None, proxy_port=None):
         """Constructor"""
         self._username = username
@@ -482,7 +500,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
             datetime.timedelta(seconds=1)
-        
+
         #if token['expires'] > 86400:
             #seconds = 86400
         #else:
@@ -647,8 +665,13 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     Inputs:
        username - name of the user
        password - password for user
-       org_Url - base organization URL
-                    ex: https://chronus.com/arcgis/
+       org_url - The url of that ArcGIS Organization.  This url is
+         composed on the machine name and the instance name of the portal.
+         For example:  http://myportal.mycompany.com/portal for a Portal
+         for ArcGIS Server instance.
+          - http://www.arcgis.com for ArcGIS Online
+          - http://myOnlineOrg.maps.arcgis.com for ArcGIS Online, but the
+            unique url for your org
        proxy_url - URL of the proxy
        proxy_port - proxy port
     """
@@ -708,8 +731,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._org_url = str(self._org_url).replace('/sharing/rest','')
         else:
             self._url = self._org_url + "/sharing/rest"
-       
-            
+
+
         if self._url.startswith('http://'):
             self._surl = self._url.replace('http://', 'https://')
         else:
@@ -885,7 +908,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._server_token = server_token['token']
             self._server_token_created_on = datetime.datetime.now()
-        
+
             self._server_token_expires_on = datetime.datetime.fromtimestamp(server_token['expires'] /1000) - \
                 datetime.timedelta(seconds=1)
             self._server_expires_in = (self._server_token_expires_on - self._server_token_created_on).total_seconds()
