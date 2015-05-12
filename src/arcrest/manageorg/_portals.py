@@ -95,16 +95,18 @@ class PortalSelf(BaseAGOLClass):
                  securityHandler,
                  proxy_url=None,
                  proxy_port=None,
-                 initialize=False):#portalSelfDict):
+                 initialize=False):
         """Constructor"""
         self._culture = culture
         self._region = region
         self._url = url
-        self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._securityHandler = securityHandler
+            self._referer_url = securityHandler.referer_url
         proxy_url = self._proxy_url
         proxy_port = self._proxy_port
-
-        self.__init()
+        if initialize:
+            self.__init()
     #----------------------------------------------------------------------
     def __init(self):
         """ populates the object information """
@@ -817,7 +819,7 @@ class Portals(BaseAGOLClass):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def portalSelf(self, culture=None, region=None):
+    def portalSelf(self, usePortalId=True, culture=None, region=None):
         """
         The Portal Self resource is used to return the view of the portal
         as seen by the current user, anonymous or logged in. It includes
@@ -835,13 +837,18 @@ class Portals(BaseAGOLClass):
                      customized for this culture if settings are available
            region - the region code of the calling client.
         """
-        url = self._url + "/self"
+        if usePortalId == False:
+            url = self._url + "/self"
+        else:
+            url = self._baseURL + "/self"
+
         ps = PortalSelf(culture=culture,
                         region=region,
                         url=url,
                         securityHandler=self._securityHandler,
                         proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port)#PortalSelf(res)
+                        proxy_port=self._proxy_port)
+        #ps._referer_url = self._referer_url
         return ps
     #----------------------------------------------------------------------
     @property

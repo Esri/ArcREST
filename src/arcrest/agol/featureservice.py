@@ -93,11 +93,10 @@ class FeatureService(abstract.BaseAGOLClass):
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url
-
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
-
+                self._referer_url = securityHandler.referer_url
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

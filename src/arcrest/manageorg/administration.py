@@ -103,6 +103,7 @@ class Administration(BaseAGOLClass):
     def query(self,
               q,
               t=None,
+              focus=None,
               bbox=None,
               start=1,
               num=10,
@@ -123,6 +124,7 @@ class Administration(BaseAGOLClass):
         Inputs:
            q - The query string used to search
            t - type of content to search for.
+           focus - another content filter. Ex: files
            bbox - The bounding box for a spatial search defined as minx,
                   miny, maxx, or maxy. Search requires q, bbox, or both.
                   Spatial search is an overlaps/intersects function of the
@@ -164,6 +166,8 @@ class Administration(BaseAGOLClass):
             "num" : num,
             "start" : start
         }
+        if not focus is None:
+            params['focus'] = focus
         if not t is None:
             params['t'] = t
         if self._securityHandler is not None:
@@ -265,10 +269,11 @@ class Administration(BaseAGOLClass):
             url = self._url
         else:
             url = self._url + "/rest"
-        return _content.Content(url=url + "/content",
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+        c = _content.Content(url=url + "/content",
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+        return c
     #----------------------------------------------------------------------
     @property
     def oauth2(self):
@@ -293,11 +298,13 @@ class Administration(BaseAGOLClass):
         else:
             url = self._url + "/rest"
         url += "/portals"
-        return _portals.Portals(url,
-                                portalId,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+        p = _portals.Portals(url,
+                             portalId,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+        p._referer_url = self._referer_url
+        return p
     #----------------------------------------------------------------------
     def tileServers(self, portalId=None):
         """
@@ -341,6 +348,22 @@ class Administration(BaseAGOLClass):
                                       initialize=False)
                 )
             return services
+    #----------------------------------------------------------------------
+    #@staticmethod
+    #def obtainReferer(securityHandler,
+                      #proxy_url=None,
+                      #proxy_port=None):
+        #"""gets the referer url"""
+        #params = {
+            #"f" : "json",
+            #"token" : securityHandler.token
+        #}
+        #url = "https://www.arcgis.com/sharing/rest/portals/self"
+        #value = BaseAGOLClass()._do_get(url=url,
+                                       #param_dict=params,
+                                       #proxy_url=proxy_url,
+                                       #proxy_port=proxy_port)
+        #return value
     #----------------------------------------------------------------------
     def hostingServers(self, portalId=None):
         """

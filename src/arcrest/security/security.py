@@ -345,13 +345,28 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         else:
             self._token_url = token_url
-        if referer_url is None:
-            if not self._org_url.startswith('http://'):
-                self._referer_url = self._org_url.replace('http://', 'https://')
-            else:
-                self._referer_url = self._org_url
+        if referer_url is None or \
+           referer_url.lower().find('www.arcgis.com') > -1:
+            self._referer_url = self.__getRefererUrl()
         else:
             self._referer_url = referer_url
+    #----------------------------------------------------------------------
+    def __getRefererUrl(self, url=None):
+        """
+        gets the referer url for the token handler
+        """
+        if url is None:
+            url = "http://www.arcgis.com/sharing/rest/portals/self"
+        params = {
+            "f" : "json",
+            "token" : self.token
+        }
+        val = self._do_get(url=url, param_dict=params,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
+        self._referer_url = "http://%s.%s" % (val['urlKey'], val['customBaseUrl'])
+        self._token = None
+        return self._referer_url
     #----------------------------------------------------------------------
     @property
     def message(self):

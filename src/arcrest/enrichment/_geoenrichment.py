@@ -31,6 +31,10 @@ class GeoEnrichment(BaseGeoEnrichment):
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url
+        else:
+            raise Exception("A SecurityHandler object is required for this object.")
         admin = Administration(securityHandler=securityHandler,
                                proxy_url=proxy_url,
                                proxy_port=proxy_port)

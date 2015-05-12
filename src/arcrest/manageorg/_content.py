@@ -1582,11 +1582,16 @@ class UserContent(BaseAGOLClass):
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
-            "overwrite" : overwrite
         }
         res = ""
         if itemParameters is not None:
             params.update(itemParameters.value)
+        if itemParameters.overwrite is None:
+            if overwrite == True:
+                params['overwrite'] = "true"
+            else:
+                params['overwrite'] = "false"
+
         if url is not None:
             params['url'] = url
         if text is not None:
@@ -2171,7 +2176,7 @@ class UserContent(BaseAGOLClass):
         if 'largeThumbnail' in params:
             v = params['largeThumbnail']
             del params['largeThumbnail']
-            files.append(('largeThumbnail', v, os.path.basename(v)))            
+            files.append(('largeThumbnail', v, os.path.basename(v)))
         if 'metadata' in params:
             v = params['metadata']
             del params['metadata']
