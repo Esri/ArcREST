@@ -171,126 +171,176 @@ class PortalSelf(BaseAGOLClass):
     @property
     def canSharePublic(self):
         """gets the can share public value"""
+        if self._canSearchPublic is None:
+            self.__init()
         return self._canSharePublic
     #----------------------------------------------------------------------
     @property
     def subscriptionInfo(self):
         """returns the subscription information"""
+        if self._subscriptionInfo is None:
+            self.__init()
         return self._subscriptionInfo
     #----------------------------------------------------------------------
     @property
     def defaultExtent(self):
         """returns the default extent"""
+        if self._defaultExtent is None:
+            self.__init()
         return self._defaultExtent
     #----------------------------------------------------------------------
     @property
     def supportsHostedServices(self):
         """returns the support of hosted services"""
+        if self._supportsHostedServices is None:
+            self.__init()
         return self._supportsHostedServices
     #----------------------------------------------------------------------
     @property
     def homePageFeaturedContentCount(self):
         """returns the homePageFeaturedContentCount value"""
+        if self._homePageFeaturedContentCount is None:
+            self.__init()
         return self._homePageFeaturedContentCount
     #----------------------------------------------------------------------
     @property
     def supportsOAuth(self):
         """returns the supports OAuth value"""
+        if self._supportsOAuth is None:
+            self.__init()
         return self._supportsOAuth
     #----------------------------------------------------------------------
     @property
     def portalName(self):
         """returns the portal name"""
+        if self._portalName is None:
+            self.__init()
         return self._portalName
     #----------------------------------------------------------------------
     @property
     def urlKey(self):
         """returns the url key"""
+        if self._urlKey is None:
+            self.__init()
         return self._urlKey
     #----------------------------------------------------------------------
     @property
     def modified(self):
         """returns the modified value"""
+        if self._modified is None:
+            self.__init()
         return self._modified
     #----------------------------------------------------------------------
     @property
     def culture(self):
         """returns the culture value"""
+        if self._culture is None:
+            self.__init()
         return self._culture
     #----------------------------------------------------------------------
     @property
     def helpBase(self):
         """returns the helpBase value"""
+        if self._helpBase is None:
+            self.__init()
         return self._helpBase
     #----------------------------------------------------------------------
     @property
     def galleryTemplatesGroupQuery(self):
         """returns the value"""
+        if self._galleryTemplatesGroupQuery is None:
+            self.__init()
         return self._galleryTemplatesGroupQuery
     #----------------------------------------------------------------------
     @property
     def commentsEnabled(self):
         """returns the comments enable value"""
+        if self._commentsEnabled is None:
+            self.__init()
         return self._commentsEnabled
     #----------------------------------------------------------------------
     @property
     def databaseQuota(self):
         """returns the database quota"""
+        if self._databaseQuota is None:
+            self.__init()
         return self._databaseQuota
     #----------------------------------------------------------------------
     @property
     def id(self):
         """returns the portal id"""
+        if self._id is None:
+            self.__init()
         return self._id
     #----------------------------------------------------------------------
     @property
     def canSearchPublic(self):
         """returns the can search public value"""
+        if self._canSearchPublic is None:
+            self.__init()
         return self._canSearchPublic
     #----------------------------------------------------------------------
     @property
     def customBaseUrl(self):
         """returns the base url"""
+        if self._customBaseUrl is None:
+            self.__init()
         return self._customBaseUrl
     #----------------------------------------------------------------------
     @property
     def allSSL(self):
         """gets the all SSL value"""
+        if self._allSSL is None:
+            self.__init()
         return self._allSSL
     #----------------------------------------------------------------------
     @property
     def featuredGroupsId(self):
         """returns the feature groups id"""
+        if self._featuredGroupsId is None:
+            self.__init()
         return self._featuredGroupsId
     #----------------------------------------------------------------------
     @property
     def defaultBasemap(self):
         """returns the default basemap"""
+        if self._defaultBasemap is None:
+            self.__init()
         return self._defaultBasemap
     #----------------------------------------------------------------------
     @property
     def created(self):
         """returns the created date"""
+        if self._created is None:
+            self.__init()
         return self._created
     #----------------------------------------------------------------------
     @property
     def access(self):
         """returns the access value"""
+        if self._access is None:
+            self.__init()
         return self._access
     #----------------------------------------------------------------------
     @property
     def httpPort(self):
         """returns the http Port"""
+        if self._httpPort is None:
+            self.__init()
         return self._httpPort
     #----------------------------------------------------------------------
     @property
     def isPortal(self):
         """returns the isPortal value"""
+        if self._isPortal is None:
+            self.__init()
         return self._isPortal
     #----------------------------------------------------------------------
     @property
     def canSignInArcGIS(self):
         """returns the value"""
+        if self._canSignInArcGIS is None:
+            self.__init()
         return self._canSignInArcGIS
     #----------------------------------------------------------------------
     @property
@@ -301,196 +351,274 @@ class PortalSelf(BaseAGOLClass):
     @property
     def httpsPort(self):
         """returns the https port"""
+        if self._httpsPort is None:
+            self.__init()
         return self._httpsPort
     #----------------------------------------------------------------------
     @property
     def units(self):
         """returns the default units"""
+        if self._units is None:
+            self.__init()
         return self._units
     #----------------------------------------------------------------------
     @property
     def canListPreProvisionedItems(self):
         """returns the value"""
+        if self._canListPreProvisionedItems is None:
+            self.__init()
         return self._canListPreProvisionedItems
     #----------------------------------------------------------------------
     @property
     def mfaEnabled(self):
         """returns the mfe enabled value"""
+        if self._mfaEnabled is None:
+            self.__init()
         return self._mfaEnabled
     #----------------------------------------------------------------------
     @property
     def featureGroups(self):
         """returns feature groups value"""
+        if self._featuredGroups is None:
+            self.__init()
         return self._featuredGroups
     #----------------------------------------------------------------------
     @property
     def thumbnail(self):
         """returns the thumbnail value"""
+        if self._thumbnail is None:
+            self.__init()
         return self._thumbnail
     #----------------------------------------------------------------------
     @property
     def featuredItemsGroupQuery(self):
         """returns the feature Items group query"""
+        if self._galleryTemplatesGroupQuery is None:
+            self.__init()
         return self._featuredItemsGroupQuery
     #----------------------------------------------------------------------
     @property
     def canSignInIDP(self):
         """return can signin IDP"""
+        if self._canSignInIDP is None:
+            self.__init()
         return self._canSignInIDP
     #----------------------------------------------------------------------
     @property
     def storageUsage(self):
         """returns the storage usage"""
+        if self._storageUsage is None:
+            self.__init()
         return self._storageUsage
     #----------------------------------------------------------------------
     @property
     def rotatorPanels(self):
         """returns the rotator panels"""
+        if self._rotatorPanels is None:
+            self.__init()
         return self._rotatorPanels
     #----------------------------------------------------------------------
     @property
     def description(self):
         """returns the portal description"""
+        if self._description is None:
+            self.__init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def homePageFeatureContent(self):
         """return home page feature content"""
+        if self._homePageFeaturedContent is None:
+            self.__init()
         return self._homePageFeaturedContent
     #----------------------------------------------------------------------
     @property
     def canProvisionDirectPurchase(self):
         """returns the provision direct purchase"""
+        if self._canProvisionDirectPurchase is None:
+            self.__init()
         return self._canProvisionDirectPurchase
     #----------------------------------------------------------------------
     @property
     def canListData(self):
         """returns the canListData value"""
+        if self._canListData is None:
+            self.__init()
         return self._canListData
     #----------------------------------------------------------------------
     @property
     def ipCntryCode(self):
         """returns the ip cntrycode"""
+        if self._ipCntryCode is None:
+            self.__init()
         return self._ipCntryCode
     #----------------------------------------------------------------------
     @property
     def user(self):
         """returns the user value"""
+        if self._user is None:
+            self.__init()
         return self._user
     #----------------------------------------------------------------------
     @property
     def helpMap(self):
         """returns the helpmap value"""
+        if self._helpMap is None:
+            self.__init()
         return self._helpMap
     #----------------------------------------------------------------------
     @property
     def colorSetsGroupQuery(self):
         """returns the colorsets group query"""
+        if self._colorSetsGroupQuery is None:
+            self.__init()
         return self._colorSetsGroupQuery
     #----------------------------------------------------------------------
     @property
     def canListApps(self):
         """returns the can list apps value"""
+        if self._canListApps is None:
+            self.__init()
         return self._canListApps
     #----------------------------------------------------------------------
     @property
     def portalProperties(self):
         """returns the portal properties"""
+        if self._portalProperties is None:
+            self.__init()
         return self._portalProperties
     #----------------------------------------------------------------------
     @property
     def portalHostname(self):
         """returns the portal hostname"""
+        if self._portalHostname is None:
+            self.__init()
         return self._portalHostname
     #----------------------------------------------------------------------
     @property
     def useStandardizedQuery(self):
         """returns the user standardized query value"""
+        if self._useStandardizedQuery is None:
+            self.__init()
         return self._useStandardizedQuery
     #----------------------------------------------------------------------
     @property
     def stylesGroupQuery(self):
         """returns the styles group query"""
+        if self._stylesGroupQuery is None:
+            self.__init()
         return self._stylesGroupQuery
     #----------------------------------------------------------------------
     @property
     def symbolSetsGroupQuery(self):
         """returns the symbolsets group query"""
+        if self._symbolSetsGroupQuery is None:
+            self.__init()
         return self._symbolSetsGroupQuery
     #----------------------------------------------------------------------
     @property
     def name(self):
         """returns the portal name"""
+        if self._name is None:
+            self.__init()
         return  self._name
     #----------------------------------------------------------------------
     @property
     def storageQuota(self):
         """returns the storageQuota value"""
+        if self._storageQuota is None:
+            self.__init()
         return self._storageQuota
     #----------------------------------------------------------------------
     @property
     def canShareBingPublic(self):
         """returns the canShareBingPublic value"""
+        if self._canShareBingPublic is None:
+            self.__init()
         return self._canShareBingPublic
     #----------------------------------------------------------------------
     @property
     def maxTokenExpirationMinutes(self):
         """returns the maxTokenExpirationMinutes value"""
+        if self._maxTokenExpirationMinutes is None:
+            self.__init()
         return self._maxTokenExpirationMinutes
     #----------------------------------------------------------------------
     @property
     def layerTemplatesGroupQuery(self):
         """returns the layerTemplatesGroupQuery value"""
+        if self._layerTemplatesGroupQuery is None:
+            self.__init()
         return self._layerTemplatesGroupQuery
     #----------------------------------------------------------------------
     @property
     def staticImagesUrl(self):
         """returns the staticImagesUrl value"""
+        if self._staticImagesUrl is None:
+            self.__init()
         return self._staticImagesUrl
     #----------------------------------------------------------------------
     @property
     def databaseUsage(self):
         """returns the databaseUsage value"""
+        if self._databaseUsage is None:
+            self.__init()
         return self._databaseUsage
     #----------------------------------------------------------------------
     @property
     def showHomePageDescription(self):
         """returns the show home page description value"""
+        if self._showHomePageDescription is None:
+            self.__init()
         return self._showHomePageDescription
     #----------------------------------------------------------------------
     @property
     def availableCredits(self):
         """returns the available credits"""
+        if self._availableCredits is None:
+            self.__init()
         return self._availableCredits
     #----------------------------------------------------------------------
     @property
     def helperServices(self):
         """returns the helper services"""
+        if self._helperServices is None:
+            self.__init()
         return self._helperServices
     #----------------------------------------------------------------------
     @property
     def templatesGroupQuery(self):
         """returns the templates group query"""
+        if self._templatesGroupQuery is None:
+            self.__init()
         return self._templatesGroupQuery
     #----------------------------------------------------------------------
     @property
     def mfaAdmins(self):
         """returns the mfaAdmins value"""
+        if self._mfaAdmins is None:
+            self.__init()
         return self._mfaAdmins
     #----------------------------------------------------------------------
     @property
     def basemapGalleryGroupQuery(self):
         """returns the basemap gallery group query"""
+        if self._basemapGalleryGroupQuery is None:
+            self.__init()
         return self._basemapGalleryGroupQuery
     #----------------------------------------------------------------------
     @property
     def region(self):
         """returns the portal region value"""
+        if self._region is None:
+            self.__init()
         return self._region
     #----------------------------------------------------------------------
     @property
     def portalMode(self):
         """returns the portal's mode"""
+        if self._portalMode is None:
+            self.__init()
         return self._portalMode
 ########################################################################
 class UserInvite(object):
@@ -848,7 +976,6 @@ class Portals(BaseAGOLClass):
                         securityHandler=self._securityHandler,
                         proxy_url=self._proxy_url,
                         proxy_port=self._proxy_port)
-        #ps._referer_url = self._referer_url
         return ps
     #----------------------------------------------------------------------
     @property

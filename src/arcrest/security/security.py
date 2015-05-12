@@ -347,7 +347,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._token_url = token_url
         if referer_url is None or \
            referer_url.lower().find('www.arcgis.com') > -1:
-            self._referer_url = self.__getRefererUrl()
+            self._referer_url = "arcgis.com"
         else:
             self._referer_url = referer_url
     #----------------------------------------------------------------------
@@ -364,7 +364,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         val = self._do_get(url=url, param_dict=params,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
-        self._referer_url = "http://%s.%s" % (val['urlKey'], val['customBaseUrl'])
+        self._referer_url = "arcgis.com"#"http://%s.%s" % (val['urlKey'], val['customBaseUrl'])
         self._token = None
         return self._referer_url
     #----------------------------------------------------------------------
