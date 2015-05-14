@@ -129,13 +129,12 @@ class MapService(BaseAGSServer):
     #----------------------------------------------------------------------
     def __init(self):
         """ populates all the properties for the map service """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict,
+        
+        params = {"f": "json"}
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
+            
+        json_dict = self._do_get(self._url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json = json.dumps(json_dict)
@@ -204,7 +203,7 @@ class MapService(BaseAGSServer):
                 pass
         elif value is None:
             self._securityHandler = None
-            self._token = None
+           
     #----------------------------------------------------------------------
     @property
     def maxExportTilesCount(self):
@@ -409,8 +408,8 @@ class MapService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         res = self._do_get(url, param_dict=params)
         return_dict = {
             "layers" : [],
@@ -461,9 +460,8 @@ class MapService(BaseAGSServer):
             "gdbVersion" : gdbVersion,
             "layers" : layers
         }
-        if not self._token is None and \
-           self._token != "":
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         res = self._do_get(url, params)
         qResults = []
         for r in res['results']:
@@ -476,8 +474,8 @@ class MapService(BaseAGSServer):
         params={
             "f" : "json"
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         res = self._do_get(url=url, param_dict=params)
         return res['type']
     #----------------------------------------------------------------------
@@ -561,8 +559,8 @@ class MapService(BaseAGSServer):
                  'layers' : layers,
                  'layerOptions': layerOptions
                  }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         import urllib
         url = kmlURL + "?%s" % urllib.urlencode(params)
         return self._download_file(url, save_location, docName + ".kmz")
@@ -642,8 +640,8 @@ class MapService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token           
         if isinstance(bbox, geometry.Envelope):
             vals = bbox.asDictionary
             params['bbox'] = "%s,%s,%s,%s" % (vals['xmin'], vals['ymin'],

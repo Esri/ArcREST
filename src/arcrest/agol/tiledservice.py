@@ -74,13 +74,11 @@ class TiledService(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        params = {"f": "json"}
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token
+            
+        json_dict = self._do_get(self._url, params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]

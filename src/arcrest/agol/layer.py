@@ -142,8 +142,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         json_dict = self._do_get(self._url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -160,6 +160,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             securityHandler=self._securityHandler,
             proxy_port=self._proxy_port,
             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def refresh(self):
+        """refreshes all the properties of the service"""
+        self.__init()
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
@@ -194,11 +198,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
         part2 = url[res[1]:]
         adminURL = "%s%s%s" % (part1, addText, part2)
 
-        res = AdminFeatureServiceLayer(url=url,
+        res = AdminFeatureServiceLayer(url=adminURL,
                                        securityHandler=self._securityHandler,
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port,
-                                       initialize=False)
+                                       initialize=True)
         return res
     #----------------------------------------------------------------------
     @property
@@ -577,8 +581,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if self.hasAttachments == True:
             attachURL = self._url + "/%s/addAttachment" % oid
             params = {'f':'json'}
-            if not self._token is None:
-                params['token'] = self._token
+            if self._securityHandler is not None:
+                params['token'] = self._securityHandler.token   
             parsed = urlparse(attachURL)
 
             files = []
@@ -608,8 +612,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f":"json",
             "attachmentIds" : "%s" % attachment_id
         }
-        if not self._token is None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         return self._do_post(url, params, proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -627,8 +631,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f":"json",
             "attachmentId" : "%s" % attachment_id
         }
-        if not self._token is None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         parsed = urlparse(url)
         port = parsed.port
         files = []
@@ -649,8 +653,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {
             "f":"json"
         }
-        if not self._token is None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         return self._do_get(url, params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -834,8 +838,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "returnM" : returnM,
             "returnZ" : returnZ
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if definitionExpression is not None:
@@ -866,8 +870,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params = {
                 'f' : "json"
             }
-            if self._token is not None:
-                params['token'] = self._token
+            if self._securityHandler is not None:
+                params['token'] = self._securityHandler.token   
             return self._do_get(url=popURL, param_dict=params, proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
         return ""
@@ -950,8 +954,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         }
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
                                             default=_date_handler
@@ -1023,8 +1027,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if objectIds is not None and \
            objectIds != "":
             params['objectIds'] = objectIds
-        if not self._token is None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
 
         result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
@@ -1062,8 +1066,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         editURL = self._url + "/applyEdits"
         params = {"f": "json"
                   }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
@@ -1101,8 +1105,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if isinstance(rollbackOnFailure, bool):
@@ -1163,8 +1167,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                     "features"  : json.dumps(chunk,
                                              default=self._date_handler)
                 }
-                if not self._token is None:
-                    params['token'] = self._token
+                if self._securityHandler is not None:
+                    params['token'] = self._securityHandler.token   
                 result = self._do_post(url=uURL, param_dict=params, proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
                 messages.update(result)
@@ -1258,8 +1262,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         elif isinstance(calcExpression, list):
             params["calcExpression"] = json.dumps(calcExpression,
                                                   default=_date_handler)
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if sqlFormat.lower() in ['native', 'standard']:
             params['sqlFormat'] = sqlFormat.lower()
         else:

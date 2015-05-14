@@ -102,13 +102,11 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict,
+        params = {"f": "json"}
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token 
+            
+        json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         self._json_dict = json_dict
         self._json = json.dumps(self._json_dict,
@@ -292,13 +290,11 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def _getLayers(self):
         """ gets layers for the featuer service """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict,
+        
+        params = {"f": "json"}        
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token               
+        json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._layers = []
@@ -313,13 +309,12 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def _getTables(self):
         """ gets layers for the featuer service """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict,
+         
+        params = {"f": "json"}
+        
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
+        json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         self._tables = []
         if json_dict.has_key("tables"):
@@ -437,8 +432,8 @@ class FeatureService(abstract.BaseAGOLClass):
                   "returnCountOnly": returnCountOnly,
                   "returnZ": returnZ,
                   "returnM" : returnM}
-        if not self._token is None:
-            params["token"] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if not layerDefsFilter is None and \
            isinstance(layerDefsFilter, LayerDefinitionFilter):
             params['layerDefs'] = layerDefsFilter.filter
@@ -543,8 +538,8 @@ class FeatureService(abstract.BaseAGOLClass):
             "returnM" : returnM,
             "returnZ" : returnZ
         }
-        if self._token is not None:
-            params['token'] = self._token
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if definitionExpression is not None:

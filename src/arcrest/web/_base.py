@@ -33,7 +33,7 @@ class AGOLRedirectHandler(urllib2.HTTPRedirectHandler):
 ########################################################################
 class BaseWebOperations(object):
     """ base class that holds operations for web requests """
-    _token = None
+    
     _referer_url = ""
     _useragent = "ArcREST"
     _proxy_url = None

@@ -64,13 +64,11 @@ class FeatureService(BaseAGSServer):
     #----------------------------------------------------------------------
     def __init(self):
         """ loads the data into the class """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict,
+        params = {"f": "json"}
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
+            
+        json_dict = self._do_get(self._url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
@@ -255,15 +253,14 @@ class FeatureService(BaseAGSServer):
             self.__init()
         self._getLayers()
         return self._layers
+    #----------------------------------------------------------------------
     def _getLayers(self):
         """ gets layers for the featuer service """
-        if self._token is None:
-            param_dict = {"f": "json"}
-        else:
-            param_dict = {"f": "json",
-                          "token" : self._token
-                          }
-        json_dict = self._do_get(self._url, param_dict)
+        params = {"f": "json"}
+
+        if self._securityHandler is not None:
+            params['token'] = self._securityHandler.token   
+        json_dict = self._do_get(self._url, params)
         self._layers = []
         if json_dict.has_key("layers"):
             for l in json_dict["layers"]:
