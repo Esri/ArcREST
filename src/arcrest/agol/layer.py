@@ -161,6 +161,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             proxy_port=self._proxy_port,
             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def refresh(self):
+        """refreshes all the properties of the service"""
+        self.__init()
+    #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
         return json.dumps(dict(self), default=_date_handler)
@@ -194,11 +198,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
         part2 = url[res[1]:]
         adminURL = "%s%s%s" % (part1, addText, part2)
 
-        res = AdminFeatureServiceLayer(url=url,
+        res = AdminFeatureServiceLayer(url=adminURL,
                                        securityHandler=self._securityHandler,
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port,
-                                       initialize=False)
+                                       initialize=True)
         return res
     #----------------------------------------------------------------------
     @property
