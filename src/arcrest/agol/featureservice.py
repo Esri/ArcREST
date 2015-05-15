@@ -104,8 +104,8 @@ class FeatureService(abstract.BaseAGOLClass):
         """ loads the data into the class """
         params = {"f": "json"}
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token 
-            
+            params['token'] = self._securityHandler.token
+
         json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         self._json_dict = json_dict
@@ -290,10 +290,10 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def _getLayers(self):
         """ gets layers for the featuer service """
-        
-        params = {"f": "json"}        
+
+        params = {"f": "json"}
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token               
+            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -309,11 +309,11 @@ class FeatureService(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def _getTables(self):
         """ gets layers for the featuer service """
-         
+
         params = {"f": "json"}
-        
+
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         self._tables = []
@@ -433,7 +433,7 @@ class FeatureService(abstract.BaseAGOLClass):
                   "returnZ": returnZ,
                   "returnM" : returnM}
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if not layerDefsFilter is None and \
            isinstance(layerDefsFilter, LayerDefinitionFilter):
             params['layerDefs'] = layerDefsFilter.filter
@@ -539,7 +539,7 @@ class FeatureService(abstract.BaseAGOLClass):
             "returnZ" : returnZ
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if definitionExpression is not None:
@@ -561,8 +561,8 @@ class FeatureService(abstract.BaseAGOLClass):
             "f" : "json",
 
         }
-        if not self._token is None:
-            params["token"] = self._token
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
         url = self._url + "/replicas"
         return self._do_get(url, params,
                             proxy_url=self._proxy_url, proxy_port=self._proxy_port)
@@ -578,8 +578,8 @@ class FeatureService(abstract.BaseAGOLClass):
             "f" : "json",
             "replicaID" : replica_id
         }
-        if not self._token is None:
-            params["token"] = self._token
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
         url = self._url + "/unRegisterReplica"
         return self._do_post(url, params,
                              proxy_url=self._proxy_url,
@@ -596,8 +596,8 @@ class FeatureService(abstract.BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        if not self._token is None:
-            params["token"] = self._token
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
         url = self._url + "/replicas/%s" + replica_id
         return self._do_get(url, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -652,8 +652,8 @@ class FeatureService(abstract.BaseAGOLClass):
                 "returnAttachments" : returnAttachments,
                 "async" : False
             }
-            if not self._token is None:
-                params["token"] = self._token
+            if not self._securityHandler is None:
+                params["token"] = self._securityHandler.token
             if not geometryFilter is None and \
                isinstance(geometryFilter, GeometryFilter):
                 gf = geometryFilter.filter

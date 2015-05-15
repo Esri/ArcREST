@@ -66,8 +66,8 @@ class FeatureService(BaseAGSServer):
         """ loads the data into the class """
         params = {"f": "json"}
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
-            
+            params['token'] = self._securityHandler.token
+
         json_dict = self._do_get(self._url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -259,7 +259,7 @@ class FeatureService(BaseAGSServer):
         params = {"f": "json"}
 
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params)
         self._layers = []
         if json_dict.has_key("layers"):
@@ -347,8 +347,8 @@ class FeatureService(BaseAGSServer):
                   "returnCountOnly": returnCountOnly,
                   "returnZ": returnZ,
                   "returnM" : returnM}
-        if not self._token is None:
-            params["token"] = self._token
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
         if not layerDefsFilter is None and \
            isinstance(layerDefsFilter, LayerDefinitionFilter):
             params['layerDefs'] = layerDefsFilter.filter

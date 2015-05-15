@@ -143,7 +143,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f" : "json",
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -582,7 +582,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             attachURL = self._url + "/%s/addAttachment" % oid
             params = {'f':'json'}
             if self._securityHandler is not None:
-                params['token'] = self._securityHandler.token   
+                params['token'] = self._securityHandler.token
             parsed = urlparse(attachURL)
 
             files = []
@@ -613,7 +613,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "attachmentIds" : "%s" % attachment_id
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         return self._do_post(url, params, proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -632,7 +632,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "attachmentId" : "%s" % attachment_id
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         parsed = urlparse(url)
         port = parsed.port
         files = []
@@ -654,7 +654,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f":"json"
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         return self._do_get(url, params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -729,8 +729,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
                   }
-        if not self._token is None:
-            params["token"] = self._token
+        if not self._securityHandler is None:
+            params["token"] = self._securityHandler.token
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
             params['time'] = timeFilter.filter
@@ -839,7 +839,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "returnZ" : returnZ
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if definitionExpression is not None:
@@ -871,7 +871,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 'f' : "json"
             }
             if self._securityHandler is not None:
-                params['token'] = self._securityHandler.token   
+                params['token'] = self._securityHandler.token
             return self._do_get(url=popURL, param_dict=params, proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
         return ""
@@ -955,7 +955,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
                                             default=_date_handler
@@ -1028,7 +1028,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
            objectIds != "":
             params['objectIds'] = objectIds
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
 
         result = self._do_post(url=dURL, param_dict=params, proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
@@ -1067,7 +1067,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {"f": "json"
                   }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
@@ -1106,7 +1106,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f" : "json"
         }
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
         if isinstance(rollbackOnFailure, bool):
@@ -1168,7 +1168,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                              default=self._date_handler)
                 }
                 if self._securityHandler is not None:
-                    params['token'] = self._securityHandler.token   
+                    params['token'] = self._securityHandler.token
                 result = self._do_post(url=uURL, param_dict=params, proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
                 messages.update(result)
@@ -1263,7 +1263,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params["calcExpression"] = json.dumps(calcExpression,
                                                   default=_date_handler)
         if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token   
+            params['token'] = self._securityHandler.token
         if sqlFormat.lower() in ['native', 'standard']:
             params['sqlFormat'] = sqlFormat.lower()
         else:
