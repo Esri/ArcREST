@@ -1,6 +1,6 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
-from parameters import ItemParameter, BaseParameters, AnalyzeParameters
+from parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
 import urllib
 import urlparse
 import json
@@ -275,7 +275,8 @@ class FeatureContent(BaseAGOLClass):
            isinstance(analyzeParameters, AnalyzeParameters):
             params['analyzeParameters'] = analyzeParameters.value
 
-        if os.path.isfile(filePath):
+        if not (filePath is None) and \
+           os.path.isfile(filePath):
             params['text'] = open(filePath, 'rb').read()
             return self._do_post(url=url, param_dict=params,
                                  proxy_url=self._proxy_url,
@@ -2016,8 +2017,11 @@ class UserContent(BaseAGOLClass):
         #if publishParameters is not None and \
            #isinstance(publishParameters, BaseParameters):
             #params['publishParameters'] = publishParameters.value
-        if publishParameters is not None:
+        if publishParameters is not None and \
+           isinstance(publishParameters, PublishCSVParameters) == False:
             params.update(publishParameters.value)
+        elif isinstance(publishParameters, PublishCSVParameters):
+            params['publishParameters'] = json.dumps(publishParameters.value)
         if itemId is not None:
             params['itemId'] = itemId
         if text is not None and fileType.lower() == 'csv':
