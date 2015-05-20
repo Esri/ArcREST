@@ -1,4 +1,4 @@
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 from parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
 import urllib
@@ -1587,12 +1587,9 @@ class UserContent(BaseAGOLClass):
         res = ""
         if itemParameters is not None:
             params.update(itemParameters.value)
-        if itemParameters.overwrite is None:
-            if overwrite == True:
-                params['overwrite'] = "true"
-            else:
-                params['overwrite'] = "false"
-
+        if overwrite:
+            from warnings import warn
+            warn(message="Overwrite is depricated in the REST API")
         if url is not None:
             params['url'] = url
         if text is not None:

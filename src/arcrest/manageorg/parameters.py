@@ -591,17 +591,19 @@ class ItemParameter(BaseParameters):
     @property
     def overwrite(self):
         """
-        Snippet or summary for the item. Limit this brief descriptive text
-        to 250 characters.
+        overwrites an existing item (depricated)
         """
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
     def overwrite(self, value):
         """
-        Snippet or summary for the item. Limit this brief descriptive text
-        to 250 characters.
+        overwrites an existing item (depricated)
         """
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         if self._overwrite != value:
             self._overwrite = value
     #----------------------------------------------------------------------
@@ -1289,11 +1291,15 @@ class PublishFGDBParameter(BaseParameters):
     @property
     def overwrite(self):
         """gets/sets the overwrite value"""
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
     def overwrite(self, value):
         """gets/sets the overwrite value"""
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         if isinstance(value, bool):
             self._overwrite = value
     #----------------------------------------------------------------------
@@ -1422,16 +1428,18 @@ class PublishSDParmaeters(BaseParameters):
     @property
     def overwrite(self):
         """
-        Snippet or summary for the item. Limit this brief descriptive text
-        to 250 characters.
+        overwrites an item
         """
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
     def overwrite(self, value):
         """
-        Snippet or summary for the item. Limit this brief descriptive text
-        to 250 characters.
+        overwrites an item
         """
+        from warnings import warn
+        warn(message="The overwrite property is no longer supported")
         if self._overwrite != value:
             self._overwrite = value
