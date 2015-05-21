@@ -591,10 +591,8 @@ class ItemParameter(BaseParameters):
     @property
     def overwrite(self):
         """
-        overwrites an existing item (depricated)
+        overwrites an existing item.
         """
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
@@ -602,8 +600,6 @@ class ItemParameter(BaseParameters):
         """
         overwrites an existing item (depricated)
         """
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
         if self._overwrite != value:
             self._overwrite = value
     #----------------------------------------------------------------------
@@ -1291,15 +1287,13 @@ class PublishFGDBParameter(BaseParameters):
     @property
     def overwrite(self):
         """gets/sets the overwrite value"""
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
+
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
     def overwrite(self, value):
         """gets/sets the overwrite value"""
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
+
         if isinstance(value, bool):
             self._overwrite = value
     #----------------------------------------------------------------------
@@ -1430,8 +1424,6 @@ class PublishSDParmaeters(BaseParameters):
         """
         overwrites an item
         """
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
         return self._overwrite
     #----------------------------------------------------------------------
     @overwrite.setter
@@ -1439,7 +1431,5 @@ class PublishSDParmaeters(BaseParameters):
         """
         overwrites an item
         """
-        from warnings import warn
-        warn(message="The overwrite property is no longer supported")
         if self._overwrite != value:
             self._overwrite = value

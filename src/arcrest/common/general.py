@@ -58,7 +58,16 @@ def online_time_to_string(value,timeFormat):
           string
     """
     return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
-
+#----------------------------------------------------------------------
+def timestamp_to_datetime(timestamp):
+    """
+       Converts a timestamp to a datetime object
+       Inputs:
+          timestamp - timestamp value as Long
+       output:
+          datetime object
+    """
+    return datetime.datetime.fromtimestamp(timestamp /1000)
 ########################################################################
 class Feature(object):
     """ returns a feature  """

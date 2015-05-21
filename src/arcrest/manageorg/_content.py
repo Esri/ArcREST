@@ -1587,9 +1587,8 @@ class UserContent(BaseAGOLClass):
         res = ""
         if itemParameters is not None:
             params.update(itemParameters.value)
-        if overwrite:
-            from warnings import warn
-            warn(message="Overwrite is depricated in the REST API")
+        if itemParameters.overwrite is None:
+            params['overwrite'] = json.dumps(overwrite)
         if url is not None:
             params['url'] = url
         if text is not None:
