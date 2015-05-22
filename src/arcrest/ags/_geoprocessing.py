@@ -101,7 +101,7 @@ class GPService(BaseAGSServer):
                                    securityHandler=self._securityHandler,
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port,
-                                   initialize=True)
+                                   initialize=False)
                         )
                 else:
                     setattr(self, "_"+ k, json_dict[k])
