@@ -105,6 +105,30 @@ class Info(BaseAGSServer):
             self.__init()
         return self._loggedInUserPrivilege
     #----------------------------------------------------------------------
+    def healthCheck(self):
+        """
+        The health check reports if the ArcGIS Server site is able to
+        receive requests. For example, during site creation, this URL
+        reports the site is unhealthy because it can't take requests at
+        that time. This endpoint is useful if you're setting up a
+        third-party load balancer or other monitoring software that
+        supports a health check function.
+        A healthy (available) site will return an HTTP 200 response code
+        along with a message indicating "success": true (noted below). An
+        unhealthy (unavailable) site will return messaging other than HTTP
+        200.
+        """
+        url = self._url + "/healthCheck"
+        params = {
+            "f" : "json"
+        }
+        if not self._securityHandler is None:
+            params['token'] = self._securityHandler.token
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def getAvailableTimeZones(self):
         """
            Returns an enumeration of all the time zones of which the server

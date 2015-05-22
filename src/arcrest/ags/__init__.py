@@ -1,7 +1,8 @@
 from featureservice import *
 from mapservice import *
 from layer import *
-from geoprocessing import *
+from _geoprocessing import *
+from _gpobjects import *
 from _imageservice import ImageService
 from _uploads import Uploads
 from _globeservice import GlobeService, GlobeServiceLayer
