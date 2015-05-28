@@ -108,7 +108,99 @@ class Administration(BaseAGOLClass):
               start=1,
               num=10,
               sortField=None,
-              sortOrder="asc"):
+              sortOrder="asc",
+              useSecurity=True):
+        """
+        This operation searches for content items in the portal. The
+        searches are performed against a high performance index that
+        indexes the most popular fields of an item. See the Search
+        reference page for information on the fields and the syntax of the
+        query.
+        The search index is updated whenever users add, update, or delete
+        content. There can be a lag between the time that the content is
+        updated and the time when it's reflected in the search results.
+        The results of a search only contain items that the user has
+        permission to access.
+
+        Inputs:
+           q - The query string used to search
+           t - type of content to search for.
+           focus - another content filter. Ex: files
+           bbox - The bounding box for a spatial search defined as minx,
+                  miny, maxx, or maxy. Search requires q, bbox, or both.
+                  Spatial search is an overlaps/intersects function of the
+                  query bbox and the extent of the document.
+                  Documents that have no extent (e.g., mxds, 3dds, lyr)
+                  will not be found when doing a bbox search.
+                  Document extent is assumed to be in the WGS84 geographic
+                  coordinate system.
+           start -  The number of the first entry in the result set
+                    response. The index number is 1-based.
+                    The default value of start is 1 (that is, the first
+                    search result).
+                    The start parameter, along with the num parameter, can
+                    be used to paginate the search results.
+           num - The maximum number of results to be included in the result
+                 set response.
+                 The default value is 10, and the maximum allowed value is
+                 100.
+                 The start parameter, along with the num parameter, can be
+                 used to paginate the search results.
+           sortField - Field to sort by. You can also sort by multiple
+                       fields (comma separated) for an item.
+                       The allowed sort field names are title, created,
+                       type, owner, modified, avgRating, numRatings,
+                       numComments, and numViews.
+           sortOrder - Describes whether the results return in ascending or
+                       descending order. Default is ascending.
+                       Values: asc | desc
+           useSecurity - boolean value that determines if the security
+                         handler object's token will be appended on the
+                         search call.  If the value is set to False, then
+                         the search will be performed without
+                         authentication.  This means only items that have
+                         been shared with everyone on AGOL or portal site
+                         will be found.  If it is set to True, then all
+                         items the user has permission to see based on the
+                         query passed will be returned.
+        """
+        if self._url.endswith("/rest"):
+            url = self._url + "/search"
+        else:
+            url = self._url + "/rest/search"
+
+        params = {
+            "f" : "json",
+            "q" : q,
+            "sortOrder" : sortOrder,
+            "num" : num,
+            "start" : start
+        }
+        if not focus is None:
+            params['focus'] = focus
+        if not t is None:
+            params['t'] = t
+        if useSecurity:
+            if self._securityHandler is not None:
+                params["token"] = self._securityHandler.token
+        if sortField is not None:
+            params['sortField'] = sortField
+        if bbox is not None:
+            params['bbox'] = bbox
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def query_without_creds(self,
+                            q,
+                            t=None,
+                            focus=None,
+                            bbox=None,
+                            start=1,
+                            num=10,
+                            sortField=None,
+                            sortOrder="asc"):
         """
         This operation searches for content items in the portal. The
         searches are performed against a high performance index that
@@ -154,6 +246,8 @@ class Administration(BaseAGOLClass):
                        descending order. Default is ascending.
                        Values: asc | desc
         """
+        import warnings
+        warnings.warn("deprecated, please use query()", DeprecationWarning)
         if self._url.endswith("/rest"):
             url = self._url + "/search"
         else:
@@ -170,78 +264,6 @@ class Administration(BaseAGOLClass):
             params['focus'] = focus
         if not t is None:
             params['t'] = t
-        if self._securityHandler is not None:
-            params["token"] = self._securityHandler.token
-        if sortField is not None:
-            params['sortField'] = sortField
-        if bbox is not None:
-            params['bbox'] = bbox
-        return self._do_get(url=url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def query_without_creds(self,q,
-              bbox=None,
-              start=1,
-              num=10,
-              sortField=None,
-              sortOrder="asc"):
-        """
-        This operation searches for content items in the portal. The
-        searches are performed against a high performance index that
-        indexes the most popular fields of an item. See the Search
-        reference page for information on the fields and the syntax of the
-        query.
-        The search index is updated whenever users add, update, or delete
-        content. There can be a lag between the time that the content is
-        updated and the time when it's reflected in the search results.
-        The results of a search only contain items that the user has
-        permission to access.
-
-        Inputs:
-           q - The query string used to search
-           bbox - The bounding box for a spatial search defined as minx,
-                  miny, maxx, or maxy. Search requires q, bbox, or both.
-                  Spatial search is an overlaps/intersects function of the
-                  query bbox and the extent of the document.
-                  Documents that have no extent (e.g., mxds, 3dds, lyr)
-                  will not be found when doing a bbox search.
-                  Document extent is assumed to be in the WGS84 geographic
-                  coordinate system.
-           start -  The number of the first entry in the result set
-                    response. The index number is 1-based.
-                    The default value of start is 1 (that is, the first
-                    search result).
-                    The start parameter, along with the num parameter, can
-                    be used to paginate the search results.
-           num - The maximum number of results to be included in the result
-                 set response.
-                 The default value is 10, and the maximum allowed value is
-                 100.
-                 The start parameter, along with the num parameter, can be
-                 used to paginate the search results.
-           sortField - Field to sort by. You can also sort by multiple
-                       fields (comma separated) for an item.
-                       The allowed sort field names are title, created,
-                       type, owner, modified, avgRating, numRatings,
-                       numComments, and numViews.
-           sortOrder - Describes whether the results return in ascending or
-                       descending order. Default is ascending.
-                       Values: asc | desc
-        """
-        if self._url.endswith("/rest"):
-            url = self._url + "/search"
-        else:
-            url = self._url + "/rest/search"
-        params = {
-            "f" : "json",
-            "q" : q,
-            "sortOrder" : sortOrder,
-            "num" : num,
-            "start" : start,
-            "focus" : "layers"
-        }
         if sortField is not None:
             params['sortField'] = sortField
         if bbox is not None:
