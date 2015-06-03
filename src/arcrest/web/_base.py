@@ -277,7 +277,7 @@ class BaseWebOperations(object):
                                                  compress)
         return jres
     #----------------------------------------------------------------------
-    def _assemble_url(self, host, selctor, port=80):
+    def _assemble_url(self, host, selector, port=80, ssl=False):
         """creates the url string for the request"""
         if not port is None and \
            port != 80:
@@ -331,7 +331,7 @@ class BaseWebOperations(object):
         proxies = None
         headers = {'User-agent': 'ArcREST'}
         postFiles = {}
-        url = self._assemble_url(host, selctor, port)
+        url = self._assemble_url(host, selector, port, ssl)
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80
@@ -567,7 +567,7 @@ class BaseWebOperations(object):
                                )
         """
         content_type, body = self._encode_multipart_formdata(fields, files)
-        url = self._assemble_url(host, selctor, port)
+        url = self._assemble_url(host, selector, port, ssl)
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80

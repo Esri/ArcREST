@@ -1426,6 +1426,20 @@ class UserContent(BaseAGOLClass):
         else:
             self._baseUrl = url
     #----------------------------------------------------------------------
+    def listUserFolders(self, username):
+        """
+           Gets a user's folders.
+
+           Inputs:
+              username - name of the user to query
+        """
+        res = self.listUserContent(username=username)
+        if "folders" in res:
+            return res.get("folders")
+        else:
+            return []
+
+    #----------------------------------------------------------------------
     def listUserContent(self, username=None, folderId=None):
         """
         Gets the user's content in the folder (if given)
