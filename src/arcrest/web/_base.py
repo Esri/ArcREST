@@ -33,7 +33,7 @@ class AGOLRedirectHandler(urllib2.HTTPRedirectHandler):
 ########################################################################
 class BaseWebOperations(object):
     """ base class that holds operations for web requests """
-    
+
     _referer_url = ""
     _useragent = "ArcREST"
     _proxy_url = None
@@ -277,6 +277,21 @@ class BaseWebOperations(object):
                                                  compress)
         return jres
     #----------------------------------------------------------------------
+    def _assemble_url(self, host, selctor, port=80):
+        """creates the url string for the request"""
+        if not port is None and \
+           port != 80:
+            if ssl:
+                url = "https://%s:%s%s" % (host, port, selector)
+            else:
+                url = "http://%s:%s%s" % (host, port, selector)
+        else:
+            if ssl:
+                url = "https://%s%s" % (host, selector)
+            else:
+                url = "http://%s%s" % (host, selector)
+        return url
+    #----------------------------------------------------------------------
     def _post_multipart_requests(self,
                                  host,
                                  selector,
@@ -316,10 +331,7 @@ class BaseWebOperations(object):
         proxies = None
         headers = {'User-agent': 'ArcREST'}
         postFiles = {}
-        if ssl:
-            url = "https://%s%s" % (host, selector)
-        else:
-            url = "http://%s%s" % (host, selector)
+        url = self._assemble_url(host, selctor, port)
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80
@@ -455,7 +467,7 @@ class BaseWebOperations(object):
     #----------------------------------------------------------------------
     def _do_get_stnd(self, url, param_dict, header=None, proxy_url=None, proxy_port=None,compress=True):
         """ performs a get operation """
-       
+
         headers = [('Referer', self._referer_url),
                    ('User-Agent', self._useragent)]
         if not header is None  :
@@ -480,9 +492,9 @@ class BaseWebOperations(object):
 
         else:
             format_url = url + "?%s" % urllib.urlencode(param_dict)
-            
+
             resp = opener.open(format_url)
-                
+
         if resp.info().get('Content-Encoding') == 'gzip':
             buf = StringIO(resp.read())
             f = gzip.GzipFile(fileobj=buf)
@@ -555,11 +567,7 @@ class BaseWebOperations(object):
                                )
         """
         content_type, body = self._encode_multipart_formdata(fields, files)
-
-        if ssl:
-            url = "https://%s%s" % (host, selector)
-        else:
-            url = "http://%s%s" % (host, selector)
+        url = self._assemble_url(host, selctor, port)
         if proxy_url is not None:
             if proxy_port is None:
                 proxy_port = 80

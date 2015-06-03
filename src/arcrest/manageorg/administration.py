@@ -52,7 +52,6 @@ class Administration(BaseAGOLClass):
             if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
                isinstance(securityHandler, PortalTokenSecurityHandler) or \
                isinstance(securityHandler, OAuthSecurityHandler):
-                self._token = securityHandler.token
                 self._referer_url = securityHandler.referer_url
             else:
                 raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
@@ -64,7 +63,7 @@ class Administration(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        if self._token is not None:
+        if self._securityHandler is not None:
             params['token'] = self._securityHandler.token
         json_dict = self._do_get(url, params,
                                  proxy_port=self._proxy_port,
