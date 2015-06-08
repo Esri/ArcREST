@@ -1,10 +1,9 @@
-from ..security.security import AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler
+from ..security.security import AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import json
 from urllib import quote_plus
 import _community, _content, _marketplace, _portals, _oauth2
 from ..hostedservice import Services
-from ..security import PortalServerSecurityHandler
 from ..manageags import AGSAdministration
 ########################################################################
 class Administration(BaseAGOLClass):

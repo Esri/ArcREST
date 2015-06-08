@@ -450,6 +450,15 @@ class publishingtools(abstract.baseToolsClass):
                             #pass                       
                     opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
                     if 'applicationProperties' in webmap_data:
+                        if 'editing' in webmap_data['applicationProperties'] and \
+                           not webmap_data['applicationProperties']['editing'] is None:  
+                            if 'locationTracking' in webmap_data['applicationProperties']['editing'] and \
+                                not webmap_data['applicationProperties']['editing']['locationTracking'] is None: 
+                                if 'info' in webmap_data['applicationProperties']['editing']['locationTracking'] and \
+                                   not webmap_data['applicationProperties']['editing']['locationTracking']['info'] is None: 
+                                    if 'layerId' in webmap_data['applicationProperties']['editing']['locationTracking']['info']: 
+                                        if webmap_data['applicationProperties']['editing']['locationTracking']['info']['layerId'] == currentID:
+                                            webmap_data['applicationProperties']['editing']['locationTracking']['info']['layerId'] = opLayer['id']
                         if 'viewing' in webmap_data['applicationProperties'] and \
                            not webmap_data['applicationProperties']['viewing'] is None:                    
                             if 'search' in webmap_data['applicationProperties']['viewing'] and \
@@ -472,8 +481,8 @@ class publishingtools(abstract.baseToolsClass):
                                                                                                  
                                             webmap_data['applicationProperties']['viewing']['search']['layers'][k] = searchlayer
                                             
-                    #if 'applicationProperties' in webmap_data:
-                        #webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
+                    if 'applicationProperties' in webmap_data:
+                        webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
                     
                     resultLayer = {"Name":opLayer['title'],
                                   "ID":opLayer['id']
@@ -491,6 +500,38 @@ class publishingtools(abstract.baseToolsClass):
                         currentID = opLayer['id']
                     
                         opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                        if 'applicationProperties' in webmap_data:
+                            if 'editing' in webmap_data['applicationProperties'] and \
+                               not webmap_data['applicationProperties']['editing'] is None:  
+                                if 'locationTracking' in webmap_data['applicationProperties']['editing'] and \
+                                   not webmap_data['applicationProperties']['editing']['locationTracking'] is None: 
+                                    if 'info' in webmap_data['applicationProperties']['editing']['locationTracking'] and \
+                                       not webmap_data['applicationProperties']['editing']['locationTracking']['info'] is None: 
+                                        if 'layerId' in webmap_data['applicationProperties']['editing']['locationTracking']['info']: 
+                                            if webmap_data['applicationProperties']['editing']['locationTracking']['info']['layerId'] == currentID:
+                                                webmap_data['applicationProperties']['editing']['locationTracking']['info']['layerId'] = opLayer['id']
+                            if 'viewing' in webmap_data['applicationProperties'] and \
+                               not webmap_data['applicationProperties']['viewing'] is None:                    
+                                if 'search' in webmap_data['applicationProperties']['viewing'] and \
+                                   not webmap_data['applicationProperties']['viewing']['search'] is None:
+                                    if 'layers' in webmap_data['applicationProperties']['viewing']['search'] and \
+                                       not webmap_data['applicationProperties']['viewing']['search']['layers'] is None: 
+                    
+                                        for k in range(len(webmap_data['applicationProperties']['viewing']['search']['layers'])):
+                                            searchlayer =  webmap_data['applicationProperties']['viewing']['search']['layers'][k]                                  
+                                            if searchlayer['id'] == currentID:
+                                                searchlayer['id'] = opLayer['id']
+                                                if 'fields' in searchlayer and \
+                                                   not searchlayer['fields'] is None:                                       
+                                                    for i in range(len(searchlayer['fields'])):
+                    
+                                                        searchlayer['fields'][i]['Name'] = str(searchlayer['fields'][i]['Name']).lower() 
+                                                if 'field' in searchlayer and \
+                                                   not searchlayer['field'] is None:                                       
+                                                    searchlayer['field']['name'] = searchlayer['field']['name'].lower() 
+                    
+                                                webmap_data['applicationProperties']['viewing']['search']['layers'][k] = searchlayer
+                        
                         if 'applicationProperties' in webmap_data:
                             webmap_data['applicationProperties'] = common.find_replace(webmap_data['applicationProperties'], currentID, opLayer['id'])
                                            
