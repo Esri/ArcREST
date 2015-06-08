@@ -1982,7 +1982,8 @@ class UserContent(BaseAGOLClass):
                     itemId=None,
                     filePath=None,
                     text=None,
-                    outputType=None
+                    outputType=None,
+                    buildIntialCache=False
                     ):
         """
         Publishes a hosted service based on an existing source item.
@@ -2007,6 +2008,9 @@ class UserContent(BaseAGOLClass):
            filePath - The file to be uploaded.
            outputType - Only used when a feature service is published as a
                         tile service.
+           buildIntialCache - default false.  Allows the user to prevent
+                              the creation of the initial cache for tiled
+                              services.
         """
         _allowed_types = ["serviceDefinition", "shapefile", "csv",
                           "tilePackage", "featureService",
@@ -2027,6 +2031,8 @@ class UserContent(BaseAGOLClass):
         #if publishParameters is not None and \
            #isinstance(publishParameters, BaseParameters):
             #params['publishParameters'] = publishParameters.value
+        if isinstance(buildIntialCache, bool):
+            params['buildInitialCache'] = buildIntialCache
         if publishParameters is not None and \
            isinstance(publishParameters, PublishCSVParameters) == False:
             params.update(publishParameters.value)
