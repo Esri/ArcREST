@@ -818,7 +818,58 @@ class AGSService(BaseAGSServer):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def itemInfoUpload(self, folder, filePath):
+        """
+        Allows for the upload of new itemInfo files such as metadata.xml
+        Inputs:
+           folder - folder on ArcGIS Server
+           filePath - full path of the file to upload
+        Output:
+           json as dictionary
+        """
+        files = []
+        url = self._url + "/iteminfo/upload"
+        import urlparse
+        params = {
+            "f" : "json",
+            "folder" : folder,
+            "token" : self._securityHandler.token
 
+        }
+        files.append(('file', filePath, os.path.basename(filePath)))
+        parsed = urlparse.urlparse(url)
+        return self._post_multipart(host=parsed.hostname,
+                                    port=parsed.port,
+                                    selector=parsed.path,
+                                    fields=params,
+                                    files=files,
+                                    ssl=parsed.scheme.lower() == 'https',
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def editItemInfo(self, json_dict):
+        """
+        Allows for the direct edit of the service's item's information.
+        To get the current item information, pull the data by calling
+        iteminfo property.  This will return the default template then pass
+        this object back into the editItemInfo() as a dictionary.
+
+        Inputs:
+           json_dict - iteminfo dictionary.
+        Output:
+           json as dictionary
+        """
+        url = self._url + "/iteminfo/edit"
+        params = {
+            "f" : "json",
+            "token" : self._securityHandler.token,
+            "serviceItemInfo" : json.dumps(json_dict)
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def serviceManifest(self, fileType="json"):
         """
         The service manifest resource documents the data and other

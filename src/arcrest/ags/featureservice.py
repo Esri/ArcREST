@@ -1,6 +1,7 @@
 """
    Contains information regarding an ArcGIS Server Feature Server
 """
+from re import search
 from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
 import layer
@@ -81,6 +82,23 @@ class FeatureService(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print k, " - attribute not implmented for Feature Service."
+    #----------------------------------------------------------------------
+    @property
+    def administration(self):
+        """returns the service admin object (if accessible)"""
+        from ..manageags._services import AGSService
+        url = self._url
+        res = search("/rest/", url).span()
+        addText = "/admin/"
+        part1 = url[:res[1]].lower().replace('/rest/', '')
+        part2 = url[res[1]:].lower().replace('/featureserver', ".mapserver")
+        adminURL = "%s%s%s" % (part1, addText, part2)
+        return AGSService(url=adminURL,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port,
+                          initialize=False)
+
     #----------------------------------------------------------------------
     @property
     def itemInfo(self):
