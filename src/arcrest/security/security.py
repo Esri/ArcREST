@@ -1,4 +1,10 @@
 import datetime
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
+
 from .._abstract import abstract
 _defaultTokenExpiration = 5 #Minutes
 ########################################################################
@@ -255,6 +261,168 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
             self._token_created_on = None
             self._token_expires_on = None
             #self._token_expires_on = None
+########################################################################
+class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
+    """ handles ArcGIS Maps Token Base Security
+        
+    """
+    _token = None
+    _surl = None
+    _org_url =None 
+    _url = None 
+    _referer_url = None
+    _username = None
+    _token_expires_on = None
+    _expires_in = None
+    _proxy_url = None
+    _proxy_port = None    
+    _valid = True
+    _message = ""
+    
+    #----------------------------------------------------------------------
+    def __init__(self,proxy_url=None, proxy_port=None):
+        """Constructor"""        
+        if arcpyFound == False:
+            self._message = "ArcPy not available"
+            self._valid = False
+        else:        
+            self._proxy_port = proxy_port
+            self._proxy_url = proxy_url    
+            self._token_expires_on = None
+            self._initURL()
+    #----------------------------------------------------------------------
+    def _initURL(self):
+        """ sets proper URLs for AGOL """
+
+        token = self._getTokenArcMap()
+                   
+        self._org_url = arcpy.GetActivePortalURL()
+        
+        if self._org_url.lower().find('/sharing/rest') > -1:
+            self._url = self._org_url
+        else:
+            self._url = self._org_url + "/sharing/rest"
+
+        if self._url.startswith('http://'):
+            self._surl = self._url.replace('http://', 'https://')
+        else:
+            self._surl  =  self._url
+            
+        url = '{}/portals/self'.format( self._url)
+
+        parameters = {
+            'token': token,
+            'f': 'json'
+        }
+        portal_info = self._do_post(url=url,
+                              param_dict=parameters,
+                              proxy_url=self._proxy_url,
+                              proxy_port=self._proxy_port)            
+       
+        if 'user' in portal_info:
+            if 'username' in portal_info['user']:
+                
+                self._username =  portal_info['user']['username']
+        
+        #"http://%s.%s" % (portal_info['urlKey'], portal_info['customBaseUrl'])
+        
+        #url = '{}/community/self'.format( self._url)
+        #user_info = self._do_post(url=url,
+                              #param_dict=parameters,
+                              #proxy_url=self._proxy_url,
+                              #proxy_port=self._proxy_port)
+        
+        #if 'username' in user_info:
+         #   self._username = user_info['username']    
+        
+    #----------------------------------------------------------------------
+    @property
+    def message(self):
+        """ returns any messages """
+        return self._message
+    #----------------------------------------------------------------------
+    @property
+    def valid(self):
+        """ returns boolean wether handler is valid """
+        return self._valid
+    #----------------------------------------------------------------------
+    @property
+    def org_url(self):
+        """ gets/sets the organization URL """
+        return self._org_url
+  
+    #----------------------------------------------------------------------
+    @property
+    def proxy_url(self):
+        """gets the proxy url"""
+        return self._proxy_url
+    #----------------------------------------------------------------------
+    @proxy_url.setter
+    def proxy_url(self, value):
+        """ sets the proxy_url """
+        self._proxy_url = value
+    #----------------------------------------------------------------------
+    @property
+    def proxy_port(self):
+        """ gets the proxy port """
+        return self._proxy_port
+    #----------------------------------------------------------------------
+    @proxy_port.setter
+    def proxy_port(self, value):
+        """ sets the proxy port """
+        if isinstance(value, int):
+            self._proxy_port = value   
+    #----------------------------------------------------------------------
+    @property
+    def username(self):
+        """ returns the username """
+        return self._username
+  
+    #----------------------------------------------------------------------
+    @property
+    def tokenExperationDate(self):
+        """ returns when the token is not valid """
+        return self._token_expires_on
+    #----------------------------------------------------------------------
+    @property
+    def tokenObtainedDate(self):
+        """ returns when the token was generated """
+        return self._token_created_on
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """ returns when the token was generated """
+        return self._referer_url
+    #----------------------------------------------------------------------
+    @property
+    def token(self):
+        """ returns the token for the site """
+        if self._token is None or \
+           datetime.datetime.now() >= self._token_expires_on:
+            result = self._getTokenArcMap()
+            if 'error' in result:
+                self._valid = False
+                self._message = result
+            else:
+                self._valid = True
+                self._message = "Token Generated"
+        return self._token
+    #----------------------------------------------------------------------
+    def _getTokenArcMap(self):
+        token_response = arcpy.GetSigninToken()
+        if token_response and 'token' in token_response:
+            self._token = token_response['token']
+            self._expires_in = token_response['expires']
+            self._token_expires_on = datetime.datetime.fromtimestamp(token_response['expires'] /1000) - \
+                datetime.timedelta(seconds=1)
+            self._referer_url = token_response['referer']
+            return self._token
+            #{'token': u'', 'expires': 1434040404L, 'referer': u'http://www.esri.com/AGO/A4901C34-4DDA-4B63-8D7A-E5906A85D17C'}
+            
+            
+        else:
+            return {"error": "No valid token, please log in ArcMap"}
+        
 ########################################################################
 class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     """ handles ArcGIS Online Token Base Security
