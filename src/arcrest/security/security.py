@@ -295,35 +295,40 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ sets proper URLs for AGOL """
 
         token = self._getTokenArcMap()
-                   
-        self._org_url = arcpy.GetActivePortalURL()
-        
-        if self._org_url.lower().find('/sharing/rest') > -1:
-            self._url = self._org_url
+        if 'error' in token:
+            self._valid = False
+            self._message = token['error']
         else:
-            self._url = self._org_url + "/sharing/rest"
-
-        if self._url.startswith('http://'):
-            self._surl = self._url.replace('http://', 'https://')
-        else:
-            self._surl  =  self._url
+            self._valid = True
+            self._message = "Token Generated"                   
+            self._org_url = arcpy.GetActivePortalURL()
             
-        url = '{}/portals/self'.format( self._url)
-
-        parameters = {
-            'token': token,
-            'f': 'json'
-        }
-        portal_info = self._do_post(url=url,
-                              param_dict=parameters,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)            
-       
-        if 'user' in portal_info:
-            if 'username' in portal_info['user']:
+            if self._org_url.lower().find('/sharing/rest') > -1:
+                self._url = self._org_url
+            else:
+                self._url = self._org_url + "/sharing/rest"
+    
+            if self._url.startswith('http://'):
+                self._surl = self._url.replace('http://', 'https://')
+            else:
+                self._surl  =  self._url
                 
-                self._username =  portal_info['user']['username']
-        
+            url = '{}/portals/self'.format( self._url)
+    
+            parameters = {
+                'token': token,
+                'f': 'json'
+            }
+            portal_info = self._do_post(url=url,
+                                  param_dict=parameters,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port)            
+           
+            if 'user' in portal_info:
+                if 'username' in portal_info['user']:
+                    
+                    self._username =  portal_info['user']['username']
+            
         #"http://%s.%s" % (portal_info['urlKey'], portal_info['customBaseUrl'])
         
         #url = '{}/community/self'.format( self._url)
