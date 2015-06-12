@@ -25,10 +25,10 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "MikeSolutions"
-    password = "double1pa"
+    username = "<username>"
+    password = "<password>"
     url = "http://www.arcgis.com"
-    groups = ["Network Services"] #Name of groupd
+    groups = ["Network Services"] #Name of groups
     outputlocation = r"C:\TEMP"
     outputfilename = "group.json"
     outputitemID = "id.csv"
