@@ -1,4 +1,5 @@
 import datetime
+import urllib2
 try:
     import arcpy
     arcpyFound = True
@@ -418,11 +419,6 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._valid = True
             self._message = "Token Generated"                   
         self._org_url = arcpy.GetActivePortalURL()
-<<<<<<< .mine
-
-=======
-            
->>>>>>> .theirs
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -432,11 +428,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._surl = self._url.replace('http://', 'https://')
         else:
             self._surl  =  self._url
-<<<<<<< .mine
 
-=======
-                
->>>>>>> .theirs
         url = '{}/portals/self'.format( self._url)
 
         parameters = {
@@ -446,26 +438,11 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         portal_info = self._do_post(url=url,
                               param_dict=parameters,
                               proxy_url=self._proxy_url,
-<<<<<<< .mine
                               proxy_port=self._proxy_port)
 
-=======
-                                  proxy_port=self._proxy_port)            
-           
->>>>>>> .theirs
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
-<<<<<<< .mine
-
-=======
-                    
->>>>>>> .theirs
-                self._username =  portal_info['user']['username']
-<<<<<<< .mine
-
-=======
-            
->>>>>>> .theirs
+                self._username = portal_info['user']
         #"http://%s.%s" % (portal_info['urlKey'], portal_info['customBaseUrl'])
 
         #url = '{}/community/self'.format( self._url)
@@ -525,11 +502,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
     def tokenExperationDate(self):
         """ returns when the token is not valid """
         return self._token_expires_on
-    #----------------------------------------------------------------------
-    @property
-    def tokenObtainedDate(self):
-        """ returns when the token was generated """
-        return self._token_created_on
+
     #----------------------------------------------------------------------
     @property
     def referer_url(self):
