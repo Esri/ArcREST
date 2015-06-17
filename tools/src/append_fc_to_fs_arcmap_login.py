@@ -41,9 +41,7 @@ def outputPrinter(message,typeOfMessage='message'):
 
     print(message)
 def main(*argv):
-    userName = None
-    password = None
-    org_url = None
+
     fsId = None
     layerName = None
     dataToAppend = None
@@ -54,21 +52,18 @@ def main(*argv):
     existingDef= None
     try:
 
-        userName = argv[0]
-        password = argv[1]
-        org_url = argv[2]
-        fsId = argv[3]
-        layerName = argv[4]
-        dataToAppend = argv[5]
-        toggleEditCapabilities = argv[6]
+      
+        fsId = argv[0]
+        layerName = argv[1]
+        dataToAppend = argv[2]
+        toggleEditCapabilities = argv[3]
        
         if arcpy.Exists(dataset=dataToAppend) == False:
             outputPrinter(message="Data layer not found: %" % dataToAppend)
         else:
-            fst = featureservicetools.featureservicetools(username = userName, password=password,org_url=org_url,
-                                                       token_url=None,
-                                                       proxy_url=None,
-                                                       proxy_port=None)
+            fst = featureservicetools.featureservicetools(proxy_url=None,
+                                                       proxy_port=None,
+                                                        use_arcgis_creds=True)
             if fst.valid:
                 outputPrinter(message="Security handler created")
 
@@ -83,23 +78,23 @@ def main(*argv):
 
                         if 'error' in results:
                             outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
-                            arcpy.SetParameterAsText(7, "false")
+                            arcpy.SetParameterAsText(4, "false")
 
                         else:
                             outputPrinter (message="%s features added" % len(results['addResults']) )
                             if toggleEditCapabilities == 'True':
                                 existingDef = fst.EnableEditingOnService(url=fs.url,definition = existingDef)
-                            arcpy.SetParameterAsText(7, "true")
+                            arcpy.SetParameterAsText(4, "true")
 
                     else:
                         outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
-                        arcpy.SetParameterAsText(7, "false")
+                        arcpy.SetParameterAsText(4, "false")
                 else:
                     outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
-                    arcpy.SetParameterAsText(7, "false")
+                    arcpy.SetParameterAsText(4, "false")
             else:
                 outputPrinter(fst.message,typeOfMessage='error')
-                arcpy.SetParameterAsText(7, "false")
+                arcpy.SetParameterAsText(4, "false")
 
 
 
@@ -109,16 +104,16 @@ def main(*argv):
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(4, "false")
     except (common.ArcRestHelperError),e:
         outputPrinter(message=e,typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(4, "false")
     except:
         line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(4, "false")
     finally:
         existingDef = None
         userName = None
