@@ -8,6 +8,122 @@ except:
 from .._abstract import abstract
 _defaultTokenExpiration = 5 #Minutes
 ########################################################################
+class PKISecurityHandler(abstract.BaseSecurityHandler):
+    """
+       This Security Handler handles PKI based security
+    """
+    _jar = None
+    _handler = None
+    _certificatefile = None
+    _keyfile = None
+    _token = ""
+    _proxy_url = None
+    _proxy_port = None
+    _org_url = None
+    _referer_url = None
+    _method = "PKI"
+    #----------------------------------------------------------------------
+    def __init__(self, org_url, keyfile, certificatefile,
+                 proxy_url=None, proxy_port=None, referer_url=None):
+        """Constructor"""
+        self._keyfile = keyfile
+        self._certificatefile = certificatefile
+        self._org_url = org_url
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+        self._referer_url = referer_url
+        self._initURL(org_url=self._org_url,
+                      referer_url=self._referer_url)
+    #----------------------------------------------------------------------
+    @property
+    def method(self):
+        """get the security handler type"""
+        return self._method
+    #----------------------------------------------------------------------
+    def _initURL(self,
+                 org_url,
+                 referer_url):
+        """ sets proper URLs for AGOL """
+        from urlparse import urlparse
+        if referer_url is None:
+            parsed_org = urlparse(org_url)
+            self._referer_url = parsed_org.netloc
+        if org_url.lower().find("/sharing/rest") == -1:
+            self._org_url = org_url + "/sharing/rest"
+        self._org_url.replace("http://", "https://")
+    #----------------------------------------------------------------------
+    @property
+    def org_url(self):
+        """gets the org_url"""
+        return self._org_url
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """gets the referer url"""
+        return self._referer_url
+    #----------------------------------------------------------------------
+    @property
+    def token(self):
+        """gets the token"""
+        return self._token
+    #----------------------------------------------------------------------
+    @property
+    def handler(self):
+        """returns the handler"""
+        if self._handler is None:
+            self._handler = self.HTTPSClientAuthHandler(key=self._keyfile,
+                                                        cert=self._certificatefile)
+        return self._handler
+    #----------------------------------------------------------------------
+    @property
+    def certificate(self):
+        """gets/sets the certificate file"""
+        return self._certificatefile
+    #----------------------------------------------------------------------
+    @certificate.setter
+    def certificate(self, value):
+        """gets/sets the certificate file"""
+        import os
+        if os.path.isfile(value):
+            self._certificatefile = value
+    #----------------------------------------------------------------------
+    @property
+    def key_file(self):
+        """returns the key file"""
+        return self._keyfile
+    #----------------------------------------------------------------------
+    @key_file.setter
+    def key_file(self, value):
+        """gets/sets the certificate file"""
+        import os
+        if os.path.isfile(value):
+            self._keyfile = value
+    #----------------------------------------------------------------------
+    @property
+    def cookiejar(self):
+        """gets the cookiejar"""
+        if self._jar is None:
+            from cookielib import CookieJar
+            self._jar = CookieJar()
+        return self._jar
+    #----------------------------------------------------------------------
+    class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
+        import httplib
+        def __init__(self, key, cert):
+            urllib2.HTTPSHandler.__init__(self)
+            self.key = key
+            self.cert = cert
+        def https_open(self, req):
+            #Rather than pass in a reference to a connection class, we pass in
+            # a reference to a function which, for all intents and purposes,
+            # will behave as a constructor
+            return self.do_open(self.getConnection, req)
+        def getConnection(self, host, timeout=300):
+            return  self.httplib.HTTPSConnection(host,
+                                                 key_file=self.key,
+                                                 cert_file=self.cert,
+                                                 timeout=timeout)
+########################################################################
 class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
     """
     This service is designed to allow users manage a server from a Portal
@@ -264,30 +380,30 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
 ########################################################################
 class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
     """ handles ArcGIS Maps Token Base Security
-        
+
     """
     _token = None
     _surl = None
-    _org_url =None 
-    _url = None 
+    _org_url =None
+    _url = None
     _referer_url = None
     _username = None
     _token_expires_on = None
     _expires_in = None
     _proxy_url = None
-    _proxy_port = None    
+    _proxy_port = None
     _valid = True
     _message = ""
-    
+
     #----------------------------------------------------------------------
     def __init__(self,proxy_url=None, proxy_port=None):
-        """Constructor"""        
+        """Constructor"""
         if arcpyFound == False:
             self._message = "ArcPy not available"
             self._valid = False
-        else:        
+        else:
             self._proxy_port = proxy_port
-            self._proxy_url = proxy_url    
+            self._proxy_url = proxy_url
             self._token_expires_on = None
             self._initURL()
     #----------------------------------------------------------------------
@@ -295,9 +411,9 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ sets proper URLs for AGOL """
 
         token = self._getTokenArcMap()
-                   
+
         self._org_url = arcpy.GetActivePortalURL()
-        
+
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -307,7 +423,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._surl = self._url.replace('http://', 'https://')
         else:
             self._surl  =  self._url
-            
+
         url = '{}/portals/self'.format( self._url)
 
         parameters = {
@@ -317,24 +433,24 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         portal_info = self._do_post(url=url,
                               param_dict=parameters,
                               proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)            
-       
+                              proxy_port=self._proxy_port)
+
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
-                
+
                 self._username =  portal_info['user']['username']
-        
+
         #"http://%s.%s" % (portal_info['urlKey'], portal_info['customBaseUrl'])
-        
+
         #url = '{}/community/self'.format( self._url)
         #user_info = self._do_post(url=url,
                               #param_dict=parameters,
                               #proxy_url=self._proxy_url,
                               #proxy_port=self._proxy_port)
-        
+
         #if 'username' in user_info:
-         #   self._username = user_info['username']    
-        
+         #   self._username = user_info['username']
+
     #----------------------------------------------------------------------
     @property
     def message(self):
@@ -350,7 +466,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
     def org_url(self):
         """ gets/sets the organization URL """
         return self._org_url
-  
+
     #----------------------------------------------------------------------
     @property
     def proxy_url(self):
@@ -371,13 +487,13 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
     def proxy_port(self, value):
         """ sets the proxy port """
         if isinstance(value, int):
-            self._proxy_port = value   
+            self._proxy_port = value
     #----------------------------------------------------------------------
     @property
     def username(self):
         """ returns the username """
         return self._username
-  
+
     #----------------------------------------------------------------------
     @property
     def tokenExperationDate(self):
@@ -418,11 +534,11 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._referer_url = token_response['referer']
             return self._token
             #{'token': u'', 'expires': 1434040404L, 'referer': u'http://www.esri.com/AGO/A4901C34-4DDA-4B63-8D7A-E5906A85D17C'}
-            
-            
+
+
         else:
             return {"error": "No valid token, please log in ArcMap"}
-        
+
 ########################################################################
 class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     """ handles ArcGIS Online Token Base Security
