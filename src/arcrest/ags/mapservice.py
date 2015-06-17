@@ -60,7 +60,8 @@ class MapService(BaseAGSServer):
         self._url = url
         if securityHandler is not None and \
            isinstance(securityHandler, (security.AGSTokenSecurityHandler,
-                                        security.PortalServerSecurityHandler)):
+                                        security.PortalServerSecurityHandler,
+                                        security.ArcGISTokenSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url

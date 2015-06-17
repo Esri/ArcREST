@@ -108,32 +108,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if securityHandler is not None and \
            isinstance(securityHandler, abstract.BaseSecurityHandler):
             self._securityHandler = securityHandler
-            self._token = securityHandler.token
+           
             if not securityHandler.referer_url is None:
                 self._referer_url = securityHandler.referer_url
-            #if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
-                #self._token = securityHandler.token
-                #self._username = securityHandler.username
-                #self._password = securityHandler.password
-                #self._token_url = securityHandler.token_url
-                #self._securityHandler = securityHandler
-                #self._referer_url = securityHandler.referer_url
-            #elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
-                #parsedURL = urlparse(url=url)
-                #pathParts = parsedURL.path.split('/')
-                #self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
-
-                #self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
-                #self._username = securityHandler.username
-                #self._password = securityHandler.password
-                #self._token_url = securityHandler.token_url
-                #self._securityHandler = securityHandler
-                #self._referer_url = securityHandler.referer_url
-            #elif isinstance(securityHandler, security.OAuthSecurityHandler):
-                #self._token = securityHandler.token
-                #self._securityHandler = securityHandler
-            #else:
-                #pass
+           
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

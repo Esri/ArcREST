@@ -116,9 +116,6 @@ def main(*argv):
         arcpy.SetParameterAsText(4, "false")
     finally:
         existingDef = None
-        userName = None
-        password = None
-        org_url = None
         fsId = None
         layerName = None
         dataToAppend = None
@@ -128,9 +125,7 @@ def main(*argv):
         fl = None
 
         del existingDef
-        del userName
-        del password
-        del org_url
+      
         del fsId
         del layerName
         del dataToAppend
