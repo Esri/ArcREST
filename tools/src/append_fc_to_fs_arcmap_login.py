@@ -52,12 +52,12 @@ def main(*argv):
     existingDef= None
     try:
 
-      
+
         fsId = argv[0]
         layerName = argv[1]
         dataToAppend = argv[2]
         toggleEditCapabilities = argv[3]
-       
+
         if arcpy.Exists(dataset=dataToAppend) == False:
             outputPrinter(message="Data layer not found: %" % dataToAppend)
         else:
@@ -81,7 +81,10 @@ def main(*argv):
                             arcpy.SetParameterAsText(4, "false")
 
                         else:
-                            outputPrinter (message="%s features added" % len(results['addResults']) )
+                            if results['addResults'] is not None:
+                                outputPrinter (message="%s features added" % len(results['addResults']) )
+                            else:
+                                outputPrinter (message="0 features added" )
                             if toggleEditCapabilities == 'True':
                                 existingDef = fst.EnableEditingOnService(url=fs.url,definition = existingDef)
                             arcpy.SetParameterAsText(4, "true")
@@ -125,7 +128,7 @@ def main(*argv):
         fl = None
 
         del existingDef
-      
+
         del fsId
         del layerName
         del dataToAppend
