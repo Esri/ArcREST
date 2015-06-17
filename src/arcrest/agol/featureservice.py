@@ -78,23 +78,27 @@ class FeatureService(abstract.BaseAGOLClass):
                 self._username = securityHandler.username
                 self._password = securityHandler._password
                 self._token_url = securityHandler.token_url
-                self._token = securityHandler.token
+              
                 self._securityHandler = securityHandler
 
                 self._referer_url = securityHandler.referer_url
+            elif isinstance(securityHandler, security.ArcGISTokenSecurityHandler):
+                    self._username = securityHandler.username
+                    self._securityHandler = securityHandler
+            
+                    self._referer_url = securityHandler.referer_url            
             elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
                 parsedURL = urlparse(url=url)
                 pathParts = parsedURL.path.split('/')
                 self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
 
-                self._token = securityHandler.servertoken(serverURL=self._serverURL,referer=parsedURL.netloc)
                 self._username = securityHandler.username
                 self._password = securityHandler.password
                 self._token_url = securityHandler.token_url
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url
             elif isinstance(securityHandler, security.OAuthSecurityHandler):
-                self._token = securityHandler.token
+               
                 self._securityHandler = securityHandler
                 self._referer_url = securityHandler.referer_url
         if initialize:
@@ -151,12 +155,10 @@ class FeatureService(abstract.BaseAGOLClass):
         if isinstance(value, abstract.BaseSecurityHandler):
             if isinstance(value, security.AGOLTokenSecurityHandler):
                 self._securityHandler = value
-                self._token = value.token
                 self._username = value.username
                 self._password = value._password
                 self._token_url = value.token_url
             elif isinstance(value, security.OAuthSecurityHandler):
-                self._token = value.token
                 self._securityHandler = value
             else:
                 pass

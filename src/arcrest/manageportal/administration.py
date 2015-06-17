@@ -9,7 +9,7 @@ are hierarchical and have unique universal resource locators (URLs).
 import json
 from datetime import datetime
 from .._abstract.abstract import BaseAGOLClass
-from ..security import PortalTokenSecurityHandler
+from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler,AGOLTokenSecurityHandler
 ########################################################################
 class _log(BaseAGOLClass):
     """handles the portal log information at 10.3.1+"""
@@ -203,7 +203,9 @@ class _Security(BaseAGOLClass):
         """Constructor"""
         if securityHandler is None:
             pass
-        elif isinstance(securityHandler, PortalTokenSecurityHandler):
+        elif isinstance(securityHandler, PortalTokenSecurityHandler) or \
+               isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
+               isinstance(securityHandler, OAuthSecurityHandler):
             self._securityHandler = securityHandler
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
@@ -492,7 +494,10 @@ class _System(BaseAGOLClass):
         """Constructor"""
         if securityHandler is None:
             pass
-        elif isinstance(securityHandler, PortalTokenSecurityHandler):
+        elif isinstance(securityHandler, AGOLTokenSecurityHandler) or \
+               isinstance(securityHandler, PortalTokenSecurityHandler) or \
+                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
+               isinstance(securityHandler, OAuthSecurityHandler):
             self._securityHandler = securityHandler
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
@@ -890,7 +895,9 @@ class PortalAdministration(BaseAGOLClass):
         """Constructor"""
         if securityHandler is None:
             pass
-        elif isinstance(securityHandler, PortalTokenSecurityHandler):
+        elif isinstance(securityHandler, PortalTokenSecurityHandler) or \
+                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
+               isinstance(securityHandler, OAuthSecurityHandler):
             self._securityHandler = securityHandler
 
         self._proxy_url = proxy_url

@@ -42,7 +42,8 @@ class Services(BaseAGOLClass):
         if securityHandler is not None and \
            isinstance(securityHandler, BaseSecurityHandler):
             if isinstance(securityHandler, (security.AGOLTokenSecurityHandler,
-                                            security.PortalTokenSecurityHandler)):
+                                            security.PortalTokenSecurityHandler,
+                                            security.ArcGISTokenSecurityHandler)):
                 self._token = securityHandler.token
                 self._securityHandler = securityHandler
                 if not securityHandler is None:
@@ -244,14 +245,13 @@ class AdminMapService(BaseAGOLClass):
                  proxy_port=None):
         """Constructor"""
         self._url = url
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
-           isinstance(securityHandler, security.PortalTokenSecurityHandler):
-            self._token = securityHandler.token
+        if isinstance(securityHandler, BaseSecurityHandler):
+            
             self._securityHandler = securityHandler
             if not securityHandler is None:
                 self._referer_url = securityHandler.referer_url
         else:
-            raise AttributeError("Security Handler must be security.AGOLTokenSecurityHandler")
+            raise AttributeError("Security Handler must be security.AGOLTokenSecurityHandler, PortalTokenSecurityHandler, or ArcGISTokenSecurityHandler")
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -636,8 +636,7 @@ class AdminFeatureService(BaseAGOLClass):
             url = url.replace('rest/services', 'rest/admin/services')
         self._url = url
 
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
-           isinstance(securityHandler, security.PortalTokenSecurityHandler):
+        if isinstance(securityHandler, BaseSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
                 self._referer_url = securityHandler.referer_url
@@ -926,7 +925,7 @@ class AdminFeatureService(BaseAGOLClass):
     def url(self):
         """ returns boolean is disconnecting editted supported """
         if self._url is None:
-            return none
+            return None
         return self._url    
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
@@ -1151,8 +1150,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-        if isinstance(securityHandler, security.AGOLTokenSecurityHandler) or \
-           isinstance(securityHandler, security.PortalTokenSecurityHandler):
+        if isinstance(securityHandler, BaseSecurityHandler):
             self._securityHandler = securityHandler
             if not securityHandler is None:
                 self._referer_url = securityHandler.referer_url

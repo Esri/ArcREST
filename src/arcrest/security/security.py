@@ -411,9 +411,18 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ sets proper URLs for AGOL """
 
         token = self._getTokenArcMap()
-
+        if 'error' in token:
+            self._valid = False
+            self._message = token['error']
+        else:
+            self._valid = True
+            self._message = "Token Generated"                   
         self._org_url = arcpy.GetActivePortalURL()
+<<<<<<< .mine
 
+=======
+            
+>>>>>>> .theirs
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
         else:
@@ -423,7 +432,11 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._surl = self._url.replace('http://', 'https://')
         else:
             self._surl  =  self._url
+<<<<<<< .mine
 
+=======
+                
+>>>>>>> .theirs
         url = '{}/portals/self'.format( self._url)
 
         parameters = {
@@ -433,13 +446,26 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         portal_info = self._do_post(url=url,
                               param_dict=parameters,
                               proxy_url=self._proxy_url,
+<<<<<<< .mine
                               proxy_port=self._proxy_port)
 
+=======
+                                  proxy_port=self._proxy_port)            
+           
+>>>>>>> .theirs
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
+<<<<<<< .mine
 
+=======
+                    
+>>>>>>> .theirs
                 self._username =  portal_info['user']['username']
+<<<<<<< .mine
 
+=======
+            
+>>>>>>> .theirs
         #"http://%s.%s" % (portal_info['urlKey'], portal_info['customBaseUrl'])
 
         #url = '{}/community/self'.format( self._url)

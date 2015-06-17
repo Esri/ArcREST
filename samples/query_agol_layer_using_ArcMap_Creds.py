@@ -15,7 +15,7 @@ from arcpy import da
 import arcpy
 import arcrest
 from arcrest.security import ArcGISTokenSecurityHandler
-from arcrest.agol import FeatureLayer  
+from arcrest.agol import FeatureLayer
 
 #--------------------------------------------------------------------------
 class FunctionError(Exception):
@@ -44,16 +44,18 @@ def main(*argv):
     """ main driver of program """
     try:
         url = str(argv[0])
-       
+
         arcgisSH = ArcGISTokenSecurityHandler()
-        
+        if arcgisSH.valid == False:
+            arcpy.AddError(arcgisSH.message)
+            return
         fl = FeatureLayer(
             url=url,
             securityHandler=arcgisSH,
             initialize=True)
-    
-        res = fl.query(where="1=1",out_fields='*',returnGeometry=False) 
-               
+
+        res = fl.query(where="1=1",out_fields='*',returnGeometry=False)
+        arcpy.AddMessage(res)
         arcpy.SetParameterAsText(1, str(res))
     except arcpy.ExecuteError:
         line, filename, synerror = trace()

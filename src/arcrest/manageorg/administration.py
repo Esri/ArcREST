@@ -1,4 +1,4 @@
-from ..security.security import AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import json
 from urllib import quote_plus
@@ -50,6 +50,7 @@ class Administration(BaseAGOLClass):
         if securityHandler is not None:
             if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
                isinstance(securityHandler, PortalTokenSecurityHandler) or \
+                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
                isinstance(securityHandler, OAuthSecurityHandler):
                 self._referer_url = securityHandler.referer_url
             else:

@@ -75,6 +75,7 @@ class FeatureLayer(BaseAGSServer):
         if securityHandler is not None and \
            isinstance(securityHandler,
                       (security.AGSTokenSecurityHandler,
+                       security.ArcGISTokenSecurityHandler,
                        security.PortalServerSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
@@ -791,7 +792,8 @@ class GroupLayer(FeatureLayer):
         self._url = url
         if securityHandler is not None and \
            isinstance(securityHandler,
-                      security.AGSTokenSecurityHandler):
+                      (security.AGSTokenSecurityHandler,
+                       security.ArcGISTokenSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
