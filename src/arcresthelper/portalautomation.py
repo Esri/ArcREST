@@ -73,7 +73,7 @@ def publishfromconfig(configFiles,globalLoginInfo,combinedApp=None,log_file=None
         print "-----Portal Credentials-----" 
         
         cred_info = None
-        if os.path.isfile(globalLoginInfo):
+        if not globalLoginInfo is None and os.path.isfile(globalLoginInfo):
             loginInfo = common.init_config_json(config_file=globalLoginInfo)
             if 'Credentials' in loginInfo:
                 cred_info = loginInfo['Credentials']
