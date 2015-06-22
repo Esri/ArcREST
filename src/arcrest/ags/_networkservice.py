@@ -47,7 +47,7 @@ class NetworkService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                #print k, " - attribute not implmented for Mobile Service."
+                #print k, " - attribute not implemented for Mobile Service."
                 print "_%s = None" % k
     #----------------------------------------------------------------------
     def __str__(self):

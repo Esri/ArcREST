@@ -51,7 +51,7 @@ class GeoDataService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for GeoData Service"
+                print k, " - attribute not implemented for GeoData Service"
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

@@ -51,7 +51,7 @@ class Security(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -217,7 +217,7 @@ class Security(BaseAGSServer):
            system and accidentally disabled the primary site administrator
            account, you can re-enable the account by running the password
            reset utility. This utility is shipped in <ArcGIS Server
-           installation directory>\Server\tools\passwordreset. Use the -e
+           installation directory>//Server//tools//passwordreset. Use the -e
            option to re-enable the primary site administrator. This utility
            is described in more detail in the ArcGIS Server Help.
         """

@@ -72,7 +72,7 @@ class MobileServiceLayer(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for Mobile Service Layer."
+                print k, " - attribute not implemented for Mobile Service Layer."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -323,7 +323,7 @@ class MobileService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for Mobile Service."
+                print k, " - attribute not implemented for Mobile Service."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

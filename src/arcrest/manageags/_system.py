@@ -48,7 +48,7 @@ class System(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -237,7 +237,7 @@ class ConfigurationStore(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -358,7 +358,7 @@ class Jobs(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -519,7 +519,7 @@ class ServerProperties(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -611,7 +611,7 @@ class ServerDirectory(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------

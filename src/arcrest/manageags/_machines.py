@@ -67,7 +67,7 @@ class Machines(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented for Machines"
+                print k, " - attribute not implemented for Machines"
             del k
             del v
     #----------------------------------------------------------------------
@@ -238,7 +238,7 @@ class Machine(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented for Machine"
+                print k, " - attribute not implemented for Machine"
             del k
             del v
     #----------------------------------------------------------------------

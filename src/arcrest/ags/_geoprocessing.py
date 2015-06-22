@@ -106,7 +106,7 @@ class GPService(BaseAGSServer):
                 else:
                     setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented for gp service."
+                print k, " - attribute not implemented for gp service."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as a string"""
@@ -206,7 +206,7 @@ class GPTask(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
 
     #----------------------------------------------------------------------
     @property
@@ -439,7 +439,7 @@ class GPJob(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented for GPJob."
+                print k, " - attribute not implemented for GPJob."
     #----------------------------------------------------------------------
     def cancelJob(self):
         """ cancels the job """
@@ -532,6 +532,6 @@ class GPJob(BaseAGSServer):
     def getParameterValue(self, parameterName):
         """ gets a parameter value """
         if  self._results is None:
-            self.results
+            self.__init()
         parameter = self._results[parameterName]
         return parameter

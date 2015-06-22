@@ -57,7 +57,7 @@ class _log(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in manageportal.administration.log class."
+                print k, " - attribute not implemented in manageportal.administration.log class."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -233,7 +233,7 @@ class _Security(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in manageportal.administration.log class."
+                print k, " - attribute not implemented in manageportal.administration.log class."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -925,7 +925,7 @@ class PortalAdministration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in manageportal.administration class."
+                print k, " - attribute not implemented in manageportal.administration class."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

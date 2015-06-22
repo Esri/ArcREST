@@ -77,7 +77,7 @@ class Administration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in Administration class."
+                print k, " - attribute not implemented in Administration class."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

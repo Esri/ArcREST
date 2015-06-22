@@ -64,7 +64,7 @@ class GlobeServiceLayer(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for Globe Service Layer."
+                print k, " - attribute not implemented for Globe Service Layer."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -264,7 +264,7 @@ class GlobeService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for Globe Service."
+                print k, " - attribute not implemented for Globe Service."
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

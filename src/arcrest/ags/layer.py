@@ -112,7 +112,7 @@ class FeatureLayer(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for layer.FeatureLayer."
+                print k, " - attribute not implemented for layer.FeatureLayer."
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
@@ -820,7 +820,7 @@ class GroupLayer(FeatureLayer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
 ########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""

@@ -83,10 +83,10 @@ class FeatureService(abstract.BaseAGOLClass):
 
                 self._referer_url = securityHandler.referer_url
             elif isinstance(securityHandler, security.ArcGISTokenSecurityHandler):
-                    self._username = securityHandler.username
-                    self._securityHandler = securityHandler
+                self._username = securityHandler.username
+                self._securityHandler = securityHandler
             
-                    self._referer_url = securityHandler.referer_url            
+                self._referer_url = securityHandler.referer_url            
             elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
                 parsedURL = urlparse(url=url)
                 pathParts = parsedURL.path.split('/')
@@ -122,7 +122,7 @@ class FeatureService(abstract.BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in Feature Service."
+                print k, " - attribute not implemented in Feature Service."
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """

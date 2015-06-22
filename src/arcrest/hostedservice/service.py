@@ -71,7 +71,7 @@ class Services(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in hostedservice.Services."
+                print k, " - attribute not implemented in hostedservice.Services."
             del k, v
     #----------------------------------------------------------------------
     @property
@@ -276,7 +276,7 @@ class AdminMapService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k,  " - attribute not implmented. Please log an support request."
+                print k,  " - attribute not implemented. Please log an support request."
             del k, v
     #----------------------------------------------------------------------
     @property
@@ -690,7 +690,7 @@ class AdminFeatureService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in AdminFeatureService."
+                print k, " - attribute not implemented in AdminFeatureService."
     #----------------------------------------------------------------------
     @property
     def error(self):
@@ -1200,7 +1200,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented AdminFeatureServiceLayer."
+                print k, " - attribute not implemented AdminFeatureServiceLayer."
             del k, v
     #----------------------------------------------------------------------
     def refresh(self):

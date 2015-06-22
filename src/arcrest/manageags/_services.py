@@ -57,7 +57,7 @@ class Services(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------
@@ -517,7 +517,7 @@ class AGSService(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented."
+                print k, " - attribute not implemented."
             del k
             del v
     #----------------------------------------------------------------------

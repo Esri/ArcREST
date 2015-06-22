@@ -114,7 +114,7 @@ class ImageService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implmented for Image Service."
+                print k, " - attribute not implemented for Image Service."
     #----------------------------------------------------------------------
     @property
     def hasMultidimensions(self):

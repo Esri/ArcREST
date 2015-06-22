@@ -82,33 +82,33 @@ class Content(BaseAGOLClass):
 
     #----------------------------------------------------------------------
     def getFolderID(self, name, userContent=None):
-            """
-               This function retrieves the folder ID and creates the folder if
-               it does not exist
+        """
+           This function retrieves the folder ID and creates the folder if
+           it does not exist
 
-               Inputs:
-                 name - the name of the folder
-                 userContent - a list of user contnet
-               Output:
-                  string - ID of folder, none if no foldername is specified
-            """
-            if not name == None and not name == '':
-                if userContent is None:
-                    userContent = self.getUserContent()
-                folderID = None
-                if 'folders' in userContent:
-                    folders = userContent['folders']
+           Inputs:
+             name - the name of the folder
+             userContent - a list of user contnet
+           Output:
+              string - ID of folder, none if no foldername is specified
+        """
+        if not name == None and not name == '':
+            if userContent is None:
+                userContent = self.getUserContent()
+            folderID = None
+            if 'folders' in userContent:
+                folders = userContent['folders']
 
-                    for folder in folders:
-                        if folder['title'] == name:
-                            folderID = folder['id']
-                            break
-                    del folders
+                for folder in folders:
+                    if folder['title'] == name:
+                        folderID = folder['id']
+                        break
+                del folders
 
-                return folderID
+            return folderID
 
-            else:
-                return None
+        else:
+            return None
     #----------------------------------------------------------------------
     def getItemID(self,title=None, name=None, itemType=None,userContent=None,folderId=None,username=None):
         """
@@ -455,7 +455,7 @@ class Item(BaseAGOLClass):
             elif k == 'error':
                 print json_dict[k]
             else:
-                print k, " - attribute not implmented in the class _content.Item."
+                print k, " - attribute not implemented in the class _content.Item."
             del k,v
     #----------------------------------------------------------------------
     def __str__(self):

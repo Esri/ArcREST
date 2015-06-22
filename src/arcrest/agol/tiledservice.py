@@ -13,7 +13,6 @@ from .._abstract.abstract import BaseAGOLClass, BaseSecurityHandler
 import urlparse
 import urllib
 import os
-import json
 import types
 from ..security import security
 from ..common.general import _date_handler
@@ -86,7 +85,7 @@ class TiledService(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in tiled service."
+                print k, " - attribute not implemented in tiled service."
     #----------------------------------------------------------------------
     @property
     def maxExportTilesCount(self):

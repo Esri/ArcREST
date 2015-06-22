@@ -132,7 +132,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implmented in Feature Layer."
+                print k, " - attribute not implemented in Feature Layer."
         self._parentLayer = featureservice.FeatureService(
             url=os.path.dirname(self._url),
             securityHandler=self._securityHandler,
