@@ -399,63 +399,64 @@ class Administration(BaseAGOLClass):
         urls = portal.urls
         services = []
         if urls != {}:
-            for https in portal.featureServers['https']:
-
-                if 'isPortal' in portal.portalProperties:
-                    if portal.portalProperties['isPortal'] == True:
-                        url = "%s/admin" % https
-                        services.append(AGSAdministration(url=url,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port))
-                    elif portal.portalProperties['isPortal'] == False:
-                        url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-                        services.append(Services(url=url,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port))
-                    else:
-                        url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-                        services.append(Services(url=url,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port))
-##                elif self._securityHandler is not None:
-##
-##
-##
-##                    if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
-##                        url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-##                        services.append(Services(url=url,
-##                                             securityHandler=self._securityHandler,
-##                                             proxy_url=self._proxy_url,
-##                                             proxy_port=self._proxy_port))
-##                    elif isinstance(self._securityHandler, PortalTokenSecurityHandler):
-##                        url = "%s/admin" % https
-##                        services.append(AGSAdministration(url=url,
-##                                             securityHandler=self._securityHandler,
-##                                             proxy_url=self._proxy_url,
-##                                             proxy_port=self._proxy_port))
-##                    elif isinstance(self._securityHandler, ArcGISTokenSecurityHandler):
-##                        if 'isPortal' in portal.portalProperties:
-##                            if portal.portalProperties['isPortal'] == True:
-##                                url = "%s/admin" % https
-##                                services.append(AGSAdministration(url=url,
-##                                             securityHandler=self._securityHandler,
-##                                             proxy_url=self._proxy_url,
-##                                             proxy_port=self._proxy_port))
-##                            elif portal.portalProperties['isPortal'] == False:
-##                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-##                                services.append(Services(url=url,
-##                                             securityHandler=self._securityHandler,
-##                                             proxy_url=self._proxy_url,
-##                                             proxy_port=self._proxy_port))
-##                            else:
-##                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-##                                services.append(Services(url=url,
-##                                             securityHandler=self._securityHandler,
-##                                             proxy_url=self._proxy_url,
-##                                             proxy_port=self._proxy_port))
+            if 'https' in portal.featureServers:
+                for https in portal.featureServers['https']:
+    
+                    if 'isPortal' in portal.portalProperties:
+                        if portal.portalProperties['isPortal'] == True:
+                            url = "%s/admin" % https
+                            services.append(AGSAdministration(url=url,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port))
+                        elif portal.portalProperties['isPortal'] == False:
+                            url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                            services.append(Services(url=url,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port))
+                        else:
+                            url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                            services.append(Services(url=url,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port))
+    ##                elif self._securityHandler is not None:
+    ##
+    ##
+    ##
+    ##                    if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
+    ##                        url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+    ##                        services.append(Services(url=url,
+    ##                                             securityHandler=self._securityHandler,
+    ##                                             proxy_url=self._proxy_url,
+    ##                                             proxy_port=self._proxy_port))
+    ##                    elif isinstance(self._securityHandler, PortalTokenSecurityHandler):
+    ##                        url = "%s/admin" % https
+    ##                        services.append(AGSAdministration(url=url,
+    ##                                             securityHandler=self._securityHandler,
+    ##                                             proxy_url=self._proxy_url,
+    ##                                             proxy_port=self._proxy_port))
+    ##                    elif isinstance(self._securityHandler, ArcGISTokenSecurityHandler):
+    ##                        if 'isPortal' in portal.portalProperties:
+    ##                            if portal.portalProperties['isPortal'] == True:
+    ##                                url = "%s/admin" % https
+    ##                                services.append(AGSAdministration(url=url,
+    ##                                             securityHandler=self._securityHandler,
+    ##                                             proxy_url=self._proxy_url,
+    ##                                             proxy_port=self._proxy_port))
+    ##                            elif portal.portalProperties['isPortal'] == False:
+    ##                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+    ##                                services.append(Services(url=url,
+    ##                                             securityHandler=self._securityHandler,
+    ##                                             proxy_url=self._proxy_url,
+    ##                                             proxy_port=self._proxy_port))
+    ##                            else:
+    ##                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+    ##                                services.append(Services(url=url,
+    ##                                             securityHandler=self._securityHandler,
+    ##                                             proxy_url=self._proxy_url,
+    ##                                             proxy_port=self._proxy_port))
                 else:
                     print "Security Handler is not set"
             return services

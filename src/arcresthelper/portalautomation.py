@@ -217,6 +217,11 @@ def publishfromconfig(configFiles,globalLoginInfo,combinedApp=None,log_file=None
                 print("with error message: %s" % e[0]['synerror'])
                 if 'arcpyError' in e[0]:
                     print("with arcpy message: %s" % e[0]['arcpyError'])
+            else:
+                line, filename, synerror = trace()
+                print("error on line: %s" % line)
+                print("error in file name: %s" % filename)
+                print("with error message: %s" % synerror)            
         else:
             line, filename, synerror = trace()
             print("error on line: %s" % line)
