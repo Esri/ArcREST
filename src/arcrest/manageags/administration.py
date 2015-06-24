@@ -3,6 +3,7 @@
    through the Administration REST API
 
 """
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 from .._abstract.abstract import BaseAGSServer
 from datetime import datetime
 import csv
@@ -54,9 +55,15 @@ class AGSAdministration(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
-        }
+            "f" : "json"
+        }        
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token
+      
+    
         json_dict = self._do_get(url=self._url, param_dict=params)
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
@@ -309,6 +316,8 @@ class AGSAdministration(BaseAGSServer):
         """returns the reference to the data functions as a class"""
         if self._resources is None:
             self.__init()
+        if self._resources is None:
+            return
         if "data" in self._resources:
             url = self._url + "/data"
             return _data.Data(url=url,

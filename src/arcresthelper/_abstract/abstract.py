@@ -87,30 +87,31 @@ class baseToolsClass(object):
 
             admin = arcrest.manageorg.Administration(url=self._org_url,
                                                      securityHandler=self._securityHandler)
-
-            hostingServers = admin.hostingServers()
-            for hostingServer in hostingServers:
-                if isinstance(hostingServer, AGSAdministration):
-                    serData = hostingServer.data
-
-                    dataItems = serData.rootDataItems
-                    if 'rootItems' in dataItems:
-                        for rootItem in dataItems['rootItems']:
-                            if rootItem == '/enterpriseDatabases':
-                                rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
-                                if not rootItems is None and 'items' in rootItems:
-                                    for item in rootItems['items']:
-                                        if 'info' in item:
-                                            if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
-                                                conStrDic = {}
-                                                conStr = item['info']['connectionString'].split(";")
-                                                for conStrValue in conStr:
-                                                    spltval = conStrValue.split("=")
-                                                    conStrDic[spltval[0]] = spltval[1]
-                                                if 'DBCLIENT' in conStrDic:
-                                                    if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
-                                                        self._featureServiceFieldCase = 'lower'
-
+            try:
+                hostingServers = admin.hostingServers()
+                for hostingServer in hostingServers:
+                    if isinstance(hostingServer, AGSAdministration):
+                        serData = hostingServer.data
+    
+                        dataItems = serData.rootDataItems
+                        if 'rootItems' in dataItems:
+                            for rootItem in dataItems['rootItems']:
+                                if rootItem == '/enterpriseDatabases':
+                                    rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
+                                    if not rootItems is None and 'items' in rootItems:
+                                        for item in rootItems['items']:
+                                            if 'info' in item:
+                                                if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
+                                                    conStrDic = {}
+                                                    conStr = item['info']['connectionString'].split(";")
+                                                    for conStrValue in conStr:
+                                                        spltval = conStrValue.split("=")
+                                                        conStrDic[spltval[0]] = spltval[1]
+                                                    if 'DBCLIENT' in conStrDic:
+                                                        if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
+                                                            self._featureServiceFieldCase = 'lower'
+            except e as Exception:
+                print e
                 #if 'error' in self._securityHandler.message and token is None:
                     #if self._securityHandler.message['error']== 401:
 
