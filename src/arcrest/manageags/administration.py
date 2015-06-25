@@ -151,7 +151,6 @@ class AGSAdministration(BaseAGSServer):
         url = self._url + "/createNewSite"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "cluster" : cluster,
             "directories" : directories,
             "username" : username,
@@ -160,6 +159,11 @@ class AGSAdministration(BaseAGSServer):
             "logSettings" : logsSettings,
             "runAsync" : runAsync
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -190,11 +194,15 @@ class AGSAdministration(BaseAGSServer):
         url = self._url + "/joinSite"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "adminURL" : adminURL,
             "username" : username,
             "password" : password
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -218,9 +226,13 @@ class AGSAdministration(BaseAGSServer):
         """
         url = self._url + "/deleteSite"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -242,9 +254,13 @@ class AGSAdministration(BaseAGSServer):
         """
         url = self._url + "/exportSite"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         if location is not None:
             params['location'] = location
         return self._do_post(url=url,
@@ -275,9 +291,13 @@ class AGSAdministration(BaseAGSServer):
         url = self._url + "/importSite"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "location" : location
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -288,9 +308,13 @@ class AGSAdministration(BaseAGSServer):
         """gets the public key"""
         url = self._url + "/publicKey"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token                
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,

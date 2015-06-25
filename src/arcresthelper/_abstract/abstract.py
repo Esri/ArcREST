@@ -11,7 +11,7 @@ import json
 import os
 from .. import common
 import gc
-
+import urllib2
 
 ########################################################################
 class baseToolsClass(object):
@@ -91,26 +91,31 @@ class baseToolsClass(object):
                 hostingServers = admin.hostingServers()
                 for hostingServer in hostingServers:
                     if isinstance(hostingServer, AGSAdministration):
-                        serData = hostingServer.data
-    
-                        dataItems = serData.rootDataItems
-                        if 'rootItems' in dataItems:
-                            for rootItem in dataItems['rootItems']:
-                                if rootItem == '/enterpriseDatabases':
-                                    rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
-                                    if not rootItems is None and 'items' in rootItems:
-                                        for item in rootItems['items']:
-                                            if 'info' in item:
-                                                if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
-                                                    conStrDic = {}
-                                                    conStr = item['info']['connectionString'].split(";")
-                                                    for conStrValue in conStr:
-                                                        spltval = conStrValue.split("=")
-                                                        conStrDic[spltval[0]] = spltval[1]
-                                                    if 'DBCLIENT' in conStrDic:
-                                                        if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
-                                                            self._featureServiceFieldCase = 'lower'
-            except e as Exception:
+                        try:                        
+                            serData = hostingServer.data
+        
+                            dataItems = serData.rootDataItems
+                            if 'rootItems' in dataItems:
+                                for rootItem in dataItems['rootItems']:
+                                    if rootItem == '/enterpriseDatabases':
+                                        rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
+                                        if not rootItems is None and 'items' in rootItems:
+                                            for item in rootItems['items']:
+                                                if 'info' in item:
+                                                    if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
+                                                        conStrDic = {}
+                                                        conStr = item['info']['connectionString'].split(";")
+                                                        for conStrValue in conStr:
+                                                            spltval = conStrValue.split("=")
+                                                            conStrDic[spltval[0]] = spltval[1]
+                                                        if 'DBCLIENT' in conStrDic:
+                                                            if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
+                                                                self._featureServiceFieldCase = 'lower'
+                        except urllib2.HTTPError, err:
+                            print err
+                        except Exception, e:
+                            print e
+            except Exception, e:
                 print e
                 #if 'error' in self._securityHandler.message and token is None:
                     #if self._securityHandler.message['error']== 401:
