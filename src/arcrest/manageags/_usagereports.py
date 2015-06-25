@@ -1,5 +1,7 @@
 from .._abstract.abstract import BaseAGSServer
 from urllib import urlencode, quote_plus
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
+
 import json
 ########################################################################
 class UsageReports(BaseAGSServer):
@@ -35,9 +37,13 @@ class UsageReports(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url, param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -97,9 +103,13 @@ class UsageReports(BaseAGSServer):
         statistics are persisted forever.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/settings"
         return self._do_get(url=url,
                             param_dict=params,
@@ -127,11 +137,15 @@ class UsageReports(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "maxHistory" : maxHistory,
             "enabled" : enabled,
             "samplingInterval"  : samplingInterval
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/settings/edit"
         return self._do_post(url=url,
                              param_dict=params,
@@ -248,12 +262,16 @@ class UsageReports(BaseAGSServer):
 
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "reportname" : reportname,
             "since" : since,
 
             "metadata" : metadata
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         if isinstance(queries, dict):
             params["queries"] = [queries]
         elif isinstance(queries, list):
@@ -308,9 +326,13 @@ class UsageReport(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url, param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -441,9 +463,13 @@ class UsageReport(BaseAGSServer):
         }
         params = {
             "f" : "json",
-            "token": self._securityHandler.token,
             "usagereport" : json.dumps(usagereport_dict)
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/edit"
         return self._do_post(url=url,
                              param_dict=params,
@@ -454,9 +480,13 @@ class UsageReport(BaseAGSServer):
         """deletes the current report"""
         url = self._url + "/delete"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -490,9 +520,13 @@ class UsageReport(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "filter" : queryFilter
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/query"
         return self._do_post(url=url,
                              param_dict=params,

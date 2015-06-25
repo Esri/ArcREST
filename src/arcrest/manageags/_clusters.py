@@ -1,6 +1,8 @@
 from .._abstract.abstract import BaseAGSServer
 import json
 from parameters import ClusterProtocol
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
+
 ########################################################################
 class Clusters(BaseAGSServer):
     """
@@ -39,9 +41,13 @@ class Clusters(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
@@ -85,12 +91,16 @@ class Clusters(BaseAGSServer):
         """
         url = self._url + "/create"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "clusterName" : clusterName,
             "machineNames" : machineNames,
             "tcpClusterPort" : tcpClusterPort
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -105,9 +115,13 @@ class Clusters(BaseAGSServer):
         """
         url = self._url + "/getAvailableMachines"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -152,9 +166,13 @@ class Cluster(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
@@ -234,9 +252,13 @@ class Cluster(BaseAGSServer):
         operation reports an error.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/start"
         return self._do_post(url=url,
                              param_dict=params,
@@ -251,9 +273,13 @@ class Cluster(BaseAGSServer):
         be reached, then this operation reports an error.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/stop"
         return self._do_post(url=url,
                              param_dict=params,
@@ -268,9 +294,13 @@ class Cluster(BaseAGSServer):
         also stopped. Deleting a cluster does not delete your GIS services.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/delete"
         return self._do_post(url=url,
                              param_dict=params,
@@ -286,9 +316,13 @@ class Cluster(BaseAGSServer):
         This resource was added at ArcGIS 10.1 Service Pack 1.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         url = self._url + "/services"
         return self._do_post(url=url,
                              param_dict=params,
@@ -306,9 +340,13 @@ class Cluster(BaseAGSServer):
         """
         url = self._url + "/machines"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -328,9 +366,13 @@ class Cluster(BaseAGSServer):
         url = self._url + "/machines/add"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "machineNames" : machineNames
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -349,9 +391,13 @@ class Cluster(BaseAGSServer):
         url = self._url + "/machines/remove"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "machineNames" : machineNames
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -368,9 +414,13 @@ class Cluster(BaseAGSServer):
         url = self._url + "/editProtocol"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "clusterProtocol" : str(clusterProtocolObj)
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,

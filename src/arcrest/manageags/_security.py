@@ -1,5 +1,7 @@
 from .._abstract.abstract import BaseAGSServer
 import json
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
+
 ########################################################################
 class Security(BaseAGSServer):
     """ The security resource is a container for all resources and
@@ -37,9 +39,13 @@ class Security(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         json_dict = self._do_get(url=self._url, param_dict=params,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -78,10 +84,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "name" : name,
             "description" : description
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         aURL = self._url + "/roles/add"
         return self._do_post(url=aURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -101,10 +111,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username,
             "password" : password,
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         if fullname is not None:
             params['fullname'] = fullname
         if description is not None:
@@ -120,10 +134,14 @@ class Security(BaseAGSServer):
         """ Assigns a role to multiple users """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "rolename" : rolename,
             "users" : users
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         rURL = self._url + "/roles/addUsersToRole"
         return self._do_post(url=rURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -158,10 +176,14 @@ class Security(BaseAGSServer):
         aURL = self._url + "/roles/assignPrivilege"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "rolename" : rolename,
             "privilege" : privilege
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=aURL,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -183,10 +205,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username,
             "roles" : roles
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/users/assignRoles"
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -201,9 +227,13 @@ class Security(BaseAGSServer):
         """
         dURL = self._url + "/psa/disable"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=dURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -223,9 +253,13 @@ class Security(BaseAGSServer):
         """
         eURL = self._url + "/psa/enable"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=eURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -240,9 +274,13 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "rolename" : rolename
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         pURL = self._url + "/roles/getPrivilege"
         return self._do_post(url=pURL,
                              param_dict=params,
@@ -259,9 +297,13 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         url = self._url + "/users/getPrivilege"
         return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -284,10 +326,14 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getRoles"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "startIndex" : startIndex,
             "pageSize" : pageSize
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -303,9 +349,13 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getRolesByPrivilege"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "privilege" : privilege
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -322,9 +372,13 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getRolesForUser"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         if filter is not None:
             params['filter'] = filter
 
@@ -352,10 +406,14 @@ class Security(BaseAGSServer):
         uURL = self._url + "/users/getUsers"
         params={
             "f" : "json",
-            "token" : self._securityHandler.token,
             "startIndex" : startIndex,
             "pageSize" : pageSize
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=uURL,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -375,10 +433,14 @@ class Security(BaseAGSServer):
         uURL = self._url + "/roles/getUsersWithinRole"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "rolename" : rolename,
             "maxCount" : maxCount
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         if filter is not None and \
            isinstance(filter, str):
             params['filter'] = filter
@@ -390,9 +452,13 @@ class Security(BaseAGSServer):
     def primarySiteAdministrator(self):
         """ returns if the primary site admin has been disabled """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/psa"
         return self._do_get(url=uURL, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -410,9 +476,13 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "rolename" : rolename
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/roles/remove"
         return self._do_post(url=uURL,
                              param_dict=params,
@@ -433,10 +503,14 @@ class Security(BaseAGSServer):
         uURL = self._url + "/users/removeRoles"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username,
             "roles" : roles
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -451,9 +525,13 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : 'json',
-            "token" : self._securityHandler.token,
             "username" : username
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/users/remove"
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -470,10 +548,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : 'json',
-            "token" : self._securityHandler.token,
             "rolename" : rolename,
             "users" : users
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/roles/removeUsersFromRole"
         return self._do_post(url=uURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -485,9 +567,13 @@ class Security(BaseAGSServer):
            returns the number of roles for AGS
         """
         params = {
-        "f" : "json",
-        "token" : self._securityHandler.token
+        "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/roles"
         return self._do_get(url=uURL, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -506,10 +592,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "filter" : filter,
             "maxCount" : maxCount
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/roles/search"
         return self._do_get(url=uURL, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -528,10 +618,14 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "filter" : filter,
             "maxCount" : maxCount
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         uURL = self._url + "/users/search"
         return self._do_get(url=uURL, param_dict=params,
                             proxy_url=self._proxy_url,

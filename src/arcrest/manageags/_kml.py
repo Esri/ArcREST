@@ -1,5 +1,6 @@
 import json
 from .._abstract.abstract import BaseAGSServer
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 
 ########################################################################
 class KML(BaseAGSServer):
@@ -29,9 +30,13 @@ class KML(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
                                  proxy_url=self._proxy_url,
@@ -56,9 +61,13 @@ class KML(BaseAGSServer):
         kmlURL = self._url + "/createKmz"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "kml" : kmz_as_json
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token              
         return self._do_post(url=kmlURL, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

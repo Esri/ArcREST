@@ -1,4 +1,6 @@
 from .._abstract.abstract import BaseAGSServer
+from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
+
 import json
 ########################################################################
 class Data(BaseAGSServer):
@@ -46,9 +48,13 @@ class Data(BaseAGSServer):
            published can reference data. Values: true | false
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         dURL = self._url + "/config"
         return self._do_get(url=dURL, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -67,9 +73,13 @@ class Data(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "datastoreConfig" : datastoreConfig
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         url = self._url + "/config/update"
         return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -89,9 +99,13 @@ class Data(BaseAGSServer):
         cURL = self._url + "/computeTotalRefCount"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "path" : path
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=cURL,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -112,9 +126,13 @@ class Data(BaseAGSServer):
               dictionary
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         if parentPath is not None:
             params['parentPath'] = parentPath        
         if ancestorPath is not None:
@@ -139,9 +157,13 @@ class Data(BaseAGSServer):
         """
         params = {
             "item" : item,
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         rURL = self._url + "/registerItem"
         return self._do_post(url=rURL, param_dict=params,
                              proxy_url=self._proxy_url,
@@ -154,9 +176,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -166,8 +192,12 @@ class Data(BaseAGSServer):
     def validateAllDataItems(self):
         """ validates all the items in the datastore """
         params = {
-        "f" : "json",
-        "token": self._securityHandler.token}
+        "f" : "json"}
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         url = self._url + "/validateAllDataItems"
         return self._do_get(url=url, param_dict=params,
                             proxy_url=self._proxy_url,
@@ -191,9 +221,13 @@ class Data(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "item" : item
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         url = self._url + "/ validateDataItem"
         return self._do_post(url=url,
                              param_dict=params,
@@ -208,9 +242,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items/enterpriseDatabases/%s/machines/%s/makePrimary" % (dataStoreName, machineName)
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -227,9 +265,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items/enterpriseDatabases/%s/machines/%s/remove" % (dataStoreItemName, machineName)
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -244,9 +286,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items/enterpriseDatabases/%s/machines/%s/start" % (dataStoreItemName, machineName)
         params = {
-            "f": "json",
-            "token" : self._securityHandler.token
+            "f": "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -261,9 +307,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items/enterpriseDatabases/%s/machines/%s/stop" % (dataStoreItemName, machineName)
         params = {
-            "f": "json",
-            "token" : self._securityHandler.token
+            "f": "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=url, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -283,9 +333,13 @@ class Data(BaseAGSServer):
         url = self._url + "/unregisterItem"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "path" : path
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url, param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -301,9 +355,13 @@ class Data(BaseAGSServer):
         """
         url = self._url + "/items/enterpriseDatabases/%s/machines/%s/validate" % (dataStoreName, machineName)
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
+        if self._securityHandler is not None:
+            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
+                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
+            else:
+                params['token'] = self._securityHandler.token        
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
