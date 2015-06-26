@@ -1121,11 +1121,37 @@ class publishingtools(abstract.baseToolsClass):
                                     #itemID = admin.content.getItemID(title=service_name_safe,itemType='Feature Service',userContent=folderContent)
 
                             if not itemID is None:
-                                delres=adminusercontent.deleteItems(items=itemID)
-                                if 'error' in delres:
-                                    print delres
-                                    return delres
-                                print "Delete successful"
+                                item = admin.content.item(itemId=itemId)
+                               
+                                adminFS = AdminFeatureService(url=item.url, securityHandler=self._securityHandler)
+        
+                                cap = str(adminFS.capabilities)
+                                existingDef = {}
+                            
+            
+                                if 'Sync' in cap:
+                                    capItems = cap.split(',')
+                                    if 'Sync' in capItems:
+                                        capItems.remove('Sync')
+                        
+                                    existingDef['capabilities'] = ','.join(capItems)
+                                    enableResults = adminFS.updateDefinition(json_dict=existingDef)
+                            
+                                    if 'error' in enableResults:
+                                        delres=adminusercontent.deleteItems(items=itemID)
+                                        if 'error' in delres:
+                                            print delres
+                                            return delres
+                                        print "Delete successful"      
+                                else:
+                                    delres=adminusercontent.deleteItems(items=itemID)
+                                    if 'error' in delres:
+                                        print delres
+                                        return delres
+                                    print "Delete successful"                                    
+                                adminFS = None
+                                del adminFS                                  
+                               
                             else:
                                 print "Item cannot be found"
 
