@@ -56,7 +56,28 @@ class featureservicetools(abstract.baseToolsClass):
 
         return existingDef
     #----------------------------------------------------------------------
+    def disableSync(self, url, definition = None):
+        adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
+        
+        cap = str(adminFS.capabilities)
+        existingDef = {}
+    
+        enableResults = 'skipped'      
+        if 'Sync' in cap:
+            capItems = cap.split(',')
+            if 'Sync' in capItems:
+                capItems.remove('Sync')
 
+            existingDef['capabilities'] = ','.join(capItems)
+            enableResults = adminFS.updateDefinition(json_dict=existingDef)
+    
+            if 'error' in enableResults:
+                return enableResults['error']
+        adminFS = None
+        del adminFS
+
+
+        return enableResults
     def GetFeatureService(self,itemId,returnURLOnly=False):
         admin = None
         item = None
