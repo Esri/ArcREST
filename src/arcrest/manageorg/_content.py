@@ -2035,7 +2035,7 @@ class UserContent(BaseAGOLClass):
             params['buildInitialCache'] = buildIntialCache
         if publishParameters is not None and \
            isinstance(publishParameters, PublishCSVParameters) == False:
-            params.update(publishParameters.value)
+            params['publishParameters'] = json.dumps(publishParameters.value)
         elif isinstance(publishParameters, PublishCSVParameters):
             params['publishParameters'] = json.dumps(publishParameters.value)
         if itemId is not None:

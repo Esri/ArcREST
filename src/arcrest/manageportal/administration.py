@@ -29,8 +29,8 @@ class _log(BaseAGOLClass):
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
-        if url.lower().endswith("/log") == False:
-            url = url + "/log"
+        if url.lower().endswith("/logs") == False:
+            url = url + "/logs"
         self._url = url
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
