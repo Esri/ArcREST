@@ -1192,3 +1192,7 @@ class User(BaseAGOLClass):
             "f" : "json",
             "token" : self._securityHandler.token
         }
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
