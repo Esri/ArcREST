@@ -417,7 +417,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._message = token['error']
         else:
             self._valid = True
-            self._message = "Token Generated"                   
+            self._message = "Token Generated"
         self._org_url = arcpy.GetActivePortalURL()
         if self._org_url.lower().find('/sharing/rest') > -1:
             self._url = self._org_url
@@ -1188,7 +1188,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'expiration':str(_defaultTokenExpiration),
                       'f': 'json',
                       'request':'getToken',
-                      'referer':referer}
+                      'referer': referer}
         if expiration is not None:
             query_dict['expiration'] = expiration
         server_token = self._do_post(url=tokenUrl,
