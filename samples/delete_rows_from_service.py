@@ -55,7 +55,21 @@ def main():
                 for layerName in layerNames.split(','):
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
-                        results = fl.deleteFeatures(where=sql)
+                        qRes = fl.query(where=sql, returnIDsOnly=True)
+                        oids = qRes['objectids']
+                        minId = min(oids)
+                        maxId = max(oids)
+                        chunksize = 500
+                        i = 0
+                        while(i <= len(oids)):
+                            oidsDelete = ','.join(str(e) for e in oids[i:i+chunksize])
+                            if oids == '':
+                                continue
+                            else:
+                                results = fl.deleteFeatures(objectIds=oids)
+                            i += chunksize
+                            print i
+                            print "Completed: {0:.0f}%".format(i / float(len(oids)) *100)
                         print results
     except:
         line, filename, synerror = trace()
