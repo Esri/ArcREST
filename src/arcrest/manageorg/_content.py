@@ -2151,6 +2151,7 @@ class UserContent(BaseAGOLClass):
                    folderId=None,
                    clearEmptyFields=True,
                    filePath=None,
+                   multipart=False,
                    url=None,
                    text=None
                    ):
@@ -2168,10 +2169,13 @@ class UserContent(BaseAGOLClass):
            clearEmptyFields - boolean, Clears any fields that are passed in
                               empty
            filePath - path of the file that will update the online item
+           multipart - If true, the file is uploaded in multiple parts. Used
+                       for files over 100 MBs in size. 
            url - The URL of the item to be updated.
            text - The text content for the item to be updated.
         """
         files = []
+        res = ""
         params = {
             "f" : "json",
             "token" : self._securityHandler.token,
@@ -2205,24 +2209,49 @@ class UserContent(BaseAGOLClass):
         if folderId is not None:
             url += '/' + folderId
         url = url + "/items/%s/update" % itemId
-        if len(files) > 0:
-            parsed = urlparse.urlparse(url)
-            res = self._post_multipart(host=parsed.hostname,
-                                               selector=parsed.path,
-                                               files = files,
-                                               fields=params,
-                                               port=parsed.port,
-                                               ssl=parsed.scheme.lower() == 'https',
-                                               proxy_port=self._proxy_port,
-                                               proxy_url=self._proxy_url)
-        else:
-            header = {"Content-Type": "application/x-www-form-urlencoded",
-                      "Accept": "*/*",
-                      "User-Agent": "ArcREST",
-                      }
-            res = self._do_post(url, param_dict=params,
-                                proxy_port=self._proxy_port,
+
+        if multipart and len(files) > 0:
+            params['multipart'] = multipart
+            params["filename"] = os.path.basename(filePath)
+            params['itemType'] = 'file'
+            res = self._do_post(url,
+                                param_dict=params,
                                 proxy_url=self._proxy_url,
-                                header=header)
-        res = self._unicode_convert(res)
-        return res
+                                proxy_port=self._proxy_port)
+            if 'id' in res.keys():
+                itemId = res['id']
+                res = self.addByPart(filePath=filePath,
+                                     itemId=itemId,
+                                     folder=folderId)
+                itemId = res['id']
+                # need to pass 'type' on commit
+                res = self.commit(itemId=itemId, 
+                                  folderId=folderId,
+                                  wait=True)
+                itemId = res['itemId']
+
+            res = self._unicode_convert(res)
+
+        else:        
+            if len(files) > 0:
+                parsed = urlparse.urlparse(url)
+                res = self._post_multipart(host=parsed.hostname,
+                                                   selector=parsed.path,
+                                                   files = files,
+                                                   fields=params,
+                                                   port=parsed.port,
+                                                   ssl=parsed.scheme.lower() == 'https',
+                                                   proxy_port=self._proxy_port,
+                                                   proxy_url=self._proxy_url)
+            else:
+                header = {"Content-Type": "application/x-www-form-urlencoded",
+                          "Accept": "*/*",
+                          "User-Agent": "ArcREST",
+                          }
+                res = self._do_post(url, param_dict=params,
+                                    proxy_port=self._proxy_port,
+                                    proxy_url=self._proxy_url,
+                                    header=header)
+            res = self._unicode_convert(res)
+        
+        return self._unicode_convert(res)
