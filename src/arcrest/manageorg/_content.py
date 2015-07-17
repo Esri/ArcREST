@@ -1081,19 +1081,25 @@ class Item(BaseAGOLClass):
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def deleteInfo(self):
-        """deletes the info information for a given item."""
-        #TODO: - fix delete metadata
+    def deleteInfo(self, infoFile="metadata/metadata.xml"):
+        """
+        deletes the info information for a given item.
+        Input:
+          infoFile - the file to erase.
+           Example: metadata/metadata.xml is the xml file on the item
+        Output:
+         dictionary
+        """
         url = self._baseUrl.replace("/items", "/users") + \
             "/%s/items/%s/deleteInfo" % (self.owner, self.itemId)
         params = {
-        "f" : "json"
+        "f" : "json",
+        "infoFile" : infoFile
         }
-        #print self._do_post(url=url, param_dict=params,
-                      #securityHandler=self._securityHandler,
-                      #proxy_url=self._proxy_url,
-                      #proxy_port=self._proxy_port)
-        return None
+        return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def updateMetadata(self, metadataFile):
         """
