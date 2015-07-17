@@ -43,11 +43,11 @@ class Machines(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json = json.dumps(json_dict)
@@ -109,8 +109,6 @@ class Machines(BaseAGSServer):
                        initialize=True,
                        proxy_url=self._proxy_url,
                        proxy_port=self._proxy_port)
-
-
     #----------------------------------------------------------------------
     def registerMachine(self, machineName, adminURL):
         """
@@ -131,12 +129,12 @@ class Machines(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "machineName" : machineName,
             "adminURL" : adminURL
         }
         uURL = "%s/register" % self._url
         return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -158,12 +156,12 @@ class Machines(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "machineName" : machineName,
             "newMachineName" : newMachineName
         }
         uURL = self._url + "/rename"
         return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url                             )
 ########################################################################
@@ -223,11 +221,11 @@ class Machine(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         json_dict = self._do_get(url=self._currentURL,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json = json.dumps(json_dict)
@@ -338,31 +336,31 @@ class Machine(BaseAGSServer):
         uURL = self._url + "/status"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_get(url=uURL, param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def startMachine(self):
         """ Starts the server machine """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         uURL = self._url + "/start"
         return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def stopMachine(self):
         """ Stops the server machine """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         uURL = self._url + "/stop"
         return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -380,10 +378,10 @@ class Machine(BaseAGSServer):
            or join an existing site.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         uURL = self._url + "/start"
         return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)

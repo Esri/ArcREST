@@ -64,8 +64,7 @@ class TiledService(BaseAGOLClass):
         if isinstance(securityHandler, BaseSecurityHandler):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
-            self._token = securityHandler.token
+            self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -74,10 +73,9 @@ class TiledService(BaseAGOLClass):
     def __init(self):
         """ loads the data into the class """
         params = {"f": "json"}
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-            
-        json_dict = self._do_get(self._url, params, proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -112,9 +110,7 @@ class TiledService(BaseAGOLClass):
         if isinstance(value, BaseSecurityHandler):
             if isinstance(value, security.AGOLTokenSecurityHandler):
                 self._securityHandler = value
-                self._token = value.token
             elif isinstance(value, security.OAuthSecurityHandler):
-                self._token = value.token
                 self._securityHandler = value
             else:
                 pass

@@ -79,10 +79,9 @@ class MapService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         url = self._url + "/info/iteminfo"
         return self._do_get(url=url, param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -92,12 +91,11 @@ class MapService(BaseAGSServer):
         params = {
 
         }
-        if not self._securityHandler is None:
-            params['token']  = self._securityHandler.token
         return self._download_file(url=url,
                             save_path=outPath,
                             file_name=None,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -106,12 +104,11 @@ class MapService(BaseAGSServer):
         fileName = "metadata.xml"
         url = self._url + "/info/metadata"
         params = {}
-        if not self._securityHandler is None:
-            params['token']  = self._securityHandler.token
         return self._download_file(url=url,
                                    save_path=outPath,
                                    file_name=fileName,
                                    param_dict=params,
+                                   securityHandler=self._securityHandler,
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -132,10 +129,8 @@ class MapService(BaseAGSServer):
         """ populates all the properties for the map service """
 
         params = {"f": "json"}
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json = json.dumps(json_dict)
@@ -199,7 +194,6 @@ class MapService(BaseAGSServer):
         if isinstance(value, BaseSecurityHandler):
             if isinstance(value, security.AGSTokenSecurityHandler):
                 self._securityHandler = value
-                self._token = value.token
             else:
                 pass
         elif value is None:
@@ -344,7 +338,6 @@ class MapService(BaseAGSServer):
         if self._timeInfo is None:
             self.__init()
         return self._timeInfo
-
     #----------------------------------------------------------------------
     @property
     def documentInfo(self):
@@ -409,9 +402,10 @@ class MapService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        res = self._do_get(url, param_dict=params)
+        res = self._do_get(url, param_dict=params,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
         return_dict = {
             "layers" : [],
             "tables" : []
@@ -461,9 +455,10 @@ class MapService(BaseAGSServer):
             "gdbVersion" : gdbVersion,
             "layers" : layers
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        res = self._do_get(url, params)
+        res = self._do_get(url, params,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
         qResults = []
         for r in res['results']:
             qResults.append(Feature(r))
@@ -475,9 +470,10 @@ class MapService(BaseAGSServer):
         params={
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        res = self._do_get(url=url, param_dict=params)
+        res = self._do_get(url=url, param_dict=params,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
         return res['type']
     #----------------------------------------------------------------------
     def getFeatureDynamicLayer(self, oid, dynamicLayer,
@@ -498,6 +494,7 @@ class MapService(BaseAGSServer):
         return Feature(
             json_string=self._do_get(url=url,
                                      param_dict=params,
+                                     securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
                                      proxy_url=self._proxy_url)
         )
@@ -560,11 +557,16 @@ class MapService(BaseAGSServer):
                  'layers' : layers,
                  'layerOptions': layerOptions
                  }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         import urllib
-        url = kmlURL + "?%s" % urllib.urlencode(params)
-        return self._download_file(url, save_location, docName + ".kmz")
+        if len(params.keys()) > 0:
+            url = kmlURL + "?%s" % urllib.urlencode(params)
+        return self._download_file(url=url,
+                                   save_path=save_location,
+                                   file_name=docName + ".kmz",
+                                   securityHandler=self._securityHandler,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port
+                                   )
     #----------------------------------------------------------------------
     def exportMap(self,
                   bbox,
@@ -641,8 +643,7 @@ class MapService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
+
         if isinstance(bbox, geometry.Envelope):
             vals = bbox.asDictionary
             params['bbox'] = "%s,%s,%s,%s" % (vals['xmin'], vals['ymin'],
@@ -677,7 +678,10 @@ class MapService(BaseAGSServer):
                 params['mapScale'] = mapScale
             exportURL = self._url + "/export"
             return self._do_get(url=exportURL,
-                                param_dict=params)
+                                param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
         else:
             return None
     #----------------------------------------------------------------------
@@ -746,8 +750,6 @@ class MapService(BaseAGSServer):
             "tilePackage" : tilePackage,
             "exportExtent" : exportExtent
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         params["levels"] = levels
         if not areaOfInterest is None:
             if isinstance(areaOfInterest, Polygon):
@@ -758,11 +760,13 @@ class MapService(BaseAGSServer):
         if async == True:
             return self._do_get(url=url,
                                 param_dict=params,
+                                securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
         else:
             exportJob = self._do_get(url=url,
                                      param_dict=params,
+                                     securityHandler=self._securityHandler,
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
@@ -779,7 +783,7 @@ class MapService(BaseAGSServer):
                 else:
                     time.sleep(5)
                     status = gpJob.jobStatus
-            return gpJob.getAllResults['out_service_url']['value']
+            return gpJob.results
     #----------------------------------------------------------------------
     def exportTiles(self,
                     levels,
@@ -878,8 +882,6 @@ class MapService(BaseAGSServer):
             "levels" : levels
         }
         url = self._url + "/exportTiles"
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         if isinstance(areaOfInterest, Polygon):
             geom = areaOfInterest.asDictionary()
             template = { "features": [geom]}
@@ -890,8 +892,9 @@ class MapService(BaseAGSServer):
                             proxy_port=self._proxy_port)
         else:
             exportJob = self._do_get(url=url, param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+                                     securityHandler=self._securityHandler,
+                                     proxy_url=self._proxy_url,
+                                     proxy_port=self._proxy_port)
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
             gpJob = GPJob(url=jobUrl,
                           securityHandler=self._securityHandler,
@@ -906,17 +909,16 @@ class MapService(BaseAGSServer):
                 else:
                     time.sleep(5)
                     status = gpJob.jobStatus
-            allResults = gpJob.getAllResults
+            allResults = gpJob.results
             for k,v in allResults.iteritems():
                 if k == "out_service_url":
                     value = v['value']
                     params = {
                         "f" : "json"
                     }
-                    if not self._securityHandler is None:
-                        params['token'] = self._securityHandler.token
                     gpRes = self._do_get(url=v['value'],
                                          param_dict=params,
+                                         securityHandler=self._securityHandler,
                                          proxy_url=self._proxy_url,
                                          proxy_port=self._proxy_port)
                     if tilePackage == True:
@@ -929,6 +931,7 @@ class MapService(BaseAGSServer):
                                                     save_path=tempfile.gettempdir(),
                                                     file_name=name,
                                                     param_dict=params,
+                                                    securityHandler=self._securityHandler,
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port)
                             )
@@ -937,9 +940,3 @@ class MapService(BaseAGSServer):
                         return gpRes['folders']
                 else:
                     return None
-
-
-
-
-
-

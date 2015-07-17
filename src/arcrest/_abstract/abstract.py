@@ -53,6 +53,18 @@ class BaseParameters(object):
 class BaseSecurityHandler(_base.BaseWebOperations):
     """ All Security Objects inherit from this class """
     _token = None
+    _valid = True
+    _message = ""
+    #----------------------------------------------------------------------
+    @property
+    def message(self):
+        """ returns any messages """
+        return self._message
+    #----------------------------------------------------------------------
+    @property
+    def valid(self):
+        """ returns boolean wether handler is valid """
+        return self._valid    
 ########################################################################
 class AbstractGeometry(object):
     """ Base Geometry Class """

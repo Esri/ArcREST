@@ -57,6 +57,7 @@ class hydrology(abstract.BaseAGOLClass):
             params['token'] = self._securityHandler.token
         res = self._do_get(url=portals_self_url,
                            param_dict=params,
+                           securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
         if "helperServices" in res:

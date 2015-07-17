@@ -37,9 +37,8 @@ class GeoDataService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json_dict = json_dict

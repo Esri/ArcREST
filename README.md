@@ -1,4 +1,6 @@
-# ArcREST Version 2
+# ArcREST Version 3
+*If you are using an older version(v2) of ArcRest, you can find it here:https://github.com/Esri/ArcREST/tree/FinalV2
+
 *If you are using an older version(v1) of ArcRest, you can find it here:https://github.com/Esri/ArcREST/tree/October2014v1.0Final
  
 A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.  
@@ -22,7 +24,7 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 
 * Python 2.7.x
 * ArcPy
-* ArcGIS Desktop 10.2.x
+* ArcGIS Desktop 10.2.x, 10.3.x
 	
 ## Installation
 

@@ -27,13 +27,13 @@ class Administration(BaseAGOLClass):
         self._securityHandler = securityHandler
         if url is None and not securityHandler is None:
             url = securityHandler.org_url
-        if proxy_url is None and not securityHandler is None:
-            self._proxy_url = securityHandler.proxy_url
-        if proxy_port is None and not securityHandler is None:
-            self._proxy_url = securityHandler.proxy_port
+        #if proxy_url is None and not securityHandler is None:
+            #self._proxy_url = securityHandler.proxy_url
+        #if proxy_port is None and not securityHandler is None:
+            #self._proxy_url = securityHandler.proxy_port
 
         if url is None or url == '':
-            raise AttributeError("URL or Security Hanlder needs to be specified")
+            raise AttributeError("URL or Security Handler needs to be specified")
 
         if url.lower().find("/sharing") > -1:
             pass
@@ -48,24 +48,21 @@ class Administration(BaseAGOLClass):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if securityHandler is not None:
-            if isinstance(securityHandler, AGOLTokenSecurityHandler) or \
-               isinstance(securityHandler, PortalTokenSecurityHandler) or \
-                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
-               isinstance(securityHandler, OAuthSecurityHandler):
-                self._referer_url = securityHandler.referer_url
-            else:
-                raise AttributeError("Security Handler Must be AGOLTokenSecurityHandler or PortalTokenSecurityHandler")
+
+            self._referer_url = securityHandler.referer_url
+        else:
+            raise AttributeError("Security Handler is required for the administration function")
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------
     def __init(self, url):
         """ initializes the site properties """
         params = {
-            "f" : "json",
+            "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        json_dict = self._do_get(url, params,
+        json_dict = self._do_get(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
@@ -179,8 +176,9 @@ class Administration(BaseAGOLClass):
             params['focus'] = focus
         if not t is None:
             params['t'] = t
-        if useSecurity:
-            if self._securityHandler is not None:
+        if useSecurity and \
+           self._securityHandler is not None and \
+           self._securityHandler.method == "token":
                 params["token"] = self._securityHandler.token
         if sortField is not None:
             params['sortField'] = sortField
@@ -188,90 +186,9 @@ class Administration(BaseAGOLClass):
             params['bbox'] = bbox
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def query_without_creds(self,
-                            q,
-                            t=None,
-                            focus=None,
-                            bbox=None,
-                            start=1,
-                            num=10,
-                            sortField=None,
-                            sortOrder="asc"):
-        """
-        This operation searches for content items in the portal. The
-        searches are performed against a high performance index that
-        indexes the most popular fields of an item. See the Search
-        reference page for information on the fields and the syntax of the
-        query.
-        The search index is updated whenever users add, update, or delete
-        content. There can be a lag between the time that the content is
-        updated and the time when it's reflected in the search results.
-        The results of a search only contain items that the user has
-        permission to access.
-
-        Inputs:
-           q - The query string used to search
-           t - type of content to search for.
-           focus - another content filter. Ex: files
-           bbox - The bounding box for a spatial search defined as minx,
-                  miny, maxx, or maxy. Search requires q, bbox, or both.
-                  Spatial search is an overlaps/intersects function of the
-                  query bbox and the extent of the document.
-                  Documents that have no extent (e.g., mxds, 3dds, lyr)
-                  will not be found when doing a bbox search.
-                  Document extent is assumed to be in the WGS84 geographic
-                  coordinate system.
-           start -  The number of the first entry in the result set
-                    response. The index number is 1-based.
-                    The default value of start is 1 (that is, the first
-                    search result).
-                    The start parameter, along with the num parameter, can
-                    be used to paginate the search results.
-           num - The maximum number of results to be included in the result
-                 set response.
-                 The default value is 10, and the maximum allowed value is
-                 100.
-                 The start parameter, along with the num parameter, can be
-                 used to paginate the search results.
-           sortField - Field to sort by. You can also sort by multiple
-                       fields (comma separated) for an item.
-                       The allowed sort field names are title, created,
-                       type, owner, modified, avgRating, numRatings,
-                       numComments, and numViews.
-           sortOrder - Describes whether the results return in ascending or
-                       descending order. Default is ascending.
-                       Values: asc | desc
-        """
-        import warnings
-        warnings.warn("deprecated, please use query()", DeprecationWarning)
-        if self._url.endswith("/rest"):
-            url = self._url + "/search"
-        else:
-            url = self._url + "/rest/search"
-
-        params = {
-            "f" : "json",
-            "q" : q,
-            "sortOrder" : sortOrder,
-            "num" : num,
-            "start" : start
-        }
-        if not focus is None:
-            params['focus'] = focus
-        if not t is None:
-            params['t'] = t
-        if sortField is not None:
-            params['sortField'] = sortField
-        if bbox is not None:
-            params['bbox'] = bbox
-        return self._do_get(url=url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port,
-                            compress=False)
     #----------------------------------------------------------------------
     @property
     def community(self):
@@ -327,6 +244,19 @@ class Administration(BaseAGOLClass):
         p._referer_url = self._referer_url
         return p
     #----------------------------------------------------------------------
+    @property
+    def info(self):
+        """returns the info propert of the portal"""
+        params = {
+            "f" : "json"
+        }
+        url = self._url + "/info"
+        return self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def tileServers(self, portalId=None):
         """
           Returns the objects to manage site's tile hosted services/servers. It returns
@@ -357,7 +287,7 @@ class Administration(BaseAGOLClass):
         else:
             for server in portal.servers['servers']:
                 url = server['adminUrl'] + "/admin"
-                sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
                                                  serverUrl=url,
                                                  referer=server['name'].replace(":6080", ":6443")
                                                  )
@@ -370,22 +300,6 @@ class Administration(BaseAGOLClass):
                 )
             return services
     #----------------------------------------------------------------------
-    #@staticmethod
-    #def obtainReferer(securityHandler,
-                      #proxy_url=None,
-                      #proxy_port=None):
-        #"""gets the referer url"""
-        #params = {
-            #"f" : "json",
-            #"token" : securityHandler.token
-        #}
-        #url = "https://www.arcgis.com/sharing/rest/portals/self"
-        #value = BaseAGOLClass()._do_get(url=url,
-                                       #param_dict=params,
-                                       #proxy_url=proxy_url,
-                                       #proxy_port=proxy_port)
-        #return value
-    #----------------------------------------------------------------------
     def hostingServers(self, portalId=None):
         """
           Returns the objects to manage site's hosted services. It returns
@@ -397,14 +311,18 @@ class Administration(BaseAGOLClass):
         """
         portal = self.portals()
         urls = portal.urls
+        if 'error' in urls:
+            print urls
+            return
         services = []
         if urls != {}:
             if 'https' in portal.featureServers:
                 for https in portal.featureServers['https']:
-
                     if 'isPortal' in portal.portalProperties:
                         if portal.portalProperties['isPortal'] == True:
+
                             url = "%s/admin" % https
+                            #url = https
                             services.append(AGSAdministration(url=url,
                                          securityHandler=self._securityHandler,
                                          proxy_url=self._proxy_url,
@@ -429,24 +347,27 @@ class Administration(BaseAGOLClass):
                             services.append(AGSAdministration(url=url,
                                                               securityHandler=self._securityHandler,
                                                               proxy_url=self._proxy_url,
-                                                              proxy_port=self._proxy_port))
+                                                              proxy_port=self._proxy_port,
+                                                              initialize=True))
                         elif portal.portalProperties['isPortal'] == False:
-                            url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                            url = "http://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
                             services.append(Services(url=url,
                                                      securityHandler=self._securityHandler,
                                                      proxy_url=self._proxy_url,
                                                      proxy_port=self._proxy_port))
                         else:
-                            url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                            url = "http://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
                             services.append(Services(url=url,
                                                      securityHandler=self._securityHandler,
                                                      proxy_url=self._proxy_url,
                                                      proxy_port=self._proxy_port))
+            else:
+                print "Publishing servers not found"
             return services
         else:
             for server in portal.servers['servers']:
                 url = server['adminUrl'] + "/admin"
-                sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
                                                    serverUrl=url,
                                                    referer=server['name'].replace(":6080", ":6443")
                                                    )

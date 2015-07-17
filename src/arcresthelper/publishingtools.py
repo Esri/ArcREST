@@ -1,4 +1,5 @@
-from arcresthelper._abstract import abstract
+
+from securityhandlerhelper import securityhandlerhelper
 import re as re
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
@@ -41,12 +42,12 @@ def trace():
     return line, filename, synerror
 
 
-class publishingtools(abstract.baseToolsClass):
+class publishingtools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def publishMap(self,maps_info,fsInfo=None):
         itemInfo = None
-        itemID = None
+        itemId = None
         map_results = None
         replaceInfo = None
         replaceItem = None
@@ -81,8 +82,8 @@ class publishingtools(abstract.baseToolsClass):
                                     elif replaceItem.has_key('ItemID'):
                                         if replaceItem.has_key('ItemFolder') == False:
 
-                                            itemID = replaceItem['ItemID']
-                                            itemInfo = admin.content.item(itemId=itemID)
+                                            itemId = replaceItem['ItemID']
+                                            itemInfo = admin.content.item(itemId=itemId)
                                             if 'owner' in itemInfo:
                                                 if itemInfo['owner'] == self._securityHandler.username and 'ownerFolder' in itemInfo:
                                                     replaceItem['ItemFolder'] = itemInfo['ownerFolder']
@@ -131,14 +132,14 @@ class publishingtools(abstract.baseToolsClass):
 
         finally:
             itemInfo = None
-            itemID = None
+            itemId = None
             replaceInfo = None
             replaceItem = None
             map_info = None
             admin = None
 
             del itemInfo
-            del itemID
+            del itemId
             del replaceInfo
             del replaceItem
             del map_info
@@ -185,7 +186,7 @@ class publishingtools(abstract.baseToolsClass):
         folderId = None
         res = None
         folderContent = None
-        itemID = None
+        itemId = None
         group_ids = None
         shareResults = None
         updateParams = None
@@ -593,10 +594,10 @@ class publishingtools(abstract.baseToolsClass):
 
             folderContent = admin.content.getUserContent(folderId=folderId)
 
-            itemID = admin.content.getItemID(title=name,itemType='Web Map',userContent=folderContent)
+            itemId = admin.content.getItemID(title=name,itemType='Web Map',userContent=folderContent)
 
-            if not itemID is None:
-                resultMap['Results'] = adminusercontent.updateItem(itemId=itemID,
+            if not itemId is None:
+                resultMap['Results'] = adminusercontent.updateItem(itemId=itemId,
                                             updateItemParameters=itemParams,
                                             folderId=folderId,
                                             text=json.dumps(webmap_data))
@@ -690,7 +691,7 @@ class publishingtools(abstract.baseToolsClass):
             folderId = None
             res = None
             folderContent = None
-            itemID = None
+            itemId = None
             group_ids = None
             shareResults = None
             updateParams = None
@@ -733,7 +734,7 @@ class publishingtools(abstract.baseToolsClass):
             del folderId
             del res
             del folderContent
-            del itemID
+            del itemId
             del group_ids
             del shareResults
             del updateParams
@@ -951,7 +952,7 @@ class publishingtools(abstract.baseToolsClass):
         folderId = None
         res = None
         folderContent = None
-        itemID = None
+        itemId = None
         resultSD = None
         publishParameters = None
         resultFS = None
@@ -1030,7 +1031,7 @@ class publishingtools(abstract.baseToolsClass):
             if sd_Info is None:
                 return
 
-            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
+            admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
 
 
             itemParams = arcrest.manageorg.ItemParameter()
@@ -1039,30 +1040,23 @@ class publishingtools(abstract.baseToolsClass):
             itemParams.type = "Service Definition"
             itemParams.overwrite = True
 
-            adminusercontent = admin.content.usercontent()
+            content = admin.content
+            adminusercontent = content.usercontent()
             userCommunity = admin.community
-            userContent = admin.content.getUserContent()
+            userContent = content.getUserContent()
 
-            folderId = admin.content.getFolderID(name=folderName,userContent=userContent)
+            folderId = content.getFolderID(name=folderName,userContent=userContent)
             if folderId is None:
                 res = adminusercontent.createFolder(name=folderName)
                 if 'success' in res:
                     folderId = res['folder']['id']
                 else:
                     pass
+            folderContent = content.getUserContent(folderId=folderId)
 
-            #q = "title:\""+ service_name + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Service Definition" + "\""
-
-            #items = admin.query(q=q, bbox=None, start=1, num=10, sortField=None,
-                       #sortOrder="asc")
-
-            #if items['total'] >= 1:
-                #pass
-            folderContent = admin.content.getUserContent(folderId=folderId)
-
-            itemID = admin.content.getItemID(title=service_name,itemType='Service Definition',userContent=folderContent)
-            if not itemID is None:
-                resultSD = adminusercontent.updateItem(itemId=itemID,
+            itemId = content.getItemID(title=service_name,itemType='Service Definition',userContent=folderContent)
+            if not itemId is None:
+                resultSD = adminusercontent.updateItem(itemId=itemId,
                                             updateItemParameters=itemParams,
                                             folderId=folderId,
                                             filePath=sd_Info['servicedef'])
@@ -1084,10 +1078,7 @@ class publishingtools(abstract.baseToolsClass):
 
             if not 'error' in resultSD:
                 publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=sd_Info['tags'],overwrite='true')
-                #itemID = admin.content.getItemID(title=service_name,itemType='Feature Service',userContent=folderContent)
-                #if not itemID is None:
-                    #delres=adminusercontent.deleteItems(items=itemID)
-
+             
                 resultFS = adminusercontent.publishItem(
                     fileType="serviceDefinition",
                     itemId=resultSD['id'],
@@ -1097,61 +1088,70 @@ class publishingtools(abstract.baseToolsClass):
                     if len(resultFS['services']) > 0:
 
                         if 'error' in resultFS['services'][0]:
-                            print "Overwrite failed, attempting to delete, then recreate"
-                            if  self._securityHandler is None or self._securityHandler.username is None:
-                                q = "title:\""+ service_name + "\" AND type:\"" + "Feature Service" + "\""
-                            else:
-                                q = "title:\""+ service_name + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
-                            items = admin.query(q=q, bbox=None, start=1, num=10, sortField=None,
-                                       sortOrder="asc")
+                            print "Overwrite failed"
+                            
+                            sea = arcrest.find.search(securityHandler=self._securityHandler)
+                            items = sea.findItem(title =service_name, itemType='Feature Service')
+                          
                             if items['total'] >= 1:
-                                itemID = items['results'][0]['id']
+                                itemId = items['results'][0]['id']
 
                             else:
-                                if self._securityHandler is None or self._securityHandler.username is None:
-                                    q = "title:\""+ service_name_safe + "\" AND type:\"" + "Feature Service" + "\""
-                                else:
-                                    q = "title:\""+ service_name_safe + "\"AND owner:\"" + self._securityHandler.username + "\" AND type:\"" + "Feature Service" + "\""
-                                items = admin.query(q=q, bbox=None, start=1, num=10, sortField=None,
-                                                                      sortOrder="asc")
-                                if items['total'] >= 1:
-                                    itemID = items['results'][0]['id']
-                                #itemID = admin.content.getItemID(title=service_name,itemType='Feature Service',userContent=folderContent)
-                                #if  itemID is None:
-                                    #itemID = admin.content.getItemID(title=service_name_safe,itemType='Feature Service',userContent=folderContent)
+                            
+                                sea = arcrest.find.search(securityHandler=self._securityHandler)
+                                items = sea.findItem(title =service_name_safe, itemType='Feature Service')
 
-                            if not itemID is None:
+                                if items['total'] >= 1:
+                                    itemId = items['results'][0]['id']
+                                
+                            if not itemId is None:
                                 item = admin.content.item(itemId=itemId)
-                               
-                                adminFS = AdminFeatureService(url=item.url, securityHandler=self._securityHandler)
-        
-                                cap = str(adminFS.capabilities)
-                                existingDef = {}
-                            
+                                if item.url is None:
+                                    username = self._securityHandler.username
+                                    
+                                    item = content.getItem(itemId=itemId,
+                                                    username=username, 
+                                                   folderId=item.ownerFolder)
+                                      
+                                if item.url is not None:
+                                    adminFS = AdminFeatureService(url=item.url, securityHandler=self._securityHandler)
             
-                                if 'Sync' in cap:
-                                    capItems = cap.split(',')
-                                    if 'Sync' in capItems:
-                                        capItems.remove('Sync')
-                        
-                                    existingDef['capabilities'] = ','.join(capItems)
-                                    enableResults = adminFS.updateDefinition(json_dict=existingDef)
+                                    cap = str(adminFS.capabilities)
+                                    existingDef = {}
+                                
+                                    if 'Sync' in cap:
+                                        print "Disabling Sync"
+                                        capItems = cap.split(',')
+                                        if 'Sync' in capItems:
+                                            capItems.remove('Sync')
                             
-                                    if 'error' in enableResults:
-                                        delres=adminusercontent.deleteItems(items=itemID)
+                                        existingDef['capabilities'] = ','.join(capItems)
+                                        enableResults = adminFS.updateDefinition(json_dict=existingDef)
+                                
+                                        if 'error' in enableResults:
+                                            delres=adminusercontent.deleteItems(items=itemId)
+                                            if 'error' in delres:
+                                                print delres
+                                                return delres
+                                            print "Delete successful"    
+                                        else:
+                                            print "Sync Disabled"
+                                    else:
+                                        print "Attempting to delete"
+                                        delres=adminusercontent.deleteItems(items=itemId)
                                         if 'error' in delres:
                                             print delres
                                             return delres
-                                        print "Delete successful"      
+                                        print "Delete successful"                                    
+                                    adminFS = None
+                                    del adminFS                                  
                                 else:
-                                    delres=adminusercontent.deleteItems(items=itemID)
+                                    print "Attempting to delete"
+                                    delres=adminusercontent.deleteItems(items=itemId)
                                     if 'error' in delres:
                                         print delres
                                         return delres
-                                    print "Delete successful"                                    
-                                adminFS = None
-                                del adminFS                                  
-                               
+                                    print "Delete successful"                                
                             else:
                                 print "Item cannot be found"
 
@@ -1161,7 +1161,19 @@ class publishingtools(abstract.baseToolsClass):
                                            publishParameters=publishParameters)
 
                         if 'error' in resultFS:
-                            return resultFS
+                            delres=adminusercontent.deleteItems(items=itemId)  
+                            if 'error' in delres:
+                                print delres
+                                return delres
+                            
+                            print "Delete successful"      
+                            resultFS = adminusercontent.publishItem(
+                                fileType="serviceDefinition",
+                                itemId=resultSD['id'],
+                                publishParameters=publishParameters)
+                        if 'error' in resultFS['services'][0]:
+                            print resultFS['services'][0]['error']
+                            return resultFS['services'][0]['error']                            
                         #if 'services' in resultFS:
                             #if resultFS['services']['success']     == 'false':
                                 #return
@@ -1328,7 +1340,7 @@ class publishingtools(abstract.baseToolsClass):
             folderId = None
             res = None
             folderContent = None
-            itemID = None
+            itemId = None
             resultSD = None
             publishParameters = None
             resultFS = None
@@ -1373,7 +1385,7 @@ class publishingtools(abstract.baseToolsClass):
             del folderId
             del res
             del folderContent
-            del itemID
+            del itemId
             del resultSD
             del publishParameters
             del resultFS
@@ -1431,6 +1443,7 @@ class publishingtools(abstract.baseToolsClass):
                                     itemId = replaceItem['ItemID']
                                     itemInfo = admin.content.item(itemId=itemId)
                                     if 'owner' in itemInfo:
+                                        
                                         if itemInfo['owner'] == self._securityHandler.username and 'ownerFolder' in itemInfo:
                                             replaceItem['ItemFolder'] = itemInfo['ownerFolder']
                                         else:
@@ -1565,7 +1578,7 @@ class publishingtools(abstract.baseToolsClass):
         res = None
         folderId = None
         folderContent = None
-        itemID = None
+        itemId = None
         group_ids = None
         shareResults = None
         updateParams = None
@@ -1666,9 +1679,9 @@ class publishingtools(abstract.baseToolsClass):
             if 'folderId' in itemData:
                 itemData['folderId'] = folderId
 
-            itemID = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
-            if not itemID is None:
-                resultApp['Results'] = adminusercontent.updateItem(itemId=itemID,
+            itemId = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
+            if not itemId is None:
+                resultApp['Results'] = adminusercontent.updateItem(itemId=itemId,
                                             updateItemParameters=itemParams,
                                             folderId=folderId,
                                             text=json.dumps(itemData))
@@ -1761,7 +1774,7 @@ class publishingtools(abstract.baseToolsClass):
             res = None
             folderId = None
             folderContent = None
-            itemID = None
+            itemId = None
             group_ids = None
             shareResults = None
             updateParams = None
@@ -1797,7 +1810,7 @@ class publishingtools(abstract.baseToolsClass):
             del res
             del folderId
             del folderContent
-            del itemID
+            del itemId
             del group_ids
             del shareResults
             del updateParams
@@ -1849,7 +1862,7 @@ class publishingtools(abstract.baseToolsClass):
         folderId = None
         res = None
         folderContent = None
-        itemID = None
+        itemId = None
         group_ids = None
         shareResults = None
         updateParams = None
@@ -2025,9 +2038,9 @@ class publishingtools(abstract.baseToolsClass):
 
             folderContent = admin.content.getUserContent(folderId=folderId)
 
-            itemID = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
-            if not itemID is None:
-                resultApp['Results'] = adminusercontent.updateItem(itemId=itemID,
+            itemId = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
+            if not itemId is None:
+                resultApp['Results'] = adminusercontent.updateItem(itemId=itemId,
                                             updateItemParameters=itemParams,
                                             folderId=folderId,
                                             text=json.dumps(itemData))
@@ -2122,7 +2135,7 @@ class publishingtools(abstract.baseToolsClass):
             folderId = None
             res = None
             folderContent = None
-            itemID = None
+            itemId = None
             group_ids = None
             shareResults = None
             updateParams = None
@@ -2171,7 +2184,7 @@ class publishingtools(abstract.baseToolsClass):
             del folderId
             del res
             del folderContent
-            del itemID
+            del itemId
             del group_ids
             del shareResults
             del updateParams

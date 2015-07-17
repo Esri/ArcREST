@@ -82,9 +82,6 @@ def publishfromconfig(configFiles,globalLoginInfo,combinedApp=None,log_file=None
         if cred_info is None:
             print "Credentials not found"
             cred_info = {}
-            cred_info['Username'] = ''
-            cred_info['Password'] = ''
-            cred_info['Orgurl'] = 'http://www.arcgis.com'
         print "-----Portal Credentials complete-----"
 
 
@@ -128,10 +125,7 @@ def publishfromconfig(configFiles,globalLoginInfo,combinedApp=None,log_file=None
                         print "Processing publishing in config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))
 
 
-                        publishTools = publishingtools.publishingtools(username = cred_info['Username'], password=cred_info['Password'],org_url=cred_info['Orgurl'],
-                                                              token_url=None,
-                                                              proxy_url=None,
-                                                              proxy_port=None)
+                        publishTools = publishingtools.publishingtools(securityinfo=cred_info)
                         if publishTools.valid == False :
                             print "Error creating publishing tools: %s" % publishTools.message
                         else:

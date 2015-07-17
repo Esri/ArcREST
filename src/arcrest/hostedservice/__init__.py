@@ -1,2 +1,2 @@
 from service import *
-__version__ = "2.0.101"
+__version__ = "3.0.0"

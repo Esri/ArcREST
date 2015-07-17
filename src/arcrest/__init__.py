@@ -11,4 +11,4 @@ import hostedservice
 #import webmap
 from geometryservice import *
 from enrichment import GeoEnrichment
-__version__ = "2.0.120a"
+__version__ = "3.0.0"

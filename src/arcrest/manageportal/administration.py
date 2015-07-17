@@ -29,8 +29,8 @@ class _log(BaseAGOLClass):
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
-        if url.lower().endswith("/logs") == False:
-            url = url + "/logs"
+        if url.lower().endswith("/log") == False:
+            url = url + "/log"
         self._url = url
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
@@ -43,9 +43,8 @@ class _log(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
@@ -85,9 +84,9 @@ class _log(BaseAGOLClass):
         url = self._url + "/settings"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_get(url=url, param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -106,13 +105,13 @@ class _log(BaseAGOLClass):
         url = self._url + "/settings/edit"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "logDir" : logLocation,
             "logLevel" : logLevel,
             "maxLogFileAge" : maxLogFileAge
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -143,7 +142,6 @@ class _log(BaseAGOLClass):
             filter_value['source'] = [source]
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "level" : logLevel
 
         }
@@ -166,6 +164,7 @@ class _log(BaseAGOLClass):
         params['filter'] = filter_value
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -173,11 +172,11 @@ class _log(BaseAGOLClass):
         """erases all the log data"""
         url = self._url + "/clean"
         params = {
-            "f":"json",
-            "token":self._securityHandler.token
+            "f":"json"
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
 ########################################################################
@@ -219,9 +218,8 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
@@ -277,7 +275,6 @@ class _Security(BaseAGOLClass):
         url = self._url + "/users/create"
         params = {
             "f" : "json",
-            "token": self._securityHandler.token,
             "username" : username,
             "password" : password,
             "fullname" : fullname,
@@ -288,6 +285,7 @@ class _Security(BaseAGOLClass):
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -324,11 +322,11 @@ class _Security(BaseAGOLClass):
         url = self._url + "/config/update"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "enableAutomaticAccountCreation": enableAutomaticAccountCreation,
             "disableServicesDirectory" : disableServicesDirectory
         }
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -389,7 +387,6 @@ class _Security(BaseAGOLClass):
         url = self._url + "/config/updateIdentityStore"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "userPassword" : userPassword,
             "isPasswordEncrypted" : isPasswordEncrypted,
             "user" : user,
@@ -400,6 +397,7 @@ class _Security(BaseAGOLClass):
             "caseSensitive" : caseSensitive
         }
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -415,10 +413,10 @@ class _Security(BaseAGOLClass):
         url = self._url + "/tokens/update"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "tokenConfig" : {"sharedKey" : sharedKey}
         }
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -431,11 +429,11 @@ class _Security(BaseAGOLClass):
         """
         url = self._url + "/tokens"
         params = {
-            "f" : "json",
-            "token": self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -454,10 +452,10 @@ class _Security(BaseAGOLClass):
         url = self._url + "/config"
         params = {
             "f" : "json",
-            "token": self._securityHandler.token
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -466,11 +464,11 @@ class _Security(BaseAGOLClass):
         """ returns the number of registered users on site """
         url = self._url + "/users"
         params = {
-            "f" : "json",
-            "token": self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
 ########################################################################
@@ -492,12 +490,7 @@ class _System(BaseAGOLClass):
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
-        if securityHandler is None:
-            pass
-        elif isinstance(securityHandler, AGOLTokenSecurityHandler) or \
-               isinstance(securityHandler, PortalTokenSecurityHandler) or \
-                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
-               isinstance(securityHandler, OAuthSecurityHandler):
+        if securityHandler is not None:
             self._securityHandler = securityHandler
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
@@ -514,11 +507,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/webadaptors"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -548,11 +541,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/webadaptors/%s" % webAdaptorID
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
 
@@ -571,11 +564,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/webadaptors/%s/unregister" % webAdaptorID
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -591,12 +584,12 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/webadaptors/config/update"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "webAdaptorsConfig" : webAdaptorsConfig
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -613,11 +606,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/webadaptors/config"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -648,11 +641,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/directories"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -673,11 +666,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/directories/%s" % directoryName
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -697,13 +690,13 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/directories/%s/edit" % directoryName
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "physicalPath": physicalPath,
             "description" : description
         }
         return self._do_post(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -720,11 +713,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/database"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -745,13 +738,13 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/database/updateAdminAccount"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "username" : username,
             "password" : password
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -765,11 +758,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/indexer"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -786,11 +779,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/indexer/status"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -813,13 +806,13 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/indexer/reindex"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "mode" : mode,
             "includes" : includes
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -841,13 +834,13 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/indexer/update"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json",
             "indexerHost": indexerHost,
             "indexerPort": indexerPort
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
@@ -859,11 +852,11 @@ class _System(BaseAGOLClass):
         """
         url = self._url + "/licenses"
         params = {
-            "token" : self._securityHandler.token,
             "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
 
@@ -893,12 +886,9 @@ class PortalAdministration(BaseAGOLClass):
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
-        if securityHandler is None:
-            pass
-        elif isinstance(securityHandler, PortalTokenSecurityHandler) or \
-                isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
-               isinstance(securityHandler, OAuthSecurityHandler):
+        if securityHandler is not None:
             self._securityHandler = securityHandler
+            self._referer_url = securityHandler.referer_url
 
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
@@ -911,9 +901,9 @@ class PortalAdministration(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
+
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
@@ -986,7 +976,6 @@ class PortalAdministration(BaseAGOLClass):
         url = self._url + "/createNewSite"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "username" : username,
             "password" : password,
             "fullname" : fullname,
@@ -997,6 +986,7 @@ class PortalAdministration(BaseAGOLClass):
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------

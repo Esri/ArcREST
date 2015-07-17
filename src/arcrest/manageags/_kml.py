@@ -1,6 +1,5 @@
 import json
 from .._abstract.abstract import BaseAGSServer
-from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 
 ########################################################################
 class KML(BaseAGSServer):
@@ -32,13 +31,9 @@ class KML(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
@@ -63,12 +58,8 @@ class KML(BaseAGSServer):
             "f" : "json",
             "kml" : kmz_as_json
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         return self._do_post(url=kmlURL, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------

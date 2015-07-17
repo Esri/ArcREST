@@ -1,7 +1,5 @@
 from .._abstract.abstract import BaseAGSServer
 import os
-from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
-
 ########################################################################
 class Uploads(BaseAGSServer):
     """
@@ -38,14 +36,10 @@ class Uploads(BaseAGSServer):
         params = {
             "f" :"json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         return self._do_get(url=self._url,
                             param_dict=params,
                             header={},
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
 
@@ -60,12 +54,8 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -87,12 +77,8 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         return self._do_get(url=url, param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -103,11 +89,6 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token              
         files = []
         files.append(('itemFile', filePath, os.path.basename(filePath)))
         parsed = urlparse.urlparse(url)
@@ -116,7 +97,7 @@ class Uploads(BaseAGSServer):
                                        files = files,
                                        fields=params,
                                        port=parsed.port,
+                                       securityHandler=self._securityHandler,
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
-

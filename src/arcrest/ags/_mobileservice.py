@@ -48,6 +48,8 @@ class MobileServiceLayer(BaseAGSServer):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if self._securityHandler is not None:
+            self._referer_url = self._securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -58,9 +60,8 @@ class MobileServiceLayer(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json_dict = json_dict
@@ -299,6 +300,8 @@ class MobileService(BaseAGSServer):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if self._securityHandler is not None:
+            self._referer_url = self._securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -309,9 +312,8 @@ class MobileService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json_dict = json_dict
@@ -351,7 +353,7 @@ class MobileService(BaseAGSServer):
                                                securityHandler=self._securityHandler,
                                                proxy_url=self._proxy_url,
                                                proxy_port=self._proxy_port,
-                                               initialize=True)#TODO change to false
+                                               initialize=False)
         return self._layers
     #----------------------------------------------------------------------
     @property
@@ -409,12 +411,3 @@ class MobileService(BaseAGSServer):
         if self._serviceDescription is None:
             self.__init()
         return self._serviceDescription
-
-
-
-
-
-
-
-
-

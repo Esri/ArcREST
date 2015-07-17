@@ -1,8 +1,6 @@
 from .._abstract.abstract import BaseAGSServer
 import json
 from parameters import ClusterProtocol
-from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
-
 ########################################################################
 class Clusters(BaseAGSServer):
     """
@@ -43,13 +41,9 @@ class Clusters(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json = json.dumps(json_dict)
@@ -60,7 +54,7 @@ class Clusters(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented."
+                print k, " - attribute not implemented in Clusters."
             del k
             del v
     #----------------------------------------------------------------------
@@ -96,13 +90,9 @@ class Clusters(BaseAGSServer):
             "machineNames" : machineNames,
             "tcpClusterPort" : tcpClusterPort
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -117,13 +107,9 @@ class Clusters(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
 ########################################################################
@@ -166,15 +152,12 @@ class Cluster(BaseAGSServer):
     def __init(self):
         """ populates server admin information """
         params = {
-            "f" : "json"
+            "f" : "json",
+            "token" : self._securityHandler.token
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json = json.dumps(json_dict)
@@ -185,7 +168,7 @@ class Cluster(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented."
+                print k, " - attribute not implemented in Clusters."
             del k
             del v
     #----------------------------------------------------------------------
@@ -254,14 +237,10 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         url = self._url + "/start"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -275,14 +254,10 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         url = self._url + "/stop"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -296,14 +271,10 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         url = self._url + "/delete"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -318,14 +289,10 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         url = self._url + "/services"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -342,13 +309,9 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -368,13 +331,9 @@ class Cluster(BaseAGSServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -393,13 +352,9 @@ class Cluster(BaseAGSServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -416,13 +371,8 @@ class Cluster(BaseAGSServer):
             "f" : "json",
             "clusterProtocol" : str(clusterProtocolObj)
         }
-        if self._securityHandler is not None:
-            if isinstance(self._securityHandler , PortalTokenSecurityHandler):
-                params['token'] = self._securityHandler.servertoken(serverURL=self._url,referer=self._url)
-            else:
-                params['token'] = self._securityHandler.token           
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-

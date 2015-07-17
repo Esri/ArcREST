@@ -69,7 +69,6 @@ class GPService(BaseAGSServer):
         self._url = url
         if securityHandler is not None:
             self._securityHandler = securityHandler
-        if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
@@ -81,9 +80,8 @@ class GPService(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(url=self._url, param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json_dict = json_dict
@@ -187,26 +185,18 @@ class GPTask(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(url=self._url, param_dict=params,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
         for k,v in json_dict.iteritems():
-            #if k == "parameters":
-                #self._parameters = []
-                #for param in v:
-                    #self._parameters.append(
-                        #GPInputParameterInfo(param, True)
-                    #)
-                    #del param
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented."
+                print k, " - attribute not implemented in GPTask."
 
     #----------------------------------------------------------------------
     @property
@@ -317,14 +307,13 @@ class GPTask(BaseAGSServer):
             params['end:processSR'] = processSR
         params['returnZ'] = returnZ
         params['returnM'] = returnM
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         if not inputs is None:
             for p in inputs:
                 if isinstance(p, BaseGPObject):
                     params[p.paramName] = p.value
         if method.lower() == "get":
             res = self._do_get(url=url, param_dict=params,
+                               securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
             jobUrl = self._url + "/jobs/%s" % res['jobId']
@@ -335,6 +324,7 @@ class GPTask(BaseAGSServer):
                           initialize=True)
         elif method.lower() == "post":
             res = self._do_post(url=url, param_dict=params,
+                                securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
             jobUrl = self._url + "/jobs/%s" % res['jobId']
@@ -357,12 +347,11 @@ class GPTask(BaseAGSServer):
                     method="POST"
                     ):
         """
+        performs the execute task method
         """
         params = {
             "f" : f
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         url = self._url + "/execute"
         params = { "f" : "json" }
         if not outSR is None:
@@ -371,8 +360,6 @@ class GPTask(BaseAGSServer):
             params['end:processSR'] = processSR
         params['returnZ'] = returnZ
         params['returnM'] = returnM
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         for p in inputs:
             if isinstance(p, BaseGPObject):
                 params[p.paramName] = p.value
@@ -380,11 +367,13 @@ class GPTask(BaseAGSServer):
         if method.lower() == "post":
             return self._do_post(url=url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         else:
             return self._do_get(url=url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
 ########################################################################
@@ -409,7 +398,6 @@ class GPJob(BaseAGSServer):
         self._url = url
         if securityHandler is not None:
             self._securityHandler = securityHandler
-        if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
@@ -423,12 +411,9 @@ class GPJob(BaseAGSServer):
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes all the properties """
-        params = {
-            "f" : "json"
-        }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
+        params = {"f" : "json"}
         json_dict = self._do_get(url=self._url, param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json = json.dumps(json_dict)
@@ -446,10 +431,9 @@ class GPJob(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         return self._do_get(url=self._url + "/cancel",
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -468,10 +452,9 @@ class GPJob(BaseAGSServer):
             "f" : "json",
 
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self.proxy_port)
     #----------------------------------------------------------------------

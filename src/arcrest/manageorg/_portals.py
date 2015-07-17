@@ -11,7 +11,6 @@ class PortalSelf(BaseAGOLClass):
     """
     represents the basic portal information from the portalSelf()
     """
-    _json = None
     _url = None
     _securityHandler = None
     _proxy_url = None
@@ -88,6 +87,22 @@ class PortalSelf(BaseAGOLClass):
     _portalMode = None
     _json_dict = None
     _json = None
+
+    _platform = None
+    _disableSignup = None
+    _portalLocalHttpPort = None
+    _isWindows = None
+    _samlEnabled = None
+    _portalLocalHttpsPort = None
+    _hostedServerHostedFolder = None
+    _portalLocalHostname = None
+    _supportsSceneServices = None
+
+    _metadataEditable = None
+    _backgroundImage = None
+    _metadataFormats = None
+    _livingAtlasGroupQuery = None
+
     #----------------------------------------------------------------------
     def __init__(self, culture,
                  region,
@@ -111,8 +126,7 @@ class PortalSelf(BaseAGOLClass):
     def __init(self):
         """ populates the object information """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         if not self._culture is None:
             params['culture'] = self._culture
@@ -121,8 +135,10 @@ class PortalSelf(BaseAGOLClass):
 
         json_dict = self._do_get(url=self._url,
                                  param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
+        self._json_dict = json_dict
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
@@ -131,7 +147,7 @@ class PortalSelf(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented."
+                print k, " - attribute not implemented in Portals."
             del k
             del v
     #----------------------------------------------------------------------
@@ -153,6 +169,62 @@ class PortalSelf(BaseAGOLClass):
         if self._json_dict is not None:
             return json.dumps(self._json_dict)
         return "{}"
+    #----------------------------------------------------------------------
+    @property
+    def platform(self):
+        """gets the platform info"""
+        if self._platform is None:
+            self.__init()
+        return self._platform
+    #----------------------------------------------------------------------
+    @property
+    def disableSignup(self):
+        """returns the disableSignup value"""
+        if self._disableSignup is None:
+            self.__init()
+        return self._disableSignup
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHttpPort(self):
+        """gets the portalLocalHttpPort value"""
+        if self._portalLocalHttpPort is None:
+            self.__init()
+        return self._portalLocalHttpPort
+    #----------------------------------------------------------------------
+    @property
+    def isWindows(self):
+        """determines if the OS is windows or not"""
+        if self._isWindows is None:
+            self.__init()
+        return self._isWindows
+    #----------------------------------------------------------------------
+    @property
+    def samlEnabled(self):
+        """boolean values determines if saml is used on services"""
+        if self._samlEnabled is None:
+            self.__init()
+        return self._samlEnabled
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHttpsPort(self):
+        """gets the portalLocalHttpsPort value"""
+        if self._portalLocalHttpsPort is None:
+            self.__init()
+        return self._portalLocalHttpsPort
+    #----------------------------------------------------------------------
+    @property
+    def hostedServerHostedFolder(self):
+        """returns the folder containing the hosted folder"""
+        if self._hostedServerHostedFolder is None:
+            self.__init()
+        return self._hostedServerHostedFolder
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHostname(self):
+        """returns the portal local hostname"""
+        if self._portalLocalHostname is None:
+            self.__init()
+        return self._portalLocalHostname
     #----------------------------------------------------------------------
     @property
     def featuredGroups(self):
@@ -620,6 +692,50 @@ class PortalSelf(BaseAGOLClass):
         if self._portalMode is None:
             self.__init()
         return self._portalMode
+    #----------------------------------------------------------------------
+    @property
+    def supportsSceneServices(self):
+        """returns the portal's mode"""
+        if self._supportsSceneServices is None:
+            self.__init()
+        return self._supportsSceneServices
+
+
+
+
+    #----------------------------------------------------------------------
+    @property
+    def metadataEditable(self):
+        """returns the metadataEditable"""
+        if self._metadataEditable is None:
+            self.__init()
+        return self._metadataEditable
+
+    #----------------------------------------------------------------------
+    @property
+    def backgroundImage(self):
+        """returns the backgroundImage"""
+        if self._backgroundImage is None:
+            self.__init()
+        return self._backgroundImage
+
+    #----------------------------------------------------------------------
+    @property
+    def metadataFormats(self):
+        """returns the metadataFormats"""
+        if self._metadataFormats is None:
+            self.__init()
+        return self._metadataFormats
+
+    #----------------------------------------------------------------------
+    @property
+    def livingAtlasGroupQuery(self):
+        """returns the livingAtlasGroupQuery"""
+        if self._livingAtlasGroupQuery is None:
+            self.__init()
+        return self._livingAtlasGroupQuery
+
+
 ########################################################################
 class UserInvite(object):
     """
@@ -750,6 +866,8 @@ class Portals(BaseAGOLClass):
     _proxy_port = None
     _proxy_url = None
     _portalId = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -775,15 +893,40 @@ class Portals(BaseAGOLClass):
             self._portalId = portalId
             self._url = url + "/%s" % portalId
             self._referer_url = securityHandler.referer_url
+
+    def __init(self):
+        params = {
+            "f" : "json"
+        }
+        json_dict = self._do_get(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(json_dict)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """class iterator"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield (k,v)
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
         url = self._baseURL + "/self"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         res = self._do_get(url=url, param_dict=params,
+                           securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
         if res.has_key('id'):
@@ -806,9 +949,9 @@ class Portals(BaseAGOLClass):
         url = self._baseURL + "/%s/urls" % self._portalId
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_get(url=url, param_dict=params, proxy_url=self._proxy_url,
+                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
@@ -882,12 +1025,12 @@ class Portals(BaseAGOLClass):
         url = self._url + "/isServiceNameAvailable"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "name" : name,
             "type" : serviceType
         }
         return self._do_get(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -903,7 +1046,6 @@ class Portals(BaseAGOLClass):
         url = self._baseURL + "/self/invite"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "html" : html,
             "subject" : subject
         }
@@ -913,6 +1055,7 @@ class Portals(BaseAGOLClass):
              isinstance(invitationList[0], UserInvite):
             params['invitationList'] = {"invitations":[iL.value for iL in invitationList]}
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -921,12 +1064,12 @@ class Portals(BaseAGOLClass):
         """ list of available languages """
         url = self._url + "/languages"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token,
+            "f" : "json"
 
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -939,11 +1082,11 @@ class Portals(BaseAGOLClass):
         """
         url = self._url
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -985,11 +1128,11 @@ class Portals(BaseAGOLClass):
         """
         url = self._url + "/regions"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1037,7 +1180,6 @@ class Portals(BaseAGOLClass):
         url = self._url + "/register"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "url" : url,
             "adminUrl" : adminUrl,
             "isHosted" : isHosted,
@@ -1046,6 +1188,7 @@ class Portals(BaseAGOLClass):
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1060,11 +1203,11 @@ class Portals(BaseAGOLClass):
         url = self._url + "/removeresource"
         params = {
             "key" : key,
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1080,10 +1223,10 @@ class Portals(BaseAGOLClass):
         url = self._url + "/removeusers"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "users" : users
         }
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1102,12 +1245,12 @@ class Portals(BaseAGOLClass):
         url = self._url + "/resources"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "start" : start,
             "num" : num
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1121,10 +1264,10 @@ class Portals(BaseAGOLClass):
         url = self._url + "/servers/%s" % serverId
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1137,11 +1280,11 @@ class Portals(BaseAGOLClass):
         """
         url = self._url + "/servers"
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1159,11 +1302,11 @@ class Portals(BaseAGOLClass):
         """
         url = self._url + "/servers/%s/unregister" % serverId
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_post(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1182,7 +1325,6 @@ class Portals(BaseAGOLClass):
         url = self._url + "/update"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "clearEmptyFields" : clearEmptyFields
         }
         if isinstance(updatePortalParameters, parameters.PortalParameters):
@@ -1191,6 +1333,7 @@ class Portals(BaseAGOLClass):
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1232,6 +1375,7 @@ class Portals(BaseAGOLClass):
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1260,12 +1404,12 @@ class Portals(BaseAGOLClass):
         url = self._url + "/updateuserrole"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "user" : user,
             "role" : role
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1298,7 +1442,6 @@ class Portals(BaseAGOLClass):
         url = self._url + "/users"
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "start" : start,
             "num" : num
         }
@@ -1310,6 +1453,7 @@ class Portals(BaseAGOLClass):
             params['sortOrder'] = sortOrder
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1329,10 +1473,9 @@ class Portals(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1348,12 +1491,9 @@ class Portals(BaseAGOLClass):
         """
         url = self._url + "/usage"
         startTime = int(local_time_to_online(dt=startTime)/ 1000)
-        print startTime
-        print "1429660800000"
         endTime = int(local_time_to_online(dt=endTime) /1000)
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "vars" : vars,
             "startTime" : "%s000" % startTime,
             "endTime" : "%s000" % endTime,
@@ -1363,6 +1503,7 @@ class Portals(BaseAGOLClass):
             params['groupby'] = groupby
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1373,10 +1514,10 @@ class Portals(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
-        url = self._url + "/cost" #% (self.portalId, )
+        url = self._url + "/cost"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

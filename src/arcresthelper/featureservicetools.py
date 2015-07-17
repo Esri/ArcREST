@@ -1,5 +1,5 @@
 
-from _abstract import abstract
+from securityhandlerhelper import securityhandlerhelper
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
@@ -11,6 +11,7 @@ import json
 import os
 import common 
 import gc
+
 #----------------------------------------------------------------------
 def trace():
     """
@@ -29,7 +30,7 @@ def trace():
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
 
-class featureservicetools(abstract.baseToolsClass):
+class featureservicetools(securityhandlerhelper):
   
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):

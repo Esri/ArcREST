@@ -27,7 +27,7 @@ class GeoEnrichment(BaseGeoEnrichment):
     _url_data_collection = "/Geoenrichment/dataCollections"
     #----------------------------------------------------------------------
     def __init__(self,
-                 securityHanlder,
+                 securityHandler,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
@@ -50,6 +50,7 @@ class GeoEnrichment(BaseGeoEnrichment):
     #----------------------------------------------------------------------
     def _readcsv(self, path_to_csv):
         """reads a csv column"""
+        import numpy as np
         return np.genfromtxt(path_to_csv,
                              dtype=None,
                              delimiter=',',
@@ -153,10 +154,10 @@ class GeoEnrichment(BaseGeoEnrichment):
         url = self._base_url + self._url_list_reports + "/%s" % code
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -224,7 +225,6 @@ class GeoEnrichment(BaseGeoEnrichment):
 
         params = {
             "f" : "bin",
-            "token" : self._securityHandler.token,
             "studyAreas" : studyAreas,
             "inSR" : inSR,
         }
@@ -246,6 +246,7 @@ class GeoEnrichment(BaseGeoEnrichment):
                                    save_path=os.path.dirname(out_file_path),
                                    file_name=None,
                                    param_dict=params,
+                                   securityHandler=self._securityHandler,
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -289,8 +290,7 @@ class GeoEnrichment(BaseGeoEnrichment):
         else:
             url = self._base_url + self._url_data_collection + "/%s" % countryName
         params = {
-            "f" : "token",
-            "token" : self._securityHandler.token
+            "f" : "token"
         }
         _addDerivVals = ["percent","index","average","all","*"]
         if addDerivativeVariables in _addDerivVals:
@@ -305,6 +305,7 @@ class GeoEnrichment(BaseGeoEnrichment):
                 params['suppressNullValues'] = "false"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -399,7 +400,6 @@ class GeoEnrichment(BaseGeoEnrichment):
         url = self._base_url + self._url_getVariables
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "sourceCountry" : sourceCountry
         }
         if not searchText is None:
@@ -408,6 +408,7 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['optionalCountryDataset'] = optionalCountryDataset
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -531,8 +532,7 @@ class GeoEnrichment(BaseGeoEnrichment):
         """
         url = self._base_url + self._url_standard_geography_query_execute
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         if not sourceCountry is None:
             params['sourceCountry'] = sourceCountry
@@ -574,5 +574,6 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['featureLimit'] = 1000
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

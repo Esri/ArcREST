@@ -150,7 +150,21 @@ class CreateServiceParameters(BaseParameters):
     _xssPreventionEnabled=None
     _xssPreventionRule=None
     _xssInputRule=None
-    _currentVersion = 10.21
+    _currentVersion = 10.3
+    _enableEditorTracking = False,
+    _enableOwnershipAccessControl = False,
+    _allowOthersToUpdate = True,
+    _allowOthersToDelete = True,
+    _supportsAsync = True,
+    _supportsRegisteringExistingData = True,
+    _supportsSyncDirectionControl = True,
+    _supportsPerLayerSync = True,
+    _supportsPerReplicaSync = True,
+    _supportsRollbackOnFailure = True,  
+    _hasVersionedData = False,
+    _supportsDisconnectedEditing = False,
+    _size =49152,
+    _syncEnabled =True    
     #----------------------------------------------------------------------
     def __init__(self,
                  name,
@@ -167,7 +181,22 @@ class CreateServiceParameters(BaseParameters):
                  units="esriDecimalDegrees",
                  xssPreventionEnabled=False,
                  xssPreventionRule="InputOnly",
-                 xssInputRule="sanitizeInvalid"
+                 xssInputRule="sanitizeInvalid",
+                 currentVersion="10.3",
+                 enableEditorTracking = False,
+                 enableOwnershipAccessControl = False,
+                 allowOthersToUpdate = True,
+                 allowOthersToDelete = True,
+                 supportsAsync = True,
+                 supportsRegisteringExistingData = True,
+                 supportsSyncDirectionControl = True,
+                 supportsPerLayerSync = True,
+                 supportsPerReplicaSync = True,
+                 supportsRollbackOnFailure = True,  
+                 hasVersionedData = False,
+                 supportsDisconnectedEditing = False,
+                 size =49152,
+                 syncEnabled =True                     
                  ):
         """Constructor"""
         self._name = name
@@ -186,7 +215,7 @@ class CreateServiceParameters(BaseParameters):
             if isinstance(initialExtent, Envelope):
                 self._initialExtent= initialExtent.value
             else:
-                raise AttributeError('spatialReference must be of type geometry.Envelope')
+                raise AttributeError('initialExtent must be of type geometry.Envelope')
         self._allowGeometryUpdates = allowGeometryUpdates
         self._units = units
         self._xssPreventionEnabled =  xssPreventionEnabled
@@ -207,20 +236,20 @@ class CreateServiceParameters(BaseParameters):
             'allowGeometryUpdates' : self._allowGeometryUpdates,
             'capabilities' : self._capabilities,
             "currentVersion" : self._currentVersion,
-            "hasVersionedData" : False,
-            "supportsDisconnectedEditing": False,
-            "size":49152,
-            "syncEnabled":True,
-            "syncCapabilities":{"supportsAsync":True,
-                                "supportsRegisteringExistingData":True,
-                                "supportsSyncDirectionControl":True,
-                                "supportsPerLayerSync":True,
-                                "supportsPerReplicaSync":True,
-                                "supportsRollbackOnFailure":True},
-            "editorTrackingInfo":{"enableEditorTracking":False,
-                                  "enableOwnershipAccessControl":False,
-                                  "allowOthersToUpdate":True,
-                                  "allowOthersToDelete":True},
+            "hasVersionedData" : self._hasStaticData,
+            "supportsDisconnectedEditing": self._supportsDisconnectedEditing,
+            "size":self._size,
+            "syncEnabled":self._syncEnabled,
+            "syncCapabilities":{"supportsAsync":self._supportsAsync,
+                                "supportsRegisteringExistingData":self._supportsRegisteringExistingData,
+                                "supportsSyncDirectionControl":self._supportsSyncDirectionControl,
+                                "supportsPerLayerSync":self._supportsPerLayerSync,
+                                "supportsPerReplicaSync":self._supportsPerReplicaSync,
+                                "supportsRollbackOnFailure":self._supportsRollbackOnFailure},
+            "editorTrackingInfo":{"enableEditorTracking":self._enableEditorTracking,
+                                  "enableOwnershipAccessControl":self._enableOwnershipAccessControl,
+                                  "allowOthersToUpdate":self._allowOthersToUpdate,
+                                  "allowOthersToDelete":self._allowOthersToDelete},
             "tables":[],
             "_ssl":False
 

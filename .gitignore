@@ -229,3 +229,10 @@ source/[Tt]est[Cc]onfigs/
 src/service_monitor
 *.pyc
 error.txt
+/src/arcrest/security/ntlm/HTTPNtlmAuthHandler.py
+/src/arcrest/security/ntlm/U32.py
+/src/arcrest/security/ntlm/__init__.py
+/src/arcrest/security/ntlm/des.py
+/src/arcrest/security/ntlm/des_c.py
+/src/arcrest/security/ntlm/des_data.py
+/src/arcrest/security/ntlm/ntlm.py

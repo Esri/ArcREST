@@ -1,5 +1,5 @@
 
-from _abstract import abstract
+from securityhandlerhelper import securityhandlerhelper
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
@@ -29,7 +29,7 @@ def trace():
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
 
-class orgtools(abstract.baseToolsClass):
+class orgtools(securityhandlerhelper):
  
     #----------------------------------------------------------------------
     def shareItemsToGroup(self,shareToGroupName,items=None,groups=None):

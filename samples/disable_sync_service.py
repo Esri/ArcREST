@@ -37,11 +37,13 @@ def trace():
     return line, filename, synerror
 
 def main():
-    username = "<User Name>"
-    password = "<Password>"
-    url = "<Org or Portal>"
+    securityInfo = {}
+    securityInfo['security_type'] = 'Portal'
+    securityInfo['username'] = "MikeSolutionsDemo"
+    securityInfo['password'] = "double1pa"
+    securityInfo['org_url'] = "http://www.arcgis.com"
    
-    itemCSVFile =  r'Path to CSV File'
+    itemCSVFile =  r'C:\temp\items.csv'
     
     sciptPath = os.getcwd()
     try:
@@ -58,10 +60,7 @@ def main():
             print "csv file %s could not be located" % itemCSVFile
             return
                        
-        fst = featureservicetools.featureservicetools(username = username, password=password,org_url=url,
-                                                  token_url=None, 
-                                                  proxy_url=None, 
-                                                  proxy_port=None)
+        fst = featureservicetools.featureservicetools(securityinfo=securityInfo)
         if fst.valid:
             with open(itemCSVFile, 'rb') as csvfile:
                 
@@ -72,7 +71,9 @@ def main():
                         return
                     itemid = row['itemid']
                     fs = fst.GetFeatureService(itemId=itemid,returnURLOnly=False)
-                    print fst.disableSync(url=fs.url)                
+                    print fst.disableSync(url=fs.url)
+        else:
+            print "Error: %s" % fst.message
                                           
     except:
         line, filename, synerror = trace()

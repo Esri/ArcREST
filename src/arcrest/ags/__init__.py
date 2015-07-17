@@ -9,4 +9,4 @@ from _globeservice import GlobeService, GlobeServiceLayer
 from _mobileservice import MobileService, MobileServiceLayer
 from _geodataservice import GeoDataService
 from _geocodeservice import GeocodeService
-__version__ = "2.0.120"
+__version__ = "3.0.0"

@@ -4,4 +4,4 @@ import geometry
 import filters
 import servicedef
 import find
-__version__ = "2.0.120"
+__version__ = "3.0.0"

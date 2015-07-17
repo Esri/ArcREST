@@ -34,7 +34,7 @@ class Uploads(BaseAGSServer):
             self._url = url + "/uploads"
         self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url  
+            self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -50,9 +50,9 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        return self._do_get(url=url, param_dict=params, proxy_url=self._proxy_url,
+        return self._do_get(url=url, param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def upload(self, filePath, description=None):
@@ -73,10 +73,7 @@ class Uploads(BaseAGSServer):
            description	- An optional description for the uploaded item.
         """
         params = {
-            "f" : "json",
-        }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
+            "f" : "json"}
         if description is not None:
             params['description'] = str(description)
         url = self._url + "/upload"
@@ -88,6 +85,7 @@ class Uploads(BaseAGSServer):
                                        files = files,
                                        fields=params,
                                        port=parsed.port,
+                                       securityHandler=self._securityHandler,
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
@@ -103,9 +101,8 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -122,11 +119,12 @@ class Uploads(BaseAGSServer):
         url = self._url + "/%s/download" % itemID
         params = {
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        url =  url + "?%s" % urllib.urlencode(params)
+        if len(params.keys()):
+            url =  url + "?%s" % urllib.urlencode(params)
         return self._download_file(url=url,
+                                   param_dict=params,
                                    save_path=savePath,
+                                   securityHandler=self._securityHandler,
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -140,9 +138,9 @@ class Uploads(BaseAGSServer):
             "f" : "json",
 
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
-        return self._do_get(url=url, param_dict=params, proxy_url=self._proxy_url,
+        return self._do_get(url=url, param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
 
 

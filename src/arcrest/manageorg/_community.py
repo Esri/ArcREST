@@ -1,7 +1,6 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import urlparse
-import json
 import os
 ########################################################################
 class Community(BaseAGOLClass):
@@ -37,13 +36,13 @@ class Community(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "usernames" : username
         }
         url = self._url + "/checkUsernames"
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
+                             securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
@@ -51,35 +50,35 @@ class Community(BaseAGOLClass):
         """ returns information about the user """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_get(url=self._url + "/self",
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def getUserCommunity(self, username=None):
-            """
+        """
             The user's community are items
 
             Inputs:
                username - name of user to query
-            """
-            if username is None:
-                username = self._securityHandler.username
+        """
+        if username is None:
+            username = self._securityHandler.username
 
-            url = self._url + "/users/%s" % username
+        url = self._url + "/users/%s" % username
 
-            params = {
-                "f" : "json",
-                "token" : self._securityHandler.token
-            }
-            return self._do_get(url=url,
-                                 header=("Accept-Encoding",""),
-                                 param_dict=params,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port,
-                                 compress=False)
+        params = {
+            "f" : "json"
+        }
+        return self._do_get(url=url,
+                             header=("Accept-Encoding",""),
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port,
+                             compress=False)
     #----------------------------------------------------------------------
     def groupSearch(self, q, t=None,
                     start=1, num=10,
@@ -107,8 +106,6 @@ class Community(BaseAGOLClass):
             "num" : num,
             "start" : start
         }
-        if not self._securityHandler is None:
-            params['token'] = self._securityHandler.token
         if not t is None:
             params['t'] = t
         if not sortField is None:
@@ -118,6 +115,7 @@ class Community(BaseAGOLClass):
         url = self._url + "/groups"
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -197,7 +195,6 @@ class Community(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "title" : title,
             "description" : description,
             "snippet" : snippet,
@@ -221,12 +218,14 @@ class Community(BaseAGOLClass):
                                        selector=parsed.path,
                                        fields=params,
                                        files=files,
+                                       securityHandler=self._securityHandler,
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
             return res
         else:
             return self._do_post(url=url, param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -312,11 +311,11 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_post(url=self._url + "/%s/applications/%s/accept" % (groupId,
                                                                              username),
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -340,11 +339,11 @@ class Groups(BaseAGOLClass):
         url = self._url + "/%s/addUsers" % groupID
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "users" : users,
         }
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
 
@@ -357,10 +356,10 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_post(url=self._url + "/%s/delete" % groupID,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     ##----------------------------------------------------------------------
@@ -383,10 +382,10 @@ class Groups(BaseAGOLClass):
         """
         params = {
                     "f" : "json",
-                    "token" : self._securityHandler.token
         }
         return self._do_post(url=self._url + "/%s" % groupId,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -421,7 +420,6 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "q" : q,
             "start" : start,
             "num" : num,
@@ -430,6 +428,7 @@ class Groups(BaseAGOLClass):
         }
         return self._do_get(url=self._url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -442,10 +441,10 @@ class Groups(BaseAGOLClass):
         groupId - id of group
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
             }
         return self._do_get(url=self._url + "/%s/users" % groupId,
+                            securityHandler=self._securityHandler,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -482,12 +481,12 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "users" : users,
             "role" : role,
             "expiration" : expiration
         }
         return self._do_post(url=self._url + "/%s/invite" % groupId,
+                             securityHandler=self._securityHandler,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -509,11 +508,11 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token
         }
         return self._do_post(url=self._url + "/%s/applications/%s/decline" % (groupId,
                                                                              username),
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -530,11 +529,11 @@ class Groups(BaseAGOLClass):
            applicationUsername - Name of user that applied to group
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(url=self._url + "/%s/applications/%s" % (groupId, applicationUsername),
                                      param_dict=params,
+                                     securityHandler=self._securityHandler,
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -547,11 +546,11 @@ class Groups(BaseAGOLClass):
            groupId - unique identifier of the group
         """
         params = {
-                    "f" : "json",
-                    "token" : self._securityHandler.token
+                    "f" : "json"
                 }
         return self._do_get(url=self._url + "/%s/applications" % groupId,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -574,13 +573,13 @@ class Groups(BaseAGOLClass):
            groupId - unique identifier of the group
         """
         params = {
-                            "f" : "json",
-                            "token" : self._securityHandler.token
-                        }
+            "f" : "json",
+        }
         return self._do_post(url=self._url + "/%s/join" % groupId,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+                             securityHandler=self._securityHandler,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def leaveGroup(self, groupId):
         """
@@ -593,11 +592,11 @@ class Groups(BaseAGOLClass):
            groupId - unique identifier of the group
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_post(url=self._url + "/%s/leave" % groupId,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -614,11 +613,11 @@ class Groups(BaseAGOLClass):
         """
         params = {
                     "f" : "json",
-                    "token" : self._securityHandler.token,
                     "targetUsername" : targetUsername
                 }
         return self._do_post(url=self._url + "/%s/reassign" % groupId,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -639,11 +638,11 @@ class Groups(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "users" : users
         }
         return self._do_post(url=self._url + "/%s/removeUsers" % groupId,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -704,8 +703,7 @@ class Groups(BaseAGOLClass):
 
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         if title is not None:
             params['title'] = title
@@ -737,6 +735,7 @@ class Groups(BaseAGOLClass):
            os.path.isfile(thumbnail):
             res = self._post_multipart(host=parsed.hostname,
                                        port=parsed.port,
+                                       securityHandler=self._securityHandler,
                                        selector=parsed.path,
                                        fields=params,
                                        files=files,
@@ -746,15 +745,9 @@ class Groups(BaseAGOLClass):
             return res
         else:
             return self._do_post(url=url, param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
-
-
-
-
-
-
-
 ########################################################################
 class User(BaseAGOLClass):
     """ represents the Group Functions """
@@ -791,12 +784,12 @@ class User(BaseAGOLClass):
               username - name of user to query
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(
             url = self._url + "/%s" % username,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -815,13 +808,13 @@ class User(BaseAGOLClass):
 
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(
             url = self._url + "/%s/invitations/%s/decline" % (username,
                                                               invitationId),
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -840,13 +833,13 @@ class User(BaseAGOLClass):
 
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(
             url = self._url + "/%s/invitations/%s/accept" % (username,
                                                               invitationId),
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -866,12 +859,12 @@ class User(BaseAGOLClass):
            username - name of user to erase
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         url = self._url + "/%s/delete" % username
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -884,12 +877,12 @@ class User(BaseAGOLClass):
            username - username to disable
         """
         params = {
-                    "f" : "json",
-                    "token" : self._securityHandler.token
+                    "f" : "json"
                 }
         return self._do_get(
             url = self._url + "/%s/disable" % username,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -902,10 +895,10 @@ class User(BaseAGOLClass):
            username - username to disable
         """
         params = {
-                    "f" : "json",
-                    "token" : self._securityHandler.token
+                    "f" : "json"
                 }
         return self._do_get(
+            securityHandler=self._securityHandler,
             url = self._url + "/%s/enable" % username,
             param_dict=params,
             proxy_url=self._proxy_url,
@@ -925,12 +918,12 @@ class User(BaseAGOLClass):
 
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         url = self._url + "/%s/notifications/%s" % (username, notificationId)
         return self._do_get(
             url = url,
+            securityHandler=self._securityHandler,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
@@ -945,12 +938,12 @@ class User(BaseAGOLClass):
            username - name of the user to query
         """
         params = {
-                    "f" : "json",
-                    "token" : self._securityHandler.token
+                    "f" : "json"
                 }
         url = self._url + "/%s/notifications" % username
         return self._do_get(
             url = url,
+            securityHandler=self._securityHandler,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
@@ -1015,8 +1008,7 @@ class User(BaseAGOLClass):
                  basemap gallery.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         if region is not None:
             params['region'] = region
@@ -1050,12 +1042,15 @@ class User(BaseAGOLClass):
                                        selector=parsed.path,
                                        fields=params,
                                        files=files,
+                                       securityHandler=self._securityHandler,
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
             return res
         else:
-            return self._do_post(url=url, param_dict=params,
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1070,12 +1065,12 @@ class User(BaseAGOLClass):
         administrator) if their access setting is set to "private."
         """
         params = {
-                    "f" : "json",
-                    "token" : self._securityHandler.token
+                    "f" : "json"
                 }
         return self._do_get(
             url = self._url + "/%s" % username,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1099,12 +1094,12 @@ class User(BaseAGOLClass):
         """
         url = self._url + "/%s/invitations/%s" % (username, invitationId)
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(
             url = url,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1118,12 +1113,12 @@ class User(BaseAGOLClass):
         """
         url = self._url + "/%s/invitations" % username
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
+            "f" : "json"
         }
         return self._do_get(
             url = url,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1164,7 +1159,6 @@ class User(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "token" : self._securityHandler.token,
             "q" : q,
             "start" : start,
             "num" : num,
@@ -1175,6 +1169,7 @@ class User(BaseAGOLClass):
         return self._do_get(
             url = url,
             param_dict=params,
+            securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -1194,5 +1189,6 @@ class User(BaseAGOLClass):
         }
         return self._do_get(url=url,
                             param_dict=params,
+                            securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)

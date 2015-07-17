@@ -23,6 +23,8 @@ class NetworkService(BaseAGSServer):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
+        if self._securityHandler is not None:
+            self._referer_url = self._securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         if initialize:
@@ -33,9 +35,8 @@ class NetworkService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        if self._securityHandler is not None:
-            params['token'] = self._securityHandler.token
         json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._json_dict = json_dict
@@ -47,8 +48,8 @@ class NetworkService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                #print k, " - attribute not implemented for Mobile Service."
-                print "_%s = None" % k
+
+                print "attribe %s is not implemented." % k
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
