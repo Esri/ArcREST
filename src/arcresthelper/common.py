@@ -298,7 +298,7 @@ def find_replace(obj,find,replace):
     finally:                
         pass   
 #----------------------------------------------------------------------
-def init_log(log_file,):
+def init_log(log_file):
 
     #Create the log file
     log = None
@@ -311,7 +311,12 @@ def init_log(log_file,):
     except:
         pass
     return log
-
+def close_log(log_file):
+    sys.stdout = sys.__stdout__
+    if log_file is not None:
+        log_file.close()
+        del log_file
+        
 #----------------------------------------------------------------------
 class Tee(object):
     """ Combines standard output with a file for logging"""

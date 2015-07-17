@@ -1,11 +1,8 @@
 """
-   This sample shows how to loop through all users
-   and delete all their content and groups
-
+   This sample shows how to delete rows from a layer
 """
-
 import arcrest
-from arcresthelper import resettools
+from arcresthelper import featureservicetools
 def trace():
     """
         trace finds the line, the filename
@@ -41,17 +38,25 @@ def main():
     securityInfo['client_id'] = None
     securityInfo['secret_id'] = None   
 
-    try:
-        
-        rst = resettools.resetTools(securityinfo=securityInfo)
-        if rst.valid:
-            users = {'users':[{'username':securityInfo['username']}]}
-            #arh.removeUserData(users=users)
-            #arh.removeUserGroups(users=users
-            rst.removeUserData(users=users)
-            rst.removeUserGroups(users=users) 
-        else:
-            print rst.message
+
+    itemId = "<ID of Item>"    
+    sql = "1=1"
+    layerNames = "Layer1,Layer2"
+    try:      
+
+        fst = featureservicetools.featureservicetools(securityInfo)
+        if fst.valid == False:
+            print fst.message
+        else:         
+
+            fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
+            if not fs is None:
+               
+                for layerName in layerNames.split(','):
+                    fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
+                    if not fl is None:
+                        results = fl.deleteFeatures(where=sql)
+                        print results
     except:
         line, filename, synerror = trace()
         print("error on line: %s" % line)

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     securityInfo['client_id'] = None
     securityInfo['secret_id'] = None   
    
-    shh = securityhandlerhelper.securityhandlerhelper(securityInfo)
+    shh = securityhandlerhelper.securityhandlerhelper(securityInfo=securityInfo)
     if shh.valid == False:
         print shh.message
     else:
