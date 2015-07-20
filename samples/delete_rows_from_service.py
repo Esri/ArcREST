@@ -3,6 +3,8 @@
 """
 import arcrest
 from arcresthelper import featureservicetools
+from arcresthelper import common
+
 def trace():
     """
         trace finds the line, the filename
@@ -26,8 +28,8 @@ def main():
 
     securityInfo = {}
     securityInfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityInfo['username'] = "<UserName>"
-    securityInfo['password'] = "<Password>"
+    securityInfo['username'] = "<UserName>"#<UserName>
+    securityInfo['password'] = "<Password>"#<Password>
     securityInfo['org_url'] = "http://www.arcgis.com"
     securityInfo['proxy_url'] = proxy_url
     securityInfo['proxy_port'] = proxy_port
@@ -39,9 +41,9 @@ def main():
     securityInfo['secret_id'] = None   
 
 
-    itemId = "<ID of Item>"    
+    itemId = "<Item ID>"#<Item ID>
     sql = "1=1"
-    layerNames = "Layer1,Layer2"
+    layerNames = "layer1, layer2" #layer1, layer2
     try:      
 
         fst = featureservicetools.featureservicetools(securityInfo)
@@ -53,24 +55,18 @@ def main():
             if not fs is None:
                
                 for layerName in layerNames.split(','):
-                    fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
-                    if not fl is None:
-                        qRes = fl.query(where=sql, returnIDsOnly=True)
-                        oids = qRes['objectids']
-                        minId = min(oids)
-                        maxId = max(oids)
-                        chunksize = 500
-                        i = 0
-                        while(i <= len(oids)):
-                            oidsDelete = ','.join(str(e) for e in oids[i:i+chunksize])
-                            if oids == '':
-                                continue
-                            else:
-                                results = fl.deleteFeatures(objectIds=oids)
-                            i += chunksize
-                            print i
-                            print "Completed: {0:.0f}%".format(i / float(len(oids)) *100)
-                        print results
+                    fs_url = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=True)
+                    if not fs_url is None:
+                        print fst.DeleteFeaturesFromFeatureLayer(url=fs_url, sql=sql, 
+                                                          chunksize=2000)
+    except (common.ArcRestHelperError),e:
+        print("error in function: %s" % e[0]['function'])
+        print("error on line: %s" % e[0]['line'])
+        print("error in file name: %s" % e[0]['filename'])
+        print("with error message: %s" % e[0]['synerror'])
+        if 'arcpyError' in e[0]:
+            print("with arcpy message: %s" % e[0]['arcpyError'])
+    
     except:
         line, filename, synerror = trace()
         print("error on line: %s" % line)

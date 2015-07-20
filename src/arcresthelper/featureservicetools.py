@@ -214,13 +214,63 @@ class featureservicetools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def DeleteFeaturesFromFeatureLayer(self,url,sql):
+    def DeleteFeaturesFromFeatureLayer(self,url,sql,chunksize=0):
         fl = None
         try:
             fl = FeatureLayer(
                    url=url,
                    securityHandler=self._securityHandler)
-            return fl.deleteFeatures(where=sql)
+            totalDeleted = 0
+            if chunksize > 0:
+                qRes = fl.query(where=sql, returnIDsOnly=True)
+                if 'error' in qRes:
+                    print qRes
+                    return qRes
+                elif 'objectIds' in qRes:
+                    oids = qRes['objectIds']
+                    total = len(oids)
+                    if total == 0:
+                        return "No features matched the query"
+                        
+                    minId = min(oids)
+                    maxId = max(oids)
+                   
+                    i = 0
+                    print "%s features to be deleted" % total
+                    while(i <= len(oids)):
+                        oidsDelete = ','.join(str(e) for e in oids[i:i+chunksize])
+                        if oidsDelete == '':
+                            continue
+                        else:
+                            results = fl.deleteFeatures(objectIds=oidsDelete)
+                        if 'deleteResults' in results:
+                            totalDeleted += len(results['deleteResults'])
+                            print "%s%% Completed: %s/%s " % (int(totalDeleted / float(total) *100), totalDeleted, total)
+                            i += chunksize                            
+                        else:
+                            print results
+                            return "%s deleted" % totalDeleted
+                    qRes = fl.query(where=sql, returnIDsOnly=True)
+                    if 'objectIds' in qRes:
+                        oids = qRes['objectIds']
+                        if len(oids)> 0 :
+                            print "%s features to be deleted" % len(oids)
+                            results = fl.deleteFeatures(where=sql)
+                            if 'deleteResults' in results:
+                                totalDeleted += len(results['deleteResults'])
+                                return "%s deleted" % totalDeleted
+                            else:
+                                return results
+                    return "%s deleted" % totalDeleted 
+                    
+                else:
+                    print qRes
+            else:
+                results = fl.deleteFeatures(where=sql)
+                if 'deleteResults' in results:         
+                    return totalDeleted + len(results['deleteResults'])
+                else:
+                    return results
        
         except:
             line, filename, synerror = trace()
