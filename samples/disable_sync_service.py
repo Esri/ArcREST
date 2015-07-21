@@ -37,13 +37,13 @@ def trace():
     return line, filename, synerror
 
 def main():
-    securityInfo = {}
-    securityInfo['security_type'] = 'Portal'
-    securityInfo['username'] = "MikeSolutionsDemo"
-    securityInfo['password'] = "double1pa"
-    securityInfo['org_url'] = "http://www.arcgis.com"
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'
+    securityinfo['username'] = "<UserName>"
+    securityinfo['password'] = "<Password>"
+    securityinfo['org_url'] = "http://www.arcgis.com"
    
-    itemCSVFile =  r'C:\temp\items.csv'
+    itemCSVFile =  r'<Path to CSV>'
     
     sciptPath = os.getcwd()
     try:
@@ -60,7 +60,7 @@ def main():
             print "csv file %s could not be located" % itemCSVFile
             return
                        
-        fst = featureservicetools.featureservicetools(securityinfo=securityInfo)
+        fst = featureservicetools.featureservicetools(securityinfo=securityinfo)
         if fst.valid:
             with open(itemCSVFile, 'rb') as csvfile:
                 

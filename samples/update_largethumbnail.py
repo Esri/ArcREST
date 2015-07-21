@@ -3,8 +3,8 @@
    large thumbnail of an item
 """
 import arcrest
-from arcrest.security import AGOLTokenSecurityHandler
-from arcrest.security import PortalTokenSecurityHandler
+from arcresthelper import securityhandlerhelper
+from arcresthelper import common
 def trace():
     """
         trace finds the line, the filename
@@ -22,24 +22,56 @@ def trace():
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
 
-if __name__ == "__main__":
-    username = "<username>"
-    password = "<password>"
-    url = "<portal or AGOL url>"
-    itemId = "<Id of feature service item>"    
+def main():
+    proxy_port = None
+    proxy_url = None    
+
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = "<Username>"#<UserName>
+    securityinfo['password'] = "<Password>"#<Password>
+    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None   
+    
+    itemId = "<Item ID>"    
     
       
-    agolSH = AGOLTokenSecurityHandler(username=username,
-                                      password=password,org_url=url)
+    try:
+        shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
+        if shh.valid == False:
+            print shh.message
+        else:
+            portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+            content = portalAdmin.content
+            adminusercontent = content.usercontent()
+            item = content.item(itemId)
+            itemParams = arcrest.manageorg.ItemParameter()
+           
+            itemParams.largeThumbnail = r"<Path to Image>"
+        
+            print adminusercontent.updateItem(itemId = itemId,
+                                                        updateItemParameters=itemParams,
+                                                        folderId=item.ownerFolder)
+    except (common.ArcRestHelperError),e:
+        print("error in function: %s" % e[0]['function'])
+        print("error on line: %s" % e[0]['line'])
+        print("error in file name: %s" % e[0]['filename'])
+        print("with error message: %s" % e[0]['synerror'])
+        if 'arcpyError' in e[0]:
+            print("with arcpy message: %s" % e[0]['arcpyError'])
 
-    portalAdmin = arcrest.manageorg.Administration(securityHandler=agolSH)
-    content = portalAdmin.content
-    adminusercontent = content.usercontent()
-    item = content.item(itemId)
-    itemParams = arcrest.manageorg.ItemParameter()
-   
-    itemParams.largeThumbnail = r"<Path to Image>"
+    except:
+        line, filename, synerror = trace()
+        print("error on line: %s" % line)
+        print("error in file name: %s" % filename)
+        print("with error message: %s" % synerror)
 
-    print adminusercontent.updateItem(itemId = itemId,
-                                                updateItemParameters=itemParams,
-                                                folderId=item.ownerFolder)
+if __name__ == "__main__":
+    main()        
