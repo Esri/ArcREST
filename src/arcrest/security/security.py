@@ -20,6 +20,7 @@ _defaultTokenExpiration = 5 #Minutes
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module='urllib2')
+
 ########################################################################
 class LDAPSecurityHandler(abstract.BaseSecurityHandler):
     """
@@ -57,7 +58,24 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
                       referer_url=referer_url)
         
         self.loadusername()
-        
+    _is_portal = None
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    def check_portal(self):
+        from ..manageorg import Administration
+
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False             
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -341,6 +359,24 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
         if referer_url is None:
             parsed_org = urlparse(self._org_url)
             self._referer_url = parsed_org.netloc
+    _is_portal = None
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    def check_portal(self):
+        from ..manageorg import Administration
+
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False                       
     #----------------------------------------------------------------------
     @property
     def org_url(self):
@@ -538,7 +574,10 @@ class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
            self._referer is not None and \
            self._referer.lower() != value.lower():
             self._referer = value
-            
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        return False        
 ########################################################################
 class OAuthSecurityHandler(abstract.BaseSecurityHandler):
     """Handles AGOL OAuth Security
@@ -617,7 +656,24 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
                 self._referer_url = self._org_url
         else:
             self._referer_url = referer_url
+    _is_portal = None
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    def check_portal(self):
+        from ..manageorg import Administration
 
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False           
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -826,7 +882,24 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._token_url = self._surl  + '/generateToken'
 
 
+    _is_portal = None
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    def check_portal(self):
+        from ..manageorg import Administration
 
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False               
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -1059,7 +1132,25 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             #self._referer_url = "arcgis.com"
         #else:
             #self._referer_url = referer_url
+    _is_portal = None
     #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    def check_portal(self):
+        from ..manageorg import Administration
+
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False               
+#----------------------------------------------------------------------
     def __getRefererUrl(self, url=None):
         """
         gets the referer url for the token handler
@@ -1289,6 +1380,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._token_url = result['authInfo']['tokenServicesUrl']
             else:
                 raise Exception("Cannot determine the token url, please pass that parameter.")
+      
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -1519,7 +1611,26 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         if referer_url is None:
 
             self._referer_url = parsed_url.netloc    
+        
+    _is_portal = None
+    #----------------------------------------------------------------------
+    @property            
+    def is_portal(self):
+        if self._is_portal is None:
+            self.check_portal()
+        return self._is_portal
+    #----------------------------------------------------------------------   
+    def check_portal(self):
+        from ..manageorg import Administration
 
+        admin = Administration(url=self._org_url,
+                               securityHandler=self)
+        portal = admin.portals()      
+        if 'isPortal' in portal.portalProperties:
+            if portal.portalProperties['isPortal'] == True:
+                self._is_portal = True
+            else:
+                self._is_portal = False                  
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -1755,3 +1866,34 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._expires_in = (self._token_expires_on - self._token_created_on).total_seconds()
             return token['token']
 
+    #----------------------------------------------------------------------
+    def portalServerHandler(self, serverUrl, username=None):
+        """
+        returns a handler to access a federated server
+
+        serverUrl - url to the server. Example:
+                    https://server.site.com/arcgis
+        username - the portal site username. if None is passed, it obtains
+         it from the portal properties
+        Outout:
+          returns a PortalServerSecurityHandler object
+
+        Usage:
+        >>> # access the administration site
+        >>> serverUrl="https://mysite.site.com/arcgis"
+        >>> newSH = sh.portalServerHandler(serverUrl=serverUrl,
+                                           username=None)
+        >>> agsAdmin = AGSAdministration(url=serverUrl, securityHandler=newSH)
+        >>> print agsAdmin.info
+        >>> # access a secure service from portal handler
+        >>> msUrl = "https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer"
+        >>> ms = arcrest.ags.MapService(url=msUrl, securityHandler=newSH)
+        >>> print ms.mapName
+        """
+
+        pssh = PortalServerSecurityHandler(tokenHandler=self,
+                                           serverUrl=serverUrl,
+                                           referer=self._referer_url)
+
+
+        return pssh

@@ -75,7 +75,10 @@ class securityhandlerhelper(object):
                 self._referer_url = securityinfo._referer_url
                 self._client_id = securityinfo._client_id
                 self._secret_id = securityinfo._secret_id
-                self._is_portal = securityinfo._is_portal                     
+                self._is_portal = securityinfo._is_portal
+                self._message = securityinfo._message
+                self._valid = securityinfo._valid
+                
                 #self._securityHandler = securityinfo
                 return
             else:
@@ -210,14 +213,15 @@ class securityhandlerhelper(object):
                 self._message = "OAuth security handler created"
             else:
                 print "No valid security type set"
+                self._message = "No valid security type set"
             admin = Administration(url=self._org_url,
                                    securityHandler=self._securityHandler)
-            portal = admin.portals()      
-            if 'isPortal' in portal.portalProperties:
-                if portal.portalProperties['isPortal'] == True:
-                    self._is_portal = True;
-                else:
-                    self._is_portal = False;
+            #portal = admin.portals()      
+            #if 'isPortal' in portal.portalProperties:
+                #if portal.portalProperties['isPortal'] == True:
+                    #self._is_portal = True
+                #else:
+                    #self._is_portal = False
             
             try:
                 hostingServers = admin.hostingServers()
@@ -255,7 +259,8 @@ class securityhandlerhelper(object):
                 self._valid = False
     
             else:
-                self._message = self._securityHandler.message
+                if self._securityHandler.message is not None:
+                    self._message = self._securityHandler.message
                 self._valid = True
         else:
             self._message = 'Security info not set'
@@ -306,6 +311,6 @@ class securityhandlerhelper(object):
     def securityhandler(self):
         """ returns the security hanlder """
         return self._securityHandler
-    @property
-    def is_portal(self):
-        return self._is_portal    
+    #@property
+    #def is_portal(self):
+        #return self._is_portal    

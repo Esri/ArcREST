@@ -39,17 +39,24 @@ class Services(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-        if securityHandler is not None and \
-           isinstance(securityHandler, BaseSecurityHandler):
-            if isinstance(securityHandler, (security.AGOLTokenSecurityHandler,
-                                            security.PortalTokenSecurityHandler,
-                                            security.ArcGISTokenSecurityHandler)):
-
-                self._securityHandler = securityHandler
-                self._referer_url = securityHandler.referer_url
+               
+        if isinstance(securityHandler, BaseSecurityHandler):
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+                    
             else:
-                raise AttributeError("Invalid Security Handler, " + \
-                                     "only AGOLTokenSecurityHandler and PortalTokenSecurityHandler is accepted")
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+            
+           
+        else:
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+      
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -240,12 +247,25 @@ class AdminMapService(BaseAGOLClass):
                  proxy_port=None):
         """Constructor"""
         self._url = url
+      
+        
         if isinstance(securityHandler, BaseSecurityHandler):
-
-            self._securityHandler = securityHandler
-            self._referer_url = securityHandler.referer_url
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+                    
+            else:
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+            
+           
         else:
-            raise AttributeError("Security Handler must be security.AGOLTokenSecurityHandler, PortalTokenSecurityHandler, or ArcGISTokenSecurityHandler")
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+      
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -627,14 +647,24 @@ class AdminFeatureService(BaseAGOLClass):
             url = url.replace('rest/services', 'rest/admin/services')
         self._url = url
 
+                
         if isinstance(securityHandler, BaseSecurityHandler):
-            self._securityHandler = securityHandler
-            if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url
-
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+                    
+            else:
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+            
+           
         else:
-            raise AttributeError("Admin only supports security.AGOLTokenSecurityHandler or security.PortalTokenSecurityHandler")
-
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+      
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -1152,13 +1182,24 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
+              
         if isinstance(securityHandler, BaseSecurityHandler):
-            self._securityHandler = securityHandler
-            if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url
-
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+                    
+            else:
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+            
+           
         else:
-            raise AttributeError("This object only accepts security.AGOLTokenSecurityHandler as a security option")
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+      
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

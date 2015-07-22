@@ -1091,7 +1091,7 @@ class publishingtools(securityhandlerhelper):
                             print "Overwrite failed"
                             
                             sea = arcrest.find.search(securityHandler=self._securityHandler)
-                            items = sea.findItem(title =service_name, itemType='Feature Service')
+                            items = sea.findItem(title =service_name, itemType='Feature Service',searchorg=False)
                           
                             if items['total'] >= 1:
                                 itemId = items['results'][0]['id']
@@ -1099,7 +1099,7 @@ class publishingtools(securityhandlerhelper):
                             else:
                             
                                 sea = arcrest.find.search(securityHandler=self._securityHandler)
-                                items = sea.findItem(title =service_name_safe, itemType='Feature Service')
+                                items = sea.findItem(title =service_name_safe, itemType='Feature Service',searchorg=False)
 
                                 if items['total'] >= 1:
                                     itemId = items['results'][0]['id']
@@ -1115,7 +1115,6 @@ class publishingtools(securityhandlerhelper):
                                       
                                 if item.url is not None:
                                     adminFS = AdminFeatureService(url=item.url, securityHandler=self._securityHandler)
-            
                                     cap = str(adminFS.capabilities)
                                     existingDef = {}
                                 
@@ -1153,7 +1152,14 @@ class publishingtools(securityhandlerhelper):
                                         return delres
                                     print "Delete successful"                                
                             else:
-                                print "Item cannot be found"
+                                print "Item exist and cannot be found, probably owned by another user."
+                                raise common.ArcRestHelperError({
+                                    "function": "_publishFsFromConfig",
+                                    "line": 1155,
+                                    "filename":  'publishingtools.py',
+                                    "synerror": "Item exist and cannot be found, probably owned by another user."
+                                }
+                                )       
 
                             resultFS = adminusercontent.publishItem(
                                            fileType="serviceDefinition",
@@ -1172,11 +1178,20 @@ class publishingtools(securityhandlerhelper):
                                 itemId=resultSD['id'],
                                 publishParameters=publishParameters)
                         if 'error' in resultFS['services'][0]:
-                            print resultFS['services'][0]['error']
-                            return resultFS['services'][0]['error']                            
-                        #if 'services' in resultFS:
-                            #if resultFS['services']['success']     == 'false':
-                                #return
+                            print "Overwrite failed, deleting"
+                            delres=adminusercontent.deleteItems(items=itemId)  
+                            if 'error' in delres:
+                                print delres
+                                return delres
+                             
+                            print "Delete successful"      
+                            resultFS = adminusercontent.publishItem(
+                                fileType="serviceDefinition",
+                                itemId=resultSD['id'],
+                                publishParameters=publishParameters)  
+                            if 'error' in resultFS:
+                                return resultFS
+                       
                         status = adminusercontent.status(itemId=resultFS['services'][0]['serviceItemId'],
                                                          jobId=resultFS['services'][0]['jobId'],
                                                          jobType='publish')

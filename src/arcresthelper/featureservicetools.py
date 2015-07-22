@@ -11,7 +11,7 @@ import json
 import os
 import common 
 import gc
-
+import arcpy
 #----------------------------------------------------------------------
 def trace():
     """
@@ -190,14 +190,59 @@ class featureservicetools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass):
+    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0):
         fl = None
         try:
             fl = FeatureLayer(
                    url=url,
                    securityHandler=self._securityHandler)
-            return fl.addFeatures(fc=pathToFeatureClass)
-       
+                        
+            if chunksize > 0:
+                messages = {'addResults':[]}
+                total = arcpy.GetCount_management(pathToFeatureClass)
+                arcpy.env.overwriteOutput = True
+                inDesc = arcpy.Describe(pathToFeatureClass)
+                oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
+                sql = '%s = (select min(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                minOID = cur.next()[0]
+                del cur, sql
+                sql = '%s = (select max(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                maxOID = cur.next()[0]
+                del cur, sql
+                breaks = range(minOID,maxOID)[0:-1:chunksize] 
+                breaks.append(maxOID+1)
+                exprList = [oidName + ' >= ' + str(breaks[b]) + ' and ' + \
+                            oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
+                for expr in exprList:
+                    UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
+                    result = fl.addFeatures(fc=UploadLayer)
+                    if messages is None:
+                        messages = result
+                    else:
+                        if 'addResults' in result:
+                            if 'addResults' in messages:
+                                messages['addResults'] = messages['addResults'] + result['addResults']
+                                print "%s/%s features added" % (len(messages['addResults']),total)
+                            else:
+                                messages['addResults'] = result['addResults']
+                                print "%s/%s features added" % (len(messages['addResults']),total)
+                        else:
+                            messages['errors'] = result
+                return messages
+            else:
+                return fl.addFeatures(fc=pathToFeatureClass)
+        except arcpy.ExecuteError:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "create_report_layers_using_config",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+                "arcpyError": arcpy.GetMessages(2),
+            }
+                           )  
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

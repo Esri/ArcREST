@@ -37,17 +37,20 @@ class search(_base.BaseWebOperations):
         
        
     #----------------------------------------------------------------------
-    def findItem(self, title, itemType,username=None):
+    def findItem(self, title, itemType,username=None,searchorg=False):
         #
         # Find the itemID of whats being updated
         #
        
         if username is None:
             username = self._securityHandler.username
-
-        params = {'f': 'json',
-                 'q': "title:\""+ title + "\"AND owner:\"" + username + "\" AND type:\"" + itemType + "\""}
-
+        if searchorg == True:
+            params = {'f': 'json',
+               'q': "title:\""+ title + "\" AND type:\"" + itemType + "\""}               
+        else:
+            params = {'f': 'json',
+               'q': "title:\""+ title + "\"AND owner:\"" + username + "\" AND type:\"" + itemType + "\""}
+            
         jsonResponse = self._do_get(url=self._url,
                                    securityHandler=self._securityHandler,
                                    param_dict=params,
