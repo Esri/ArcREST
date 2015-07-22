@@ -11,6 +11,7 @@ import json
 import os
 import common 
 import gc
+
 #----------------------------------------------------------------------
 def trace():
     """
@@ -58,20 +59,12 @@ class resetTools(securityhandlerhelper):
                     if 'folders' in userContent:
                         for userFolder in userContent['folders']:
                             folderContent = admin.content.getUserContent(username=user['username'],folderId=userFolder['id'])
-                            for userItem in folderContent['items']:
-                                print adminusercontent.deleteItems(items=userItem['id'])
+                            if 'items' in folderContent:
+                                for userItem in folderContent['items']:
+                                    print adminusercontent.deleteItems(items=userItem['id'])
 
-                            print adminusercontent.deleteFolder(folderId=userItem['id'])
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+                            print adminusercontent.deleteFolder(folderId=userFolder['id'])
+       
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -137,16 +130,7 @@ class resetTools(securityhandlerhelper):
                     else:
                         print "No Groups Found"
 
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+       
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

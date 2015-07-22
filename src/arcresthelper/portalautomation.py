@@ -96,28 +96,29 @@ class portalautomation(securityhandlerhelper):
     
                         config = common.init_config_json(config_file=configFile)
                         if config is not None:
-                           
-                            startTime = datetime.datetime.now()
-                            print "Processing config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))
-                            contentInfo = config['ContentItems']
-                            for cont in contentInfo:
-                                content = cont['Content']
-                                group = cont['ShareToGroup']
-                    
-                                print "Sharing content to: %s" % group
-                                if os.path.isfile(content):
-                                    with open(content, 'rb') as csvfile:
-                                        items = []
-                                        groups = []
-                                        for row in csv.DictReader(csvfile,dialect='excel'):
-                                            if cont['Type'] == "Group":
-                                                groups.append(row['id'])
-                                            elif cont['Type'] == "Items":
-                                                items.append(row['id'])
-                                        results = orgTools.shareItemsToGroup(shareToGroupName=group,items=items,groups=groups)
-    
-                            print "Config %s completed, time to complete: %s" % (configFile, str(datetime.datetime.now() - startTime))
-    
+                            if 'ContentItems' in config:
+                                startTime = datetime.datetime.now()
+                                print "Processing config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))
+                                contentInfo = config['ContentItems']
+                                for cont in contentInfo:
+                                    content = cont['Content']
+                                    group = cont['ShareToGroup']
+                        
+                                    print "Sharing content to: %s" % group
+                                    if os.path.isfile(content):
+                                        with open(content, 'rb') as csvfile:
+                                            items = []
+                                            groups = []
+                                            for row in csv.DictReader(csvfile,dialect='excel'):
+                                                if cont['Type'] == "Group":
+                                                    groups.append(row['id'])
+                                                elif cont['Type'] == "Items":
+                                                    items.append(row['id'])
+                                            results = orgTools.shareItemsToGroup(shareToGroupName=group,items=items,groups=groups)
+        
+                                print "Config %s completed, time to complete: %s" % (configFile, str(datetime.datetime.now() - startTime))
+                            else:
+                                print "Config file missing ContentItems section"    
                         else:
                             print "Config %s not found" % configFile
     

@@ -219,7 +219,7 @@ class BaseWebOperations(object):
                                             proxy_port=proxy_port,
                                             compress=compress)
                 else:
-                    print jres['error']
+                    print result['error']
         if 'status' in result:
             if result['status'] == 'error':
                 print str(result['code']) + " " + str(result['messages'])

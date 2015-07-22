@@ -6,6 +6,7 @@
 
 import arcrest
 from arcresthelper import resettools
+from arcresthelper import common
 def trace():
     """
         trace finds the line, the filename
@@ -29,8 +30,8 @@ def main():
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "<UserName>"
-    securityinfo['password'] = "<Password>"
+    securityinfo['username'] = "<username>"
+    securityinfo['password'] = "<password>"
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -46,12 +47,18 @@ def main():
         rst = resettools.resetTools(securityinfo=securityinfo)
         if rst.valid:
             users = {'users':[{'username':securityinfo['username']}]}
-            #arh.removeUserData(users=users)
-            #arh.removeUserGroups(users=users
+            
             rst.removeUserData(users=users)
             rst.removeUserGroups(users=users) 
         else:
             print rst.message
+    except (common.ArcRestHelperError),e:
+        print("error in function: %s" % e[0]['function'])
+        print("error on line: %s" % e[0]['line'])
+        print("error in file name: %s" % e[0]['filename'])
+        print("with error message: %s" % e[0]['synerror'])
+        if 'arcpyError' in e[0]:
+            print("with arcpy message: %s" % e[0]['arcpyError'])
     except:
         line, filename, synerror = trace()
         print("error on line: %s" % line)

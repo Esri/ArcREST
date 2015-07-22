@@ -134,7 +134,7 @@ class securityhandlerhelper(object):
     
                 self._securityHandler = security.ArcGISTokenSecurityHandler(proxy_url=self._proxy_url,
                                             proxy_port=self._proxy_port)
-                token = self._securityHandler.token
+               
                 self._org_url = self._securityHandler.org_url
                 self._username = self._securityHandler.username
                 self._valid = True
@@ -254,7 +254,7 @@ class securityhandlerhelper(object):
             except Exception, e:
                 print e
         
-            if 'error' in self._securityHandler.message and token is None:
+            if 'error' in self._securityHandler.message:
                 self._message = self._securityHandler.message
                 self._valid = False
     
