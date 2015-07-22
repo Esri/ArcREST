@@ -28,8 +28,8 @@ def main():
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "MikeSolutions"#<UserName>
-    securityinfo['password'] = "double1pa"#<Password>
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
