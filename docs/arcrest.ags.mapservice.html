@@ -1,0 +1,595 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.ags.mapservice module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.ags.mapservice">
+<span id="arcrest-ags-mapservice-module"></span><h1>arcrest.ags.mapservice module<a class="headerlink" href="#module-arcrest.ags.mapservice" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="arcrest.ags.mapservice.MapService">
+<em class="property">class </em><code class="descclassname">arcrest.ags.mapservice.</code><code class="descname">MapService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>contains information about a map service</p>
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.allLayers">
+<code class="descname">allLayers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.allLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all layers for the service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service&#8217;s capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.documentInfo">
+<code class="descname">documentInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.documentInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the document information as a dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.downloadMetadataFile">
+<code class="descname">downloadMetadataFile</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.downloadMetadataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the metadata file to a given path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.downloadThumbnail">
+<code class="descname">downloadThumbnail</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.downloadThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the items&#8217;s thumbnail</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.estimateExportTilesSize">
+<code class="descname">estimateExportTilesSize</code><span class="sig-paren">(</span><em>exportBy</em>, <em>levels</em>, <em>tilePackage=False</em>, <em>exportExtent='DEFAULTEXTENT'</em>, <em>areaOfInterest=None</em>, <em>async=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.estimateExportTilesSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>The estimateExportTilesSize operation is an asynchronous task that
+allows estimation of the size of the tile package or the cache data
+set that you download using the Export Tiles operation. This
+operation can also be used to estimate the tile count in a tile
+package and determine if it will exceced the maxExportTileCount
+limit set by the administrator of the service. The result of this
+operation is Map Service Job. This job response contains reference
+to Map Service Result resource that returns the total size of the
+cache to be exported (in bytes) and the number of tiles that will
+be exported.</p>
+<p>Inputs:</p>
+<dl class="docutils">
+<dt>tilePackage - Allows estimating the size for either a tile package</dt>
+<dd><p class="first">or a cache raster data set. Specify the value true for tile
+packages format and false for Cache Raster data set. The default
+value is False</p>
+<blockquote class="last">
+<div>Values: True | False</div></blockquote>
+</dd>
+<dt>exportExtent - The extent (bounding box) of the tile package or the</dt>
+<dd><p class="first">cache dataset to be exported. If extent does not include a spatial
+reference, the extent values are assumed to be in the spatial
+reference of the map. The default value is full extent of the
+tiled map service.</p>
+<blockquote class="last">
+<div>Syntax: &lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+Example 1: -104,35.6,-94.32,41</div></blockquote>
+</dd>
+<dt>exportBy - The criteria that will be used to select the tile</dt>
+<dd><p class="first">service levels to export. The values can be Level IDs, cache scales
+or the Resolution (in the case of image services).</p>
+<blockquote class="last">
+<div>Values: LevelID | Resolution | Scale</div></blockquote>
+</dd>
+<dt>levels - Specify the tiled service levels for which you want to get</dt>
+<dd><p class="first">the estimates. The values should correspond to Level IDs, cache
+scales or the Resolution as specified in exportBy parameter. The
+values can be comma separated values or a range.</p>
+<blockquote class="last">
+<div>Example 1: 1,2,3,4,5,6,7,8,9
+Example 2: 1-4,7-9</div></blockquote>
+</dd>
+<dt>areaOfInterest - (Optional) The areaOfInterest polygon allows</dt>
+<dd><p class="first">exporting tiles within the specified polygon areas. This parameter
+supersedes exportExtent parameter. Also excepts geometry.Polygon.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>Example: { &#8220;features&#8221;: [{&#8220;geometry&#8221;:{&#8220;rings&#8221;:[[[-100,35],</dt>
+<dd>[-100,45],[-90,45],[-90,35],[-100,35]]],
+&#8220;spatialReference&#8221;:{&#8220;wkid&#8221;:4326}}}]}</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>async - (optional) the estimate function is run asynchronously</dt>
+<dd><p class="first">requiring the tool status to be checked manually to force it to
+run synchronously the tool will check the status until the
+estimation completes.  The default is True, which means the status
+of the job and results need to be checked manually.  If the value
+is set to False, the function will wait until the task completes.</p>
+<blockquote class="last">
+<div>Values: True | False</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.exportMap">
+<code class="descname">exportMap</code><span class="sig-paren">(</span><em>bbox</em>, <em>size='600</em>, <em>550'</em>, <em>dpi=200</em>, <em>imageSR=None</em>, <em>image_format='png'</em>, <em>layerDefFilter=None</em>, <em>layers=None</em>, <em>transparent=False</em>, <em>timeFilter=None</em>, <em>layerTimeOptions=None</em>, <em>dynamicLayers=None</em>, <em>mapScale=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>The export operation is performed on a map service resource.
+The result of this operation is a map image resource. This
+resource provides information about the exported map image such
+as its URL, its width and height, extent and scale.
+Inputs:</p>
+<blockquote>
+<div><p>bbox - envelope geometry object
+size - size of image in pixels
+dpi - dots per inch
+imageSR - spatial reference of the output image
+image_format - Description: The format of the exported image.</p>
+<blockquote>
+<div><p>The default format is .png.
+Values: png | png8 | png24 | jpg | pdf | bmp | gif</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">svg | svgz | emf | ps | png32</div>
+</div>
+</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>layerDefFilter - Description: Allows you to filter the</dt>
+<dd>features of individual layers in the exported
+map by specifying definition expressions for
+those layers. Definition expression for a
+layer that is published with the service will
+be always honored.</dd>
+<dt>layers - Determines which layers appear on the exported map.</dt>
+<dd><dl class="first last docutils">
+<dt>There are four ways to specify which layers are shown:</dt>
+<dd><dl class="first last docutils">
+<dt>show: Only the layers specified in this list will</dt>
+<dd>be exported.</dd>
+<dt>hide: All layers except those specified in this</dt>
+<dd>list will be exported.</dd>
+<dt>include: In addition to the layers exported by</dt>
+<dd>default, the layers specified in this list
+will be exported.</dd>
+<dt>exclude: The layers exported by default excluding</dt>
+<dd>those specified in this list will be
+exported.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>transparent - If true, the image will be exported with the</dt>
+<dd>background color of the map set as its
+transparent color. The default is false. Only
+the .png and .gif formats support transparency.
+Internet Explorer 6 does not display transparency
+correctly for png24 image formats.</dd>
+<dt>timeFilter - The time instant or time extent of the exported</dt>
+<dd>map image.</dd>
+<dt>layerTimeOptions - The time options per layer. Users can</dt>
+<dd>indicate whether or not the layer should use
+the time extent specified by the time
+parameter or not, whether to draw the layer
+features cumulatively or not and the time
+offsets for the layer.
+see: <a class="reference external" href="http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Export_Map/02r3000000v7000000/">http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Export_Map/02r3000000v7000000/</a></dd>
+<dt>dynamicLayers - Use dynamicLayers parameter to modify the layer</dt>
+<dd>drawing order, change layer drawing info, and
+change layer data source version for this request.
+New layers (dataLayer) can also be added to the
+dynamicLayers based on the map service registered
+workspaces.</dd>
+<dt>mapScale - Use this parameter to export a map image at a specific</dt>
+<dd>scale, with the map centered around the center of the
+specified bounding box (bbox).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.exportTiles">
+<code class="descname">exportTiles</code><span class="sig-paren">(</span><em>levels</em>, <em>exportBy='LevelID'</em>, <em>tilePackage=False</em>, <em>exportExtent='DEFAULT'</em>, <em>optimizeTilesForSize=True</em>, <em>compressionQuality=0</em>, <em>areaOfInterest=None</em>, <em>async=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportTiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>The exportTiles operation is performed as an asynchronous task and
+allows client applications to download map tiles from a server for
+offline use. This operation is performed on a Map Service that
+allows clients to export cache tiles. The result of this operation
+is Map Service Job. This job response contains a reference to the
+Map Service Result resource, which returns a URL to the resulting
+tile package (.tpk) or a cache raster dataset.
+exportTiles can be enabled in a service by using ArcGIS for Desktop
+or the ArcGIS Server Administrator Directory. In ArcGIS for Desktop
+make an admin or publisher connection to the server, go to service
+properties, and enable Allow Clients to Export Cache Tiles in the
+advanced caching page of the Service Editor. You can also specify
+the maximum tiles clients will be allowed to download. The default
+maximum allowed tile count is 100,000. To enable this capability
+using the Administrator Directory, edit the service, and set the
+properties exportTilesAllowed=true and maxExportTilesCount=100000.</p>
+<p>At 10.2.2 and later versions, exportTiles is supported as an
+operation of the Map Server. The use of the
+<a class="reference external" href="http://Map">http://Map</a> Service/exportTiles/submitJob operation is deprecated.
+You can provide arguments to the exportTiles operation as defined
+in the following parameters table:</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>exportBy - The criteria that will be used to select the tile</dt>
+<dd>service levels to export. The values can be Level IDs, cache
+scales. or the resolution (in the case of image services).
+Values: LevelID | Resolution | Scale</dd>
+</dl>
+</dd>
+<dt>levels - Specifies the tiled service levels to export. The values</dt>
+<dd><p class="first">should correspond to Level IDs, cache scales. or the resolution
+as specified in exportBy parameter. The values can be comma
+separated values or a range. Make sure tiles are present at the
+levels where you attempt to export tiles.</p>
+<blockquote class="last">
+<div>Example 1: 1,2,3,4,5,6,7,8,9
+Example 2: 1-4,7-9</div></blockquote>
+</dd>
+<dt>tilePackage - Allows exporting either a tile package or a cache</dt>
+<dd><p class="first">raster data set. If the value is true, output will be in tile
+package format, and if the value is false, a cache raster data
+set is returned. The default value is false</p>
+<blockquote class="last">
+<div>Values: true | false</div></blockquote>
+</dd>
+<dt>exportExtent - The extent (bounding box) of the tile package or the</dt>
+<dd><p class="first">cache dataset to be exported. If extent does not include a
+spatial reference, the extent values are assumed to be in the
+spatial reference of the map. The default value is full extent of
+the tiled map service.</p>
+<blockquote class="last">
+<div><p>Syntax: &lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+Example 1: -104,35.6,-94.32,41
+Example 2: {&#8220;xmin&#8221; : -109.55, &#8220;ymin&#8221; : 25.76,</p>
+<blockquote>
+<div>&#8220;xmax&#8221; : -86.39, &#8220;ymax&#8221; : 49.94,
+&#8220;spatialReference&#8221; : {&#8220;wkid&#8221; : 4326}}</div></blockquote>
+</div></blockquote>
+</dd>
+<dt>optimizeTilesForSize - (Optional) Use this parameter to enable</dt>
+<dd><p class="first">compression of JPEG tiles and reduce the size of the downloaded
+tile package or the cache raster data set. Compressing tiles
+slightly compromises the quality of tiles but helps reduce the
+size of the download. Try sample compressions to determine the
+optimal compression before using this feature.</p>
+<blockquote class="last">
+<div>Values: true | false</div></blockquote>
+</dd>
+<dt>compressionQuality - (Optional) When optimizeTilesForSize=true, you</dt>
+<dd>can specify a compression factor. The value must be between 0 and
+100. The value cannot be greater than the default compression
+already set on the original tile. For example, if the default
+value is 75, the value of compressionQuality must be between 0 and
+75. A value greater than 75 in this example will attempt to up
+sample an already compressed tile and will further degrade the
+quality of tiles.</dd>
+<dt>areaOfInterest - (Optional) The areaOfInterest polygon allows</dt>
+<dd>exporting tiles within the specified polygon areas. This parameter
+supersedes the exportExtent parameter. Must be geometry.Polygon
+object.</dd>
+<dt>Example: { &#8220;features&#8221;: [{&#8220;geometry&#8221;:{&#8220;rings&#8221;:[[[-100,35],</dt>
+<dd>[-100,45],[-90,45],[-90,35],[-100,35]]],
+&#8220;spatialReference&#8221;:{&#8220;wkid&#8221;:4326}}}]}</dd>
+<dt>async - default True, this value ensures the returns are returned</dt>
+<dd>to the user instead of the user having the check the job status
+manually.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.exportTilesAllowed">
+<code class="descname">exportTilesAllowed</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportTilesAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean if export tiles is allowed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>searchText</em>, <em>layers</em>, <em>contains=True</em>, <em>searchFields=''</em>, <em>sr=''</em>, <em>layerDefs=''</em>, <em>returnGeometry=True</em>, <em>maxAllowableOffset=''</em>, <em>geometryPrecision=''</em>, <em>dynamicLayers=''</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>gdbVersion=''</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs the map service find operation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent of the map service</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.generateKML">
+<code class="descname">generateKML</code><span class="sig-paren">(</span><em>save_location</em>, <em>docName</em>, <em>layers</em>, <em>layerOptions='composite'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.generateKML" title="Permalink to this definition">¶</a></dt>
+<dd><p>The generateKml operation is performed on a map service resource.
+The result of this operation is a KML document wrapped in a KMZ
+file. The document contains a network link to the KML Service
+endpoint with properties and parameters you specify.
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>docName - The name of the resulting KML document. This is the</dt>
+<dd>name that appears in the Places panel of Google
+Earth.</dd>
+<dt>layers - the layers to perform the generateKML operation on.</dt>
+<dd>The layers are specified as a comma-separated list
+of layer ids.</dd>
+<dt>layerOptions - The layer drawing options. Based on the option</dt>
+<dd><p class="first">chosen, the layers are drawn as one composite
+image, as separate images, or as vectors. When
+the KML capability is enabled, the ArcGIS
+Server administrator has the option of setting
+the layer operations allowed. If vectors are
+not allowed, then the caller will not be able
+to get vectors. Instead, the caller receives a
+single composite image.
+values: composite | separateImage |</p>
+<blockquote class="last">
+<div>nonComposite</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.getFeatureDynamicLayer">
+<code class="descname">getFeatureDynamicLayer</code><span class="sig-paren">(</span><em>oid</em>, <em>dynamicLayer</em>, <em>returnZ=False</em>, <em>returnM=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.getFeatureDynamicLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The feature resource represents a single feature in a dynamic
+layer in a map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.hasVersionedData">
+<code class="descname">hasVersionedData</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.hasVersionedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>reutrn boolean if has versioned data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.identify">
+<code class="descname">identify</code><span class="sig-paren">(</span><em>geometryFilter</em>, <em>mapExtent</em>, <em>imageDisplay</em>, <em>layerDefs=None</em>, <em>timeFilter=None</em>, <em>layerTimeOptions=None</em>, <em>layers='top'</em>, <em>tolerance=None</em>, <em>returnGeometry=True</em>, <em>maxAllowableOffset=None</em>, <em>geometryPrecision=None</em>, <em>dynamicLayers=None</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>gdbVersion=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.ags.mapservice.MapService.identify" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs the map service&#8217;s identify operation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the initial extent of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.itemInfo">
+<code class="descname">itemInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.itemInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the item&#8217;s info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.json_dict">
+<code class="descname">json_dict</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.json_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns object as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the layers in the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.mapName">
+<code class="descname">mapName</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.mapName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map name value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxExportTilesCount">
+<code class="descname">maxExportTilesCount</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxExportTilesCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the maximum export tiles count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxImageHeight">
+<code class="descname">maxImageHeight</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxImageHeight" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max image height</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxImageWidth">
+<code class="descname">maxImageWidth</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxImageWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max image width</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max number of records returned by a query/display ect.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max scale for a map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service minimum scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the serviceDescription of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.singleFusedMapCache">
+<code class="descname">singleFusedMapCache</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.singleFusedMapCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean for this property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatialreference information for the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedExtensions">
+<code class="descname">supportedExtensions</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedExtensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported extensions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedImageFormatTypes">
+<code class="descname">supportedImageFormatTypes</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedImageFormatTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported image format types</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported query formats</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportsDynamicLayers">
+<code class="descname">supportsDynamicLayers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportsDynamicLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean (True/False) if it support dynamic layers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all tables in the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.tileInfo">
+<code class="descname">tileInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.tileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns tile info for cached services</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.timeInfo">
+<code class="descname">timeInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.timeInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the timeInformation for a given service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service&#8217;s measurement units</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.ags.mapservice.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.ags.mapservice.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

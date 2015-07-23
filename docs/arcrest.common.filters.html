@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.common.filters module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.common.filters">
+<span id="arcrest-common-filters-module"></span><h1>arcrest.common.filters module<a class="headerlink" href="#module-arcrest.common.filters" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="arcrest.common.filters.GeometryFilter">
+<em class="property">class </em><code class="descclassname">arcrest.common.filters.</code><code class="descname">GeometryFilter</code><span class="sig-paren">(</span><em>geomObject</em>, <em>spatialFilter='esriSpatialRelIntersects'</em>, <em>bufferDistance=None</em>, <em>units='esriSRUnit_Meter'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.filters.GeometryFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseFilter</span></code></p>
+<dl class="docutils">
+<dt>creates a geometry filter for queries</dt>
+<dd><dl class="first last docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">geomObject - a common.Geometry or arcpy.Geometry object
+spatialFilter - The spatial relationship to be applied on the</p>
+<blockquote>
+<div>input geometry while performing the query. The
+supported spatial relationships include
+intersects, contains, envelope intersects,
+within, etc. The default spatial relationship
+is intersects (esriSpatialRelIntersects).</div></blockquote>
+<dl class="last docutils">
+<dt>bufferDistance - if filter type esriSpatialRelWithin is selected</dt>
+<dd>and the service supports that select type, then
+the geometry will be buffered at a given.
+Can be of type integer or float.</dd>
+<dt>units - the value the distance units represents. Valid values</dt>
+<dd><dl class="first last docutils">
+<dt>are: &#8220;esriSRUnit_Meter&#8221;, &#8220;esriSRUnit_StatuteMile&#8221;,</dt>
+<dd><dl class="first last docutils">
+<dt>&#8220;esriSRUnit_Foot&#8221;, &#8220;esriSRUnit_Kilometer&#8221;,</dt>
+<dd>&#8220;esriSRUnit_NauticalMile&#8221;, and
+&#8220;esriSRUnit_USNauticalMile&#8221;</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt>
+<dd>AttributeError for invalid inputs</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.common.filters.GeometryFilter.filter">
+<code class="descname">filter</code><a class="headerlink" href="#arcrest.common.filters.GeometryFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the key/value pair of a geometry filter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.common.filters.GeometryFilter.geometry">
+<code class="descname">geometry</code><a class="headerlink" href="#arcrest.common.filters.GeometryFilter.geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the geometry object used by the filter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.common.filters.GeometryFilter.geometryType">
+<code class="descname">geometryType</code><a class="headerlink" href="#arcrest.common.filters.GeometryFilter.geometryType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the geometry type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.common.filters.GeometryFilter.spatialRelation">
+<code class="descname">spatialRelation</code><a class="headerlink" href="#arcrest.common.filters.GeometryFilter.spatialRelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the filter type</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.common.filters.LayerDefinitionFilter">
+<em class="property">class </em><code class="descclassname">arcrest.common.filters.</code><code class="descname">LayerDefinitionFilter</code><a class="headerlink" href="#arcrest.common.filters.LayerDefinitionFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseFilter</span></code></p>
+<p>Allows you to filter the features of individual layers in the
+query by specifying definition expressions for those layers. A
+definition expression for a layer that is published with the
+service will always be honored.</p>
+<dl class="method">
+<dt id="arcrest.common.filters.LayerDefinitionFilter.addFilter">
+<code class="descname">addFilter</code><span class="sig-paren">(</span><em>layer_id</em>, <em>where=None</em>, <em>outFields='*'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.filters.LayerDefinitionFilter.addFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a layer definition filter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.common.filters.LayerDefinitionFilter.filter">
+<code class="descname">filter</code><a class="headerlink" href="#arcrest.common.filters.LayerDefinitionFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the filter object as a list of layer defs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.common.filters.LayerDefinitionFilter.removeAll">
+<code class="descname">removeAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.filters.LayerDefinitionFilter.removeAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes all items from the filter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.common.filters.LayerDefinitionFilter.removeFilter">
+<code class="descname">removeFilter</code><span class="sig-paren">(</span><em>filter_index</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.filters.LayerDefinitionFilter.removeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes a layer filter based on position in filter list</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.common.filters.TimeFilter">
+<em class="property">class </em><code class="descclassname">arcrest.common.filters.</code><code class="descname">TimeFilter</code><span class="sig-paren">(</span><em>start_time</em>, <em>time_zone='UTC'</em>, <em>end_time=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.filters.TimeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseFilter</span></code></p>
+<p>Implements the time filter</p>
+<dl class="attribute">
+<dt id="arcrest.common.filters.TimeFilter.filter">
+<code class="descname">filter</code><a class="headerlink" href="#arcrest.common.filters.TimeFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.common.filters.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.common.filters.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

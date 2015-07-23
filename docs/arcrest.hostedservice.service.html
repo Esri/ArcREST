@@ -1,0 +1,1088 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.hostedservice.service module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.hostedservice.service">
+<span id="arcrest-hostedservice-service-module"></span><h1>arcrest.hostedservice.service module<a class="headerlink" href="#module-arcrest.hostedservice.service" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="arcrest.hostedservice.service.AdminFeatureService">
+<em class="property">class </em><code class="descclassname">arcrest.hostedservice.service.</code><code class="descname">AdminFeatureService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>A feature service can contain datasets (e.g. tables, views) with and
+without a spatial column.  Datasets with a spatial column are
+considered layers and without a spatial column are considered
+tables.  A feature service allows clients to query and edit feature
+geometry and attributes.</p>
+<p>This resource provides basic information about the feature service
+including the feature layers and tables that it contains, the
+service description, etc.  The administrative feature service
+resource maintains a set of operations that manage the state and
+contents of the service.  Note, query and edit operations are not
+available via the adminstrative resource.</p>
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.addToDefinition">
+<code class="descname">addToDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.addToDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The addToDefinition operation supports adding a definition
+property to a hosted feature service. The result of this
+operation is a response indicating success or failure with error
+code and description.</p>
+<p>This function will allow users to change add additional values
+to an already published service.</p>
+<dl class="docutils">
+<dt>Input:</dt>
+<dd><dl class="first last docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.adminServiceInfo">
+<code class="descname">adminServiceInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.adminServiceInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the admin service information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.allowGeometryUpdates">
+<code class="descname">allowGeometryUpdates</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.allowGeometryUpdates" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if the data allows geometry updates</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the feature service as a dictionary object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service current version</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.deleteFromDefinition">
+<code class="descname">deleteFromDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.deleteFromDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The deleteFromDefinition operation supports deleting a
+definition property from a hosted feature service. The result of
+this operation is a response indicating success or failure with
+error code and description.
+See: <a class="reference external" href="http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Delete_From_Definition_Feature_Service/02r30000021w000000/">http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Delete_From_Definition_Feature_Service/02r30000021w000000/</a>
+for additional information on this function.
+Input:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.  Only
+include the items you want to remove from the
+FeatureService or layer.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>JSON Message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.editorTrackingInfo">
+<code class="descname">editorTrackingInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.editorTrackingInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.enableZDefaults">
+<code class="descname">enableZDefaults</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.enableZDefaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layers for a service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.error">
+<code class="descname">error</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the error message</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.hasStaticData">
+<code class="descname">hasStaticData</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.hasStaticData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.hasVersionedData">
+<code class="descname">hasVersionedData</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.hasVersionedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean for versioned data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the initial extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.json">
+<code class="descname">json</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.json" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean is disconnecting editted supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layers for a service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max record count</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>refreshes a service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the serviceDescription of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.size">
+<code class="descname">size</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the size parameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatial reference</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.status">
+<code class="descname">status</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service status</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.supportsDisconnectedEditing">
+<code class="descname">supportsDisconnectedEditing</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.supportsDisconnectedEditing" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean is disconnecting editted supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.syncCapabilities">
+<code class="descname">syncCapabilities</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.syncCapabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>type of sync that can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.syncEnabled">
+<code class="descname">syncEnabled</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.syncEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if sync of data can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layers for a service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the measurement unit</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.updateDefinition">
+<code class="descname">updateDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.updateDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The updateDefinition operation supports updating a definition
+property in a hosted feature service. The result of this
+operation is a response indicating success or failure with error
+code and description.</p>
+<dl class="docutils">
+<dt>Input:</dt>
+<dd><dl class="first last docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON Message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.url">
+<code class="descname">url</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean is disconnecting editted supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureService.xssPreventionInfo">
+<code class="descname">xssPreventionInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureService.xssPreventionInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the xssPreventionInfo information</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer">
+<em class="property">class </em><code class="descclassname">arcrest.hostedservice.service.</code><code class="descname">AdminFeatureServiceLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>The layer resource represents a single feature layer or a non
+spatial table in a feature service.  A feature layer is a table or
+view with at least one spatial column.
+For tables, it provides basic information about the table such as
+its id, name, fields, types and templates.
+For feature layers, in addition to the table information above, it
+provides information such as its geometry type, min and max scales,
+and spatial reference.
+Each type includes information about the type such as the type id,
+name, and definition expression.  Sub-types also include a default
+symbol and a list of feature templates.
+Each feature template includes a template name, description and a
+prototypical feature.
+The property supportsRollbackOnFailures will be true to indicate the
+support for transactional edits.
+The property maxRecordCount returns the maximum number of records
+that will be returned at once for a query.
+The property capabilities returns Query, Create, Delete, Update, and
+Editing capabilities. The Editing capability will be included if
+Create, Delete or Update is enabled for a Feature Service.
+Note, query and edit operations are not available on a layer in the
+adminstrative view.</p>
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.addToDefinition">
+<code class="descname">addToDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.addToDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The addToDefinition operation supports adding a definition
+property to a hosted feature service. The result of this
+operation is a response indicating success or failure with error
+code and description.</p>
+<p>This function will allow users to change add additional values
+to an already published service.</p>
+<dl class="docutils">
+<dt>Input:</dt>
+<dd><dl class="first last docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.adminLayerInfo">
+<code class="descname">adminLayerInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.adminLayerInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.advancedQueryCapabilities">
+<code class="descname">advancedQueryCapabilities</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.advancedQueryCapabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the advanced query capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.allowGeometryUpdates">
+<code class="descname">allowGeometryUpdates</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.allowGeometryUpdates" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean if geometry updates are allowed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.canModifyLayer">
+<code class="descname">canModifyLayer</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.canModifyLayer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.canScaleSymbols">
+<code class="descname">canScaleSymbols</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.canScaleSymbols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.dateFieldsTimeReference">
+<code class="descname">dateFieldsTimeReference</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.dateFieldsTimeReference" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.defaultVisibility">
+<code class="descname">defaultVisibility</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.defaultVisibility" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.definitionExpression">
+<code class="descname">definitionExpression</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.definitionExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the definitionExpression</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.definitionQuery">
+<code class="descname">definitionQuery</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.definitionQuery" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.deleteFromDefinition">
+<code class="descname">deleteFromDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.deleteFromDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The deleteFromDefinition operation supports deleting a
+definition property from a hosted feature service. The result of
+this operation is a response indicating success or failure with
+error code and description.
+See: <a class="reference external" href="http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Delete_From_Definition_Feature_Service/02r30000021w000000/">http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Delete_From_Definition_Feature_Service/02r30000021w000000/</a>
+for additional information on this function.
+Input:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.  Only
+include the items you want to remove from the
+FeatureService or layer.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>JSON Message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layer&#8217;s description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.displayField">
+<code class="descname">displayField</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.displayField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.drawingInfo">
+<code class="descname">drawingInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.drawingInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.editFieldsInfo">
+<code class="descname">editFieldsInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.editFieldsInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the edit fields information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.editingInfo">
+<code class="descname">editingInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.editingInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the editingInfo value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.effectiveMaxScale">
+<code class="descname">effectiveMaxScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.effectiveMaxScale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.effectiveMinScale">
+<code class="descname">effectiveMinScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.effectiveMinScale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.enableZDefaults">
+<code class="descname">enableZDefaults</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.enableZDefaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.error">
+<code class="descname">error</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns error message if error occurs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.exceedsLimitFactor">
+<code class="descname">exceedsLimitFactor</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.exceedsLimitFactor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.extent">
+<code class="descname">extent</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.extent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.fields">
+<code class="descname">fields</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.geometryType">
+<code class="descname">geometryType</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.geometryType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the geometry type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.globalIdField">
+<code class="descname">globalIdField</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.globalIdField" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the global id field</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.hasAttachments">
+<code class="descname">hasAttachments</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.hasAttachments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.hasLabels">
+<code class="descname">hasLabels</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.hasLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.hasM">
+<code class="descname">hasM</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.hasM" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns if it has a m value or not</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.hasStaticData">
+<code class="descname">hasStaticData</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.hasStaticData" title="Permalink to this definition">¶</a></dt>
+<dd><p>boolean T/F if static data is present</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.hasZ">
+<code class="descname">hasZ</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.hasZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns if it has a Z value or not</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.htmlPopupType">
+<code class="descname">htmlPopupType</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.htmlPopupType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.id">
+<code class="descname">id</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.indexes">
+<code class="descname">indexes</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the indexes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.isDataVersioned">
+<code class="descname">isDataVersioned</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.isDataVersioned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.loadAttributes">
+<code class="descname">loadAttributes</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.loadAttributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the max scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>minimum scale layer will show</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.objectIdField">
+<code class="descname">objectIdField</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.objectIdField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.ogcGeometryType">
+<code class="descname">ogcGeometryType</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.ogcGeometryType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.ownershipBasedAccessControlForFeatures">
+<code class="descname">ownershipBasedAccessControlForFeatures</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.ownershipBasedAccessControlForFeatures" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.parentLayer">
+<code class="descname">parentLayer</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.parentLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns information about the parent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>refreshes a service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.relationships">
+<code class="descname">relationships</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.relationships" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.subLayers">
+<code class="descname">subLayers</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.subLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns sublayers for layer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsAdvancedQueries">
+<code class="descname">supportsAdvancedQueries</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsAdvancedQueries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsAttachmentsByUploadId">
+<code class="descname">supportsAttachmentsByUploadId</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsAttachmentsByUploadId" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the supportsAttachmentsByUploadId value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsCalculate">
+<code class="descname">supportsCalculate</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsCalculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the supportsCalculate value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsCoordinatesQuantization">
+<code class="descname">supportsCoordinatesQuantization</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsCoordinatesQuantization" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the supportsCoordinatesQuantization value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsRollbackOnFailureParameter">
+<code class="descname">supportsRollbackOnFailureParameter</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsRollbackOnFailureParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns if rollback on failure supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsStatistics">
+<code class="descname">supportsStatistics</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsStatistics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsValidateSql">
+<code class="descname">supportsValidateSql</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.supportsValidateSql" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the support validate sql value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.syncCanReturnChanges">
+<code class="descname">syncCanReturnChanges</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.syncCanReturnChanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.templates">
+<code class="descname">templates</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the template</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.timeInfo">
+<code class="descname">timeInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.timeInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.type">
+<code class="descname">type</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.typeIdField">
+<code class="descname">typeIdField</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.typeIdField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.types">
+<code class="descname">types</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.updateDefinition">
+<code class="descname">updateDefinition</code><span class="sig-paren">(</span><em>json_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.updateDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>The updateDefinition operation supports updating a definition
+property in a hosted feature service. The result of this
+operation is a response indicating success or failure with error
+code and description.</p>
+<dl class="docutils">
+<dt>Input:</dt>
+<dd><dl class="first last docutils">
+<dt>json_dict - part to add to host service.  The part format can</dt>
+<dd>be derived from the asDictionary property.  For
+layer level modifications, run updates on each
+individual feature service layer object.</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON Message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.useStandardizedQueries">
+<code class="descname">useStandardizedQueries</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.useStandardizedQueries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminFeatureServiceLayer.zDefault">
+<code class="descname">zDefault</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminFeatureServiceLayer.zDefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.hostedservice.service.AdminMapService">
+<em class="property">class </em><code class="descclassname">arcrest.hostedservice.service.</code><code class="descname">AdminMapService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>A map service offer access to map and layer content.</p>
+<p>The REST API administrative map service resource represents a map
+service. This resource provides basic information about the map,
+including the layers that it contains, whether the map is cached or
+not, its spatial reference, initial and full extents, etc...  The
+administrative map service resource maintains a set of operations
+that manage the state and contents of the service.</p>
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.access">
+<code class="descname">access</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.access" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the access</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.cacheExecutionStatus">
+<code class="descname">cacheExecutionStatus</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.cacheExecutionStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the cacheExecutionStatus</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminMapService.cancelJob">
+<code class="descname">cancelJob</code><span class="sig-paren">(</span><em>jobId</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.cancelJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cancel job operation supports cancelling a job while update
+tiles is running from a hosted feature service. The result of this
+operation is a response indicating success or failure with error
+code and description.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>jobId - jobId to cancel</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.count">
+<code class="descname">count</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.created">
+<code class="descname">created</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.created" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the created</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.currentJob">
+<code class="descname">currentJob</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.currentJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the currentJob</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminMapService.editTileService">
+<code class="descname">editTileService</code><span class="sig-paren">(</span><em>serviceDefinition=None</em>, <em>minScale=None</em>, <em>maxScale=None</em>, <em>sourceItemId=None</em>, <em>exportTilesAllowed=False</em>, <em>maxExportTileCount=100000</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.editTileService" title="Permalink to this definition">¶</a></dt>
+<dd><p>This post operation updates a Tile Service&#8217;s properties</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">serviceDefinition - updates a service definition
+minScale - sets the services minimum scale for caching
+maxScale - sets the service&#8217;s maximum scale for caching
+sourceItemId - The Source Item ID is the GeoWarehouse Item ID of the map service
+exportTilesAllowed - sets the value to let users export tiles
+maxExportTileCount - sets the maximum amount of tiles to be exported</p>
+<blockquote class="last">
+<div>from a single call.</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.exportTilesAllowed">
+<code class="descname">exportTilesAllowed</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.exportTilesAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the exportTilesAllowed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the fullExtent</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.id">
+<code class="descname">id</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the initialExtent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminMapService.jobStatistics">
+<code class="descname">jobStatistics</code><span class="sig-paren">(</span><em>jobId</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.jobStatistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>The delete job operation supports deleting a job from a hosted map
+service. The result of this operation is a response indicating
+success or failure with error code and description.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.jobStatus">
+<code class="descname">jobStatus</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.jobStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the jobStatus</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.jobs">
+<code class="descname">jobs</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the jobs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.lodInfos">
+<code class="descname">lodInfos</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.lodInfos" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the lodInfos</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.maxExportTilesCount">
+<code class="descname">maxExportTilesCount</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.maxExportTilesCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the maxExportTilesCount</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the maxScale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the minScale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.modified">
+<code class="descname">modified</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the modified</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the name</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.hostedservice.service.AdminMapService.refresh">
+<code class="descname">refresh</code><span class="sig-paren">(</span><em>serviceDefinition=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>The refresh operation refreshes a service, which clears the web
+server cache for the service.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.serverId">
+<code class="descname">serverId</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.serverId" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the serverId</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.size">
+<code class="descname">size</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.sourceType">
+<code class="descname">sourceType</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.sourceType" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the sourceType</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.status">
+<code class="descname">status</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service status</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.tileInfo">
+<code class="descname">tileInfo</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.tileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the tileInfo</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.type">
+<code class="descname">type</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.AdminMapService.urlService">
+<code class="descname">urlService</code><a class="headerlink" href="#arcrest.hostedservice.service.AdminMapService.urlService" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the url</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.hostedservice.service.Services">
+<em class="property">class </em><code class="descclassname">arcrest.hostedservice.service.</code><code class="descname">Services</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.hostedservice.service.Services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>The administration resource is the root node and initial entry point
+into a Spatial Data Server adminstrative interface. This resource
+represents a catalog of data sources and services published on the
+host.
+The current version and type of the server is also returned in the
+response. The value of the version is a number such that its value
+at a future release is guaranteed to be greater than its value at a
+previous release.
+Inputs:</p>
+<blockquote>
+<div>url - url to service admin site: <a class="reference external" href="http:/">http:/</a>/&lt;web server hostname&gt;/arcgis/rest/admin
+securityHandler - AGOL/Portal</div></blockquote>
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the software&#8217;s current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the description property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.folderName">
+<code class="descname">folderName</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.folderName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the folder name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.folders">
+<code class="descname">folders</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.folders" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service folders</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.resources">
+<code class="descname">resources</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of all resources on the AGOL site</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.serverType">
+<code class="descname">serverType</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.serverType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the server type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.hostedservice.service.Services.services">
+<code class="descname">services</code><a class="headerlink" href="#arcrest.hostedservice.service.Services.services" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the service objects in the admin service&#8217;s page</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.hostedservice.service.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.hostedservice.service.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

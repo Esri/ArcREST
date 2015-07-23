@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.security.ntlm3.ntlm module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.security.ntlm3.ntlm">
+<span id="arcrest-security-ntlm3-ntlm-module"></span><h1>arcrest.security.ntlm3.ntlm module<a class="headerlink" href="#module-arcrest.security.ntlm3.ntlm" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.ComputeResponse">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">ComputeResponse</code><span class="sig-paren">(</span><em>ResponseKeyNT</em>, <em>ResponseKeyLM</em>, <em>ServerChallenge</em>, <em>ServerName</em>, <em>ClientChallenge='\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'</em>, <em>Time='\x00\x00\x00\x00\x00\x00\x00\x00'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.ComputeResponse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="arcrest.security.ntlm3.ntlm.NTLM_MsAvRestrictions">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">NTLM_MsAvRestrictions</code><em class="property"> = 8</em><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.NTLM_MsAvRestrictions" title="Permalink to this definition">¶</a></dt>
+<dd><p>utility functions for Microsoft NTLM authentication</p>
+<p>References:
+[MS-NLMP]: NT LAN Manager (NTLM) Authentication Protocol Specification
+<a class="reference external" href="http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NLMP%5D.pdf">http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NLMP%5D.pdf</a></p>
+<p>[MS-NTHT]: NTLM Over HTTP Protocol Specification
+<a class="reference external" href="http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NTHT%5D.pdf">http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NTHT%5D.pdf</a></p>
+<p>Cntlm Authentication Proxy
+<a class="reference external" href="http://cntlm.awk.cz/">http://cntlm.awk.cz/</a></p>
+<p>NTLM Authorization Proxy Server
+<a class="reference external" href="http://sourceforge.net/projects/ntlmaps/">http://sourceforge.net/projects/ntlmaps/</a></p>
+<p>Optimized Attack for NTLM2 Session Response
+<a class="reference external" href="http://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-seki.pdf">http://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-seki.pdf</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.calc_resp">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">calc_resp</code><span class="sig-paren">(</span><em>password_hash</em>, <em>server_challenge</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.calc_resp" title="Permalink to this definition">¶</a></dt>
+<dd><p>calc_resp generates the LM response given a 16-byte password hash and the
+challenge from the Type-2 message.
+&#64;param password_hash</p>
+<blockquote>
+<div>16-byte password hash</div></blockquote>
+<dl class="docutils">
+<dt>&#64;param server_challenge</dt>
+<dd>8-byte challenge from Type-2 message</dd>
+<dt>returns</dt>
+<dd>24-byte buffer to contain the LM response upon return</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_LM_hashed_password_v1">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_LM_hashed_password_v1</code><span class="sig-paren">(</span><em>passwd</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_LM_hashed_password_v1" title="Permalink to this definition">¶</a></dt>
+<dd><p>create LanManager hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_NTLM_AUTHENTICATE_MESSAGE">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_NTLM_AUTHENTICATE_MESSAGE</code><span class="sig-paren">(</span><em>nonce</em>, <em>user</em>, <em>domain</em>, <em>password</em>, <em>NegotiateFlags</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_NTLM_AUTHENTICATE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_NTLM_NEGOTIATE_MESSAGE">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_NTLM_NEGOTIATE_MESSAGE</code><span class="sig-paren">(</span><em>user</em>, <em>type1_flags=2718478855L</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_NTLM_NEGOTIATE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_NT_hashed_password_v1">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_NT_hashed_password_v1</code><span class="sig-paren">(</span><em>passwd</em>, <em>user=None</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_NT_hashed_password_v1" title="Permalink to this definition">¶</a></dt>
+<dd><p>create NT hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_NT_hashed_password_v2">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_NT_hashed_password_v2</code><span class="sig-paren">(</span><em>passwd</em>, <em>user</em>, <em>domain</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_NT_hashed_password_v2" title="Permalink to this definition">¶</a></dt>
+<dd><p>create NT hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.create_sessionbasekey">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">create_sessionbasekey</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.create_sessionbasekey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.ntlm2sr_calc_resp">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">ntlm2sr_calc_resp</code><span class="sig-paren">(</span><em>ResponseKeyNT</em>, <em>ServerChallenge</em>, <em>ClientChallenge='\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.ntlm2sr_calc_resp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.security.ntlm3.ntlm.parse_NTLM_CHALLENGE_MESSAGE">
+<code class="descclassname">arcrest.security.ntlm3.ntlm.</code><code class="descname">parse_NTLM_CHALLENGE_MESSAGE</code><span class="sig-paren">(</span><em>msg2</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.security.ntlm3.ntlm.parse_NTLM_CHALLENGE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.security.ntlm3.ntlm.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.security.ntlm3.ntlm.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
