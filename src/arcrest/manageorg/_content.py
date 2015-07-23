@@ -1560,7 +1560,7 @@ class UserContent(BaseAGOLClass):
                                securityHandler=self._securityHandler,
                                proxy_url=self._proxy_url,
                                proxy_port=self._proxy_port)
-        return  admin.portals().portalSelf().user['username']   
+        return  admin.portals().portalSelf().user['username']
     #----------------------------------------------------------------------
     def listUserFolders(self, username):
         """
@@ -2307,7 +2307,7 @@ class UserContent(BaseAGOLClass):
                               empty
            filePath - path of the file that will update the online item
            multipart - If true, the file is uploaded in multiple parts. Used
-                       for files over 100 MBs in size. 
+                       for files over 100 MBs in size.
            url - The URL of the item to be updated.
            text - The text content for the item to be updated.
         """
@@ -2345,7 +2345,7 @@ class UserContent(BaseAGOLClass):
         if folderId is not None:
             url += '/' + folderId
         url = url + "/items/%s/update" % itemId
-        
+
         if multipart and len(files) > 0:
             params['multipart'] = multipart
             params["filename"] = os.path.basename(filePath)
@@ -2362,12 +2362,12 @@ class UserContent(BaseAGOLClass):
                                      folder=folderId)
                 itemId = res['id']
                 # need to pass 'type' on commit
-                res = self.commit(itemId=itemId, 
+                res = self.commit(itemId=itemId,
                                   folderId=folderId,
                                   wait=True
                                   )
                 itemId = res['itemId']
-        else:        
+        else:
             if len(files) > 0:
                 parsed = urlparse.urlparse(url)
                 res = self._post_multipart(host=parsed.hostname,
@@ -2387,7 +2387,7 @@ class UserContent(BaseAGOLClass):
                                     proxy_port=self._proxy_port,
                                     proxy_url=self._proxy_url,
                                     securityHandler=self._securityHandler,
-                                    header=header) 
+                                    header=header)
         #Original
         #if len(files) > 0:
             #parsed = urlparse.urlparse(url)

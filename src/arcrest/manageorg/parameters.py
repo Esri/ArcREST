@@ -160,11 +160,11 @@ class CreateServiceParameters(BaseParameters):
     _supportsSyncDirectionControl = True,
     _supportsPerLayerSync = True,
     _supportsPerReplicaSync = True,
-    _supportsRollbackOnFailure = True,  
+    _supportsRollbackOnFailure = True,
     _hasVersionedData = False,
     _supportsDisconnectedEditing = False,
     _size =49152,
-    _syncEnabled =True    
+    _syncEnabled =True
     #----------------------------------------------------------------------
     def __init__(self,
                  name,
@@ -192,11 +192,11 @@ class CreateServiceParameters(BaseParameters):
                  supportsSyncDirectionControl = True,
                  supportsPerLayerSync = True,
                  supportsPerReplicaSync = True,
-                 supportsRollbackOnFailure = True,  
+                 supportsRollbackOnFailure = True,
                  hasVersionedData = False,
                  supportsDisconnectedEditing = False,
                  size =49152,
-                 syncEnabled =True                     
+                 syncEnabled =True
                  ):
         """Constructor"""
         self._name = name
@@ -274,27 +274,107 @@ class PortalParameters(BaseParameters):
     """
     The following parameters represent the properties of a portal
     """
-    _name = None
-    _access = None
-    _description = None
     _canSharePublic = None
-    _canSearchPublic = None
-    _thumbnail = None
+    _subscriptionInfo = None
+    _defaultExtent = None
+    _supportsHostedServices = None
+    _homePageFeaturedContentCount = None
+    _supportsOAuth = None
+    _portalName = None
     _urlKey = None
-    _urlHostName = None
+    _databaseUsage = None
     _culture = None
-
-    __allowed_keys = ['name', 'access', "description",
-                      "canSharePublic", "canSearchPublic",
-                      "thumbnail", "urlKey", "urlHostName",
-                      "culture"]
+    _helpBase = None
+    _galleryTemplatesGroupQuery = None
+    _commentsEnabled = None
+    _metadataEditable = None
+    _databaseQuota = None
+    _id = None
+    _canSearchPublic = None
+    _customBaseUrl = None
+    _allSSL = None
+    _featuredGroupsId = None
+    _defaultBasemap = None
+    _created = None
+    _access = None
+    _httpPort = None
+    _isPortal = None
+    _canSignInArcGIS = None
+    _portalThumbnail = None
+    _httpsPort = None
+    _units = None
+    _canListPreProvisionedItems = None
+    _mfaEnabled = None
+    _featuredGroups = None
+    _thumbnail = None
+    _featuredItemsGroupQuery = None
+    _canSignInIDP = None
+    _useStandardizedQuery = None
+    _canListData = None
+    _rotatorPanels = None
+    _description = None
+    _homePageFeaturedContent = None
+    _canProvisionDirectPurchase = None
+    _metadataFormats = None
+    _stylesGroupQuery = None
+    _ipCntryCode = None
+    _user = None
+    _helpMap = None
+    _colorSetsGroupQuery = None
+    _canListApps = None
+    _portalProperties = None
+    _portalHostname = None
+    _livingAtlasGroupQuery = None
+    _symbolSetsGroupQuery = None
+    _name = None
+    _storageQuota = None
+    _canShareBingPublic = None
+    _maxTokenExpirationMinutes = None
+    _layerTemplatesGroupQuery = None
+    _staticImagesUrl = None
+    _modified = None
+    _showHomePageDescription = None
+    _availableCredits = None
+    _helperServices = None
+    _storageUsage = None
+    _templatesGroupQuery = None
+    _mfaAdmins = None
+    _basemapGalleryGroupQuery = None
+    _region = None
+    _portalMode = None
+    __allowed_keys = ["canSharePublic","subscriptionInfo","defaultExtent","supportsHostedServices",
+                      "homePageFeaturedContentCount","supportsOAuth","portalName","urlKey",
+                      "databaseUsage","culture","helpBase","galleryTemplatesGroupQuery",
+                      "commentsEnabled","metadataEditable","databaseQuota","id","canSearchPublic",
+                      "customBaseUrl","allSSL","featuredGroupsId","defaultBasemap","created",
+                      "access","httpPort","isPortal","canSignInArcGIS","portalThumbnail",
+                      "httpsPort","units","canListPreProvisionedItems","mfaEnabled",
+                      "featuredGroups","thumbnail","featuredItemsGroupQuery","canSignInIDP",
+                      "useStandardizedQuery","canListData","rotatorPanels","description",
+                      "homePageFeaturedContent","canProvisionDirectPurchase","metadataFormats",
+                      "stylesGroupQuery","ipCntryCode","user","helpMap","colorSetsGroupQuery",
+                      "canListApps","portalProperties","portalHostname","livingAtlasGroupQuery",
+                      "symbolSetsGroupQuery","name","storageQuota","canShareBingPublic",
+                      "maxTokenExpirationMinutes","layerTemplatesGroupQuery","staticImagesUrl",
+                      "modified","showHomePageDescription","availableCredits","helperServices",
+                      "storageUsage","templatesGroupQuery","mfaAdmins",
+                      "basemapGalleryGroupQuery","region","portalMode"]
     #----------------------------------------------------------------------
     def __init__(self, **kwargv):
         """Constructor"""
         for key, value in kwargv:
             if key in self.__allowed_keys:
                 setattr(self, "_"+ key, value)
-
+    @staticmethod
+    def fromDictionary(value):
+        """creates the portal properties object from a dictionary"""
+        if isinstance(value, dict):
+            pp = PortalParameters()
+            for k,v in value.iteritems():
+                setattr(pp, "_%s" % k, v)
+            return pp
+        else:
+            raise AttributeError("Invalid input.")
     #----------------------------------------------------------------------
     @property
     def value(self):
@@ -304,59 +384,753 @@ class PortalParameters(BaseParameters):
             val = getattr(self, "_" + k)
             val[k] = val
         return val
-    #----------------------------------------------------------------------
     @property
-    def name(self):
-        """ The name of the organization/portal. The character limit is 250 """
-        return self._name
-    #----------------------------------------------------------------------
-    @name.setter
-    def name(self, value):
-        """The name of the organization/portal. The character limit is 250"""
-        if self._name != value:
-            self._name = value
-    #----------------------------------------------------------------------
+    def canSharePublic(self):
+        """gets/sets the property value canSharePublic"""
+        return self._canSharePublic
+    #----------------------------------------------------
+    @canSharePublic.setter
+    def canSharePublic(self,value):
+        """gets/sets the property value canSharePublic"""
+        if value is not None:
+            self._canSharePublic = value
+    #----------------------------------------------------
+    @property
+    def subscriptionInfo(self):
+        """gets/sets the property value subscriptionInfo"""
+        return self._subscriptionInfo
+    #----------------------------------------------------
+    @subscriptionInfo.setter
+    def subscriptionInfo(self,value):
+        """gets/sets the property value subscriptionInfo"""
+        if value is not None:
+            self._subscriptionInfo = value
+    #----------------------------------------------------
+    @property
+    def defaultExtent(self):
+        """gets/sets the property value defaultExtent"""
+        return self._defaultExtent
+    #----------------------------------------------------
+    @defaultExtent.setter
+    def defaultExtent(self,value):
+        """gets/sets the property value defaultExtent"""
+        if value is not None:
+            self._defaultExtent = value
+    #----------------------------------------------------
+    @property
+    def supportsHostedServices(self):
+        """gets/sets the property value supportsHostedServices"""
+        return self._supportsHostedServices
+    #----------------------------------------------------
+    @supportsHostedServices.setter
+    def supportsHostedServices(self,value):
+        """gets/sets the property value supportsHostedServices"""
+        if value is not None:
+            self._supportsHostedServices = value
+    #----------------------------------------------------
+    @property
+    def homePageFeaturedContentCount(self):
+        """gets/sets the property value homePageFeaturedContentCount"""
+        return self._homePageFeaturedContentCount
+    #----------------------------------------------------
+    @homePageFeaturedContentCount.setter
+    def homePageFeaturedContentCount(self,value):
+        """gets/sets the property value homePageFeaturedContentCount"""
+        if value is not None:
+            self._homePageFeaturedContentCount = value
+    #----------------------------------------------------
+    @property
+    def supportsOAuth(self):
+        """gets/sets the property value supportsOAuth"""
+        return self._supportsOAuth
+    #----------------------------------------------------
+    @supportsOAuth.setter
+    def supportsOAuth(self,value):
+        """gets/sets the property value supportsOAuth"""
+        if value is not None:
+            self._supportsOAuth = value
+    #----------------------------------------------------
+    @property
+    def portalName(self):
+        """gets/sets the property value portalName"""
+        return self._portalName
+    #----------------------------------------------------
+    @portalName.setter
+    def portalName(self,value):
+        """gets/sets the property value portalName"""
+        if value is not None:
+            self._portalName = value
+    #----------------------------------------------------
+    @property
+    def urlKey(self):
+        """gets/sets the property value urlKey"""
+        return self._urlKey
+    #----------------------------------------------------
+    @urlKey.setter
+    def urlKey(self,value):
+        """gets/sets the property value urlKey"""
+        if value is not None:
+            self._urlKey = value
+    #----------------------------------------------------
+    @property
+    def databaseUsage(self):
+        """gets/sets the property value databaseUsage"""
+        return self._databaseUsage
+    #----------------------------------------------------
+    @databaseUsage.setter
+    def databaseUsage(self,value):
+        """gets/sets the property value databaseUsage"""
+        if value is not None:
+            self._databaseUsage = value
+    #----------------------------------------------------
+    @property
+    def culture(self):
+        """gets/sets the property value culture"""
+        return self._culture
+    #----------------------------------------------------
+    @culture.setter
+    def culture(self,value):
+        """gets/sets the property value culture"""
+        if value is not None:
+            self._culture = value
+    #----------------------------------------------------
+    @property
+    def helpBase(self):
+        """gets/sets the property value helpBase"""
+        return self._helpBase
+    #----------------------------------------------------
+    @helpBase.setter
+    def helpBase(self,value):
+        """gets/sets the property value helpBase"""
+        if value is not None:
+            self._helpBase = value
+    #----------------------------------------------------
+    @property
+    def galleryTemplatesGroupQuery(self):
+        """gets/sets the property value galleryTemplatesGroupQuery"""
+        return self._galleryTemplatesGroupQuery
+    #----------------------------------------------------
+    @galleryTemplatesGroupQuery.setter
+    def galleryTemplatesGroupQuery(self,value):
+        """gets/sets the property value galleryTemplatesGroupQuery"""
+        if value is not None:
+            self._galleryTemplatesGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def commentsEnabled(self):
+        """gets/sets the property value commentsEnabled"""
+        return self._commentsEnabled
+    #----------------------------------------------------
+    @commentsEnabled.setter
+    def commentsEnabled(self,value):
+        """gets/sets the property value commentsEnabled"""
+        if value is not None:
+            self._commentsEnabled = value
+    #----------------------------------------------------
+    @property
+    def metadataEditable(self):
+        """gets/sets the property value metadataEditable"""
+        return self._metadataEditable
+    #----------------------------------------------------
+    @metadataEditable.setter
+    def metadataEditable(self,value):
+        """gets/sets the property value metadataEditable"""
+        if value is not None:
+            self._metadataEditable = value
+    #----------------------------------------------------
+    @property
+    def databaseQuota(self):
+        """gets/sets the property value databaseQuota"""
+        return self._databaseQuota
+    #----------------------------------------------------
+    @databaseQuota.setter
+    def databaseQuota(self,value):
+        """gets/sets the property value databaseQuota"""
+        if value is not None:
+            self._databaseQuota = value
+    #----------------------------------------------------
+    @property
+    def id(self):
+        """gets/sets the property value id"""
+        return self._id
+    #----------------------------------------------------
+    @id.setter
+    def id(self,value):
+        """gets/sets the property value id"""
+        if value is not None:
+            self._id = value
+    #----------------------------------------------------
+    @property
+    def canSearchPublic(self):
+        """gets/sets the property value canSearchPublic"""
+        return self._canSearchPublic
+    #----------------------------------------------------
+    @canSearchPublic.setter
+    def canSearchPublic(self,value):
+        """gets/sets the property value canSearchPublic"""
+        if value is not None:
+            self._canSearchPublic = value
+    #----------------------------------------------------
+    @property
+    def customBaseUrl(self):
+        """gets/sets the property value customBaseUrl"""
+        return self._customBaseUrl
+    #----------------------------------------------------
+    @customBaseUrl.setter
+    def customBaseUrl(self,value):
+        """gets/sets the property value customBaseUrl"""
+        if value is not None:
+            self._customBaseUrl = value
+    #----------------------------------------------------
+    @property
+    def allSSL(self):
+        """gets/sets the property value allSSL"""
+        return self._allSSL
+    #----------------------------------------------------
+    @allSSL.setter
+    def allSSL(self,value):
+        """gets/sets the property value allSSL"""
+        if value is not None:
+            self._allSSL = value
+    #----------------------------------------------------
+    @property
+    def featuredGroupsId(self):
+        """gets/sets the property value featuredGroupsId"""
+        return self._featuredGroupsId
+    #----------------------------------------------------
+    @featuredGroupsId.setter
+    def featuredGroupsId(self,value):
+        """gets/sets the property value featuredGroupsId"""
+        if value is not None:
+            self._featuredGroupsId = value
+    #----------------------------------------------------
+    @property
+    def defaultBasemap(self):
+        """gets/sets the property value defaultBasemap"""
+        return self._defaultBasemap
+    #----------------------------------------------------
+    @defaultBasemap.setter
+    def defaultBasemap(self,value):
+        """gets/sets the property value defaultBasemap"""
+        if value is not None:
+            self._defaultBasemap = value
+    #----------------------------------------------------
+    @property
+    def created(self):
+        """gets/sets the property value created"""
+        return self._created
+    #----------------------------------------------------
+    @created.setter
+    def created(self,value):
+        """gets/sets the property value created"""
+        if value is not None:
+            self._created = value
+    #----------------------------------------------------
     @property
     def access(self):
-        """
-        Determines who can view your organization as an anonymous user.
-        Setting to public allows anonymous users to access your
-        organization's custom URL. Setting to private restricts access to
-        only members of your organization. public is the default.
-        Values: private | public
-        """
+        """gets/sets the property value access"""
         return self._access
-    #----------------------------------------------------------------------
+    #----------------------------------------------------
     @access.setter
-    def access(self, value):
-        """
-        Determines who can view your organization as an anonymous user.
-        Setting to public allows anonymous users to access your
-        organization's custom URL. Setting to private restricts access to
-        only members of your organization. public is the default.
-        Values: private | public
-        """
-        if self._access != value:
+    def access(self,value):
+        """gets/sets the property value access"""
+        if value is not None:
             self._access = value
-    #----------------------------------------------------------------------
+    #----------------------------------------------------
+    @property
+    def httpPort(self):
+        """gets/sets the property value httpPort"""
+        return self._httpPort
+    #----------------------------------------------------
+    @httpPort.setter
+    def httpPort(self,value):
+        """gets/sets the property value httpPort"""
+        if value is not None:
+            self._httpPort = value
+    #----------------------------------------------------
+    @property
+    def isPortal(self):
+        """gets/sets the property value isPortal"""
+        return self._isPortal
+    #----------------------------------------------------
+    @isPortal.setter
+    def isPortal(self,value):
+        """gets/sets the property value isPortal"""
+        if value is not None:
+            self._isPortal = value
+    #----------------------------------------------------
+    @property
+    def canSignInArcGIS(self):
+        """gets/sets the property value canSignInArcGIS"""
+        return self._canSignInArcGIS
+    #----------------------------------------------------
+    @canSignInArcGIS.setter
+    def canSignInArcGIS(self,value):
+        """gets/sets the property value canSignInArcGIS"""
+        if value is not None:
+            self._canSignInArcGIS = value
+    #----------------------------------------------------
+    @property
+    def portalThumbnail(self):
+        """gets/sets the property value portalThumbnail"""
+        return self._portalThumbnail
+    #----------------------------------------------------
+    @portalThumbnail.setter
+    def portalThumbnail(self,value):
+        """gets/sets the property value portalThumbnail"""
+        if value is not None:
+            self._portalThumbnail = value
+    #----------------------------------------------------
+    @property
+    def httpsPort(self):
+        """gets/sets the property value httpsPort"""
+        return self._httpsPort
+    #----------------------------------------------------
+    @httpsPort.setter
+    def httpsPort(self,value):
+        """gets/sets the property value httpsPort"""
+        if value is not None:
+            self._httpsPort = value
+    #----------------------------------------------------
+    @property
+    def units(self):
+        """gets/sets the property value units"""
+        return self._units
+    #----------------------------------------------------
+    @units.setter
+    def units(self,value):
+        """gets/sets the property value units"""
+        if value is not None:
+            self._units = value
+    #----------------------------------------------------
+    @property
+    def canListPreProvisionedItems(self):
+        """gets/sets the property value canListPreProvisionedItems"""
+        return self._canListPreProvisionedItems
+    #----------------------------------------------------
+    @canListPreProvisionedItems.setter
+    def canListPreProvisionedItems(self,value):
+        """gets/sets the property value canListPreProvisionedItems"""
+        if value is not None:
+            self._canListPreProvisionedItems = value
+    #----------------------------------------------------
+    @property
+    def mfaEnabled(self):
+        """gets/sets the property value mfaEnabled"""
+        return self._mfaEnabled
+    #----------------------------------------------------
+    @mfaEnabled.setter
+    def mfaEnabled(self,value):
+        """gets/sets the property value mfaEnabled"""
+        if value is not None:
+            self._mfaEnabled = value
+    #----------------------------------------------------
+    @property
+    def featuredGroups(self):
+        """gets/sets the property value featuredGroups"""
+        return self._featuredGroups
+    #----------------------------------------------------
+    @featuredGroups.setter
+    def featuredGroups(self,value):
+        """gets/sets the property value featuredGroups"""
+        if value is not None:
+            self._featuredGroups = value
+    #----------------------------------------------------
+    @property
+    def thumbnail(self):
+        """gets/sets the property value thumbnail"""
+        return self._thumbnail
+    #----------------------------------------------------
+    @thumbnail.setter
+    def thumbnail(self,value):
+        """gets/sets the property value thumbnail"""
+        if value is not None:
+            self._thumbnail = value
+    #----------------------------------------------------
+    @property
+    def featuredItemsGroupQuery(self):
+        """gets/sets the property value featuredItemsGroupQuery"""
+        return self._featuredItemsGroupQuery
+    #----------------------------------------------------
+    @featuredItemsGroupQuery.setter
+    def featuredItemsGroupQuery(self,value):
+        """gets/sets the property value featuredItemsGroupQuery"""
+        if value is not None:
+            self._featuredItemsGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def canSignInIDP(self):
+        """gets/sets the property value canSignInIDP"""
+        return self._canSignInIDP
+    #----------------------------------------------------
+    @canSignInIDP.setter
+    def canSignInIDP(self,value):
+        """gets/sets the property value canSignInIDP"""
+        if value is not None:
+            self._canSignInIDP = value
+    #----------------------------------------------------
+    @property
+    def useStandardizedQuery(self):
+        """gets/sets the property value useStandardizedQuery"""
+        return self._useStandardizedQuery
+    #----------------------------------------------------
+    @useStandardizedQuery.setter
+    def useStandardizedQuery(self,value):
+        """gets/sets the property value useStandardizedQuery"""
+        if value is not None:
+            self._useStandardizedQuery = value
+    #----------------------------------------------------
+    @property
+    def canListData(self):
+        """gets/sets the property value canListData"""
+        return self._canListData
+    #----------------------------------------------------
+    @canListData.setter
+    def canListData(self,value):
+        """gets/sets the property value canListData"""
+        if value is not None:
+            self._canListData = value
+    #----------------------------------------------------
+    @property
+    def rotatorPanels(self):
+        """gets/sets the property value rotatorPanels"""
+        return self._rotatorPanels
+    #----------------------------------------------------
+    @rotatorPanels.setter
+    def rotatorPanels(self,value):
+        """gets/sets the property value rotatorPanels"""
+        if value is not None:
+            self._rotatorPanels = value
+    #----------------------------------------------------
     @property
     def description(self):
-        """
-        A description of the organization/portal and can be of any length
-        """
+        """gets/sets the property value description"""
         return self._description
-    #----------------------------------------------------------------------
+    #----------------------------------------------------
     @description.setter
-    def description(self, value):
-        """
-        A description of the organization/portal and can be of any length
-        """
-        if self._description != value:
+    def description(self,value):
+        """gets/sets the property value description"""
+        if value is not None:
             self._description = value
-    #----------------------------------------------------------------------
-    #@property
-    #def (self):
-        #""""""
+    #----------------------------------------------------
+    @property
+    def homePageFeaturedContent(self):
+        """gets/sets the property value homePageFeaturedContent"""
+        return self._homePageFeaturedContent
+    #----------------------------------------------------
+    @homePageFeaturedContent.setter
+    def homePageFeaturedContent(self,value):
+        """gets/sets the property value homePageFeaturedContent"""
+        if value is not None:
+            self._homePageFeaturedContent = value
+    #----------------------------------------------------
+    @property
+    def canProvisionDirectPurchase(self):
+        """gets/sets the property value canProvisionDirectPurchase"""
+        return self._canProvisionDirectPurchase
+    #----------------------------------------------------
+    @canProvisionDirectPurchase.setter
+    def canProvisionDirectPurchase(self,value):
+        """gets/sets the property value canProvisionDirectPurchase"""
+        if value is not None:
+            self._canProvisionDirectPurchase = value
+    #----------------------------------------------------
+    @property
+    def metadataFormats(self):
+        """gets/sets the property value metadataFormats"""
+        return self._metadataFormats
+    #----------------------------------------------------
+    @metadataFormats.setter
+    def metadataFormats(self,value):
+        """gets/sets the property value metadataFormats"""
+        if value is not None:
+            self._metadataFormats = value
+    #----------------------------------------------------
+    @property
+    def stylesGroupQuery(self):
+        """gets/sets the property value stylesGroupQuery"""
+        return self._stylesGroupQuery
+    #----------------------------------------------------
+    @stylesGroupQuery.setter
+    def stylesGroupQuery(self,value):
+        """gets/sets the property value stylesGroupQuery"""
+        if value is not None:
+            self._stylesGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def ipCntryCode(self):
+        """gets/sets the property value ipCntryCode"""
+        return self._ipCntryCode
+    #----------------------------------------------------
+    @ipCntryCode.setter
+    def ipCntryCode(self,value):
+        """gets/sets the property value ipCntryCode"""
+        if value is not None:
+            self._ipCntryCode = value
+    #----------------------------------------------------
+    @property
+    def user(self):
+        """gets/sets the property value user"""
+        return self._user
+    #----------------------------------------------------
+    @user.setter
+    def user(self,value):
+        """gets/sets the property value user"""
+        if value is not None:
+            self._user = value
+    #----------------------------------------------------
+    @property
+    def helpMap(self):
+        """gets/sets the property value helpMap"""
+        return self._helpMap
+    #----------------------------------------------------
+    @helpMap.setter
+    def helpMap(self,value):
+        """gets/sets the property value helpMap"""
+        if value is not None:
+            self._helpMap = value
+    #----------------------------------------------------
+    @property
+    def colorSetsGroupQuery(self):
+        """gets/sets the property value colorSetsGroupQuery"""
+        return self._colorSetsGroupQuery
+    #----------------------------------------------------
+    @colorSetsGroupQuery.setter
+    def colorSetsGroupQuery(self,value):
+        """gets/sets the property value colorSetsGroupQuery"""
+        if value is not None:
+            self._colorSetsGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def canListApps(self):
+        """gets/sets the property value canListApps"""
+        return self._canListApps
+    #----------------------------------------------------
+    @canListApps.setter
+    def canListApps(self,value):
+        """gets/sets the property value canListApps"""
+        if value is not None:
+            self._canListApps = value
+    #----------------------------------------------------
+    @property
+    def portalProperties(self):
+        """gets/sets the property value portalProperties"""
+        return self._portalProperties
+    #----------------------------------------------------
+    @portalProperties.setter
+    def portalProperties(self,value):
+        """gets/sets the property value portalProperties"""
+        if value is not None:
+            self._portalProperties = value
+    #----------------------------------------------------
+    @property
+    def portalHostname(self):
+        """gets/sets the property value portalHostname"""
+        return self._portalHostname
+    #----------------------------------------------------
+    @portalHostname.setter
+    def portalHostname(self,value):
+        """gets/sets the property value portalHostname"""
+        if value is not None:
+            self._portalHostname = value
+    #----------------------------------------------------
+    @property
+    def livingAtlasGroupQuery(self):
+        """gets/sets the property value livingAtlasGroupQuery"""
+        return self._livingAtlasGroupQuery
+    #----------------------------------------------------
+    @livingAtlasGroupQuery.setter
+    def livingAtlasGroupQuery(self,value):
+        """gets/sets the property value livingAtlasGroupQuery"""
+        if value is not None:
+            self._livingAtlasGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def symbolSetsGroupQuery(self):
+        """gets/sets the property value symbolSetsGroupQuery"""
+        return self._symbolSetsGroupQuery
+    #----------------------------------------------------
+    @symbolSetsGroupQuery.setter
+    def symbolSetsGroupQuery(self,value):
+        """gets/sets the property value symbolSetsGroupQuery"""
+        if value is not None:
+            self._symbolSetsGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def name(self):
+        """gets/sets the property value name"""
+        return self._name
+    #----------------------------------------------------
+    @name.setter
+    def name(self,value):
+        """gets/sets the property value name"""
+        if value is not None:
+            self._name = value
+    #----------------------------------------------------
+    @property
+    def storageQuota(self):
+        """gets/sets the property value storageQuota"""
+        return self._storageQuota
+    #----------------------------------------------------
+    @storageQuota.setter
+    def storageQuota(self,value):
+        """gets/sets the property value storageQuota"""
+        if value is not None:
+            self._storageQuota = value
+    #----------------------------------------------------
+    @property
+    def canShareBingPublic(self):
+        """gets/sets the property value canShareBingPublic"""
+        return self._canShareBingPublic
+    #----------------------------------------------------
+    @canShareBingPublic.setter
+    def canShareBingPublic(self,value):
+        """gets/sets the property value canShareBingPublic"""
+        if value is not None:
+            self._canShareBingPublic = value
+    #----------------------------------------------------
+    @property
+    def maxTokenExpirationMinutes(self):
+        """gets/sets the property value maxTokenExpirationMinutes"""
+        return self._maxTokenExpirationMinutes
+    #----------------------------------------------------
+    @maxTokenExpirationMinutes.setter
+    def maxTokenExpirationMinutes(self,value):
+        """gets/sets the property value maxTokenExpirationMinutes"""
+        if value is not None:
+            self._maxTokenExpirationMinutes = value
+    #----------------------------------------------------
+    @property
+    def layerTemplatesGroupQuery(self):
+        """gets/sets the property value layerTemplatesGroupQuery"""
+        return self._layerTemplatesGroupQuery
+    #----------------------------------------------------
+    @layerTemplatesGroupQuery.setter
+    def layerTemplatesGroupQuery(self,value):
+        """gets/sets the property value layerTemplatesGroupQuery"""
+        if value is not None:
+            self._layerTemplatesGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def staticImagesUrl(self):
+        """gets/sets the property value staticImagesUrl"""
+        return self._staticImagesUrl
+    #----------------------------------------------------
+    @staticImagesUrl.setter
+    def staticImagesUrl(self,value):
+        """gets/sets the property value staticImagesUrl"""
+        if value is not None:
+            self._staticImagesUrl = value
+    #----------------------------------------------------
+    @property
+    def modified(self):
+        """gets/sets the property value modified"""
+        return self._modified
+    #----------------------------------------------------
+    @modified.setter
+    def modified(self,value):
+        """gets/sets the property value modified"""
+        if value is not None:
+            self._modified = value
+    #----------------------------------------------------
+    @property
+    def showHomePageDescription(self):
+        """gets/sets the property value showHomePageDescription"""
+        return self._showHomePageDescription
+    #----------------------------------------------------
+    @showHomePageDescription.setter
+    def showHomePageDescription(self,value):
+        """gets/sets the property value showHomePageDescription"""
+        if value is not None:
+            self._showHomePageDescription = value
+    #----------------------------------------------------
+    @property
+    def availableCredits(self):
+        """gets/sets the property value availableCredits"""
+        return self._availableCredits
+    #----------------------------------------------------
+    @availableCredits.setter
+    def availableCredits(self,value):
+        """gets/sets the property value availableCredits"""
+        if value is not None:
+            self._availableCredits = value
+    #----------------------------------------------------
+    @property
+    def helperServices(self):
+        """gets/sets the property value helperServices"""
+        return self._helperServices
+    #----------------------------------------------------
+    @helperServices.setter
+    def helperServices(self,value):
+        """gets/sets the property value helperServices"""
+        if value is not None:
+            self._helperServices = value
+    #----------------------------------------------------
+    @property
+    def storageUsage(self):
+        """gets/sets the property value storageUsage"""
+        return self._storageUsage
+    #----------------------------------------------------
+    @storageUsage.setter
+    def storageUsage(self,value):
+        """gets/sets the property value storageUsage"""
+        if value is not None:
+            self._storageUsage = value
+    #----------------------------------------------------
+    @property
+    def templatesGroupQuery(self):
+        """gets/sets the property value templatesGroupQuery"""
+        return self._templatesGroupQuery
+    #----------------------------------------------------
+    @templatesGroupQuery.setter
+    def templatesGroupQuery(self,value):
+        """gets/sets the property value templatesGroupQuery"""
+        if value is not None:
+            self._templatesGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def mfaAdmins(self):
+        """gets/sets the property value mfaAdmins"""
+        return self._mfaAdmins
+    #----------------------------------------------------
+    @mfaAdmins.setter
+    def mfaAdmins(self,value):
+        """gets/sets the property value mfaAdmins"""
+        if value is not None:
+            self._mfaAdmins = value
+    #----------------------------------------------------
+    @property
+    def basemapGalleryGroupQuery(self):
+        """gets/sets the property value basemapGalleryGroupQuery"""
+        return self._basemapGalleryGroupQuery
+    #----------------------------------------------------
+    @basemapGalleryGroupQuery.setter
+    def basemapGalleryGroupQuery(self,value):
+        """gets/sets the property value basemapGalleryGroupQuery"""
+        if value is not None:
+            self._basemapGalleryGroupQuery = value
+    #----------------------------------------------------
+    @property
+    def region(self):
+        """gets/sets the property value region"""
+        return self._region
+    #----------------------------------------------------
+    @region.setter
+    def region(self,value):
+        """gets/sets the property value region"""
+        if value is not None:
+            self._region = value
+    #----------------------------------------------------
+    @property
+    def portalMode(self):
+        """gets/sets the property value portalMode"""
+        return self._portalMode
+    #----------------------------------------------------
+    @portalMode.setter
+    def portalMode(self,value):
+        """gets/sets the property value portalMode"""
+        if value is not None:
+            self._portalMode = value
 ########################################################################
 class ItemParameter(BaseParameters):
     """
