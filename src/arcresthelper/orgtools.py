@@ -11,6 +11,7 @@ import json
 import os
 import common 
 import gc
+
 #----------------------------------------------------------------------
 def trace():
     """
@@ -72,16 +73,7 @@ class orgtools(securityhandlerhelper):
                             else:
                                 print "%s shared with %s" % (result['title'],shareToGroupName)
                             results.append(res)
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "shareItemsToGroup",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -268,16 +260,7 @@ class orgtools(securityhandlerhelper):
                         isViewOnly=isViewOnly,
                         isInvitationOnly=isInvitationOnly,
                         thumbnail=thumbnail)
-        except arcpy.ExecuteError:
-            line, filename, synerror = trace()
-            raise common.ArcRestHelperError({
-                        "function": "createGroup",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                                        }
-                                        )
+        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

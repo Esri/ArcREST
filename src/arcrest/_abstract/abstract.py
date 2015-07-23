@@ -55,6 +55,7 @@ class BaseSecurityHandler(_base.BaseWebOperations):
     _token = None
     _valid = True
     _message = ""
+    _is_portal = False    
     #----------------------------------------------------------------------
     @property
     def message(self):
@@ -65,6 +66,7 @@ class BaseSecurityHandler(_base.BaseWebOperations):
     def valid(self):
         """ returns boolean wether handler is valid """
         return self._valid    
+   
 ########################################################################
 class AbstractGeometry(object):
     """ Base Geometry Class """

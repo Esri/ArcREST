@@ -25,26 +25,26 @@ def main():
     proxy_port = None
     proxy_url = None    
     
-    securityInfo = {}
-    securityInfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityInfo['username'] = ""
-    securityInfo['password'] = ""
-    securityInfo['org_url'] = ""
-    securityInfo['proxy_url'] = proxy_url
-    securityInfo['proxy_port'] = proxy_port
-    securityInfo['referer_url'] = None
-    securityInfo['token_url'] = None
-    securityInfo['certificatefile'] = None
-    securityInfo['keyfile'] = None
-    securityInfo['client_id'] = None
-    securityInfo['secret_id'] = None   
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = ""
+    securityinfo['password'] = ""
+    securityinfo['org_url'] = ""
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None   
     
    
     itemId = "1c2d57215d1241e3a17041a353ebf222"    
     new_service_name = "l21d12dd"
     try:      
         
-        shh = securityhandlerhelper.securityhandlerhelper(securityInfo)
+        shh = securityhandlerhelper.securityhandlerhelper(securityinfo)
         if shh.valid == False:
             print shh.message
         else:        

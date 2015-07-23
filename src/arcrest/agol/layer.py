@@ -1115,7 +1115,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
               boolean, add results message as list of dictionaries
 
         """
-        messages = {'addResults':None}
+        messages = {'addResults':[]}
         if attachmentTable is None:
             count = 0
             bins = 1
@@ -1145,7 +1145,16 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                        securityHandler=self._securityHandler,
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
-                messages.update(result)
+                if messages is None:
+                    messages = result
+                else:
+                    if 'addResults' in result:
+                        if 'addResults' in messages:
+                            messages['addResults'] = messages['addResults'] + result['addResults']
+                        else:
+                            messages['addResults'] = result['addResults']
+                    else:
+                        messages['errors'] = result
 
                 del params
                 del result

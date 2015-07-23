@@ -1,10 +1,10 @@
 """
-   This sample shows how to update the
-   large thumbnail of an item
+   This sample shows how to delete rows from a layer
 """
 import arcrest
-from arcresthelper import securityhandlerhelper
+from arcresthelper import featureservicetools
 from arcresthelper import common
+
 def trace():
     """
         trace finds the line, the filename
@@ -28,7 +28,7 @@ def main():
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "<Username>"#<UserName>
+    securityinfo['username'] = "<UserName>"#<UserName>
     securityinfo['password'] = "<Password>"#<Password>
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
@@ -39,26 +39,26 @@ def main():
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
     securityinfo['secret_id'] = None   
-    
-    itemId = "<Item ID>"    
-    
-      
-    try:
-        shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
-        if shh.valid == False:
-            print shh.message
-        else:
-            portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-            content = portalAdmin.content
-            adminusercontent = content.usercontent()
-            item = content.item(itemId)
-            itemParams = arcrest.manageorg.ItemParameter()
-           
-            itemParams.largeThumbnail = r"<Path to Image>"
-        
-            print adminusercontent.updateItem(itemId = itemId,
-                                                        updateItemParameters=itemParams,
-                                                        folderId=item.ownerFolder)
+
+
+    itemId = "<Item ID>"#<Item ID>
+    sql = "1=1"
+    layerNames = "layer1, layer2" #layer1, layer2
+    try:      
+
+        fst = featureservicetools.featureservicetools(securityinfo)
+        if fst.valid == False:
+            print fst.message
+        else:         
+
+            fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
+            if not fs is None:
+               
+                for layerName in layerNames.split(','):
+                    fs_url = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=True)
+                    if not fs_url is None:
+                        print fst.DeleteFeaturesFromFeatureLayer(url=fs_url, sql=sql, 
+                                                          chunksize=2000)
     except (common.ArcRestHelperError),e:
         print("error in function: %s" % e[0]['function'])
         print("error on line: %s" % e[0]['line'])
@@ -66,7 +66,7 @@ def main():
         print("with error message: %s" % e[0]['synerror'])
         if 'arcpyError' in e[0]:
             print("with arcpy message: %s" % e[0]['arcpyError'])
-
+    
     except:
         line, filename, synerror = trace()
         print("error on line: %s" % line)
@@ -74,4 +74,4 @@ def main():
         print("with error message: %s" % synerror)
 
 if __name__ == "__main__":
-    main()        
+    main()

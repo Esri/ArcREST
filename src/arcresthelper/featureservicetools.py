@@ -11,7 +11,7 @@ import json
 import os
 import common 
 import gc
-
+import arcpy
 #----------------------------------------------------------------------
 def trace():
     """
@@ -190,14 +190,59 @@ class featureservicetools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass):
+    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0):
         fl = None
         try:
             fl = FeatureLayer(
                    url=url,
                    securityHandler=self._securityHandler)
-            return fl.addFeatures(fc=pathToFeatureClass)
-       
+                        
+            if chunksize > 0:
+                messages = {'addResults':[]}
+                total = arcpy.GetCount_management(pathToFeatureClass)
+                arcpy.env.overwriteOutput = True
+                inDesc = arcpy.Describe(pathToFeatureClass)
+                oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
+                sql = '%s = (select min(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                minOID = cur.next()[0]
+                del cur, sql
+                sql = '%s = (select max(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                maxOID = cur.next()[0]
+                del cur, sql
+                breaks = range(minOID,maxOID)[0:-1:chunksize] 
+                breaks.append(maxOID+1)
+                exprList = [oidName + ' >= ' + str(breaks[b]) + ' and ' + \
+                            oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
+                for expr in exprList:
+                    UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
+                    result = fl.addFeatures(fc=UploadLayer)
+                    if messages is None:
+                        messages = result
+                    else:
+                        if 'addResults' in result:
+                            if 'addResults' in messages:
+                                messages['addResults'] = messages['addResults'] + result['addResults']
+                                print "%s/%s features added" % (len(messages['addResults']),total)
+                            else:
+                                messages['addResults'] = result['addResults']
+                                print "%s/%s features added" % (len(messages['addResults']),total)
+                        else:
+                            messages['errors'] = result
+                return messages
+            else:
+                return fl.addFeatures(fc=pathToFeatureClass)
+        except arcpy.ExecuteError:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "create_report_layers_using_config",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+                "arcpyError": arcpy.GetMessages(2),
+            }
+                           )  
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -214,13 +259,63 @@ class featureservicetools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def DeleteFeaturesFromFeatureLayer(self,url,sql):
+    def DeleteFeaturesFromFeatureLayer(self,url,sql,chunksize=0):
         fl = None
         try:
             fl = FeatureLayer(
                    url=url,
                    securityHandler=self._securityHandler)
-            return fl.deleteFeatures(where=sql)
+            totalDeleted = 0
+            if chunksize > 0:
+                qRes = fl.query(where=sql, returnIDsOnly=True)
+                if 'error' in qRes:
+                    print qRes
+                    return qRes
+                elif 'objectIds' in qRes:
+                    oids = qRes['objectIds']
+                    total = len(oids)
+                    if total == 0:
+                        return "No features matched the query"
+                        
+                    minId = min(oids)
+                    maxId = max(oids)
+                   
+                    i = 0
+                    print "%s features to be deleted" % total
+                    while(i <= len(oids)):
+                        oidsDelete = ','.join(str(e) for e in oids[i:i+chunksize])
+                        if oidsDelete == '':
+                            continue
+                        else:
+                            results = fl.deleteFeatures(objectIds=oidsDelete)
+                        if 'deleteResults' in results:
+                            totalDeleted += len(results['deleteResults'])
+                            print "%s%% Completed: %s/%s " % (int(totalDeleted / float(total) *100), totalDeleted, total)
+                            i += chunksize                            
+                        else:
+                            print results
+                            return "%s deleted" % totalDeleted
+                    qRes = fl.query(where=sql, returnIDsOnly=True)
+                    if 'objectIds' in qRes:
+                        oids = qRes['objectIds']
+                        if len(oids)> 0 :
+                            print "%s features to be deleted" % len(oids)
+                            results = fl.deleteFeatures(where=sql)
+                            if 'deleteResults' in results:
+                                totalDeleted += len(results['deleteResults'])
+                                return "%s deleted" % totalDeleted
+                            else:
+                                return results
+                    return "%s deleted" % totalDeleted 
+                    
+                else:
+                    print qRes
+            else:
+                results = fl.deleteFeatures(where=sql)
+                if 'deleteResults' in results:         
+                    return totalDeleted + len(results['deleteResults'])
+                else:
+                    return results
        
         except:
             line, filename, synerror = trace()
