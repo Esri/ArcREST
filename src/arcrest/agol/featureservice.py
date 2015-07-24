@@ -606,7 +606,7 @@ class FeatureService(abstract.BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        url = self._url + "/replicas/%s" + replica_id
+        url = self._url + "/replicas/" + replica_id
         return self._do_get(url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
