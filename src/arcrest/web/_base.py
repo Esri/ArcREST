@@ -220,7 +220,7 @@ class BaseWebOperations(object):
                                             compress=compress)
                 else:
                     print result['error']
-        if 'status' in result:
+        if 'status' in result and type(result) is dict:
             if result['status'] == 'error':
                 print str(result['code']) + " " + str(result['messages'])
         return self._unicode_convert(result)
