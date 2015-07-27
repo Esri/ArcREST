@@ -105,7 +105,8 @@ class Administration(BaseAGOLClass):
               num=10,
               sortField=None,
               sortOrder="asc",
-              useSecurity=True):
+              useSecurity=True,
+              asObject=True):
         """
         This operation searches for content items in the portal. The
         searches are performed against a high performance index that
@@ -159,6 +160,11 @@ class Administration(BaseAGOLClass):
                          will be found.  If it is set to True, then all
                          items the user has permission to see based on the
                          query passed will be returned.
+           asObject - boolean value that returns the value of the item as
+                      an ArcREST's Item object.
+           Output:
+             returns a list of dictionary wheren asObject is False, if the
+             asObjet is set to True, the list is a list of item objects.
         """
         if self._url.endswith("/rest"):
             url = self._url + "/search"
@@ -184,7 +190,20 @@ class Administration(BaseAGOLClass):
             params['sortField'] = sortField
         if bbox is not None:
             params['bbox'] = bbox
-        return self._do_get(url=url,
+        if asObject:
+            results = self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+            #from _content import Item
+            #item = Item(itemId, url,
+                        #securityHandler=self._securityHandler,
+                        #proxy_url=self._proxy_url,
+                        #proxy_port=self._proxy_port)
+            pass
+        else:
+            return self._do_get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,

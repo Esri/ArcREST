@@ -446,7 +446,6 @@ class Item(BaseAGOLClass):
     _sourceUrl = None
     _itemControl = None
     _sharing = None
-
     #----------------------------------------------------------------------
     def __init__(self, itemId, url,
                  securityHandler,
@@ -454,6 +453,8 @@ class Item(BaseAGOLClass):
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
+        if url.lower().find("/users/") > -1:
+            url = url.split('/users/')[0]
         if url.lower().endswith("/items") == False:
             self._baseUrl = url + "/items"
         else:
@@ -480,14 +481,23 @@ class Item(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            elif k == 'error':
-                print json_dict[k]
+        for key,value in json_dict.iteritems():
+            if key in ("item", "sharing"):
+                for k,v in value.iteritems():
+                    if k in attributes:
+                        setattr(self, "_"+ k, v)
+                    else:
+                        print k, " - attribute not implemented in the class _content.Item."
+                    del k,v
+            elif key == "error":
+                raise Exception("Error with Item: %s" % v)
             else:
-                print k, " - attribute not implemented in the class _content.Item."
-            del k,v
+                for k,v in json_dict.iteritems():
+                    if k in attributes:
+                        setattr(self, "_"+ k, v)
+                    else:
+                        print k, " - attribute not implemented in the class _content.Item."
+                    del k,v
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as json"""
@@ -531,7 +541,7 @@ class Item(BaseAGOLClass):
     @property
     def itemId(self):
         """ get/set id passed by the user """
-        return self._itemId
+        return self._id
     #----------------------------------------------------------------------
     @property
     def sharing(self):
@@ -990,6 +1000,8 @@ class Item(BaseAGOLClass):
            f.lower() in ['zip', 'json']:
             params['f'] = f
         url = self._baseUrl + "/%s/data" % self._itemId
+        if url.lower().find("/users/"):
+            url = url.split("/users/")[0] + "/items/%s/data" % self._itemId
         if self.type in ["Shapefile", "CityEngine Web Scene", "Web Scene", "KML",
                          "Code Sample",
                          "Code Attachment", "Operations Dashboard Add In",
@@ -1576,7 +1588,8 @@ class UserContent(BaseAGOLClass):
             return []
 
     #----------------------------------------------------------------------
-    def listUserContent(self, username=None, folderId=None):
+    def listUserContent(self, username=None, folderId=None,
+                        num=100, start=1, asObject=False):
         """
         Gets the user's content in the folder (if given)
         If the folderId is None, the root content will be returned as a
@@ -1593,12 +1606,33 @@ class UserContent(BaseAGOLClass):
         if folderId is not None:
             url += "/%s" % folderId
         params = {
-            "f" : "json"
+            "f" : "json",
+            "num" : int(num),
+            "start" : start
         }
-        return self._do_get(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        if asObject == False:
+            return self._do_get(url=url, param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+        else:
+            items = []
+            res = self._do_get(url=url, param_dict=params,
+                               securityHandler=self._securityHandler,
+                               proxy_url=self._proxy_url,
+                               proxy_port=self._proxy_port)
+            if res['items'] is not None:
+                for i in res['items']:
+                    item = Item(itemId=i['id'], url=url,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port,
+                         initialize=False)
+                    items.append(item)
+                    del i
+                res['items'] = items
+            return res
+    #----------------------------------------------------------------------
     @property
     def username(self):
         """gets/sets the username"""
