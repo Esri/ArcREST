@@ -4,6 +4,7 @@
 import arcrest
 from arcresthelper import featureservicetools
 from arcresthelper import common
+import datetime
 
 def trace():
     """
@@ -51,8 +52,6 @@ def main():
         startTime = datetime.datetime.now()
         print "Starting process at %s" % (configFile,startTime.strftime(dateTimeFormat))
             
-        
-
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid == False:
             print fst.message
