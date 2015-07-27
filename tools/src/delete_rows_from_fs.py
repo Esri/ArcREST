@@ -38,7 +38,7 @@ def outputPrinter(message,typeOfMessage='message'):
     else:
         arcpy.AddMessage(message=message)
 
-    print(message)
+    print message
 def main(*argv):
     userName = None
     password = None
@@ -54,18 +54,29 @@ def main(*argv):
     existingDef = None
     try:
 
-        userName = argv[0]
-        password = argv[1]
-        org_url = argv[2]
+        proxy_port = None
+        proxy_url = None    
+
+        securityinfo = {}
+        securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+        securityinfo['username'] = argv[0]
+        securityinfo['password'] = argv[1]
+        securityinfo['org_url'] = argv[2]
+        securityinfo['proxy_url'] = proxy_url
+        securityinfo['proxy_port'] = proxy_port
+        securityinfo['referer_url'] = None
+        securityinfo['token_url'] = None
+        securityinfo['certificatefile'] = None
+        securityinfo['keyfile'] = None
+        securityinfo['client_id'] = None
+        securityinfo['secret_id'] = None   
+        
         fsId = argv[3]
         layerNames = argv[4]
         sql = argv[5]
         toggleEditCapabilities = argv[6]
 
-        fst = featureservicetools.featureservicetools(username = userName, password=password,org_url=org_url,
-                                                      token_url=None,
-                                                      proxy_url=None,
-                                                      proxy_port=None)
+        fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid:
 
             fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)

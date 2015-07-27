@@ -60,18 +60,18 @@ def main():
                         print fst.DeleteFeaturesFromFeatureLayer(url=fs_url, sql=sql, 
                                                           chunksize=2000)
     except (common.ArcRestHelperError),e:
-        print("error in function: %s" % e[0]['function'])
-        print("error on line: %s" % e[0]['line'])
-        print("error in file name: %s" % e[0]['filename'])
-        print("with error message: %s" % e[0]['synerror'])
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
         if 'arcpyError' in e[0]:
-            print("with arcpy message: %s" % e[0]['arcpyError'])
+            print "with arcpy message: %s" % e[0]['arcpyError']
     
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
 
 if __name__ == "__main__":
     main()
