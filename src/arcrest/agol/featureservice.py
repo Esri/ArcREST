@@ -107,7 +107,11 @@ class FeatureService(abstract.BaseAGOLClass):
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
         for k,v in json_dict.iteritems():
-            if k in attributes:
+            if k == 'layers':
+                self._getLayers()
+            elif k == 'tables':
+                self._getTables()
+            elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implemented in Feature Service."

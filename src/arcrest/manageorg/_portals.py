@@ -1457,7 +1457,7 @@ class Portals(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def roles(self,
+    def getRoles(self,
               start=1,
               num=100):
         """
@@ -1478,6 +1478,15 @@ class Portals(BaseAGOLClass):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def roles(self):
+        """returns a class to work with the site's roles"""
+        return Roles(url=self._url + "/roles",
+                     securityHandler=self._securityHandler,
+                     proxy_url=self._proxy_url,
+                     proxy_port=self._proxy_port)
+
     #----------------------------------------------------------------------
     def usage(self,
               startTime,
@@ -1519,5 +1528,167 @@ class Portals(BaseAGOLClass):
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+########################################################################
+class Roles(BaseAGOLClass):
+    """Handles the searching, creation, deletion and updating of roles on
+    AGOL or Portal.
+    """
+    _url = None
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 securityHandler,
+                 proxy_url=None,
+                 proxy_port=None):
+        """Constructor"""
+        if url.find('/roles') < 0:
+            url = url + "/roles"
+        self._url = url
+        self._securityHandler = securityHandler
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns the roles as a string"""
+        nextCount = 0
+        start = 0
+        num = 100
+        results = []
+        while nextCount != -1:
+            res = self.roles(start=start + nextCount, num=num)
+            results = results + res['roles']
+            nextCount = int(res['nextStart'])
+        return json.dumps(results)
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """iterator to loop through role entries"""
+        nextCount = 0
+        start = 0
+        num = 100
+        results = []
+        while nextCount != -1:
+            res = self.roles(start=start + nextCount, num=num)
+            for r in res['roles']:
+                yield r
+            nextCount = int(res['nextStart'])
+    #----------------------------------------------------------------------
+    def roles(self, start, num):
+        """
+           lists the custom roles on the AGOL/Portal site
+
+           Input:
+              start - default 1
+              num - 100 - number of roles to return
+        """
+        url = self._url
+        params = {
+            "f" : "json",
+            "start" : start,
+            "num" : num
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def createRole(self, name, description):
+        """
+        creates a role for a portal/agol site.
+        Inputs:
+           names - name of the role
+           description - brief text string stating the nature of this
+            role.
+        Ouput:
+           dictionary
+        """
+        params = {
+            "name" : name,
+            "description" : description,
+            "f" : "json"
+        }
+        url = self._url + "/createRole"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def deleteRole(self, roleID):
+        """
+        deletes a role by ID
+
+        """
+        url = self._url + "/%s/delete" % roleID
+        params = {
+            "f" : "json"
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_post)
+    #----------------------------------------------------------------------
+    def updateRole(self, roleID, name, description):
+        """allows for the role name or description to be modified"""
+        params = {
+            "name" : name,
+            "description" : description,
+            "f" : "json"
+        }
+        url = url + "/%s/update"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def info(self, roleID):
+        """"""
+        url = self._url + "/%s" % roleID
+        params = {"f" : "json"}
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def findRoleID(self, name):
+        """searches the roles by name and returns the role's ID"""
+        for r in self:
+            if r['name'].lower == name.lower():
+                return r['id']
+            del r
+        return None
+    #----------------------------------------------------------------------
+    def privileges(self, roleID):
+        """returns the assigned priveleges for a given custom role"""
+        url = self._url + "/%s/privileges" % roleID
+        params = {"f" : "json"}
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def setPrivileges(self, roleID, privileges):
+        """
+        assigns a role a set of actions that the role can perform on the
+        AGOL or Portal site.
+
+        Input:
+           roleID - unique id of the role
+           privileges - list of privileges to assign to role.
+        """
+        params = {
+            "f" : "json",
+            "privileges" : {"privileges": privileges}
+        }
+        url = self._url + "/%s/setPrivileges" % roleID
+        return self._do_post(url=url,
+                             param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

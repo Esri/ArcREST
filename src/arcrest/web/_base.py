@@ -109,10 +109,10 @@ class BaseWebOperations(object):
             return save_path + os.sep + file_name
         except urllib2.HTTPError, e:
             print "HTTP Error:",e.code , url
-            return False
+            return None
         except urllib2.URLError, e:
             print "URL Error:",e.reason , url
-            return False
+            return None
     #----------------------------------------------------------------------
     def _get_content_type(self, filename):
         return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
@@ -289,7 +289,7 @@ class BaseWebOperations(object):
                                              proxy_url=proxy_url,
                                              proxy_port=proxy_port)
                 else:
-                    print jres['error']                
+                    print jres['error']
         if 'status' in result:
             if result['status'] == 'error':
                 print str(result['code']) + " " + str(result['messages'])
