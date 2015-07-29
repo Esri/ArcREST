@@ -13,7 +13,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect,sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -25,19 +25,30 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "<username>"
-    password = "<password>"
-    url = "http://www.arcgis.com"
+    proxy_port = None
+    proxy_url = None    
+
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
+    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None   
+      
     groups = ["Network Services"] #Name of groups
     outputlocation = r"C:\TEMP"
     outputfilename = "group.json"
     outputitemID = "id.csv"
     try:
 
-        orgt = orgtools.orgtools(username = username, password=password,org_url=url,
-                                 token_url=None, 
-                                 proxy_url=None, 
-                                 proxy_port=None)
+        orgt = orgtools.orgtools(securityinfo)
 
         groupRes = []
         if orgt.valid:
@@ -69,6 +80,6 @@ if __name__ == "__main__":
             
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)                      
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror

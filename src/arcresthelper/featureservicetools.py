@@ -12,6 +12,7 @@ import os
 import common 
 import gc
 import arcpy
+import traceback, inspect, sys 
 #----------------------------------------------------------------------
 def trace():
     """
@@ -19,7 +20,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect, sys 
+   
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -31,7 +32,120 @@ def trace():
     return line, filename, synerror
 
 class featureservicetools(securityhandlerhelper):
-  
+    #----------------------------------------------------------------------
+    def RemoveAndAddFeatures(self, url, pathToFeatureClass,id_field,chunksize=1000):
+        fl = None
+
+        try:    
+            arcpy.env.overwriteOutput = True
+            tempaddlayer= 'ewtdwedfew'
+            if not arcpy.Exists(pathToFeatureClass):
+                raise common.ArcRestHelperError({
+                    "function": "RemoveAndAddFeatures",
+                    "line": inspect.currentframe().f_back.f_lineno,
+                    "filename":  'featureservicetools',
+                    "synerror": "%s does not exist" % pathToFeatureClass
+                     }
+                    )  
+            
+            fields = arcpy.ListFields(pathToFeatureClass,wild_card=id_field)
+            if len(fields) == 0:
+                raise common.ArcRestHelperError({
+                    "function": "RemoveAndAddFeatures",
+                    "line": inspect.currentframe().f_back.f_lineno,
+                    "filename":  'featureservicetools',
+                    "synerror": "%s field does not exist" % id_field
+                })                  
+            strFld = True
+            if fields[0].type != 'String':
+                strFld = False            
+
+            fl = FeatureLayer(
+                    url=url,
+                    securityHandler=self._securityHandler)        
+            
+            id_field_local = arcpy.AddFieldDelimiters(pathToFeatureClass, id_field)
+            idlist = []
+            print arcpy.GetCount_management(in_rows=pathToFeatureClass).getOutput(0) + " features in the layer"
+            with arcpy.da.SearchCursor(pathToFeatureClass, (id_field)) as cursor:
+                for row in cursor:
+                    
+                    if (strFld):
+                        idlist.append("'" + row[0] +"'")
+                    else:
+                        idlist.append(row[0])
+                    if len(idlist) >= chunksize:
+                        idstring = ' in (' + ','.join(idlist) + ')'
+                        sql = id_field + idstring
+                        sqlLocalFC = id_field_local + idstring
+                        results = fl.deleteFeatures(where=sql, 
+                                          rollbackOnFailure=True)
+                        
+                        if 'error' in results:
+                            raise common.ArcRestHelperError({
+                            "function": "RemoveAndAddFeatures",
+                            "line": inspect.currentframe().f_back.f_lineno,
+                            "filename":  'featureservicetools',
+                            "synerror":results['error']
+                            })                               
+                        elif 'deleteResults' in results:
+                            print "%s features deleted" % len(results['deleteResults'])
+                            for itm in results['deleteResults']:
+                                if itm['success'] != True:
+                                    print itm                            
+                        else:
+                            print results                                                        
+                        
+                        arcpy.MakeFeatureLayer_management(pathToFeatureClass,tempaddlayer,sqlLocalFC)
+                        results = fl.addFeatures(fc=tempaddlayer)
+                        
+                        if 'error' in results:
+                            raise common.ArcRestHelperError({
+                            "function": "RemoveAndAddFeatures",
+                            "line": inspect.currentframe().f_back.f_lineno,
+                            "filename":  'featureservicetools',
+                            "synerror":results['error']
+                            })                               
+                        elif 'addResults' in results:
+                            print "%s features added" % len(results['addResults'])
+                            for itm in results['addResults']:
+                                if itm['success'] != True:
+                                    print itm
+                        else:
+                            print results                               
+                        idlist = []     
+          
+            if 'error' in results:
+                raise common.ArcRestHelperError({
+                    "function": "RemoveAndAddFeatures",
+                    "line": inspect.currentframe().f_back.f_lineno,
+                    "filename":  'featureservicetools',
+                    "synerror":results['error']
+                })                               
+            else:
+                print results            
+        except arcpy.ExecuteError:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "create_report_layers_using_config",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+                "arcpyError": arcpy.GetMessages(2),
+            }
+                           )  
+        except:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                        "function": "AddFeaturesToFeatureLayer",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                                        }
+                                        )
+        finally:
+            
+            gc.collect()        
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
@@ -199,7 +313,7 @@ class featureservicetools(securityhandlerhelper):
                         
             if chunksize > 0:
                 messages = {'addResults':[]}
-                total = arcpy.GetCount_management(pathToFeatureClass)
+                total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
                 arcpy.env.overwriteOutput = True
                 inDesc = arcpy.Describe(pathToFeatureClass)
                 oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
@@ -275,7 +389,7 @@ class featureservicetools(securityhandlerhelper):
                     oids = qRes['objectIds']
                     total = len(oids)
                     if total == 0:
-                        return "No features matched the query"
+                        return  {'success':'true','message': "No features matched the query"}
                         
                     minId = min(oids)
                     maxId = max(oids)
@@ -294,7 +408,7 @@ class featureservicetools(securityhandlerhelper):
                             i += chunksize                            
                         else:
                             print results
-                            return "%s deleted" % totalDeleted
+                            return {'success':'true','message': "%s deleted" % totalDeleted}
                     qRes = fl.query(where=sql, returnIDsOnly=True)
                     if 'objectIds' in qRes:
                         oids = qRes['objectIds']
@@ -303,17 +417,17 @@ class featureservicetools(securityhandlerhelper):
                             results = fl.deleteFeatures(where=sql)
                             if 'deleteResults' in results:
                                 totalDeleted += len(results['deleteResults'])
-                                return "%s deleted" % totalDeleted
+                                return  {'success':'true','message': "%s deleted" % totalDeleted}
                             else:
                                 return results
-                    return "%s deleted" % totalDeleted 
+                    return  {'success':'true','message': "%s deleted" % totalDeleted}
                     
                 else:
                     print qRes
             else:
                 results = fl.deleteFeatures(where=sql)
                 if 'deleteResults' in results:         
-                    return totalDeleted + len(results['deleteResults'])
+                    return  {'success':'true','message': totalDeleted + len(results['deleteResults'])}
                 else:
                     return results
        

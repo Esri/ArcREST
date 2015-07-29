@@ -19,8 +19,8 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "admin"
-    password = "admin.account"
+    username = ""
+    password = ""
     url = "https://arcrestdev1.esri.com/arcgis/admin/"
    
     try:      
@@ -39,6 +39,6 @@ if __name__ == "__main__":
 
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror

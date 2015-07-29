@@ -126,32 +126,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
             print "###############Stage Content Completed#################"
@@ -256,32 +256,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
             print "###############Create Groups Completed#################"
@@ -440,32 +440,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
     
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
