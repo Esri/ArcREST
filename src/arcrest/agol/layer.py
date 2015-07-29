@@ -21,6 +21,7 @@ from ..common.spatial import featureclass_to_json, create_feature_class
 from ..common.spatial import get_attachment_data
 from ..common.general import FeatureSet
 from ..hostedservice import AdminFeatureServiceLayer
+from .._abstract.abstract import BaseSecurityHandler
 import featureservice
 import os
 import json
@@ -105,12 +106,22 @@ class FeatureLayer(abstract.BaseAGOLClass):
 
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        if securityHandler is not None and \
-           isinstance(securityHandler, abstract.BaseSecurityHandler):
-            self._securityHandler = securityHandler
-
-            if not securityHandler.referer_url is None:
-                self._referer_url = securityHandler.referer_url
+        if isinstance(securityHandler, BaseSecurityHandler):
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+                    
+            else:
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+            
+           
+        else:
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
 
         if initialize:
             self.__init()

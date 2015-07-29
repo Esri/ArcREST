@@ -25,6 +25,7 @@ from ..common.general import _date_handler
 from ..common.general import FeatureSet
 from ..common import geometry
 from ..hostedservice import AdminFeatureService
+from .._abstract.abstract import BaseSecurityHandler
 
 ########################################################################
 class FeatureService(abstract.BaseAGOLClass):
@@ -72,36 +73,22 @@ class FeatureService(abstract.BaseAGOLClass):
 
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        self._securityHandler = securityHandler
-        
-        #if securityHandler is not None and \
-           #isinstance(securityHandler, abstract.BaseSecurityHandler):
-            #if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
-                #self._username = securityHandler.username
-                #self._password = securityHandler._password
-                #self._token_url = securityHandler.token_url
-
-                #self._securityHandler = securityHandler
-
-                #self._referer_url = securityHandler.referer_url
-            #elif isinstance(securityHandler, security.ArcGISTokenSecurityHandler):
-                #self._username = securityHandler.username
-                #self._securityHandler = securityHandler
-                #self._referer_url = securityHandler.referer_url
-            #elif isinstance(securityHandler, security.PortalTokenSecurityHandler):
-                #parsedURL = urlparse(url=url)
-                #pathParts = parsedURL.path.split('/')
-                #self._serverURL = parsedURL.scheme + '://' + parsedURL.netloc + '/' + pathParts[1]
-
-                #self._username = securityHandler.username
-                #self._password = securityHandler.password
-                #self._token_url = securityHandler.token_url
-                #self._securityHandler = securityHandler
-                #self._referer_url = securityHandler.referer_url
-            #elif isinstance(securityHandler, security.OAuthSecurityHandler):
-
-                #self._securityHandler = securityHandler
-                #self._referer_url = securityHandler.referer_url
+        if isinstance(securityHandler, BaseSecurityHandler):
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler                    
+                else:
+                    self._securityHandler = securityHandler
+    
+            else:
+                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+    
+    
+        else:
+            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")       
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
