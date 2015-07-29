@@ -79,7 +79,8 @@ class FeatureLayer(BaseAGSServer):
                        security.PortalServerSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
+            if hasattr(securityHandler, 'referer_url'):
+                self._referer_url = securityHandler.referer_url
         elif securityHandler is None:
             pass
         else:

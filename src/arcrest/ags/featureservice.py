@@ -48,17 +48,17 @@ class FeatureService(BaseAGSServer):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
-        if securityHandler is not None and \
-           isinstance(securityHandler, security.PortalTokenSecurityHandler) or \
-           isinstance(securityHandler, security.ArcGISTokenSecurityHandler) or \
-           isinstance(securityHandler, security.OAuthSecurityHandler):
+        print type(securityHandler)
+        if securityHandler is not None:
             self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
+
         elif securityHandler is None:
             pass
         else:
-            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
+            raise AttributeError("Invalid Security Handler")
+        if not securityHandler is None and \
+           hasattr(securityHandler, 'referer_url'):
+            self._referer_url = securityHandler.referer_url
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

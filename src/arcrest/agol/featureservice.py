@@ -73,7 +73,7 @@ class FeatureService(abstract.BaseAGOLClass):
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         self._securityHandler = securityHandler
-        
+
         #if securityHandler is not None and \
            #isinstance(securityHandler, abstract.BaseSecurityHandler):
             #if isinstance(securityHandler, security.AGOLTokenSecurityHandler):
@@ -120,7 +120,11 @@ class FeatureService(abstract.BaseAGOLClass):
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
         for k,v in json_dict.iteritems():
-            if k in attributes:
+            if k == 'layers':
+                self._getLayers()
+            elif k == 'tables':
+                self._getTables()
+            elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implemented in Feature Service."

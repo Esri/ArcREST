@@ -1055,7 +1055,11 @@ class Item(BaseAGOLClass):
         os.remove(xml)
         return text
     #----------------------------------------------------------------------
-    def metadata(self, exportFormat="default", output=None):
+    def metadata(self,
+                 exportFormat="default",
+                 output=None,
+                 saveFolder=None,
+                 fileName=None):
         """
         exports metadat to the various supported formats
         Inputs:
@@ -1063,7 +1067,11 @@ class Item(BaseAGOLClass):
            inspire, iso19139, iso19139-3.2, iso19115, and default.
            default means the value will be the default ArcGIS metadata
            format.
-         output - html or none.  Html returns values as html text.
+          output - html or none.  Html returns values as html text.
+          saveFolder - Default is None. If provided the metadata file will
+           be saved to that location.
+          fileName - Default is None. If provided, this will be the name of
+           the file on your local drive.
         Output:
          path to file or string
         """
@@ -1077,13 +1085,16 @@ class Item(BaseAGOLClass):
         }
         if output is not None:
             params['output'] = output
-
+        if saveFolder is None:
+            saveFolder = tempfile.gettempdir()
+        if fileName is None:
+            fileName = "metadata.xml"
         if output is None:
             return self._download_file(url=url,
-                                       save_path=tempfile.gettempdir(),
+                                       save_path=saveFolder,
                                        securityHandler=self._securityHandler,
                                        param_dict=params,
-                                       file_name="metadata.xml",
+                                       file_name=fileName,
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
         else:

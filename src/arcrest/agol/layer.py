@@ -108,8 +108,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if securityHandler is not None and \
            isinstance(securityHandler, abstract.BaseSecurityHandler):
             self._securityHandler = securityHandler
-
-            if not securityHandler.referer_url is None:
+            if hasattr(securityHandler, 'referer_url'):
+            #if not securityHandler.referer_url is None:
                 self._referer_url = securityHandler.referer_url
 
         if initialize:
