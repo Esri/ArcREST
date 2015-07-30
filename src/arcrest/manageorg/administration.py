@@ -90,6 +90,20 @@ class Administration(BaseAGOLClass):
             yield (k,v)
     #----------------------------------------------------------------------
     @property
+    def root(self):
+        """
+        The root resource returns the version of the containing portal. It
+        acts as a root to its child resources and operations. All other
+        URIs in this table are listed relative to the root URI.
+        """
+        return self._url
+    #----------------------------------------------------------------------
+    @property
+    def tokenURL(self):
+        """returns the common URL to generate a token"""
+        return self.root + "/generateToken"
+    #----------------------------------------------------------------------
+    @property
     def currentVersion(self):
         """ returns the current version of the site """
         if self._currentVersion is None:
@@ -160,11 +174,8 @@ class Administration(BaseAGOLClass):
                          will be found.  If it is set to True, then all
                          items the user has permission to see based on the
                          query passed will be returned.
-           asObject - boolean value that returns the value of the item as
-                      an ArcREST's Item object.
            Output:
-             returns a list of dictionary wheren asObject is False, if the
-             asObjet is set to True, the list is a list of item objects.
+             returns a list of dictionary
         """
         if self._url.endswith("/rest"):
             url = self._url + "/search"
@@ -190,24 +201,12 @@ class Administration(BaseAGOLClass):
             params['sortField'] = sortField
         if bbox is not None:
             params['bbox'] = bbox
-        if asObject:
-            results = self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-            #from _content import Item
-            #item = Item(itemId, url,
-                        #securityHandler=self._securityHandler,
-                        #proxy_url=self._proxy_url,
-                        #proxy_port=self._proxy_port)
-            pass
-        else:
-            return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+
+        return self._do_get(url=url,
+                        param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
     def community(self):

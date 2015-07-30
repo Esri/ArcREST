@@ -219,6 +219,23 @@ class Content(BaseAGOLClass):
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def useritem(self, itemId, folderId=None, username=None):
+        """
+        gets an item as a given user would see it.
+
+        """
+        if username is None:
+            username = self.__getCurrentUsername()
+        if folderId is None:
+            url = self._url + "/users/%s/items/%s" % (username, itemId)
+        else:
+            url = self._url + "/users/%s/%s/items/%s" % (username, folderId, itemId)
+        return UserItem(url=url,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port,
+                        initialize=True)
 ########################################################################
 class FeatureContent(BaseAGOLClass):
     """
@@ -1234,12 +1251,14 @@ class Item(BaseAGOLClass):
         if groups != "" and groups is not None:
             params['groups'] = groups
         url = self._baseUrl + "/%s/share" % self._itemId
-        return self._do_post(
+        res =  self._do_post(
             url = url,
             securityHandler=self._securityHandler,
             param_dict=params,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
+        self.__init()
+        return res
     #----------------------------------------------------------------------
     def unshareItem(self, groups):
         """
@@ -1260,6 +1279,63 @@ class Item(BaseAGOLClass):
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
 
+########################################################################
+class UserItem(Item):
+    """
+    A link to a user uploaded item along with the list of groups the item
+    is shared with. The item is not physically stored in the user's folder
+    but is stored as a link to the original item in the item resource
+    (/content/items/<itemId>). Access to the item via this link is
+    available only to the user.
+    """
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
+    _url = None
+    #----------------------------------------------------------------------
+    def __init__(self, url,
+                 securityHandler,
+                 proxy_url=None,
+                 proxy_port=None,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._securityHandler = securityHandler
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ loads the data into the class """
+        param_dict = {"f": "json"
+        }
+        json_dict = self._do_get(self._url, param_dict,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        self._json = json.dumps(json_dict)
+        self._json_dict = json_dict
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for key,value in json_dict.iteritems():
+            if key in ("item", "sharing"):
+                for k,v in value.iteritems():
+                    if k in attributes:
+                        setattr(self, "_"+ k, v)
+                    else:
+                        print k, " - attribute not implemented in the class _content.Item."
+                    del k,v
+            elif key == "error":
+                raise Exception("Error with Item: %s" % v)
+            else:
+                for k,v in json_dict.iteritems():
+                    if k in attributes:
+                        setattr(self, "_"+ k, v)
+                    else:
+                        print k, " - attribute not implemented in the class _content.Item."
+                    del k,v
 ########################################################################
 class UserItems(BaseAGOLClass):
     """
@@ -1597,7 +1673,6 @@ class UserContent(BaseAGOLClass):
             return res.get("folders")
         else:
             return []
-
     #----------------------------------------------------------------------
     def listUserContent(self, username=None, folderId=None,
                         num=100, start=1, asObject=False):
