@@ -39,24 +39,24 @@ class Services(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-               
+
         if isinstance(securityHandler, BaseSecurityHandler):
             if hasattr(securityHandler, 'is_portal'):
                 if securityHandler.is_portal:
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
                 raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-            
-           
+
+
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-      
+
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -193,7 +193,7 @@ class Services(BaseAGOLClass):
                     name = item['serviceName']
                     typefs = item['type']
 
-                surl = url + r"/%s/%s" % (name,
+                surl = url + r"/%s.%s" % (name,
                                            typefs)
                 self._services.append(
                     AdminFeatureService(url=surl,
@@ -247,25 +247,25 @@ class AdminMapService(BaseAGOLClass):
                  proxy_port=None):
         """Constructor"""
         self._url = url
-      
-        
+
+
         if isinstance(securityHandler, BaseSecurityHandler):
             if hasattr(securityHandler, 'is_portal'):
                 if securityHandler.is_portal:
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
                 raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-            
-           
+
+
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-      
+
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -647,24 +647,24 @@ class AdminFeatureService(BaseAGOLClass):
             url = url.replace('rest/services', 'rest/admin/services')
         self._url = url
 
-                
+
         if isinstance(securityHandler, BaseSecurityHandler):
             if hasattr(securityHandler, 'is_portal'):
                 if securityHandler.is_portal:
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
                 raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-            
-           
+
+
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-      
+
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -953,7 +953,7 @@ class AdminFeatureService(BaseAGOLClass):
         """ returns boolean is disconnecting editted supported """
         if self._dict is None:
             self.__init()
-        return self._dict   
+        return self._dict
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """
@@ -1182,24 +1182,24 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self._url = url
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
-              
+
         if isinstance(securityHandler, BaseSecurityHandler):
             if hasattr(securityHandler, 'is_portal'):
                 if securityHandler.is_portal:
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
                 raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-            
-           
+
+
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-      
+
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
