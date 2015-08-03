@@ -2,7 +2,7 @@ from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import os
 import urlparse
-import parameters
+import _parameters as parameters
 
 ########################################################################
 class oauth2(BaseAGOLClass):
@@ -98,12 +98,4 @@ class oauth2(BaseAGOLClass):
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
-
-
-
-
-
-
-
-
 

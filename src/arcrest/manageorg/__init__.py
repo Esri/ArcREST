@@ -1,4 +1,4 @@
-from parameters import *
-from administration import *
-from _portals import UserInvite
+from administration import Administration
+from _parameters import *
+
 __version__ = "3.0.0"

@@ -3,13 +3,18 @@ from ..common.general import local_time_to_online,online_time_to_string
 from .._abstract.abstract import BaseAGOLClass
 import os
 import urlparse
-import parameters
+import _parameters as parameters
 import json
 import types
 ########################################################################
-class PortalSelf(BaseAGOLClass):
+class Portals(BaseAGOLClass):
     """
-    represents the basic portal information from the portalSelf()
+    A multitenant portal contains multiple portals, each one of which is
+    owned by and represents an organization. Each user in the multitenant
+    portal belongs to one of these organizational portals or to a default
+    portal that includes all users who do not belong to an organization.
+    The Portals Root resource is a root placeholder resource that covers
+    all the portals contained in the multitenant portal.
     """
     _url = None
     _securityHandler = None
@@ -17,17 +22,101 @@ class PortalSelf(BaseAGOLClass):
     _proxy_port = None
     _culture = None
     _region = None
-    #
-    _portalSelfDict = None
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 securtyHandler=None,
+                 proxy_url=None,
+                 proxy_port=None):
+        """Constructor"""
+        if url.lower().endswith("/portals"):
+            self._url = url
+        else:
+            self._url = "%s/portals" % url
+        self._securityHandler = securtyHandler
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+    #----------------------------------------------------------------------
+    @property
+    def root(self):
+        """gets the classes url"""
+        return self._url
+    #----------------------------------------------------------------------
+    @property
+    def regions(self):
+        """gets the regions value"""
+        url = "%s/regions" % self.root
+        params = {"f": "json"}
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def languages(self):
+        """returns the site's languages"""
+        url = "%s/languages" % self.root
+        params = {'f': "json"}
+        return self._do_get(url=url,
+                            param_dict=params,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def info(self):
+        """gets the sharing api information"""
+        url = "%s/info" % self.root
+        params = {"f": "json"}
+        return self._do_get(url=url,
+                    param_dict=params,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def portalSelf(self):
+        """The portal to which the current user belongs. This is an
+        organizational portal if the user belongs to an organization or the
+        default portal if the user does not belong to one"""
+        url = "%s/self" % self.root
+        return Portal(url=url,
+                      securityHandler=self._securityHandler,
+                      proxy_url=self._proxy_url,
+                      proxy_port=self._proxy_port,
+                      )
+    #----------------------------------------------------------------------
+    def portal(self, portalID):
+        """returns a specific reference to a portal"""
+        url = "%s/%s" % (self.root, portalID)
+        return Portal(url=url,
+                  securityHandler=self._securityHandler,
+                  proxy_url=self._proxy_url,
+                  proxy_port=self._proxy_port,
+                  initalize=True)
+    #----------------------------------------------------------------------
+    @property
+    def portalId(self):
+        """gets the portal Id"""
+        return self.portalSelf.id
+########################################################################
+class Portal(BaseAGOLClass):
+    """
+    Portal returns information on your organization and is accessible to
+    administrators. Publishers and information workers can view users and
+    resources of the organization.
+    """
+    _url = None
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
+    _json = None
+    _json_dict = None
     _canSharePublic = None
-    _subscriptionInfo = None
     _defaultExtent = None
     _supportsHostedServices = None
     _homePageFeaturedContentCount = None
     _supportsOAuth = None
     _portalName = None
-    _urlKey = None
-    _modified = None
+    _databaseUsage = None
     _culture = None
     _helpBase = None
     _galleryTemplatesGroupQuery = None
@@ -37,892 +126,110 @@ class PortalSelf(BaseAGOLClass):
     _canSearchPublic = None
     _customBaseUrl = None
     _allSSL = None
+    _httpPort = None
     _featuredGroupsId = None
     _defaultBasemap = None
     _created = None
     _access = None
-    _httpPort = None
+    _platform = None
     _isPortal = None
     _canSignInArcGIS = None
-    _portalThumbnail = None
+    _disableSignup = None
     _httpsPort = None
     _units = None
-    _canListPreProvisionedItems = None
+    _backgroundImage = None
     _mfaEnabled = None
     _featuredGroups = None
     _thumbnail = None
     _featuredItemsGroupQuery = None
     _canSignInIDP = None
-    _storageUsage = None
+    _useStandardizedQuery = None
     _rotatorPanels = None
     _description = None
     _homePageFeaturedContent = None
+    _helperServices = None
     _canProvisionDirectPurchase = None
     _canListData = None
-    _ipCntryCode = None
     _user = None
     _helpMap = None
+    _canListPreProvisionedItems = None
     _colorSetsGroupQuery = None
     _canListApps = None
     _portalProperties = None
-    _portalHostname = None
-    _useStandardizedQuery = None
-    _stylesGroupQuery = None
-    _symbolSetsGroupQuery = None
+    _isWindows = None
     _name = None
+    _supportsSceneServices = None
+    _stylesGroupQuery = None
+    _samlEnabled = None
+    _symbolSetsGroupQuery = None
+    _portalLocalHttpPort = None
     _storageQuota = None
     _canShareBingPublic = None
     _maxTokenExpirationMinutes = None
     _layerTemplatesGroupQuery = None
     _staticImagesUrl = None
-    _databaseUsage = None
-    _homePageFeaturedContent = None
+    _modified = None
+    _portalHostname = None
     _showHomePageDescription = None
     _availableCredits = None
-    _helperServices = None
-    _templatesGroupQuery = None
-    _mfaAdmins = None
-    _basemapGalleryGroupQuery = None
-    _region = None
     _portalMode = None
-    _json_dict = None
-    _json = None
-
-    _platform = None
-    _disableSignup = None
-    _portalLocalHttpPort = None
-    _isWindows = None
-    _samlEnabled = None
     _portalLocalHttpsPort = None
     _hostedServerHostedFolder = None
+    _storageUsage = None
+    _templatesGroupQuery = None
     _portalLocalHostname = None
-    _supportsSceneServices = None
-
+    _basemapGalleryGroupQuery = None
+    _mfaAdmins = None
+    _portalId = None
+    _subscriptionInfo = None
+    _urlKey = None
     _metadataEditable = None
-    _backgroundImage = None
+    _portalThumbnail = None
     _metadataFormats = None
+    _ipCntryCode = None
     _livingAtlasGroupQuery = None
-
+    _region = None
     #----------------------------------------------------------------------
-    def __init__(self, culture,
-                 region,
+    def __init__(self,
                  url,
                  securityHandler,
                  proxy_url=None,
                  proxy_port=None,
-                 initialize=False):
+                 initalize=False):
         """Constructor"""
-        self._culture = culture
-        self._region = region
         self._url = url
-        if not securityHandler is None:
-            self._securityHandler = securityHandler
-            self._referer_url = securityHandler.referer_url
-        proxy_url = self._proxy_url
-        proxy_port = self._proxy_port
-        if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates the object information """
-        params = {
-            "f" : "json"
-        }
-        if not self._culture is None:
-            params['culture'] = self._culture
-        if not self._region is None:
-            params['region'] = self._region
-
-        json_dict = self._do_get(url=self._url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print k, " - attribute not implemented in Portals."
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """"""
-        attributes = [attr for attr in dir(self)
-              if not attr.startswith('__') and \
-              not attr.startswith('_') and \
-              not isinstance(getattr(self, attr), (types.MethodType,
-                                                   types.BuiltinFunctionType,
-                                                   types.BuiltinMethodType)
-                             )
-              ]
-        for att in attributes:
-            yield (att, getattr(self, att))
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """gets the object as a string"""
-        if self._json_dict is not None:
-            return json.dumps(self._json_dict)
-        return "{}"
-    #----------------------------------------------------------------------
-    @property
-    def platform(self):
-        """gets the platform info"""
-        if self._platform is None:
-            self.__init()
-        return self._platform
-    #----------------------------------------------------------------------
-    @property
-    def disableSignup(self):
-        """returns the disableSignup value"""
-        if self._disableSignup is None:
-            self.__init()
-        return self._disableSignup
-    #----------------------------------------------------------------------
-    @property
-    def portalLocalHttpPort(self):
-        """gets the portalLocalHttpPort value"""
-        if self._portalLocalHttpPort is None:
-            self.__init()
-        return self._portalLocalHttpPort
-    #----------------------------------------------------------------------
-    @property
-    def isWindows(self):
-        """determines if the OS is windows or not"""
-        if self._isWindows is None:
-            self.__init()
-        return self._isWindows
-    #----------------------------------------------------------------------
-    @property
-    def samlEnabled(self):
-        """boolean values determines if saml is used on services"""
-        if self._samlEnabled is None:
-            self.__init()
-        return self._samlEnabled
-    #----------------------------------------------------------------------
-    @property
-    def portalLocalHttpsPort(self):
-        """gets the portalLocalHttpsPort value"""
-        if self._portalLocalHttpsPort is None:
-            self.__init()
-        return self._portalLocalHttpsPort
-    #----------------------------------------------------------------------
-    @property
-    def hostedServerHostedFolder(self):
-        """returns the folder containing the hosted folder"""
-        if self._hostedServerHostedFolder is None:
-            self.__init()
-        return self._hostedServerHostedFolder
-    #----------------------------------------------------------------------
-    @property
-    def portalLocalHostname(self):
-        """returns the portal local hostname"""
-        if self._portalLocalHostname is None:
-            self.__init()
-        return self._portalLocalHostname
-    #----------------------------------------------------------------------
-    @property
-    def featuredGroups(self):
-        """returns the featured groups property"""
-        if self._featuredGroups is None:
-            self.__init()
-        return self._featuredGroups
-    #----------------------------------------------------------------------
-    @property
-    def homePageFeaturedContent(self):
-        """returns the homePageFeaturedContent property"""
-        if self._homePageFeaturedContent is None:
-            self.__init()
-        return self._homePageFeaturedContent
-    #----------------------------------------------------------------------
-    @property
-    def canSharePublic(self):
-        """gets the can share public value"""
-        if self._canSearchPublic is None:
-            self.__init()
-        return self._canSharePublic
-    #----------------------------------------------------------------------
-    @property
-    def subscriptionInfo(self):
-        """returns the subscription information"""
-        if self._subscriptionInfo is None:
-            self.__init()
-        return self._subscriptionInfo
-    #----------------------------------------------------------------------
-    @property
-    def defaultExtent(self):
-        """returns the default extent"""
-        if self._defaultExtent is None:
-            self.__init()
-        return self._defaultExtent
-    #----------------------------------------------------------------------
-    @property
-    def supportsHostedServices(self):
-        """returns the support of hosted services"""
-        if self._supportsHostedServices is None:
-            self.__init()
-        return self._supportsHostedServices
-    #----------------------------------------------------------------------
-    @property
-    def homePageFeaturedContentCount(self):
-        """returns the homePageFeaturedContentCount value"""
-        if self._homePageFeaturedContentCount is None:
-            self.__init()
-        return self._homePageFeaturedContentCount
-    #----------------------------------------------------------------------
-    @property
-    def supportsOAuth(self):
-        """returns the supports OAuth value"""
-        if self._supportsOAuth is None:
-            self.__init()
-        return self._supportsOAuth
-    #----------------------------------------------------------------------
-    @property
-    def portalName(self):
-        """returns the portal name"""
-        if self._portalName is None:
-            self.__init()
-        return self._portalName
-    #----------------------------------------------------------------------
-    @property
-    def urlKey(self):
-        """returns the url key"""
-        if self._urlKey is None:
-            self.__init()
-        return self._urlKey
-    #----------------------------------------------------------------------
-    @property
-    def modified(self):
-        """returns the modified value"""
-        if self._modified is None:
-            self.__init()
-        return self._modified
-    #----------------------------------------------------------------------
-    @property
-    def culture(self):
-        """returns the culture value"""
-        if self._culture is None:
-            self.__init()
-        return self._culture
-    #----------------------------------------------------------------------
-    @property
-    def helpBase(self):
-        """returns the helpBase value"""
-        if self._helpBase is None:
-            self.__init()
-        return self._helpBase
-    #----------------------------------------------------------------------
-    @property
-    def galleryTemplatesGroupQuery(self):
-        """returns the value"""
-        if self._galleryTemplatesGroupQuery is None:
-            self.__init()
-        return self._galleryTemplatesGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def commentsEnabled(self):
-        """returns the comments enable value"""
-        if self._commentsEnabled is None:
-            self.__init()
-        return self._commentsEnabled
-    #----------------------------------------------------------------------
-    @property
-    def databaseQuota(self):
-        """returns the database quota"""
-        if self._databaseQuota is None:
-            self.__init()
-        return self._databaseQuota
-    #----------------------------------------------------------------------
-    @property
-    def id(self):
-        """returns the portal id"""
-        if self._id is None:
-            self.__init()
-        return self._id
-    #----------------------------------------------------------------------
-    @property
-    def canSearchPublic(self):
-        """returns the can search public value"""
-        if self._canSearchPublic is None:
-            self.__init()
-        return self._canSearchPublic
-    #----------------------------------------------------------------------
-    @property
-    def customBaseUrl(self):
-        """returns the base url"""
-        if self._customBaseUrl is None:
-            self.__init()
-        return self._customBaseUrl
-    #----------------------------------------------------------------------
-    @property
-    def allSSL(self):
-        """gets the all SSL value"""
-        if self._allSSL is None:
-            self.__init()
-        return self._allSSL
-    #----------------------------------------------------------------------
-    @property
-    def featuredGroupsId(self):
-        """returns the feature groups id"""
-        if self._featuredGroupsId is None:
-            self.__init()
-        return self._featuredGroupsId
-    #----------------------------------------------------------------------
-    @property
-    def defaultBasemap(self):
-        """returns the default basemap"""
-        if self._defaultBasemap is None:
-            self.__init()
-        return self._defaultBasemap
-    #----------------------------------------------------------------------
-    @property
-    def created(self):
-        """returns the created date"""
-        if self._created is None:
-            self.__init()
-        return self._created
-    #----------------------------------------------------------------------
-    @property
-    def access(self):
-        """returns the access value"""
-        if self._access is None:
-            self.__init()
-        return self._access
-    #----------------------------------------------------------------------
-    @property
-    def httpPort(self):
-        """returns the http Port"""
-        if self._httpPort is None:
-            self.__init()
-        return self._httpPort
-    #----------------------------------------------------------------------
-    @property
-    def isPortal(self):
-        """returns the isPortal value"""
-        if self._isPortal is None:
-            self.__init()
-        return self._isPortal
-    #----------------------------------------------------------------------
-    @property
-    def canSignInArcGIS(self):
-        """returns the value"""
-        if self._canSignInArcGIS is None:
-            self.__init()
-        return self._canSignInArcGIS
-    #----------------------------------------------------------------------
-    @property
-    def portalThumbnail(self):
-        """returns the portal thumbnail"""
-        return self._portalThumbnail
-    #----------------------------------------------------------------------
-    @property
-    def httpsPort(self):
-        """returns the https port"""
-        if self._httpsPort is None:
-            self.__init()
-        return self._httpsPort
-    #----------------------------------------------------------------------
-    @property
-    def units(self):
-        """returns the default units"""
-        if self._units is None:
-            self.__init()
-        return self._units
-    #----------------------------------------------------------------------
-    @property
-    def canListPreProvisionedItems(self):
-        """returns the value"""
-        if self._canListPreProvisionedItems is None:
-            self.__init()
-        return self._canListPreProvisionedItems
-    #----------------------------------------------------------------------
-    @property
-    def mfaEnabled(self):
-        """returns the mfe enabled value"""
-        if self._mfaEnabled is None:
-            self.__init()
-        return self._mfaEnabled
-    #----------------------------------------------------------------------
-    @property
-    def featureGroups(self):
-        """returns feature groups value"""
-        if self._featuredGroups is None:
-            self.__init()
-        return self._featuredGroups
-    #----------------------------------------------------------------------
-    @property
-    def thumbnail(self):
-        """returns the thumbnail value"""
-        if self._thumbnail is None:
-            self.__init()
-        return self._thumbnail
-    #----------------------------------------------------------------------
-    @property
-    def featuredItemsGroupQuery(self):
-        """returns the feature Items group query"""
-        if self._galleryTemplatesGroupQuery is None:
-            self.__init()
-        return self._featuredItemsGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def canSignInIDP(self):
-        """return can signin IDP"""
-        if self._canSignInIDP is None:
-            self.__init()
-        return self._canSignInIDP
-    #----------------------------------------------------------------------
-    @property
-    def storageUsage(self):
-        """returns the storage usage"""
-        if self._storageUsage is None:
-            self.__init()
-        return self._storageUsage
-    #----------------------------------------------------------------------
-    @property
-    def rotatorPanels(self):
-        """returns the rotator panels"""
-        if self._rotatorPanels is None:
-            self.__init()
-        return self._rotatorPanels
-    #----------------------------------------------------------------------
-    @property
-    def description(self):
-        """returns the portal description"""
-        if self._description is None:
-            self.__init()
-        return self._description
-    #----------------------------------------------------------------------
-    @property
-    def homePageFeatureContent(self):
-        """return home page feature content"""
-        if self._homePageFeaturedContent is None:
-            self.__init()
-        return self._homePageFeaturedContent
-    #----------------------------------------------------------------------
-    @property
-    def canProvisionDirectPurchase(self):
-        """returns the provision direct purchase"""
-        if self._canProvisionDirectPurchase is None:
-            self.__init()
-        return self._canProvisionDirectPurchase
-    #----------------------------------------------------------------------
-    @property
-    def canListData(self):
-        """returns the canListData value"""
-        if self._canListData is None:
-            self.__init()
-        return self._canListData
-    #----------------------------------------------------------------------
-    @property
-    def ipCntryCode(self):
-        """returns the ip cntrycode"""
-        if self._ipCntryCode is None:
-            self.__init()
-        return self._ipCntryCode
-    #----------------------------------------------------------------------
-    @property
-    def user(self):
-        """returns the user value"""
-        if self._user is None:
-            self.__init()
-        return self._user
-    #----------------------------------------------------------------------
-    @property
-    def helpMap(self):
-        """returns the helpmap value"""
-        if self._helpMap is None:
-            self.__init()
-        return self._helpMap
-    #----------------------------------------------------------------------
-    @property
-    def colorSetsGroupQuery(self):
-        """returns the colorsets group query"""
-        if self._colorSetsGroupQuery is None:
-            self.__init()
-        return self._colorSetsGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def canListApps(self):
-        """returns the can list apps value"""
-        if self._canListApps is None:
-            self.__init()
-        return self._canListApps
-    #----------------------------------------------------------------------
-    @property
-    def portalProperties(self):
-        """returns the portal properties"""
-        if self._portalProperties is None:
-            self.__init()
-        return self._portalProperties
-    #----------------------------------------------------------------------
-    @property
-    def portalHostname(self):
-        """returns the portal hostname"""
-        if self._portalHostname is None:
-            self.__init()
-        return self._portalHostname
-    #----------------------------------------------------------------------
-    @property
-    def useStandardizedQuery(self):
-        """returns the user standardized query value"""
-        if self._useStandardizedQuery is None:
-            self.__init()
-        return self._useStandardizedQuery
-    #----------------------------------------------------------------------
-    @property
-    def stylesGroupQuery(self):
-        """returns the styles group query"""
-        if self._stylesGroupQuery is None:
-            self.__init()
-        return self._stylesGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def symbolSetsGroupQuery(self):
-        """returns the symbolsets group query"""
-        if self._symbolSetsGroupQuery is None:
-            self.__init()
-        return self._symbolSetsGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def name(self):
-        """returns the portal name"""
-        if self._name is None:
-            self.__init()
-        return  self._name
-    #----------------------------------------------------------------------
-    @property
-    def storageQuota(self):
-        """returns the storageQuota value"""
-        if self._storageQuota is None:
-            self.__init()
-        return self._storageQuota
-    #----------------------------------------------------------------------
-    @property
-    def canShareBingPublic(self):
-        """returns the canShareBingPublic value"""
-        if self._canShareBingPublic is None:
-            self.__init()
-        return self._canShareBingPublic
-    #----------------------------------------------------------------------
-    @property
-    def maxTokenExpirationMinutes(self):
-        """returns the maxTokenExpirationMinutes value"""
-        if self._maxTokenExpirationMinutes is None:
-            self.__init()
-        return self._maxTokenExpirationMinutes
-    #----------------------------------------------------------------------
-    @property
-    def layerTemplatesGroupQuery(self):
-        """returns the layerTemplatesGroupQuery value"""
-        if self._layerTemplatesGroupQuery is None:
-            self.__init()
-        return self._layerTemplatesGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def staticImagesUrl(self):
-        """returns the staticImagesUrl value"""
-        if self._staticImagesUrl is None:
-            self.__init()
-        return self._staticImagesUrl
-    #----------------------------------------------------------------------
-    @property
-    def databaseUsage(self):
-        """returns the databaseUsage value"""
-        if self._databaseUsage is None:
-            self.__init()
-        return self._databaseUsage
-    #----------------------------------------------------------------------
-    @property
-    def showHomePageDescription(self):
-        """returns the show home page description value"""
-        if self._showHomePageDescription is None:
-            self.__init()
-        return self._showHomePageDescription
-    #----------------------------------------------------------------------
-    @property
-    def availableCredits(self):
-        """returns the available credits"""
-        if self._availableCredits is None:
-            self.__init()
-        return self._availableCredits
-    #----------------------------------------------------------------------
-    @property
-    def helperServices(self):
-        """returns the helper services"""
-        if self._helperServices is None:
-            self.__init()
-        return self._helperServices
-    #----------------------------------------------------------------------
-    @property
-    def templatesGroupQuery(self):
-        """returns the templates group query"""
-        if self._templatesGroupQuery is None:
-            self.__init()
-        return self._templatesGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def mfaAdmins(self):
-        """returns the mfaAdmins value"""
-        if self._mfaAdmins is None:
-            self.__init()
-        return self._mfaAdmins
-    #----------------------------------------------------------------------
-    @property
-    def basemapGalleryGroupQuery(self):
-        """returns the basemap gallery group query"""
-        if self._basemapGalleryGroupQuery is None:
-            self.__init()
-        return self._basemapGalleryGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def region(self):
-        """returns the portal region value"""
-        if self._region is None:
-            self.__init()
-        return self._region
-    #----------------------------------------------------------------------
-    @property
-    def portalMode(self):
-        """returns the portal's mode"""
-        if self._portalMode is None:
-            self.__init()
-        return self._portalMode
-    #----------------------------------------------------------------------
-    @property
-    def supportsSceneServices(self):
-        """returns the portal's mode"""
-        if self._supportsSceneServices is None:
-            self.__init()
-        return self._supportsSceneServices
-
-
-
-
-    #----------------------------------------------------------------------
-    @property
-    def metadataEditable(self):
-        """returns the metadataEditable"""
-        if self._metadataEditable is None:
-            self.__init()
-        return self._metadataEditable
-
-    #----------------------------------------------------------------------
-    @property
-    def backgroundImage(self):
-        """returns the backgroundImage"""
-        if self._backgroundImage is None:
-            self.__init()
-        return self._backgroundImage
-
-    #----------------------------------------------------------------------
-    @property
-    def metadataFormats(self):
-        """returns the metadataFormats"""
-        if self._metadataFormats is None:
-            self.__init()
-        return self._metadataFormats
-
-    #----------------------------------------------------------------------
-    @property
-    def livingAtlasGroupQuery(self):
-        """returns the livingAtlasGroupQuery"""
-        if self._livingAtlasGroupQuery is None:
-            self.__init()
-        return self._livingAtlasGroupQuery
-
-
-########################################################################
-class UserInvite(object):
-    """
-    represents a user to invite to a user
-    """
-    _username = None
-    _password = None
-    _firstName = None
-    _lastName = None
-    _fullName = None
-    _email = None
-    _role = None
-    _allowedRole = ["account_publisher", "account_user", "account_admin"]
-    #----------------------------------------------------------------------
-    def __init__(self, username, password, firstName, lastName,
-                 email, role="account_user"):
-        """Constructor"""
-        self._username = username
-        self._password = password
-        self._firstName = firstName
-        self._lastName = lastName
-        self._fullName = firstName + " " + lastName
-        self._email = email
-        if role.lower() in self._allowedRole:
-            self._role = role
-        else:
-            raise AttributeError("Invalid Role: %s" % role)
-    #----------------------------------------------------------------------
-    @property
-    def value(self):
-        """returns object as dictionary"""
-        return {
-            "username": self._username,
-            "password": self._password,
-            "firstname": self._firstName,
-            "lastname": self._lastName,
-            "fullname":self.fullName,
-            "email":self._email,
-            "role":self.role
-        }
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """object as a string"""
-        return json.dumps(self.value)
-
-    #----------------------------------------------------------------------
-    @property
-    def firstName(self):
-        """gets/sets the first name"""
-        return self._firstName
-    #----------------------------------------------------------------------
-    @firstName.setter
-    def firstName(self, value):
-        """gets/sets the first name"""
-        if self._firstName != value:
-            self._firstName = value
-    #----------------------------------------------------------------------
-    @property
-    def lastName(self):
-        """gets/sets the last name"""
-        return self._lastName
-    #----------------------------------------------------------------------
-    @lastName.setter
-    def lastName(self, value):
-        """gets/sets the last name"""
-        if self._lastName != value:
-            self._lastName = value
-    #----------------------------------------------------------------------
-    @property
-    def email(self):
-        """gets/sets the email"""
-        return self._email
-    #----------------------------------------------------------------------
-    @email.setter
-    def email(self, value):
-        """gets/sets the email"""
-        if self._email != value:
-            self._email = value
-    #----------------------------------------------------------------------
-    @property
-    def password(self):
-        """gets/sets the password"""
-        return self._password
-    #----------------------------------------------------------------------
-    @password.setter
-    def password(self, value):
-        """gets/sets the password"""
-        if self._password != value:
-            self._password = value
-    #----------------------------------------------------------------------
-    @property
-    def username(self):
-        """gets/sets the user name"""
-        return self._username
-    #----------------------------------------------------------------------
-    @username.setter
-    def username(self, value):
-        """gets/sets the user name"""
-        if self._username != value:
-            self._username = value
-    #----------------------------------------------------------------------
-    @property
-    def role(self):
-        """gets/sets the role name"""
-        return self._role
-    #----------------------------------------------------------------------
-    @role.setter
-    def role(self, value):
-        """gets/sets the role name"""
-        if self._role != value and \
-           self._role.lower() in self._allowedRole:
-            self._role = value
-    #----------------------------------------------------------------------
-    @property
-    def fullName(self):
-        """gets the full name of the user"""
-        return self._firstName + " " + self._lastName
-
-
-########################################################################
-class Portals(BaseAGOLClass):
-    """
-    provides access to the portals' child resources.
-    """
-    _baseURL = None
-    _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
-    _portalId = None
-    _json = None
-    _json_dict = None
-    #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 portalId=None,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None):
-        """Constructor"""
-        if url.lower().find("/portals") < 0:
-            url = url + "/portals"
-        self._baseURL = url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
         self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
-        if portalId is not None:
-            self._portalId = portalId
-            self._url = url + "/%s" % portalId
-            self._referer_url = securityHandler.referer_url
-        else:
-            portalId = self._findPortalId()
-            self._portalId = portalId
-            self._url = url + "/%s" % portalId
-            self._referer_url = securityHandler.referer_url
-
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+        if initalize:
+            self.__init()
+    #----------------------------------------------------------------------
     def __init(self):
+        """loads the property data into the class"""
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=url,
+        json_dict = self._do_get(url=self.root,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
         self._json = json.dumps(json_dict)
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """class iterator"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.iteritems():
-            yield (k,v)
-
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implemented in Portal class."
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
-        url = self._baseURL + "/self"
+        url = self.root + "/self"
         params = {
             "f" : "json"
         }
@@ -932,8 +239,71 @@ class Portals(BaseAGOLClass):
                            proxy_url=self._proxy_url)
         if res.has_key('id'):
             return res['id']
-        else:
-            raise AttributeError("Invalid URL or token")
+        return None
+    #----------------------------------------------------------------------
+    @property
+    def subscriptionInfo(self):
+        '''gets the property value for subscriptionInfo'''
+        if self._subscriptionInfo is None:
+            self.__init()
+        return self._subscriptionInfo
+
+    #----------------------------------------------------------------------
+    @property
+    def urlKey(self):
+        '''gets the property value for urlKey'''
+        if self._urlKey is None:
+            self.__init()
+        return self._urlKey
+
+    #----------------------------------------------------------------------
+    @property
+    def metadataEditable(self):
+        '''gets the property value for metadataEditable'''
+        if self._metadataEditable is None:
+            self.__init()
+        return self._metadataEditable
+
+    #----------------------------------------------------------------------
+    @property
+    def portalThumbnail(self):
+        '''gets the property value for portalThumbnail'''
+        if self._portalThumbnail is None:
+            self.__init()
+        return self._portalThumbnail
+
+    #----------------------------------------------------------------------
+    @property
+    def metadataFormats(self):
+        '''gets the property value for metadataFormats'''
+        if self._metadataFormats is None:
+            self.__init()
+        return self._metadataFormats
+
+    #----------------------------------------------------------------------
+    @property
+    def ipCntryCode(self):
+        '''gets the property value for ipCntryCode'''
+        if self._ipCntryCode is None:
+            self.__init()
+        return self._ipCntryCode
+
+    #----------------------------------------------------------------------
+    @property
+    def livingAtlasGroupQuery(self):
+        '''gets the property value for livingAtlasGroupQuery'''
+        if self._livingAtlasGroupQuery is None:
+            self.__init()
+        return self._livingAtlasGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def region(self):
+        '''gets the property value for region'''
+        if self._region is None:
+            self.__init()
+        return self._region
+
     #----------------------------------------------------------------------
     @property
     def portalId(self):
@@ -942,374 +312,627 @@ class Portals(BaseAGOLClass):
             self._findPortalId()
         return self._portalId
     #----------------------------------------------------------------------
-    @property
-    def urls(self):
-        """gets the hosting server information"""
-        if self._portalId is None:
-            self._findPortalId()
-        url = self._baseURL + "/%s/urls" % self._portalId
-        params = {
-            "f" : "json",
-        }
-        return self._do_get(url=url, param_dict=params, proxy_url=self._proxy_url,
-                            securityHandler=self._securityHandler,
-                           proxy_port=self._proxy_port)
+    def __str__(self):
+        """returns class as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """iterates through raw JSON"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
     #----------------------------------------------------------------------
     @property
-    def featureServers(self):
-        """gets the hosting feature AGS Server"""
-        if self.urls == {}:
-            return {}
-        return self.urls["urls"]['features']
+    def root(self):
+        """returns classes URL"""
+        return self._url
     #----------------------------------------------------------------------
     @property
-    def tileServers(self):
-        """gets the tile server base urls"""
-        if self.urls == {}:
-            return {}
-        return self.urls["urls"]['tiles']
-    #----------------------------------------------------------------------
-    @property
-    def portalRoot(self):
-        """ returns the base url without the portal id """
-        return self._baseURL
-    #----------------------------------------------------------------------
-    def addResource(self, key, filePath, text):
-        """
-        The add resource operation allows the administrator to add a file
-        resource, for example, the organization's logo or custom banner.
-        The resource can be used by any member of the organization. File
-        resources use storage space from your quota and are scanned for
-        viruses.
+    def canSharePublic(self):
+        '''gets the property value for canSharePublic'''
+        if self._canSharePublic is None:
+            self.__init()
+        return self._canSharePublic
 
-        Inputs:
-           key - The name the resource should be stored under.
-           filePath - path of file to upload
-           text - Some text to be written (for example, JSON or JavaScript)
-                  directly to the resource from a web client.
-        """
-        url = self._url + "/addresource"
-        params = {
-        "f": "json",
-        "token" : self._securityHandler.token,
-        "key" : key,
-        "text" : text
-        }
-        parsed = urlparse.urlparse(url)
-        files = []
-        files.append(('file', filePath, os.path.basename(filePath)))
-        res = self._post_multipart(host=parsed.hostname,
-                                           selector=parsed.path,
-                                           files = files,
-                                           fields=params,
-                                           port=parsed.port,
-                                           ssl=parsed.scheme.lower() == 'https',
-                                           proxy_port=self._proxy_port,
-                                           proxy_url=self._proxy_url)
-        return res
-    #----------------------------------------------------------------------
-    def checkServiceName(self,
-                         name,
-                         serviceType):
-        """
-        Checks to see if a given service name and type are available for
-        publishing a new service. true indicates that the name and type is
-        not found in the organization's services and is available for
-        publishing. false means the requested name and type are not available.
-
-        Inputs:
-           name - requested name of service
-           serviceType - type of service allowed values: Feature Service or
-                         Map Service
-        """
-        _allowedTypes = ['Feature Service', "Map Service"]
-        url = self._url + "/isServiceNameAvailable"
-        params = {
-            "f" : "json",
-            "name" : name,
-            "type" : serviceType
-        }
-        return self._do_get(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def inviteUser(self, invitationList, html, subject):
-        """Invites a user or users to a site.
-
-        Inputs:
-           invitationList - either an UserInvite object or a list of
-                            UserInvite object.
-           html - text of invite email with HTML formatting
-           subject - subject of email to send
-        """
-        url = self._baseURL + "/self/invite"
-        params = {
-            "f" : "json",
-            "html" : html,
-            "subject" : subject
-        }
-        if isinstance(invitationList, UserInvite):
-            params['invitationList'] = {"invitations":[invitationList.value]}
-        elif isinstance(invitationList, list) and \
-             isinstance(invitationList[0], UserInvite):
-            params['invitationList'] = {"invitations":[iL.value for iL in invitationList]}
-        return self._do_post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
-    def languages(self):
-        """ list of available languages """
-        url = self._url + "/languages"
-        params = {
-            "f" : "json"
+    def defaultExtent(self):
+        '''gets the property value for defaultExtent'''
+        if self._defaultExtent is None:
+            self.__init()
+        return self._defaultExtent
 
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def supportsHostedServices(self):
+        '''gets the property value for supportsHostedServices'''
+        if self._supportsHostedServices is None:
+            self.__init()
+        return self._supportsHostedServices
+
+    #----------------------------------------------------------------------
+    @property
+    def homePageFeaturedContentCount(self):
+        '''gets the property value for homePageFeaturedContentCount'''
+        if self._homePageFeaturedContentCount is None:
+            self.__init()
+        return self._homePageFeaturedContentCount
+
+    #----------------------------------------------------------------------
+    @property
+    def supportsOAuth(self):
+        '''gets the property value for supportsOAuth'''
+        if self._supportsOAuth is None:
+            self.__init()
+        return self._supportsOAuth
+
+    #----------------------------------------------------------------------
+    @property
+    def portalName(self):
+        '''gets the property value for portalName'''
+        if self._portalName is None:
+            self.__init()
+        return self._portalName
+
+    #----------------------------------------------------------------------
+    @property
+    def databaseUsage(self):
+        '''gets the property value for databaseUsage'''
+        if self._databaseUsage is None:
+            self.__init()
+        return self._databaseUsage
+
+    #----------------------------------------------------------------------
+    @property
+    def culture(self):
+        '''gets the property value for culture'''
+        if self._culture is None:
+            self.__init()
+        return self._culture
+
+    #----------------------------------------------------------------------
+    @property
+    def helpBase(self):
+        '''gets the property value for helpBase'''
+        if self._helpBase is None:
+            self.__init()
+        return self._helpBase
+
+    #----------------------------------------------------------------------
+    @property
+    def galleryTemplatesGroupQuery(self):
+        '''gets the property value for galleryTemplatesGroupQuery'''
+        if self._galleryTemplatesGroupQuery is None:
+            self.__init()
+        return self._galleryTemplatesGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def commentsEnabled(self):
+        '''gets the property value for commentsEnabled'''
+        if self._commentsEnabled is None:
+            self.__init()
+        return self._commentsEnabled
+
+    #----------------------------------------------------------------------
+    @property
+    def databaseQuota(self):
+        '''gets the property value for databaseQuota'''
+        if self._databaseQuota is None:
+            self.__init()
+        return self._databaseQuota
+
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        '''gets the property value for id'''
+        if self._id is None:
+            self.__init()
+        return self._id
+
+    #----------------------------------------------------------------------
+    @property
+    def canSearchPublic(self):
+        '''gets the property value for canSearchPublic'''
+        if self._canSearchPublic is None:
+            self.__init()
+        return self._canSearchPublic
+
+    #----------------------------------------------------------------------
+    @property
+    def customBaseUrl(self):
+        '''gets the property value for customBaseUrl'''
+        if self._customBaseUrl is None:
+            self.__init()
+        return self._customBaseUrl
+
+    #----------------------------------------------------------------------
+    @property
+    def allSSL(self):
+        '''gets the property value for allSSL'''
+        if self._allSSL is None:
+            self.__init()
+        return self._allSSL
+
+    #----------------------------------------------------------------------
+    @property
+    def httpPort(self):
+        '''gets the property value for httpPort'''
+        if self._httpPort is None:
+            self.__init()
+        return self._httpPort
+
+    #----------------------------------------------------------------------
+    @property
+    def featuredGroupsId(self):
+        '''gets the property value for featuredGroupsId'''
+        if self._featuredGroupsId is None:
+            self.__init()
+        return self._featuredGroupsId
+
+    #----------------------------------------------------------------------
+    @property
+    def defaultBasemap(self):
+        '''gets the property value for defaultBasemap'''
+        if self._defaultBasemap is None:
+            self.__init()
+        return self._defaultBasemap
+
+    #----------------------------------------------------------------------
+    @property
+    def created(self):
+        '''gets the property value for created'''
+        if self._created is None:
+            self.__init()
+        return self._created
+
+    #----------------------------------------------------------------------
+    @property
+    def access(self):
+        '''gets the property value for access'''
+        if self._access is None:
+            self.__init()
+        return self._access
+
+    #----------------------------------------------------------------------
+    @property
+    def platform(self):
+        '''gets the property value for platform'''
+        if self._platform is None:
+            self.__init()
+        return self._platform
+
+    #----------------------------------------------------------------------
+    @property
+    def isPortal(self):
+        '''gets the property value for isPortal'''
+        if self._isPortal is None:
+            self.__init()
+        return self._isPortal
+
+    #----------------------------------------------------------------------
+    @property
+    def canSignInArcGIS(self):
+        '''gets the property value for canSignInArcGIS'''
+        if self._canSignInArcGIS is None:
+            self.__init()
+        return self._canSignInArcGIS
+
+    #----------------------------------------------------------------------
+    @property
+    def disableSignup(self):
+        '''gets the property value for disableSignup'''
+        if self._disableSignup is None:
+            self.__init()
+        return self._disableSignup
+
+    #----------------------------------------------------------------------
+    @property
+    def httpsPort(self):
+        '''gets the property value for httpsPort'''
+        if self._httpsPort is None:
+            self.__init()
+        return self._httpsPort
+
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        '''gets the property value for units'''
+        if self._units is None:
+            self.__init()
+        return self._units
+
+    #----------------------------------------------------------------------
+    @property
+    def backgroundImage(self):
+        '''gets the property value for backgroundImage'''
+        if self._backgroundImage is None:
+            self.__init()
+        return self._backgroundImage
+
+    #----------------------------------------------------------------------
+    @property
+    def mfaEnabled(self):
+        '''gets the property value for mfaEnabled'''
+        if self._mfaEnabled is None:
+            self.__init()
+        return self._mfaEnabled
+
+    #----------------------------------------------------------------------
+    @property
+    def featuredGroups(self):
+        '''gets the property value for featuredGroups'''
+        if self._featuredGroups is None:
+            self.__init()
+        return self._featuredGroups
+
+    #----------------------------------------------------------------------
+    @property
+    def thumbnail(self):
+        '''gets the property value for thumbnail'''
+        if self._thumbnail is None:
+            self.__init()
+        return self._thumbnail
+
+    #----------------------------------------------------------------------
+    @property
+    def featuredItemsGroupQuery(self):
+        '''gets the property value for featuredItemsGroupQuery'''
+        if self._featuredItemsGroupQuery is None:
+            self.__init()
+        return self._featuredItemsGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def canSignInIDP(self):
+        '''gets the property value for canSignInIDP'''
+        if self._canSignInIDP is None:
+            self.__init()
+        return self._canSignInIDP
+
+    #----------------------------------------------------------------------
+    @property
+    def useStandardizedQuery(self):
+        '''gets the property value for useStandardizedQuery'''
+        if self._useStandardizedQuery is None:
+            self.__init()
+        return self._useStandardizedQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def rotatorPanels(self):
+        '''gets the property value for rotatorPanels'''
+        if self._rotatorPanels is None:
+            self.__init()
+        return self._rotatorPanels
+
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        '''gets the property value for description'''
+        if self._description is None:
+            self.__init()
+        return self._description
+
+    #----------------------------------------------------------------------
+    @property
+    def homePageFeaturedContent(self):
+        '''gets the property value for homePageFeaturedContent'''
+        if self._homePageFeaturedContent is None:
+            self.__init()
+        return self._homePageFeaturedContent
+
+    #----------------------------------------------------------------------
+    @property
+    def helperServices(self):
+        '''gets the property value for helperServices'''
+        if self._helperServices is None:
+            self.__init()
+        return self._helperServices
+
+    #----------------------------------------------------------------------
+    @property
+    def canProvisionDirectPurchase(self):
+        '''gets the property value for canProvisionDirectPurchase'''
+        if self._canProvisionDirectPurchase is None:
+            self.__init()
+        return self._canProvisionDirectPurchase
+
+    #----------------------------------------------------------------------
+    @property
+    def canListData(self):
+        '''gets the property value for canListData'''
+        if self._canListData is None:
+            self.__init()
+        return self._canListData
+
+    #----------------------------------------------------------------------
+    @property
+    def user(self):
+        '''gets the property value for user'''
+        if self._user is None:
+            self.__init()
+        return self._user
+    #----------------------------------------------------------------------
+    @property
+    def helpMap(self):
+        '''gets the property value for helpMap'''
+        if self._helpMap is None:
+            self.__init()
+        return self._helpMap
+
+    #----------------------------------------------------------------------
+    @property
+    def canListPreProvisionedItems(self):
+        '''gets the property value for canListPreProvisionedItems'''
+        if self._canListPreProvisionedItems is None:
+            self.__init()
+        return self._canListPreProvisionedItems
+
+    #----------------------------------------------------------------------
+    @property
+    def colorSetsGroupQuery(self):
+        '''gets the property value for colorSetsGroupQuery'''
+        if self._colorSetsGroupQuery is None:
+            self.__init()
+        return self._colorSetsGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def canListApps(self):
+        '''gets the property value for canListApps'''
+        if self._canListApps is None:
+            self.__init()
+        return self._canListApps
+
     #----------------------------------------------------------------------
     @property
     def portalProperties(self):
-        """
-        Portal returns information on your organization and is accessible
-        to administrators. Publishers and information workers can view
-        users and resources of the organization.
-        """
-        url = self._url
-        params = {
-            "f" : "json"
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def portalSelf(self, usePortalId=True, culture=None, region=None):
-        """
-        The Portal Self resource is used to return the view of the portal
-        as seen by the current user, anonymous or logged in. It includes
-        information such as the name, logo, featured items, and supported
-        protocols (HTTP vs. HTTPS) for this portal. If the user is not
-        logged in, this call will return the default view of the portal. If
-        the user is logged in, the view of the returned portal will be
-        specific to the organization to which the user belongs. The default
-        view of the portal is dependent on the culture of the user, which
-        is obtained from the user's profile. A parameter to pass in the
-        locale/culture is available for anonymous users.
+        '''gets the property value for portalProperties'''
+        if self._portalProperties is None:
+            self.__init()
+        return self._portalProperties
 
-        Inputs:
-           culture - the culture code of the calling client output is
-                     customized for this culture if settings are available
-           region - the region code of the calling client.
-        """
-        if usePortalId == False:
-            url = self._url + "/self"
-        else:
-            url = self._baseURL + "/self"
-
-        ps = PortalSelf(culture=culture,
-                        region=region,
-                        url=url,
-                        securityHandler=self._securityHandler,
-                        proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port)
-        return ps
     #----------------------------------------------------------------------
     @property
-    def regions(self):
-        """
-        Lists the available regions
-        """
-        url = self._url + "/regions"
-        params = {
-            "f" : "json"
-        }
+    def isWindows(self):
+        '''gets the property value for isWindows'''
+        if self._isWindows is None:
+            self.__init()
+        return self._isWindows
+
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        '''gets the property value for name'''
+        if self._name is None:
+            self.__init()
+        return self._name
+
+    #----------------------------------------------------------------------
+    @property
+    def supportsSceneServices(self):
+        '''gets the property value for supportsSceneServices'''
+        if self._supportsSceneServices is None:
+            self.__init()
+        return self._supportsSceneServices
+
+    #----------------------------------------------------------------------
+    @property
+    def stylesGroupQuery(self):
+        '''gets the property value for stylesGroupQuery'''
+        if self._stylesGroupQuery is None:
+            self.__init()
+        return self._stylesGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def samlEnabled(self):
+        '''gets the property value for samlEnabled'''
+        if self._samlEnabled is None:
+            self.__init()
+        return self._samlEnabled
+
+    #----------------------------------------------------------------------
+    @property
+    def symbolSetsGroupQuery(self):
+        '''gets the property value for symbolSetsGroupQuery'''
+        if self._symbolSetsGroupQuery is None:
+            self.__init()
+        return self._symbolSetsGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHttpPort(self):
+        '''gets the property value for portalLocalHttpPort'''
+        if self._portalLocalHttpPort is None:
+            self.__init()
+        return self._portalLocalHttpPort
+
+    #----------------------------------------------------------------------
+    @property
+    def storageQuota(self):
+        '''gets the property value for storageQuota'''
+        if self._storageQuota is None:
+            self.__init()
+        return self._storageQuota
+
+    #----------------------------------------------------------------------
+    @property
+    def canShareBingPublic(self):
+        '''gets the property value for canShareBingPublic'''
+        if self._canShareBingPublic is None:
+            self.__init()
+        return self._canShareBingPublic
+
+    #----------------------------------------------------------------------
+    @property
+    def maxTokenExpirationMinutes(self):
+        '''gets the property value for maxTokenExpirationMinutes'''
+        if self._maxTokenExpirationMinutes is None:
+            self.__init()
+        return self._maxTokenExpirationMinutes
+
+    #----------------------------------------------------------------------
+    @property
+    def layerTemplatesGroupQuery(self):
+        '''gets the property value for layerTemplatesGroupQuery'''
+        if self._layerTemplatesGroupQuery is None:
+            self.__init()
+        return self._layerTemplatesGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def staticImagesUrl(self):
+        '''gets the property value for staticImagesUrl'''
+        if self._staticImagesUrl is None:
+            self.__init()
+        return self._staticImagesUrl
+
+    #----------------------------------------------------------------------
+    @property
+    def modified(self):
+        '''gets the property value for modified'''
+        if self._modified is None:
+            self.__init()
+        return self._modified
+
+    #----------------------------------------------------------------------
+    @property
+    def portalHostname(self):
+        '''gets the property value for portalHostname'''
+        if self._portalHostname is None:
+            self.__init()
+        return self._portalHostname
+
+    #----------------------------------------------------------------------
+    @property
+    def showHomePageDescription(self):
+        '''gets the property value for showHomePageDescription'''
+        if self._showHomePageDescription is None:
+            self.__init()
+        return self._showHomePageDescription
+
+    #----------------------------------------------------------------------
+    @property
+    def availableCredits(self):
+        '''gets the property value for availableCredits'''
+        if self._availableCredits is None:
+            self.__init()
+        return self._availableCredits
+
+    #----------------------------------------------------------------------
+    @property
+    def portalMode(self):
+        '''gets the property value for portalMode'''
+        if self._portalMode is None:
+            self.__init()
+        return self._portalMode
+
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHttpsPort(self):
+        '''gets the property value for portalLocalHttpsPort'''
+        if self._portalLocalHttpsPort is None:
+            self.__init()
+        return self._portalLocalHttpsPort
+
+    #----------------------------------------------------------------------
+    @property
+    def hostedServerHostedFolder(self):
+        '''gets the property value for hostedServerHostedFolder'''
+        if self._hostedServerHostedFolder is None:
+            self.__init()
+        return self._hostedServerHostedFolder
+
+    #----------------------------------------------------------------------
+    @property
+    def storageUsage(self):
+        '''gets the property value for storageUsage'''
+        if self._storageUsage is None:
+            self.__init()
+        return self._storageUsage
+
+    #----------------------------------------------------------------------
+    @property
+    def templatesGroupQuery(self):
+        '''gets the property value for templatesGroupQuery'''
+        if self._templatesGroupQuery is None:
+            self.__init()
+        return self._templatesGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def portalLocalHostname(self):
+        '''gets the property value for portalLocalHostname'''
+        if self._portalLocalHostname is None:
+            self.__init()
+        return self._portalLocalHostname
+
+    #----------------------------------------------------------------------
+    @property
+    def basemapGalleryGroupQuery(self):
+        '''gets the property value for basemapGalleryGroupQuery'''
+        if self._basemapGalleryGroupQuery is None:
+            self.__init()
+        return self._basemapGalleryGroupQuery
+
+    #----------------------------------------------------------------------
+    @property
+    def mfaAdmins(self):
+        '''gets the property value for mfaAdmins'''
+        if self._mfaAdmins is None:
+            self.__init()
+        return self._mfaAdmins
+    #----------------------------------------------------------------------
+    @property
+    def urls(self):
+        """gets the urls for a portal"""
+        url = "%s/urls" % self.root
+        params = {"f":"json"}
+        return self._do_get(url=url,
+                     param_dict=params,
+                     securityHandler=self._securityHandler,
+                     proxy_url=self._proxy_url,
+                     proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def purchases(self):
+        """gets the portal's purchases"""
+        url = "%s/purchases" % self.root
+        params = {"f":"json"}
         return self._do_get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def registerServer(self,
-                       name,
-                       url,
-                       adminUrl,
-                       isHosted,
-                       serverType):
-        """
-        You can optionally register (or "federate") an ArcGIS Server site
-        with your Portal for ArcGIS deployment. This provides the
-        following benefits:
-             The server and the portal share the same user store (that of
-             the portal). This results in a convenient single sign-on
-             experience.
-
-             Any items you publish to the server are automatically shared
-             on the portal.
-
-             You can optionally allow the server to host tiled map services
-             and feature services published by portal users.
-
-        After you register a server with your portal, you must invoke the
-        Update Security Configuration operation on the ArcGIS Server site
-        and configure the site's security store to take advantage of users
-        and roles from the portal.
-
-        This operation is only applicable to Portal for ArcGIS; it is not
-        supported with ArcGIS Online.
-
-        Inputs:
-           name - The fully qualified name of the machine hosting the
-                  ArcGIS Server site, followed by the port.
-           url - The externally visible URL of the ArcGIS Server site,
-                 using the fully qualified name of the machine.
-           adminUrl - The administrative URL of your ArcGIS Server site,
-                      using the fully qualified name of the machine.
-           isHosted - A Boolean property denoting whether the ArcGIS Server
-                      site will be allowed to host services for the portal
-                      (true) or not be allowed to host services (false).
-           serverType - The type of server being registered with the portal
-                        For example: ArcGIS.
-        """
-        url = self._url + "/register"
-        params = {
-            "f" : "json",
-            "url" : url,
-            "adminUrl" : adminUrl,
-            "isHosted" : isHosted,
-            "name" : name,
-            "serverType" : serverType
-        }
+    @property
+    def customers(self):
+        """gets the site's customers"""
+        url = "%s/customers" % self.root
+        params = {"f":"json"}
         return self._do_get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def removeResource(self, key):
-        """
-        The Remove Resource operation allows the administrator to remove a
-        file resource.
-
+    def exportCustomers(self, outPath):
+        """exports customer list to a csv file
         Input:
-           key - name of resource to delete
+         outPath - save location of the customer list
         """
-        url = self._url + "/removeresource"
-        params = {
-            "key" : key,
-            "f" : "json"
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def removeUser(self, users):
-        """
-        The Remove Users operation allows the administrator to remove users
-        from a portal. Before the administrator can remove the user, all of
-        the user's content and groups must be reassigned or deleted.
-
-        Inputs:
-           users - Comma-separated list of usernames to remove.
-        """
-        url = self._url + "/removeusers"
-        params = {
-            "f" : "json",
-            "users" : users
-        }
-        return self._do_post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def resources(self,
-                  start=1,
-                  num=10):
-        """
-        Resources lists all file resources for the organization. The start
-        and num paging parameters are supported.
-
-        Inputs:
-           start - the number of the first entry in the result set response
-                   The index number is 1-based and the default is 1
-           num - the maximum number of results to be returned as a whole #
-        """
-        url = self._url + "/resources"
-        params = {
-            "f" : "json",
-            "start" : start,
-            "num" : num
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def server(self, serverId):
-        """
-        This resource represents an ArcGIS Server site that has been
-        federated with the portal.
-        This resource is not applicable to ArcGIS Online; it is only
-        applicable to Portal for ArcGIS.
-        """
-        url = self._url + "/servers/%s" % serverId
-        params = {
-            "f" : "json",
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    @property
-    def servers(self):
-        """
-        This resource lists the ArcGIS Server sites that have been
-        federated with the portal. This resource is not applicable to
-        ArcGIS Online; it is only applicable to Portal for ArcGIS.
-        """
-        url = self._url + "/servers"
-        params = {
-            "f" : "json"
-        }
-        return self._do_get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def unregisterServer(self, serverId):
-        """
-        This operation unregisters an ArcGIS Server site from the portal.
-        The server is no longer federated with the portal after this
-        operation completes.
-        After this operation completes, you must invoke the Update Security
-        Configuration operation on your ArcGIS Server site to specify how
-        you want the server to work with users and roles.
-
-        Inputs:
-           serverId - unique identifier of the server
-        """
-        url = self._url + "/servers/%s/unregister" % serverId
-        params = {
-            "f" : "json"
-        }
-        return self._do_post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        url = "%s/customers/export" % self.root
+        params = {"f":"csv"}
+        return self._download_file(url=url, save_path=outPath,
+                                   securityHandler=self._securityHandler,
+                                   param_dict=params,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def update(self,
                updatePortalParameters,
@@ -1323,7 +946,7 @@ class Portals(BaseAGOLClass):
            updatePortalParamters - parameter.PortalParameters object that holds information to update
            clearEmptyFields - boolean that clears all whitespace from fields
         """
-        url = self._url + "/update"
+        url = self.root + "/update"
         params = {
             "f" : "json",
             "clearEmptyFields" : clearEmptyFields
@@ -1332,48 +955,6 @@ class Portals(BaseAGOLClass):
             params.update(updatePortalParameters.value)
         else:
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
-        return self._do_post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def updateServer(self,
-                     serverId,
-                     name,
-                     url,
-                     adminUrl,
-                     isHosted,
-                     serverType):
-        """
-        This operation updates the properties of an ArcGIS Server site that
-        has been registered, or federated, with the portal. For example,
-        you can use this operation to change the federated site that acts
-        as the portal's hosting server.
-
-        Inputs:
-           serverId - identifier of server to update.
-           name - The fully qualified name of the machine hosting the
-                  ArcGIS Server site, followed by the port.
-           url - The externally visible URL of the ArcGIS Server site,
-                 using the fully qualified name of the machine.
-           adminUrl - The administrative URL of the ArcGIS Server site,
-                      using the fully qualified name of the machine.
-           isHosted - A Boolean property denoting whether the ArcGIS Server
-                      site will be allowed to host services for the portal
-                      (true) or will not be allowed to host services
-                      (false).
-           serverType - The type of server being registered with the portal
-                        For example: ArcGIS.
-        """
-        url = self._url + "/%s/update" % serverId
-        params = {
-            "name" : name,
-            "url" : url,
-            "adminUrl" : adminUrl,
-            "isHosted" : isHosted,
-            "serverType" : serverType
-        }
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
@@ -1414,6 +995,61 @@ class Portals(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def removeUser(self, users):
+        """
+        The Remove Users operation allows the administrator to remove users
+        from a portal. Before the administrator can remove the user, all of
+        the user's content and groups must be reassigned or deleted.
+
+        Inputs:
+           users - Comma-separated list of usernames to remove.
+        """
+        url = self._url + "/removeusers"
+        params = {
+            "f" : "json",
+            "users" : users
+        }
+        return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def isServiceNameAvailable(self,
+                               name,
+                               serviceType):
+        """
+        Checks to see if a given service name and type are available for
+        publishing a new service. true indicates that the name and type is
+        not found in the organization's services and is available for
+        publishing. false means the requested name and type are not available.
+
+        Inputs:
+           name - requested name of service
+           serviceType - type of service allowed values: Feature Service or
+                         Map Service
+        """
+        _allowedTypes = ['Feature Service', "Map Service"]
+        url = self._url + "/isServiceNameAvailable"
+        params = {
+            "f" : "json",
+            "name" : name,
+            "type" : serviceType
+        }
+        return self._do_get(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def servers(self):
+        """gets the federated or registered servers for Portal"""
+        url = "%s/servers" % self.root
+        return Servers(url=url,
+                       securityHandler=self._securityHandler,
+                       proxy_url=self._proxy_url,
+                       proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def users(self,
               start=1,
               num=10,
@@ -1439,7 +1075,10 @@ class Portals(BaseAGOLClass):
            sortField - field to sort on
            sortOrder - asc or desc on the sortField
            role - name of the role or role id to search
+        Output:
+         list of User classes
         """
+        users = []
         url = self._url + "/users"
         params = {
             "f" : "json",
@@ -1452,28 +1091,42 @@ class Portals(BaseAGOLClass):
             params['sortField'] = sortField
         if not sortOrder is None:
             params['sortOrder'] = sortOrder
-        return self._do_post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def getRoles(self,
-              start=1,
-              num=100):
-        """
-           lists the custom roles on the AGOL/Portal site
+        from _community import Community
+        res = self._do_post(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
 
-           Input:
-              start - default 1
-              num - 100 - number of roles to return
+        if "users" in res:
+            if len(res['users']) > 0:
+                cURL = "https://%s/sharing/rest/community" % self.portalHostname
+                com = Community(url=cURL,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+                for r in res['users']:
+                    users.append(
+                        com.users.user(r["username"])
+                    )
+        return users
+    #----------------------------------------------------------------------
+    def createRole(self, name, description):
         """
-        url = self._url.replace(self._portalId, "") + "self/roles"
+        creates a role for a portal/agol site.
+        Inputs:
+           names - name of the role
+           description - brief text string stating the nature of this
+            role.
+        Ouput:
+           dictionary
+        """
         params = {
-            "f" : "json",
-            "start" : start,
-            "num" : num
+            "name" : name,
+            "description" : description,
+            "f" : "json"
         }
+        url = self.root + "/createRole"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
@@ -1482,12 +1135,238 @@ class Portals(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def roles(self):
-        """returns a class to work with the site's roles"""
-        return Roles(url=self._url + "/roles",
+        """gets the roles class that allows admins to manage custom roles
+        on portal"""
+        return Roles(url="%s/roles" % self.root,
+                     securityHandler=self._securityHandler,
+                     proxy_url=self._proxy_url,
+                     proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def cost(self,
+             tileStorage=0,
+             fileStorage=0,
+             featureStorage=0,
+             generatedTileCount=0,
+             loadedTileCount=0,
+             enrichVariableCount=0,
+             enrichReportCount=0,
+             serviceAreaCount=0,
+             geocodeCount=0):
+        """
+        returns the cost values for a given portal
+        Inputs:
+         tileStorage - int - numbe of tiles to store in MBs
+         fileStorage - int - size of file to store in MBs
+         featureStorage - int - size in MBs
+         generateTileCount - int - number of tiles to genearte on site
+         loadedTileCount -int- cost to host a certian number of tiles
+         enrichVariableCount - int - cost to enrich data
+         enrichReportCount - int - cost to generate an enrichment report
+         serviceAreaCount - int - cost to generate x number of service
+          areas
+         geocodeCount - int - cost to generate x number of addresses
+        """
+        params = {
+            "f" : "json",
+            "tileStorage": tileStorage,
+            "fileStorage": fileStorage,
+            "featureStorage": featureStorage,
+            "generatedTileCount": generatedTileCount,
+            "loadedTileCount":loadedTileCount,
+            "enrichVariableCount": enrichVariableCount,
+            "enrichReportCount" : enrichReportCount,
+            "serviceAreaCount" : serviceAreaCount,
+            "geocodeCount" : geocodeCount
+        }
+        url = self._url + "/cost"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def resources(self,
+                  start=1,
+                  num=10):
+        """
+        Resources lists all file resources for the organization. The start
+        and num paging parameters are supported.
+
+        Inputs:
+           start - the number of the first entry in the result set response
+                   The index number is 1-based and the default is 1
+           num - the maximum number of results to be returned as a whole #
+        """
+        url = self._url + "/resources"
+        params = {
+            "f" : "json",
+            "start" : start,
+            "num" : num
+        }
+        return self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def addResource(self, key, filePath, text):
+        """
+        The add resource operation allows the administrator to add a file
+        resource, for example, the organization's logo or custom banner.
+        The resource can be used by any member of the organization. File
+        resources use storage space from your quota and are scanned for
+        viruses.
+
+        Inputs:
+           key - The name the resource should be stored under.
+           filePath - path of file to upload
+           text - Some text to be written (for example, JSON or JavaScript)
+                  directly to the resource from a web client.
+        """
+        url = self.root + "/addresource"
+        params = {
+        "f": "json",
+        "token" : self._securityHandler.token,
+        "key" : key,
+        "text" : text
+        }
+        parsed = urlparse.urlparse(url)
+        files = []
+        files.append(('file', filePath, os.path.basename(filePath)))
+        res = self._post_multipart(host=parsed.hostname,
+                                           selector=parsed.path,
+                                           files = files,
+                                           fields=params,
+                                           port=parsed.port,
+                                           ssl=parsed.scheme.lower() == 'https',
+                                           proxy_port=self._proxy_port,
+                                           proxy_url=self._proxy_url)
+        return res
+    #----------------------------------------------------------------------
+    def removeResource(self, key):
+        """
+        The Remove Resource operation allows the administrator to remove a
+        file resource.
+
+        Input:
+           key - name of resource to delete
+        """
+        url = self._url + "/removeresource"
+        params = {
+            "key" : key,
+            "f" : "json"
+        }
+        return self._do_post(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def securityPolicy(self):
+        """gets the object to manage the portal's security policy"""
+        url = "%s/securityPolicy" % self.root
+        params = {'f': 'json'}
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def resetSecurityPolicy(self):
+        """resets the security policy to default install"""
+        params = {"f" : "json"}
+        url = "%s/securityPolicy/reset" % self.root
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateSecurityPolicy(self,
+                             minLength=8,
+                             minUpper=None,
+                             minLower=None,
+                             minLetter=None,
+                             minDigit=None,
+                             minOther=None,
+                             expirationInDays=None,
+                             historySize=None):
+        """updates the Portals security policy"""
+        params = {
+            "f" : "json",
+            "minLength" : minLength,
+            "minUpper": minUpper,
+            "minLower": minLower,
+            "minLetter": minLetter,
+            "minDigit": minDigit,
+            "minOther": minOther,
+            "expirationInDays" : expirationInDays,
+            "historySize": historySize
+        }
+        url = "%s/securityPolicy/update" % self.root
+        return self._do_post(url=url,
+                     param_dict=params,
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
 
+    #----------------------------------------------------------------------
+    @property
+    def portalAdmin(self):
+        """gets a reference to a portal administration class"""
+        from ..manageportal import PortalAdministration
+        return PortalAdministration(admin_url="https://%s/portaladmin" % self.portalHostname,
+                                    securityHandler=self._securityHandler,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port,
+                                    initalize=False)
+    #----------------------------------------------------------------------
+    def inviteByEmail(self,
+                   emails,
+                   subject,
+                   text,
+                   html,
+                   role="org_user",
+                   mustApprove=True,
+                   expiration=1440):
+        """Invites a user or users to a site.
+
+        Inputs:
+           emails - comma seperated list of emails
+           subject - title of email
+           text - email text
+           html - email text in html
+           role - site role (can't be administrator)
+           mustApprove - verifies if user that is join must be approved by
+            an administrator
+           expiration - time in seconds. Default is 1 day 1440
+        """
+        url = self.root + "/inviteByEmail"
+        params = {
+            "f" : "json",
+            "emails": emails,
+            "subject": subject,
+            "text": text,
+            "html" : html,
+            "role" : role,
+            "mustApprove": mustApprove,
+            "expiration" : expiration
+        }
+        return self._do_post(url=url, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def invitations(self):
+        """gets all the invitations to the current portal"""
+        params = {"f": "json"}
+        url = "%s/invitations" % self.root
+        return self._do_get(url=url,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def usage(self,
               startTime,
@@ -1499,7 +1378,7 @@ class Portals(BaseAGOLClass):
         """
         returns the usage statistics value
         """
-        url = self._url + "/usage"
+        url = self.root + "/usage"
         startTime = int(local_time_to_online(dt=startTime)/ 1000)
         endTime = int(local_time_to_online(dt=endTime) /1000)
         params = {
@@ -1518,19 +1397,342 @@ class Portals(BaseAGOLClass):
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
-    def cost(self):
+    def IDP(self):
+        """gets the IDP information for the portal/agol"""
+        url = "%s/idp" % self.root
+        params = {"f": "json"}
+        return self._do_get(url=url,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+########################################################################
+class Servers(BaseAGOLClass):
+    """This resource lists the ArcGIS Server sites that have been federated
+    with the portal.This resource is not applicable to ArcGIS Online; it is
+    only applicable to Portal for ArcGIS.
+    """
+    _servers = None
+    _surl = None
+    _url = None
+    _securityHandler = None
+    _proxy_url = None
+    _proxy_port = None
+    _json = None
+    _json_dict = None
+    ########################################################################
+    class Server(BaseAGOLClass):
+        _surl = None
+        _url = None
+        _id = None
+        _name = None
+        _adminURL = None
+        _url = None
+        _isHosted = None
+        _serverKey = None
+        _serverType = None
+        _surl = None
+        _url = None
+        _securityHandler = None
+        _proxy_url = None
+        _proxy_port = None
+        _json = None
+        _json_dict = None
+        """represents a single server instance registers with portal"""
+        #----------------------------------------------------------------------
+        def __init__(self,
+                     url,
+                     securityHandler,
+                     proxy_url=None,
+                     proxy_port=None,
+                     initalize=False):
+            """Constructor"""
+            self._surl = url
+            self._securityHandler = securityHandler
+            if not securityHandler is None:
+                self._referer_url = securityHandler.referer_url
+            self._proxy_port = proxy_port
+            self._proxy_url = proxy_url
+            if initalize:
+                self.__init()
+        #----------------------------------------------------------------------
+        def __init(self):
+            """loads the property data into the class"""
+            params = {
+                "f" : "json"
+            }
+            json_dict = self._do_get(url=self._url,
+                                     param_dict=params,
+                                     securityHandler=self._securityHandler,
+                                     proxy_port=self._proxy_port,
+                                     proxy_url=self._proxy_url)
+            self._json_dict = json_dict
+            self._json = json.dumps(json_dict)
+            attributes = [attr for attr in dir(self)
+                          if not attr.startswith('__') and \
+                          not attr.startswith('_')]
+            for k,v in json_dict.iteritems():
+                if k in attributes:
+                    setattr(self, "_"+ k, json_dict[k])
+                else:
+                    print k, " - attribute not implemented in Servers.Server class."
+        #----------------------------------------------------------------------
+        def __str__(self):
+            """returns class as string"""
+            if self._json is None:
+                self.__init()
+            return self._json
+        #----------------------------------------------------------------------
+        def __iter__(self):
+            """iterates through raw JSON"""
+            if self._json_dict is None:
+                self.__init()
+            for k,v in self._json_dict.iteritems():
+                yield [k,v]
+        #----------------------------------------------------------------------
+        @property
+        def root(self):
+            """returns classes URL"""
+            return self._url
+        #----------------------------------------------------------------------
+        @property
+        def id(self):
+            """gets the server id"""
+            if self._id is None:
+                self.__init()
+            return self._id
+        #----------------------------------------------------------------------
+        @property
+        def name(self):
+            """gets the server name"""
+            if self._name is None:
+                self.__init()
+            return self._name
+        #----------------------------------------------------------------------
+        @property
+        def adminURL(self):
+            """gets the adminURL for the server"""
+            if self._adminURL is None:
+                self.__init()
+            return self._adminURL
+        #----------------------------------------------------------------------
+        @property
+        def url(self):
+            """gets the url for the server"""
+            if self._url is None:
+                self.__init()
+            return self._url
+        #----------------------------------------------------------------------
+        @property
+        def isHoster(self):
+            """gets the isHosted value"""
+            if self._isHosted is None:
+                self.__init()
+            return self._isHosted
+        #----------------------------------------------------------------------
+        @property
+        def serverKey(self):
+            """gets the server key"""
+            if self._serverKey is None:
+                self.__init()
+            return self._serverKey
+        #----------------------------------------------------------------------
+        @property
+        def serverType(self):
+            """gets the server type"""
+            if self._serverType is None:
+                self.__init()
+            return self._serverType
+        #----------------------------------------------------------------------
+        def unregister(self):
+            """
+            This operation unregisters an ArcGIS Server site from the portal.
+            The server is no longer federated with the portal after this
+            operation completes.
+            After this operation completes, you must invoke the Update Security
+            Configuration operation on your ArcGIS Server site to specify how
+            you want the server to work with users and roles.
+
+            Inputs:
+               serverId - unique identifier of the server
+            """
+            url = self._url + "/unregister"
+            params = {
+                "f" : "json"
+            }
+            return self._do_post(url=url,
+                                param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+        #----------------------------------------------------------------------
+        def update(self,
+                   name,
+                   url,
+                   adminUrl,
+                   isHosted,
+                   serverType):
+            """
+            This operation updates the properties of an ArcGIS Server site that
+            has been registered, or federated, with the portal. For example,
+            you can use this operation to change the federated site that acts
+            as the portal's hosting server.
+
+            Inputs:
+               name - The fully qualified name of the machine hosting the
+                      ArcGIS Server site, followed by the port.
+               url - The externally visible URL of the ArcGIS Server site,
+                     using the fully qualified name of the machine.
+               adminUrl - The administrative URL of the ArcGIS Server site,
+                          using the fully qualified name of the machine.
+               isHosted - A Boolean property denoting whether the ArcGIS Server
+                          site will be allowed to host services for the portal
+                          (true) or will not be allowed to host services
+                          (false).
+               serverType - The type of server being registered with the portal
+                            For example: ArcGIS.
+            """
+            url = self._url + "/update"
+            params = {
+                "name" : name,
+                "url" : url,
+                "adminUrl" : adminUrl,
+                "isHosted" : isHosted,
+                "serverType" : serverType
+            }
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 securityHandler,
+                 proxy_url=None,
+                 proxy_port=None,
+                 initalize=False):
+        """Constructor"""
+        if url.lower().endswith('/servers') == False:
+            url = url + "/servers"
+        self._surl = url
+        self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+        if initalize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """loads the property data into the class"""
+        params = {
+            "f" : "json"
+        }
+        json_dict = self._do_get(url=self._surl,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(json_dict)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implemented in Servers class."
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns class as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """iterates through raw JSON"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+    #----------------------------------------------------------------------
+    @property
+    def root(self):
+        """returns classes URL"""
+        return self._surl
+    #----------------------------------------------------------------------
+    def register(self,
+                 name,
+                 url,
+                 adminUrl,
+                 isHosted,
+                 serverType):
         """
-        returns the cost values for a given portal
-        """
+            You can optionally register (or "federate") an ArcGIS Server site
+            with your Portal for ArcGIS deployment. This provides the
+            following benefits:
+                 The server and the portal share the same user store (that of
+                 the portal). This results in a convenient single sign-on
+                 experience.
+
+                 Any items you publish to the server are automatically shared
+                 on the portal.
+
+                 You can optionally allow the server to host tiled map services
+                 and feature services published by portal users.
+
+            After you register a server with your portal, you must invoke the
+            Update Security Configuration operation on the ArcGIS Server site
+            and configure the site's security store to take advantage of users
+            and roles from the portal.
+
+            This operation is only applicable to Portal for ArcGIS; it is not
+            supported with ArcGIS Online.
+
+            Inputs:
+               name - The fully qualified name of the machine hosting the
+                      ArcGIS Server site, followed by the port.
+               url - The externally visible URL of the ArcGIS Server site,
+                     using the fully qualified name of the machine.
+               adminUrl - The administrative URL of your ArcGIS Server site,
+                          using the fully qualified name of the machine.
+               isHosted - A Boolean property denoting whether the ArcGIS Server
+                          site will be allowed to host services for the portal
+                          (true) or not be allowed to host services (false).
+               serverType - The type of server being registered with the portal
+                            For example: ArcGIS.
+            """
+        url = self.root + "/register"
         params = {
             "f" : "json",
+            "url" : url,
+            "adminUrl" : adminUrl,
+            "isHosted" : isHosted,
+            "name" : name,
+            "serverType" : serverType
         }
-        url = self._url + "/cost"
-        return self._do_post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def servers(self):
+        """gets all the server resources"""
+        self.__init()
+        items = []
+        for k,v in self._json_dict.iteritems():
+            if k == "servers":
+                url = "%s/%s" % (self.root, v['id'])
+                items.append(
+                    self.Server(url=url,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port))
+            del k,v
+        return items
 ########################################################################
 class Roles(BaseAGOLClass):
     """Handles the searching, creation, deletion and updating of roles on
@@ -1592,28 +1794,6 @@ class Roles(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        return self._do_post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def createRole(self, name, description):
-        """
-        creates a role for a portal/agol site.
-        Inputs:
-           names - name of the role
-           description - brief text string stating the nature of this
-            role.
-        Ouput:
-           dictionary
-        """
-        params = {
-            "name" : name,
-            "description" : description,
-            "f" : "json"
-        }
-        url = self._url + "/createRole"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
