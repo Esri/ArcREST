@@ -2259,7 +2259,7 @@ class UserContent(BaseAGOLClass):
            fileType - Item type.
                       Values: serviceDefinition | shapefile | csv |
                       tilePackage | featureService | featureCollection |
-                      fileGeodata
+                      fileGeodata | geojson | scenePackage
            publishParameters - object describing the service to be created
                                as part of the publish operation. Only
                                required for CSV, Shapefiles, feature
@@ -2276,7 +2276,8 @@ class UserContent(BaseAGOLClass):
         """
         _allowed_types = ["serviceDefinition", "shapefile", "csv",
                           "tilePackage", "featureService",
-                          "featureCollection", "fileGeodatabase"]
+                          "featureCollection", "fileGeodatabase",
+                          "geojson", "scenePackage"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
 

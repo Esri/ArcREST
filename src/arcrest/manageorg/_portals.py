@@ -918,6 +918,7 @@ class Portals(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.iteritems():
             yield (k,v)
+
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""

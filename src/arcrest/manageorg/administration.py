@@ -1,7 +1,6 @@
 from ..security.security import ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, PortalTokenSecurityHandler, OAuthSecurityHandler, PortalServerSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import json
-from urllib import quote_plus
 import _community, _content, _marketplace, _portals, _oauth2
 from ..hostedservice import Services
 from ..manageags import AGSAdministration
@@ -27,11 +26,6 @@ class Administration(BaseAGOLClass):
         self._securityHandler = securityHandler
         if url is None and not securityHandler is None:
             url = securityHandler.org_url
-        #if proxy_url is None and not securityHandler is None:
-            #self._proxy_url = securityHandler.proxy_url
-        #if proxy_port is None and not securityHandler is None:
-            #self._proxy_url = securityHandler.proxy_port
-
         if url is None or url == '':
             raise AttributeError("URL or Security Handler needs to be specified")
 
