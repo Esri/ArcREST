@@ -280,7 +280,7 @@ class GlobeService(BaseAGSServer):
                       "layers",
                       "serviceDescription"]
         for att in attributes:
-            yield (att, getattr(self, att))
+            yield [att, getattr(self, att)]
     #----------------------------------------------------------------------
     @property
     def layers(self):

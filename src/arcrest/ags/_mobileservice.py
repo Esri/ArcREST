@@ -339,7 +339,7 @@ class MobileService(BaseAGSServer):
         """
         attributes = json.loads(str(self))
         for att in attributes.keys():
-            yield (att, getattr(self, att))
+            yield [att, getattr(self, att)]
     #----------------------------------------------------------------------
     @property
     def layers(self):
