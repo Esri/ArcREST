@@ -49,11 +49,11 @@ class Services(BaseAGOLClass):
                         self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
                 self._securityHandler = securityHandler
 
-           
+
 
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
@@ -143,7 +143,10 @@ class Services(BaseAGOLClass):
         """ returns all the service objects in the admin service's page """
         self._services = []
         params = {"f": "json"}
-        uURL = self._url + "/services"
+        if not self._url.endswith('/services'):
+            uURL = self._url + "/services"
+        else:
+            uURL = self._url
         res = self._do_get(url=uURL, param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
@@ -176,13 +179,14 @@ class Services(BaseAGOLClass):
                     name = item['name']
                 elif item.has_key('serviceName') == True:
                     name = item['serviceName']
-                    self._services.append(
-                    AdminMapService(url=url + r"/%s/%s" % (name,item['type']),
-                                            securityHandler=self._securityHandler,
-                                           proxy_url=self._proxy_url,
-                                           proxy_port=self._proxy_port,
-                                           initialize=True)
-                            )
+
+                self._services.append(
+                AdminMapService(url=url + r"/%s.%s" % (name,item['type']),
+                                        securityHandler=self._securityHandler,
+                                       proxy_url=self._proxy_url,
+                                       proxy_port=self._proxy_port,
+                                       initialize=False)
+                        )
             elif 'type' in item and item['type'] == 'FeatureServer':
                 if 'name' in item:
                     name = item['name']
@@ -240,6 +244,8 @@ class AdminMapService(BaseAGOLClass):
     _serverId = None
     _exportTilesAllowed = None
     _urlService = None
+    _readonly = None
+    _resampling = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -292,6 +298,21 @@ class AdminMapService(BaseAGOLClass):
             else:
                 print k,  " - attribute not implemented. Please log an support request."
             del k, v
+    #----------------------------------------------------------------------
+    @property
+    def readonly(self):
+        """returns the readonly property"""
+        if self._readonly is None:
+            self.__init()
+        return self._readonly
+    #----------------------------------------------------------------------
+    @property
+    def resampling(self):
+        """returns the resampling property"""
+        if self._resampling is None:
+            self.__init()
+        return self._resampling
+
     #----------------------------------------------------------------------
     @property
     def currentJob(self):
