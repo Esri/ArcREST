@@ -53,8 +53,8 @@ class Server(BaseAGSServer):
         parsed = urlparse(url)
         parts = parsed.path[1:].split('/')
         if len(parts) == 0:
-            self._adminUrl = "%://%s/arcgis/admin" % (parsed.scheme, parsed.netloc)
-            return "%://%s/arcgis/rest/services" % (parsed.scheme, parsed.netloc)
+            self._adminUrl = "%s://%s/arcgis/admin" % (parsed.scheme, parsed.netloc)
+            return "%s://%s/arcgis/rest/services" % (parsed.scheme, parsed.netloc)
         elif len(parts) > 0:
             self._adminUrl = "%s://%s/%s/admin" % (parsed.scheme, parsed.netloc, parts[0])
             return "%s://%s/%s/rest/services" % (parsed.scheme, parsed.netloc, parts[0])
@@ -145,7 +145,7 @@ class Server(BaseAGSServer):
         if self._services is None:
             self.__init()
         for service in self._services:
-            url = "%s/%s/%s" % (self.location, service['name'], service['type'])
+            url = "%s/%s/%s" % (self.root, service['name'], service['type'])
             if service['type'] == "GPServer":
                 services.append(GPService(url=url,
                                           securityHandler=self._securityHandler,
@@ -162,6 +162,7 @@ class Server(BaseAGSServer):
                                              proxy_url=self._proxy_url,
                                              proxy_port=self._proxy_port))
             elif service['type'] == "FeatureServer":
+                url = "%s/%s/%s" % (self.location, service['name'].split('/')[1], service['type'])
                 services.append(FeatureService(url=url,
                                                securityHandler=self._securityHandler,
                                                proxy_url=self._proxy_url,
