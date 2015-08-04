@@ -48,7 +48,6 @@ class FeatureService(BaseAGSServer):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
-        print type(securityHandler)
         if securityHandler is not None:
             self._securityHandler = securityHandler
 
@@ -136,6 +135,13 @@ class FeatureService(BaseAGSServer):
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):

@@ -46,6 +46,13 @@ class GeometryService(abstract.BaseAGSServer):
             self.__init()
         return self._json_string
     #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+    #----------------------------------------------------------------------
     def areasAndLengths(self,
                         polygons,
                         lengthUnit,

@@ -112,6 +112,13 @@ class GPService(BaseAGSServer):
             self.__init()
         return self._json
     #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+    #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         if self._currentVersion is None:
