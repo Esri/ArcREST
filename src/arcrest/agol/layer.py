@@ -117,8 +117,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                     self._securityHandler = securityHandler
                     
             else:
-                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-            
+                self._securityHandler = securityHandler           
            
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")

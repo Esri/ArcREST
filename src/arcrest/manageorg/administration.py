@@ -111,7 +111,7 @@ class Administration(BaseAGOLClass):
         into a given organization"""
         url = "%s/portals" % self.root
         return _portals.Portals(url=url,
-                                securtyHandler=self._securityHandler,
+                                securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
@@ -245,7 +245,79 @@ class Administration(BaseAGOLClass):
                         proxy_url=self._proxy_url,
                         proxy_port=self._proxy_port)
 
+    #----------------------------------------------------------------------
+    def hostingServers(self):
+        """
+          Returns the objects to manage site's hosted services. It returns
+          AGSAdministration object if the site is Portal and it returns a
+          hostedservice.Services object if it is AGOL.
 
-
-
-
+        """
+        portals = self.portals
+        portal = portals.portalSelf
+        urls = portal.urls
+        if 'error' in urls:
+            print urls
+            return
+        
+        services = []
+        if urls != {}:
+            if 'urls' in urls:
+                if 'features' in urls['urls']:
+                    if 'https' in urls['urls']['features']:
+                        for https in urls['urls']['features']['https']:
+                            if portal.isPortal == True:
+                               
+                                url = "%s/admin" % https
+                                #url = https
+                                services.append(AGSAdministration(url=url,
+                                             securityHandler=self._securityHandler,
+                                             proxy_url=self._proxy_url,
+                                             proxy_port=self._proxy_port))
+                               
+                            else:
+                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                                services.append(Services(url=url,
+                                             securityHandler=self._securityHandler,
+                                             proxy_url=self._proxy_url,
+                                             proxy_port=self._proxy_port))
+                    elif 'http' in urls['urls']['features']:
+                        for http in urls['urls']['features']['http']:
+                          
+                            if (portal.isPortal == True):
+                                url = "%s/admin" % http
+                                services.append(AGSAdministration(url=url,
+                                                                  securityHandler=self._securityHandler,
+                                                                  proxy_url=self._proxy_url,
+                                                                  proxy_port=self._proxy_port,
+                                                                  initialize=True))
+                        
+                            else:
+                                url = "http://%s/%s/ArcGIS/rest/admin" % (http, portal.portalId)
+                                services.append(Services(url=url,
+                                                          securityHandler=self._securityHandler,
+                                                          proxy_url=self._proxy_url,
+                                                          proxy_port=self._proxy_port))
+                                
+                    else:
+                        print "Publishing servers not found"                
+                else:
+                    print "Publishing servers not found"
+            else:
+                print "Publishing servers not found"                        
+            return services
+        else:
+            for server in portal.servers['servers']:
+                url = server['adminUrl'] + "/admin"
+                sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
+                                                   serverUrl=url,
+                                                   referer=server['name'].replace(":6080", ":6443")
+                                                   )
+                services.append(
+                    AGSAdministration(url=url,
+                                      securityHandler=sh,
+                                      proxy_url=self._proxy_url,
+                                      proxy_port=self._proxy_port,
+                                      initialize=False)
+                    )
+            return services

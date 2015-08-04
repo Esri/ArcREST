@@ -49,10 +49,11 @@ class Services(BaseAGOLClass):
                         self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-
+                    
             else:
-                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+                self._securityHandler = securityHandler
 
+           
 
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
@@ -260,8 +261,7 @@ class AdminMapService(BaseAGOLClass):
                     self._securityHandler = securityHandler
 
             else:
-                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-
+                self._securityHandler = securityHandler
 
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
@@ -659,7 +659,7 @@ class AdminFeatureService(BaseAGOLClass):
                     self._securityHandler = securityHandler
 
             else:
-                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
+                self._securityHandler = securityHandler
 
 
         else:
@@ -1194,8 +1194,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
                     self._securityHandler = securityHandler
 
             else:
-                raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")
-
+                self._securityHandler = securityHandler
 
         else:
             raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")

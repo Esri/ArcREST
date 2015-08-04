@@ -375,7 +375,6 @@ class portalautomation(securityhandlerhelper):
                                 print "Error creating publishing tools: %s" % publishTools.message
                             else:
                                 print "Publishing tools created: %s" % publishTools.message
-    
                                 if 'FeatureServices' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
                                     print " "

@@ -125,7 +125,7 @@ class Community(BaseAGOLClass):
         """
         group_ids=[]
         if communityInfo is None:
-            communityInfo = self.getUserCommunity()
+            communityInfo = self.communitySelf
 
         if 'groups' in communityInfo:
             for gp in communityInfo['groups']:

@@ -25,7 +25,7 @@ class Portals(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
-                 securtyHandler=None,
+                 securityHandler=None,
                  proxy_url=None,
                  proxy_port=None):
         """Constructor"""
@@ -33,7 +33,7 @@ class Portals(BaseAGOLClass):
             self._url = url
         else:
             self._url = "%s/portals" % url
-        self._securityHandler = securtyHandler
+        self._securityHandler = securityHandler
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
@@ -309,7 +309,7 @@ class Portal(BaseAGOLClass):
     def portalId(self):
         """gets the portal Id"""
         if self._portalId is None:
-            self._findPortalId()
+            self._portalId = self._findPortalId()
         return self._portalId
     #----------------------------------------------------------------------
     def __str__(self):
@@ -898,6 +898,20 @@ class Portal(BaseAGOLClass):
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------    
+    @property
+    def featureServers(self):
+        """gets the hosting feature AGS Server"""
+        if self.urls == {}:
+            return {}
+        return self.urls["urls"]['features']
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """gets the tile server base urls"""
+        if self.urls == {}:
+            return {}
+        return self.urls["urls"]['tiles']   
     #----------------------------------------------------------------------
     @property
     def purchases(self):
@@ -1725,12 +1739,13 @@ class Servers(BaseAGOLClass):
         items = []
         for k,v in self._json_dict.iteritems():
             if k == "servers":
-                url = "%s/%s" % (self.root, v['id'])
-                items.append(
-                    self.Server(url=url,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port))
+                if 'id' in v:
+                    url = "%s/%s" % (self.root, v['id'])
+                    items.append(
+                        self.Server(url=url,
+                                    securityHandler=self._securityHandler,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port))
             del k,v
         return items
 ########################################################################

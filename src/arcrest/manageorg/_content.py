@@ -148,7 +148,9 @@ class Users(BaseAGOLClass):
          username - name of the login for a given user on a site.
         """
         if username is None:
-            pass
+            if self._securityHandler is not None:
+                username = self._securityHandler.username
+            
         url = "%s/%s" % (self.root, username)
         return User(url=url,
                     securityHandler=self._securityHandler,
@@ -201,6 +203,8 @@ class Item(BaseAGOLClass):
     _protected = None
     _numViews = None
     _accessInformation = None
+    _orgId = None
+    _itemControl = None    
     #----------------------------------------------------------------------
     def __init__(self,url,
                  securityHandler,
@@ -235,7 +239,7 @@ class Item(BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 #print k, " - attribute not implemented in Item class."
-                print """#----------------------------------------------------------------------
+                print """#------attribute not implemented in Item class--------------------------
 @property
 def %s(self):
     '''gets the property value for %s'''
@@ -243,6 +247,18 @@ def %s(self):
         self.__init()
     return self._%s
 """ % (k,k,k, k)
+
+    def orgId(self):
+        '''gets the property value for orgId'''
+        if self._orgId is None:
+            self.__init()
+        return self._orgId                
+    #----------------------------------------------------------------------
+    def itemControl(self):
+        '''gets the property value for itemControl'''
+        if self._itemControl is None:
+            self.__init()
+        return self._itemControl                
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -548,7 +564,10 @@ def %s(self):
     @property
     def userItem(self):
         """returns a reference to the UserItem class"""
-        url = "%s/users/%s/items/%s" % (self.root.split('/items/')[0], self.owner, self.id)
+        if self.ownerFolder is not None:
+            url = "%s/users/%s/%s/items/%s" % (self.root.split('/items/')[0], self.owner,self.ownerFolder, self.id)
+        else:
+            url = "%s/users/%s/items/%s" % (self.root.split('/items/')[0], self.owner, self.id)
         return UserItem(url=url,
                         securityHandler=self._securityHandler,
                         proxy_url=self._proxy_url,
@@ -653,7 +672,7 @@ def %s(self):
             rating = 5.0
         elif rating < 1.0:
             rating = 1.0
-        url = self._baseUrl + "%s/addRating" % self.root
+        url = "%s/addRating" % self.root
         params = {
             "f": "json",
             "rating" : "%s" % rating
@@ -987,6 +1006,13 @@ class UserItem(BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print k, " - attribute not implemented in UserItem class."
+    #----------------------------------------------------------------------
+    _itemControl = None    
+    def itemControl(self):
+        '''gets the property value for itemControl'''
+        if self._itemControl is None:
+            self.__init()
+        return self._itemControl                      
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -1519,7 +1545,7 @@ class UserItem(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def status(self, itemId, jobId=None, jobType=None):
+    def status(self, jobId=None, jobType=None):
         """
            Inquire about status when publishing an item, adding an item in
            async mode, or adding with a multipart upload. "Partial" is
@@ -1543,7 +1569,7 @@ class UserItem(BaseAGOLClass):
             params['jobType'] = jobType
         if jobId is not None:
             params["jobId"] = jobId
-        url = self._baseUrl + "%s/status" % self.root
+        url = "%s/status" % self.root
         return self._do_get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
@@ -1744,13 +1770,24 @@ class User(BaseAGOLClass):
             result_template['nextStart'] = res['nextStart']
             result_template['start'] = res['start']
             result_template['num'] = res['num']
-            result_template['currentFolder'] = res['currentFolder']
+            
+            #Added so the root has content to match when in a folder,
+            #not sure if this is best practice or not.  Did not add
+            #username and created
+            if res['currentFolder'] is None:
+                result_template['currentFolder'] = {
+                    'title': 'root', 
+                    'id': None,                 
+                }            
+            else:
+                result_template['currentFolder'] = res['currentFolder']
             for item in res['items']:
                 if item not in result_template['items']:
                     result_template['items'].append(item)
-            for folder in res['folders']:
-                if folder not in result_template['folders']:
-                    result_template['folders'].append(folder)
+            if 'folders' in res:
+                for folder in res['folders']:
+                    if folder not in result_template['folders']:
+                        result_template['folders'].append(folder)
 
         self._json_dict = result_template
         self._json = json.dumps(result_template)
@@ -1822,11 +1859,11 @@ class User(BaseAGOLClass):
     @currentFolder.setter
     def currentFolder(self, value):
         """gets/sets the current folder (folder id)"""
-        for k,v in self.folders.iteritems():
-            if k == "title" and \
-               v['title'].lower() == value.lower():
-                self._location = "%s/%s" % (self.root, v['id'])
-                self.__init()
+        for folder in self.folders:
+            if 'title' in folder:    
+                if folder['title'].lower() == value.lower():           
+                    self._location = "%s/%s" % (self.root, folder['id'])
+                    self.__init()
     #----------------------------------------------------------------------
     @property
     def nextStart(self):
@@ -2001,8 +2038,6 @@ class User(BaseAGOLClass):
                           "geojson", "scenePackage"]
         if fileType.lower() not in [t.lower() for t in _allowed_types]:
             raise AttributeError("Invalid fileType: %s" % fileType)
-
-        url = self._baseUrl
 
         url = "%s/publish" % self.location
         params = {
@@ -2292,8 +2327,7 @@ class User(BaseAGOLClass):
                        for files over 100 MBs in size.
         """
         params = {
-            "f" : "json",
-            "token" : self._securityHandler.token,
+            "f" : "json"
         }
         res = ""
         if itemParameters is not None:
