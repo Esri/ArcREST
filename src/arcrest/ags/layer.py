@@ -816,7 +816,7 @@ class FeatureLayer(BaseAGSServer):
            completeness.
            Values: where | expression | statement
         """
-        url = url + "/validateSQL"
+        url = self._url + "/validateSQL"
         if not sqlType.lower() in ['where', 'expression', 'statement']:
             raise Exception("Invalid Input for sqlType: %s" % sqlType)
         params = {

@@ -53,8 +53,8 @@ class Server(BaseAGSServer):
         parsed = urlparse(url)
         parts = parsed.path[1:].split('/')
         if len(parts) == 0:
-            self._adminUrl = "%://%s/arcgis/admin" % (parsed.scheme, parsed.netloc)
-            return "%://%s/arcgis/rest/services" % (parsed.scheme, parsed.netloc)
+            self._adminUrl = "%s://%s/arcgis/admin" % (parsed.scheme, parsed.netloc)
+            return "%s://%s/arcgis/rest/services" % (parsed.scheme, parsed.netloc)
         elif len(parts) > 0:
             self._adminUrl = "%s://%s/%s/admin" % (parsed.scheme, parsed.netloc, parts[0])
             return "%s://%s/%s/rest/services" % (parsed.scheme, parsed.netloc, parts[0])
