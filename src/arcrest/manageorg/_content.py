@@ -140,6 +140,31 @@ class Users(BaseAGOLClass):
         for k,v in self._json_dict.iteritems():
             yield [k,v]
     #----------------------------------------------------------------------
+    def __getUsername(self):
+        """tries to parse the user name from various objects"""
+
+        if isinstance(self._securityHandler, (AGOLTokenSecurityHandler,
+                                              PortalTokenSecurityHandler)):
+            return self._securityHandler._username
+        elif self._securityHandler is not None and \
+               hasattr(self._securityHandler, "org_url") and \
+               self._securityHandler.org_url is not None:
+            from administration import Administration
+            user = Administration(url=self._securityHandler.org_url,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port).portals.portalSelf.user
+            return user['username']
+        else:
+            from administration import Administration
+            url = self._url.lower().split('/content/')[0]
+            user = Administration(url=url,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port).portals.portalSelf.user
+            return user['username']
+
+    #----------------------------------------------------------------------
     def user(self, username=None):
         """gets the user's content.  If None is passed, the current user is
         used.
@@ -148,9 +173,8 @@ class Users(BaseAGOLClass):
          username - name of the login for a given user on a site.
         """
         if username is None:
-            if self._securityHandler is not None:
-                username = self._securityHandler.username
-            
+            username = self.__getUsername()
+
         url = "%s/%s" % (self.root, username)
         return User(url=url,
                     securityHandler=self._securityHandler,
@@ -204,7 +228,7 @@ class Item(BaseAGOLClass):
     _numViews = None
     _accessInformation = None
     _orgId = None
-    _itemControl = None    
+    _itemControl = None
     #----------------------------------------------------------------------
     def __init__(self,url,
                  securityHandler,
@@ -252,13 +276,13 @@ def %s(self):
         '''gets the property value for orgId'''
         if self._orgId is None:
             self.__init()
-        return self._orgId                
+        return self._orgId
     #----------------------------------------------------------------------
     def itemControl(self):
         '''gets the property value for itemControl'''
         if self._itemControl is None:
             self.__init()
-        return self._itemControl                
+        return self._itemControl
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -1007,12 +1031,12 @@ class UserItem(BaseAGOLClass):
             else:
                 print k, " - attribute not implemented in UserItem class."
     #----------------------------------------------------------------------
-    _itemControl = None    
+    _itemControl = None
     def itemControl(self):
         '''gets the property value for itemControl'''
         if self._itemControl is None:
             self.__init()
-        return self._itemControl                      
+        return self._itemControl
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -1739,11 +1763,13 @@ class User(BaseAGOLClass):
         if initalize:
             self.__init()
     #----------------------------------------------------------------------
-    def __init(self):
+    def __init(self, folder='/'):
         """loads the property data into the class"""
         params = {
             "f" : "json"
         }
+        if folder is None or folder == "/":
+            folder = 'root'
         result_template = {
             "username": "",
             "total": 0,
@@ -1757,34 +1783,33 @@ class User(BaseAGOLClass):
         nextStart = 1
         self._json_dict = {}
         self._json = ""
-        #json_dict = self._do_get(url=self.location,
-                                 #param_dict=params,
-                                 #securityHandler=self._securityHandler,
-                                 #proxy_port=self._proxy_port,
-                                 #proxy_url=self._proxy_url)
         while nextStart > -1:
-            res = self.search(start=nextStart, num=29)#TODO: change to 100
+            res = self.search(start=nextStart, num=100)
             nextStart = int(res['nextStart'])
             result_template['username'] = res['username']
             result_template["total"] = res["total"]
             result_template['nextStart'] = res['nextStart']
             result_template['start'] = res['start']
             result_template['num'] = res['num']
-            
+
             #Added so the root has content to match when in a folder,
             #not sure if this is best practice or not.  Did not add
             #username and created
             if res['currentFolder'] is None:
                 result_template['currentFolder'] = {
-                    'title': 'root', 
-                    'id': None,                 
-                }            
+                    'title': 'root',
+                    'id': None,
+                    'created' : None,
+                    'username' : None
+                }
+                result_template['folders'].insert(0, result_template['currentFolder'])
             else:
                 result_template['currentFolder'] = res['currentFolder']
             for item in res['items']:
                 if item not in result_template['items']:
                     result_template['items'].append(item)
-            if 'folders' in res:
+            if 'folders' in res and \
+               folder.lower() == 'root':
                 for folder in res['folders']:
                     if folder not in result_template['folders']:
                         result_template['folders'].append(folder)
@@ -1859,11 +1884,34 @@ class User(BaseAGOLClass):
     @currentFolder.setter
     def currentFolder(self, value):
         """gets/sets the current folder (folder id)"""
-        for folder in self.folders:
-            if 'title' in folder:    
-                if folder['title'].lower() == value.lower():           
-                    self._location = "%s/%s" % (self.root, folder['id'])
-                    self.__init()
+        if value.lower() == self._currentFolder['title']:
+            return
+        if value is None:
+            self._location = self.root
+            self._currentFolder = {
+                    'title': 'root',
+                    'id': None,
+                    'created' : None,
+                    'username' : None
+                }
+            self.__init()
+        elif value == "/" or value.lower() == 'root':
+            self.location = self.root
+            self._currentFolder = {
+                    'title': 'root',
+                    'id': None,
+                    'created' : None,
+                    'username' : None
+                }
+            self.__init()
+        else:
+            for folder in self.folders:
+                if 'title' in folder:
+                    if folder['title'].lower() == value.lower():
+                        self._location = "%s/%s" % (self.root, folder['id'])
+                        self._currentFolder = folder
+                        self.__init(folder['title'])
+                        break
     #----------------------------------------------------------------------
     @property
     def nextStart(self):

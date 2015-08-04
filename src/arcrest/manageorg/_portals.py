@@ -1,4 +1,6 @@
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from ..manageags import AGSAdministration
+from ..hostedservice import Services
 from ..common.general import local_time_to_online,online_time_to_string
 from .._abstract.abstract import BaseAGOLClass
 import os
@@ -84,8 +86,10 @@ class Portals(BaseAGOLClass):
                       proxy_port=self._proxy_port,
                       )
     #----------------------------------------------------------------------
-    def portal(self, portalID):
+    def portal(self, portalID=None):
         """returns a specific reference to a portal"""
+        if portalID is None:
+            portalID = self.portalSelf.id
         url = "%s/%s" % (self.root, portalID)
         return Portal(url=url,
                   securityHandler=self._securityHandler,
@@ -240,6 +244,17 @@ class Portal(BaseAGOLClass):
         if res.has_key('id'):
             return res['id']
         return None
+    ##----------------------------------------------------------------------
+    #@property
+    #def hostingServers(self):
+        #"""returns a list of servers that host non-tile based content for a
+        #site."""
+        #return
+    ##----------------------------------------------------------------------
+    #@property
+    #def tileServers(self):
+        #""""""
+        #return
     #----------------------------------------------------------------------
     @property
     def subscriptionInfo(self):
@@ -898,20 +913,117 @@ class Portal(BaseAGOLClass):
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------    
+    #----------------------------------------------------------------------
     @property
     def featureServers(self):
         """gets the hosting feature AGS Server"""
+        services = []
         if self.urls == {}:
             return {}
-        return self.urls["urls"]['features']
+        urls = self.urls
+        if 'https' in urls['urls']['features']:
+            res = urls['urls']['features']['https']
+        else:
+            res = urls['urls']['features']['http']
+        for https in res:
+            if self.isPortal:
+                url = "%s/admin" % https
+                services.append(AGSAdministration(url=url,
+                                                  securityHandler=self._securityHandler,
+                                                  proxy_url=self._proxy_url,
+                                                  proxy_port=self._proxy_port)
+                                )
+            else:
+                url = "https://%s/%s/ArcGIS/admin" % (https, self.portalId)
+                services.append(Services(url=url,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port))
+        return services
     #----------------------------------------------------------------------
     @property
     def tileServers(self):
         """gets the tile server base urls"""
         if self.urls == {}:
             return {}
-        return self.urls["urls"]['tiles']   
+        return self.urls["urls"]['tiles']
+    #----------------------------------------------------------------------
+    @property
+    def tileServersF(self):
+        """
+          Returns the objects to manage site's tile hosted services/servers. It returns
+          AGSAdministration object if the site is Portal and it returns a
+          hostedservice.Services object if it is AGOL.
+        """
+        services = []
+        ishttps = False
+        if self.urls == {}:
+            return {}
+        urls = self.urls["urls"]['tiles']
+        if 'https' in urls:
+            res = urls['https']
+            ishttps = True
+        else:
+            res = urls['http']
+        for https in res:
+            #http://tiles.arcgis.com/tiles/PWJUSsdoJDp7SgLj/arcgis/admin/services/TileServiceTest.MapServer?f=pjson
+            if ishttps:
+                scheme = "https"
+            else:
+                scheme = "http"
+            if self.isPortal == False:
+                url = "%s://%s/tiles/%s/arcgis/admin/services" % (scheme, https, self.portalId)
+                services.append(Services(url=url,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port))
+            else:
+                url = "%s/admin" % https
+                servers = self.servers
+                for server in servers.servers:
+                    url = server.adminUrl
+                    sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                                                     serverUrl=url,
+                                                     referer=server['name'].replace(":6080", ":6443")
+                                                     )
+                    services.append(
+                        AGSAdministration(url=url,
+                                          securityHandler=sh,
+                                          proxy_url=self._proxy_url,
+                                          proxy_port=self._proxy_port,
+                                          initialize=False)
+                    )
+        print 'stop'
+        return services
+        #if urls != {}:
+            #for https in portal.tileServers['https']:
+                ##http://tiles.arcgis.com/tiles/PWJUSsdoJDp7SgLj/arcgis/admin/services/TileServiceTest.MapServer?f=pjson
+                #if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
+                    #url = "https://%s/tiles/%s/arcgis/rest/admin" % (https, portalId)
+                    #if url.endswith(r'/services') == False:
+                        #url = url
+                #else:
+                    #url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                #services.append(Services(url=url,
+                                         #securityHandler=self._securityHandler,
+                                         #proxy_url=self._proxy_url,
+                                         #proxy_port=self._proxy_port))
+            #return services
+        #else:
+            #for server in portal.servers['servers']:
+                #url = server['adminUrl'] + "/admin"
+                #sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                                                 #serverUrl=url,
+                                                 #referer=server['name'].replace(":6080", ":6443")
+                                                 #)
+                #services.append(
+                    #AGSAdministration(url=url,
+                                      #securityHandler=sh,
+                                      #proxy_url=self._proxy_url,
+                                      #proxy_port=self._proxy_port,
+                                      #initialize=False)
+                #)
+            #return services
     #----------------------------------------------------------------------
     @property
     def purchases(self):
@@ -1439,7 +1551,7 @@ class Servers(BaseAGOLClass):
         _url = None
         _id = None
         _name = None
-        _adminURL = None
+        _adminUrl = None
         _url = None
         _isHosted = None
         _serverKey = None
@@ -1474,16 +1586,16 @@ class Servers(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            json_dict = self._do_get(url=self._url,
+            json_dict = self._do_get(url=self._surl,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
                                      proxy_url=self._proxy_url)
-            self._json_dict = json_dict
+            self._json_dict = json.loads(json_dict)
             self._json = json.dumps(json_dict)
             attributes = [attr for attr in dir(self)
-                          if not attr.startswith('__') and \
-                          not attr.startswith('_')]
+              if not attr.startswith('__') and \
+              not attr.startswith('_')]
             for k,v in json_dict.iteritems():
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
@@ -1523,11 +1635,11 @@ class Servers(BaseAGOLClass):
             return self._name
         #----------------------------------------------------------------------
         @property
-        def adminURL(self):
+        def adminUrl(self):
             """gets the adminURL for the server"""
-            if self._adminURL is None:
+            if self._adminUrl is None:
                 self.__init()
-            return self._adminURL
+            return self._adminUrl
         #----------------------------------------------------------------------
         @property
         def url(self):
@@ -1537,7 +1649,7 @@ class Servers(BaseAGOLClass):
             return self._url
         #----------------------------------------------------------------------
         @property
-        def isHoster(self):
+        def isHosted(self):
             """gets the isHosted value"""
             if self._isHosted is None:
                 self.__init()
@@ -1739,13 +1851,14 @@ class Servers(BaseAGOLClass):
         items = []
         for k,v in self._json_dict.iteritems():
             if k == "servers":
-                if 'id' in v:
-                    url = "%s/%s" % (self.root, v['id'])
-                    items.append(
-                        self.Server(url=url,
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port))
+                for s in v:
+                    if 'id' in s:
+                        url = "%s/%s" % (self.root, s['id'])
+                        items.append(
+                            self.Server(url=url,
+                                        securityHandler=self._securityHandler,
+                                        proxy_url=self._proxy_url,
+                                        proxy_port=self._proxy_port))
             del k,v
         return items
 ########################################################################
