@@ -283,8 +283,7 @@ class publishingtools(securityhandlerhelper):
             if os.path.exists(itemJson) == False:
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
             update_service = 'FALSE'
-            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            adminusercontent = admin.content.usercontent()
+            
             resultMap = {'Layers':[],'Tables':[],'Results':None}
 
             with open(itemJson) as json_data:
@@ -371,46 +370,7 @@ class publishingtools(securityhandlerhelper):
                                                                                         'ConvertName':newFld})                                                
                                                             field['fieldName'] = newFld
                                                 layersInfo[opLayer['id']] = layerInfo
-                                        if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
-                                            layers = []
-                                            item = admin.content.item(itemId = replaceItem['ItemID'])
-                                            response = item.itemData()
-                                            if 'layers' in response:
-                                                layers = response['layers']
-
-                                            str(opLayer['url'] ).split("/")
-
-                                            layerIdx = common.getLayerIndex(url=opLayer['url'])
-                                            if opLayer.has_key("popupInfo"):
-                                                updatedLayer = {"id" : layerIdx ,
-                                                                "popupInfo" : opLayer["popupInfo"]
-                                                                }
-                                            else:
-                                                updatedLayer = None
-
-                                            updated = False
-                                            for layer in layers:
-                                                if str(layer['id']) == str(layerIdx):
-                                                    layer = updatedLayer
-                                                    updated = True
-                                            if updated == False and not updatedLayer is None:
-                                                layers.append(updatedLayer)
-                                            if len(layers):
-                                                text = {
-                                                    "layers" :layers
-                                                }
-
-                                                itemParams = arcrest.manageorg.ItemParameter()
-                                                itemParams.type = "Feature Service"
-
-
-                                                updateResults = adminusercontent.updateItem(itemId = replaceItem['ItemID'],
-                                                                            updateItemParameters=itemParams,
-                                                                            folderId=replaceItem['ItemFolder'],
-                                                                            text=json.dumps(text))
-                                                if 'error' in updateResults:
-                                                    print updateResults
-
+                                
                             opLayers = webmap_data['operationalLayers']
                             for opLayer in opLayers:
                                 layerInfo= {}
@@ -481,57 +441,15 @@ class publishingtools(securityhandlerhelper):
                                                         field['fieldName'] = newFld
                                             layersInfo[opLayer['id']] = layerInfo
                                           
-                                if str(update_service).upper() == "TRUE" and opLayer['itemId'] != None:
-                                    layers = []
-                                    item = admin.content.item(itemId = replaceItem['ItemID'])
-                                    response = item.itemData()
-                                    if 'layers' in response:
-                                        layers = response['layers']
-
-                                    str(opLayer['url'] ).split("/")
-                                    layerIdx = common.getLayerIndex(url=opLayer['url'])
-                                    if opLayer.has_key("popupInfo"):
-                                        updatedLayer = {"id" : layerIdx,
-                                                        "popupInfo" : opLayer["popupInfo"]
-                                                        }
-                                    else:
-                                        updatedLayer = None
-
-                                    updated = False
-                                    for layer in layers:
-                                        if str(layer['id']) == str(layerIdx):
-                                            layer = updatedLayer
-                                            updated = True
-                                    if updated == False and not updatedLayer is None:
-                                        layers.append(updatedLayer)
-                                    if len(layers):
-                                        text = {
-                                            "layers" :layers
-                                        }
-
-                                        itemParams = arcrest.manageorg.ItemParameter()
-                                        itemParams.type = "Feature Service"
-
-
-                                        updateResults = adminusercontent.updateItem(itemId = replaceItem['ItemID'],
-                                                                    updateItemParameters=itemParams,
-                                                                    folderId=replaceItem['ItemFolder'],
-                                                                    text=json.dumps(text))
-                                        if 'error' in updateResults:
-                                            print updateResults
-
+                   
                 opLayers = webmap_data['operationalLayers']
                 resultMap['Layers'] = {}
                 for opLayer in opLayers:
                     currentID = opLayer['id']
-                    #if isinstance(self._securityHandler,arcrest.security.PortalTokenSecurityHandler):
-                        #pars = urlparse(url=opLayer['url'], scheme='', allow_fragments=True)
-                        #path = str(pars.path).split("/")
-                        #adurl = pars.scheme + "://" + pars.netloc + "/" + path[1] + "/admin"
-                        #agolServices = arcrest.hostedservice.Services(url = adurl, securityHandler=self._securityHandler)
-                        #for service in agolServices.services:
-                            #pass                       
-                    opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                             
+                    #if 'url' in opLayer:    
+                        #opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                        
                     if 'applicationProperties' in webmap_data:
                         if 'editing' in webmap_data['applicationProperties'] and \
                            not webmap_data['applicationProperties']['editing'] is None:  
@@ -582,7 +500,7 @@ class publishingtools(securityhandlerhelper):
                     for opLayer in opLayers:
                         currentID = opLayer['id']
                     
-                        opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
+                        #opLayer['id'] = common.getLayerName(url=opLayer['url']) + "_" + str(common.random_int_generator(maxrange = 9999))
                         if 'applicationProperties' in webmap_data:
                             if 'editing' in webmap_data['applicationProperties'] and \
                                not webmap_data['applicationProperties']['editing'] is None:  
@@ -662,34 +580,34 @@ class publishingtools(securityhandlerhelper):
             
             itemParams.tags = tags
             itemParams.typeKeywords = ",".join(typeKeywords)
-
-            adminusercontent = admin.content.usercontent()
+            
+            admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
+            
+            content = admin.content        
+            userInfo = content.users.user()
             userCommunity = admin.community
-            userContent = admin.content.getUserContent()
+            
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                    userInfo.refresh()
+                userInfo.currentFolder = folderName    
 
-            folderId = admin.content.getFolderID(name=folderName,userContent=userContent)
-            if folderId is None:
-                res = adminusercontent.createFolder(name=folderName)
-                if 'success' in res:
-                    folderId = res['folder']['id']
-                else:
-                    pass
 
-            folderContent = admin.content.getUserContent(folderId=folderId)
-
-            itemId = admin.content.getItemID(title=name,itemType='Web Map',userContent=folderContent)
-
+            sea = arcrest.find.search(securityHandler=self._securityHandler)
+            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+            
+            if items['total'] >= 1:
+                itemId = items['results'][0]['id']            
             if not itemId is None:
-                resultMap['Results'] = adminusercontent.updateItem(itemId=itemId,
-                                            updateItemParameters=itemParams,
-                                            folderId=folderId,
+                item = content.getItem(itemId).userItem
+                resultMap['Results'] =item.updateItem(itemParameters=itemParams,
                                             text=json.dumps(webmap_data))
 
             else:
 
-                resultMap['Results'] = adminusercontent.addItem( itemParameters=itemParams,
+                resultMap['Results'] = userInfo.addItem(itemParameters=itemParams,
                         overwrite=True,
-                        folder=folderId,
                         url=None,
                         relationshipType=None,
                         originItemId=None,
@@ -702,15 +620,15 @@ class publishingtools(securityhandlerhelper):
             if not 'error' in resultMap['Results']:
 
                 group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                shareResults = adminusercontent.shareItems(items=resultMap['Results']['id'],
+                shareResults = userInfo.shareItems(items=resultMap['Results']['id'],
                                        groups=','.join(group_ids),
                                        everyone=everyone,
                                        org=org)
                 updateParams = arcrest.manageorg.ItemParameter()
                 updateParams.title = name
-                updateResults = adminusercontent.updateItem(itemId=resultMap['Results']['id'],
-                                                            updateItemParameters=updateParams,
-                                                            folderId=folderId)
+                item = content.getItem(resultMap['Results']['id']).userItem
+                updateResults = item.updateItem(itemParameters=updateParams)
+                
                 resultMap['folderId'] = folderId
                 resultMap['Name'] = name
             return resultMap
@@ -1226,6 +1144,7 @@ class publishingtools(securityhandlerhelper):
             if folderName is not None and folderName != "":               
                 if self.folderExist(name=folderName,folders=userInfo.folders) is None:
                     res = userInfo.createFolder(name=folderName)
+                    userInfo.refresh()
                 userInfo.currentFolder = folderName    
 
             sea = arcrest.find.search(securityHandler=self._securityHandler)
@@ -1513,7 +1432,7 @@ class publishingtools(securityhandlerhelper):
             sd_Info = None
             admin = None
             itemParams = None
-            adminusercontent = None
+           
             userCommunity = None
             userContent = None
             folderId = None
@@ -1558,7 +1477,7 @@ class publishingtools(securityhandlerhelper):
             del sd_Info
             del admin
             del itemParams
-            del adminusercontent
+            
             del userCommunity
             del userContent
             del folderId
@@ -1736,7 +1655,7 @@ class publishingtools(securityhandlerhelper):
         extent = None
         itemJson = None
         admin = None
-        adminusercontent = None
+        
         json_data = None
         itemData = None
         replaceItem = None
@@ -1777,7 +1696,6 @@ class publishingtools(securityhandlerhelper):
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
 
-            adminusercontent = admin.content.usercontent()
             if os.path.exists(itemJson):
                 with open(itemJson) as json_data:
                     try:
@@ -1841,34 +1759,33 @@ class publishingtools(securityhandlerhelper):
             itemParams.snippet = snippet
             itemParams.description = description
             itemParams.typeKeywords = ",".join(typeKeywords)
-
-            adminusercontent = admin.content.usercontent()
+        
+            content = admin.content        
+            userInfo = content.users.user()
             userCommunity = admin.community
-            userContent = admin.content.getUserContent()
 
-            folderId = admin.content.getFolderID(name=folderName,userContent=userContent)
-            if folderId is None:
-                res = adminusercontent.createFolder(name=folderName)
-                if 'success' in res:
-                    folderId = res['folder']['id']
-                else:
-                    pass
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                    userInfo.refresh()
+                userInfo.currentFolder = folderName    
 
-            folderContent = admin.content.getUserContent(folderId=folderId)
-            if 'folderId' in itemData:
-                itemData['folderId'] = folderId
-
-            itemId = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
+            
+            sea = arcrest.find.search(securityHandler=self._securityHandler)
+            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+            
+            if items['total'] >= 1:
+                itemId = items['results'][0]['id']                    
             if not itemId is None:
-                resultApp['Results'] = adminusercontent.updateItem(itemId=itemId,
-                                            updateItemParameters=itemParams,
-                                            folderId=folderId,
+                item = content.getItem(itemId).userItem
+                resultApp['Results'] = item.updateItem(updateItemParameters=itemParams,
                                             text=json.dumps(itemData))
 
             else:
 
-                resultApp['Results']  = adminusercontent.addItem( itemParameters=itemParams,
-                        folder=folderId,
+                resultApp['Results']  = userInfo.addItem(
+                        itemParameters=itemParams,
+                    
                         relationshipType=None,
                         originItemId=None,
                         destinationItemId=None,
@@ -1880,7 +1797,7 @@ class publishingtools(securityhandlerhelper):
             if not 'error' in resultApp['Results']:
 
                 group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                shareResults = adminusercontent.shareItems(items=resultApp['Results']['id'],
+                shareResults = userInfo.shareItems(items=resultApp['Results']['id'],
                                        groups=','.join(group_ids),
                                        everyone=everyone,
                                        org=org)
@@ -1895,10 +1812,9 @@ class publishingtools(securityhandlerhelper):
                 else:
                     url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
             
-                updateResults = adminusercontent.updateItem(itemId=resultApp['Results']['id'],
-                                                            url=url,
-                                                            updateItemParameters=updateParams,
-                                                            folderId=folderId)
+                item = content.getItem(resultApp['Results']['id']).userItem
+                updateResults = item.updateItem(url=url,
+                                                itemParameters=updateParams)
                 resultApp['folderId'] = folderId
                 resultApp['Name'] = name
             return resultApp
@@ -2503,7 +2419,7 @@ class publishingtools(securityhandlerhelper):
             feature_content = content.FeatureContent
 
             publishParameters = arcrest.manageorg.GenerateParameter(
-                name=service_name,maxRecordCount=1000
+                name=service_name,maxRecordCount=4000
                 )
             
                    
@@ -2511,13 +2427,117 @@ class publishingtools(securityhandlerhelper):
                 itemId=None,
                 filePath=zipfile,
                 fileType='shapefile')
+            
             if not 'featureCollection' in fcResults:
                 raise common.ArcRestHelperError({
                     "function": "_publishFeatureCollection",
                     "line": lineno(),
                     "filename":  'publishingtools.py',
                     "synerror": fcResults
-                })                   
+                })
+            if not 'layers' in fcResults['featureCollection']:
+                raise common.ArcRestHelperError({
+                    "function": "_publishFeatureCollection",
+                    "line": lineno(),
+                    "filename":  'publishingtools.py',
+                    "synerror": fcResults
+                })
+            
+            fcJson = {'visibility':True,
+                      'showLegend':True,
+                      'opacity':1}
+            for layer in fcResults['featureCollection']['layers']:
+                oidFldName = ''
+                highOID = -1
+                popInfo = {'title':'',
+                           'description':None,
+                           'showAttachments': False,
+                           'mediaInfo': [],
+                           'fieldInfos': []
+                           }
+                if 'layerDefinition' in layer:
+                    extVal = extent.split(',')
+                    layer['layerDefinition']['extent'] = {'type':'extent',
+                                       'xmin':extVal[0],
+                                       'ymin':extVal[1],
+                                       'xmax':extVal[2],
+                                       'ymax':extVal[3]
+                                       }
+                    layer['layerDefinition']['spatialReference'] = {'wkid':102100}
+                    
+                    if 'fields' in layer['layerDefinition']:
+                        for field in layer['layerDefinition']['fields']:
+                            fieldInfos = None
+                            if field['type'] == 'esriFieldTypeOID':
+                                oidFldName = field['name']
+                                fieldInfos = {
+                                    'fieldName':field['name'],
+                                    'label':field['alias'],
+                                    'isEditable':False,
+                                    'tooltip':'',
+                                    'visible':False,
+                                    'format':None,
+                                    'stringFieldOption':'textbox'
+                                }
+                                              
+                            elif field['type'] == 'esriFieldTypeInteger':
+                                fieldInfos = {
+                                    'fieldName':field['name'],
+                                    'label':field['alias'],
+                                    'isEditable':True,
+                                    'tooltip':'',
+                                    'visible':True,
+                                    'format':{
+                                        'places':0,
+                                        'digitSeparator':True
+                                    },
+                                    'stringFieldOption':'textbox'
+                                }    
+                            elif field['type'] == 'esriFieldTypeDouble':
+                                fieldInfos = {
+                                    'fieldName':field['name'],
+                                    'label':field['alias'],
+                                    'isEditable':True,
+                                    'tooltip':'',
+                                    'visible':True,
+                                    'format':{
+                                        'places':2,
+                                        'digitSeparator':True
+                                        },
+                                    'stringFieldOption':'textbox'
+                                }                                            
+                            elif field['type'] == 'esriFieldTypeString':
+                                fieldInfos = {
+                                    'fieldName':field['name'],
+                                    'label':field['alias'],
+                                    'isEditable':True,
+                                    'tooltip':'',
+                                    'visible':True,
+                                    'format':None,
+                                    'stringFieldOption':'textbox'
+                                }                                      
+                            else:
+                                fieldInfos = {
+                                    'fieldName':field['name'],
+                                    'label':field['alias'],
+                                    'isEditable':True,
+                                    'tooltip':'',
+                                    'visible':True,
+                                    'format':None,
+                                    'stringFieldOption':'textbox'
+                                }                                                                      
+                            if fieldInfos is not None:
+                                popInfo['fieldInfos'].append(fieldInfos)
+                                
+                if 'featureSet' in layer:
+                    if 'features' in layer['featureSet']:
+                        for feature in layer['featureSet']['features']:
+                            if 'attributes' in feature:
+                                if feature['attributes'][oidFldName] > highOID:
+                                    highOID = feature[oidFldName]
+                layer['nextObjectId'] = highOID + 1
+                
+            fcJson['layers'] = fcResults['featureCollection']['layers']
             itemParams = arcrest.manageorg.ItemParameter()
             itemParams.type = "Feature Collection"
             itemParams.title = service_name
@@ -2546,14 +2566,14 @@ class publishingtools(securityhandlerhelper):
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 resultSD = item.updateItem(itemParameters=itemParams,
-                                           text=fcResults['featureCollection'])
+                                           text=fcJson)
   
             else:
   
                 resultSD = userInfo.addItem(itemParameters=itemParams,
                                             overwrite=True,
                                             url=None,
-                                            text=fcResults['featureCollection'],
+                                            text= fcJson,
                                             relationshipType=None,
                                             originItemId=None,
                                             destinationItemId=None,
