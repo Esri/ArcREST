@@ -1080,11 +1080,11 @@ class Users(BaseAGOLClass):
         return ""
     #----------------------------------------------------------------------
     def search(self,
-                   q,
-                   start=1,
-                   num=10,
-                   sortField="username",
-                   sortOrder="asc"):
+                q,
+                start=1,
+                num=10,
+                sortField="username",
+                sortOrder="asc"):
         """
         The User Search operation searches for users in the portal. The
         search index is updated whenever users are created, updated, or
@@ -1129,12 +1129,6 @@ class Users(BaseAGOLClass):
             securityHandler=self._securityHandler,
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
-
-
-
-
-
-
     #----------------------------------------------------------------------
     def user(self, username):
         """A user resource that represents a registered user in the portal."""
@@ -1236,6 +1230,17 @@ class User(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.iteritems():
             yield [k,v]
+    #----------------------------------------------------------------------
+    @property
+    def userContent(self):
+        """allows access into the individual user's content to get at the
+        items owned by the current user"""
+        url = self._url.lower().replace('/community/', '/content/')
+        from _content import User as UserContent
+        return UserContent(url=url,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
     def disabled(self):
