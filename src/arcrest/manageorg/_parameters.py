@@ -2054,6 +2054,190 @@ class PublishFeatureCollectionParameter(BaseParameters):
         """returns object as a string"""
         return json.dumps(self.value)
 ########################################################################
+class GenerateParameter(BaseParameters):
+    """
+    The publishParameters JSON object used to create feature collections
+    Mike: This may be the same as PublishFeatureCollectionParameters
+    """
+    _name = None
+    _maxRecordCount = None
+    _copyrightText = None
+    _targetSR = None
+    _enforceOutputJsonSizeLimit = None
+    _enforceInputFileSizeLimit = None
+    _generalize = None
+    _maxAllowableOffset = None
+    _reducePrecision = None
+    _numberOfDigitsAfterDecimal = None
+    _locationType = None
+    __allowed_keys = ['name', "numberOfDigitsAfterDecimal",
+                      "maxRecordCount", "locationType",
+                      "enforceInputFileSizeLimit", "generalize",
+                      "maxAllowableOffset", "reducePrecision",
+                      "enforceOutputJsonSizeLimit", "targetSR"]
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 name,
+                 maxRecordCount=-1,
+                 targetSR={'wkid':102100},
+                 enforceOutputJsonSizeLimit = True,
+                 enforceInputFileSizeLimit = True,
+                 generalize = None,
+                 maxAllowableOffset = None,
+                 reducePrecision = True,
+                 numberOfDigitsAfterDecimal = 1,
+                 locationType = 'none'
+                 ):
+        """Constructor"""
+        self._name = name
+        self._maxRecordCount = maxRecordCount
+        self._targetSR = targetSR
+    
+        self._enforceOutputJsonSizeLimit = enforceOutputJsonSizeLimit
+        self._enforceInputFileSizeLimit = enforceInputFileSizeLimit
+        self._generalize = generalize
+        self._maxAllowableOffset = maxAllowableOffset
+        self._reducePrecision = reducePrecision
+        self._numberOfDigitsAfterDecimal = numberOfDigitsAfterDecimal    
+        self._locationType = locationType    
+
+    #----------------------------------------------------------------------
+    def generalizeDefaults():
+        self._maxAllowableOffset = 10.58335450004355
+        self._reducePrecision = True
+        self._numberOfDigitsAfterDecimal = 0             
+    #----------------------------------------------------------------------
+    @property
+    def enforceOutputJsonSizeLimit(self):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        return self._enforceOutputJsonSizeLimit
+    #----------------------------------------------------------------------
+    @enforceOutputJsonSizeLimit.setter
+    def enforceOutputJsonSizeLimit(self, value):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        if self._enforceOutputJsonSizeLimit != value:
+            self._enforceOutputJsonSizeLimit = value
+    #----------------------------------------------------------------------
+    @property
+    def locationType(self):
+        """gets/sets the locationType"""
+        return self._locationType
+    #----------------------------------------------------------------------
+    @locationType.setter
+    def locationType(self, value):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        if self._locationType != value:
+            self._locationType = value
+    
+    #----------------------------------------------------------------------
+    @property
+    def enforceInputFileSizeLimit(self):
+        """gets/sets the enforceInputFileSizeLimit"""
+        return self._enforceInputFileSizeLimit
+    #----------------------------------------------------------------------
+    @enforceInputFileSizeLimit.setter
+    def enforceInputFileSizeLimit(self, value):
+        """gets/sets the enforceInputFileSizeLimit"""
+        if self._enforceInputFileSizeLimit != value:
+            self._enforceInputFileSizeLimit = value
+    #----------------------------------------------------------------------
+    @property
+    def generalize(self):
+        """gets/sets the generalize"""
+        return self._generalize
+    #----------------------------------------------------------------------
+    @generalize.setter
+    def generalize(self, value):
+        """gets/sets the generalize"""
+        if self._generalize != value:
+            self._generalize = value            
+            
+    #----------------------------------------------------------------------
+    @property
+    def maxAllowableOffset(self):
+        """gets/sets the maxAllowableOffset"""
+        return self._maxAllowableOffset
+    #----------------------------------------------------------------------
+    @maxAllowableOffset.setter
+    def maxAllowableOffset(self, value):
+        """gets/sets the maxAllowableOffset"""
+        if self._maxAllowableOffset != value:
+            self._maxAllowableOffset = value    
+    
+    
+    #----------------------------------------------------------------------
+    @property
+    def reducePrecision(self):
+        """gets/sets the reducePrecision"""
+        return self._reducePrecision
+    #----------------------------------------------------------------------
+    @reducePrecision.setter
+    def reducePrecision(self, value):
+        """gets/sets the reducePrecision"""
+        if self._reducePrecision != value:
+            self._reducePrecision = value
+            
+    #----------------------------------------------------------------------
+    @property
+    def numberOfDigitsAfterDecimal(self):
+        """gets/sets the numberOfDigitsAfterDecimal"""
+        return self._numberOfDigitsAfterDecimal
+    #----------------------------------------------------------------------
+    @numberOfDigitsAfterDecimal.setter
+    def numberOfDigitsAfterDecimal(self, value):
+        """gets/sets the numberOfDigitsAfterDecimal"""
+        if self._numberOfDigitsAfterDecimal != value:
+            self._numberOfDigitsAfterDecimal = value            
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """gets/sets the name"""
+        return self._name
+    #----------------------------------------------------------------------
+    @name.setter
+    def name(self, value):
+        """gets/sets the name"""
+        if self._name != value:
+            self._name = value
+   
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """gets/sets the max record count"""
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @maxRecordCount.setter
+    def maxRecordCount(self, value):
+        """gets/sets the max record count"""
+        if self._maxRecordCount != value:
+            self._maxRecordCount = value
+    #----------------------------------------------------------------------
+    @property
+    def targetSR(self):
+        """gets/sets the targetSR"""
+        return self._targetSR
+    #----------------------------------------------------------------------
+    @targetSR.setter
+    def targetSR(self, value):
+        """gets/sets the targetSR"""
+        if self._targetSR != value:
+            self._targetSR = value
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns the object as a dictionary"""
+        val = {}
+        for k in self.__allowed_keys:
+            value = getattr(self, "_" + k)
+            if value is not None:
+                val[k] = value
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        return json.dumps(self.value)
+
+########################################################################
 class PublishFGDBParameter(BaseParameters):
     """
     The publishParameters JSON object used to publish file geodatabase

@@ -214,22 +214,17 @@ class securityhandlerhelper(object):
             else:
                 print "No valid security type set"
                 self._message = "No valid security type set"
+            
             admin = Administration(url=self._org_url,
                                    securityHandler=self._securityHandler)
-            #portal = admin.portals()      
-            #if 'isPortal' in portal.portalProperties:
-                #if portal.portalProperties['isPortal'] == True:
-                    #self._is_portal = True
-                #else:
-                    #self._is_portal = False
             
             try:
-                hostingServers = admin.hostingServers()
-                for hostingServer in hostingServers:
+                portal = admin.portals.portalSelf
+                for hostingServer in portal.featureServers:                
                     if isinstance(hostingServer, AGSAdministration):
                         try:                        
                             serData = hostingServer.data
-        
+                
                             dataItems = serData.rootDataItems
                             if 'rootItems' in dataItems:
                                 for rootItem in dataItems['rootItems']:
@@ -251,8 +246,17 @@ class securityhandlerhelper(object):
                             print err
                         except Exception, e:
                             print e
+                        except Exception, e:
+                            print e            
+                        
+            except urllib2.HTTPError, err:
+                print err
             except Exception, e:
                 print e
+            except Exception, e:
+                print e            
+
+          
         
             if 'error' in self._securityHandler.message:
                 self._message = self._securityHandler.message

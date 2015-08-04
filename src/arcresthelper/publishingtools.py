@@ -22,7 +22,12 @@ try:
     from arcresthelper import select_parser
 except:
     pyparsingInstall = False
+
+import inspect
     
+def lineno():
+    """Returns the current line number in our program."""
+    return inspect.currentframe().f_back.f_lineno
 #----------------------------------------------------------------------
 def trace():
     """
@@ -654,6 +659,7 @@ class publishingtools(securityhandlerhelper):
             itemParams.snippet = snippet
             itemParams.description = description
             itemParams.extent = extent
+            
             itemParams.tags = tags
             itemParams.typeKeywords = ",".join(typeKeywords)
 
@@ -950,10 +956,7 @@ class publishingtools(securityhandlerhelper):
                     else:
                         resItm = {"ReplaceTag":"{FeatureService}" }
 
-                    if 'Zip' in fs:
-                        resItm['FSInfo'] = self._publishFSFromMXD(config=fs)
-                    else:
-                        resItm['FSInfo'] = self._publishFSFromMXD(config=fs)
+                    resItm['FSInfo'] = self._publishFSFromMXD(config=fs)
                     
                     if not resItm['FSInfo'] is None and 'serviceurl' in resItm['FSInfo']:
                         print "%s created" % resItm['FSInfo']['serviceurl']
@@ -1007,6 +1010,72 @@ class publishingtools(securityhandlerhelper):
             del fs
 
             gc.collect()
+    #----------------------------------------------------------------------
+    def publishFeatureCollections(self,configs):
+        """
+            publishs a feature service from a mxd
+            Inputs:
+                feature_service_config: Json file with list of feature service publishing details
+            Output:
+                feature service item information
+
+        """
+        config = None
+        res = None
+        resItm = None
+        try:
+            res = []
+            if isinstance(configs, list):
+                for config in configs:
+                    if config.has_key('ReplaceTag'):
+
+                        resItm = {"ReplaceTag":config['ReplaceTag'] }
+                    else:
+                        resItm = {"ReplaceTag":"{FeatureService}" }
+
+                    if 'Zip' in config:
+                        resItm['FCInfo'] = self._publishFeatureCollection(config=config)
+                
+
+                    if not resItm['FCInfo'] is None and 'id' in resItm['FCInfo']:
+                        print "%s feature collection created" % resItm['FCInfo']['id']
+                        res.append(resItm)
+                    else:
+                        print str(resItm['FCInfo'])
+
+           
+            return res
+        except arcpy.ExecuteError:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishFeatureCollections",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+                "arcpyError": arcpy.GetMessages(2),
+            }
+                                            )
+        except common.ArcRestHelperError,e:
+            raise e
+        except:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishFeatureCollections",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            }
+                                            )
+
+        finally:
+            resItm = None
+            config = None
+
+            del resItm
+            del config
+
+            gc.collect()
+    
     #----------------------------------------------------------------------
     def _publishFSFromMXD(self,config):
         mxd = None
@@ -1105,7 +1174,8 @@ class publishingtools(securityhandlerhelper):
             extension = os.path.splitext(dataFile)[1]
             
             if (extension == ".mxd"):
-                dataFileType = "Service Definition"
+                dataFileType = "serviceDefinition"
+                searchType = "Service Definition"
                 sd_Info = arcrest.common.servicedef.MXDtoFeatureServiceDef(mxd_path=dataFile,
                                                                      service_name=service_name_safe,
                                                                      tags=None,
@@ -1118,6 +1188,7 @@ class publishingtools(securityhandlerhelper):
                                                                           overwrite='true')                
             elif (extension == ".zip"):
                 dataFileType = "Shapefile"
+                searchType = "Shapefile"
                 sd_Info = {'servicedef':dataFile,'tags':config['Tags']}
                 description = ""
                 if 'Description' in config:
@@ -1125,10 +1196,18 @@ class publishingtools(securityhandlerhelper):
                 publishParameters = arcrest.manageorg.PublishShapefileParameter(name=service_name,
                                                                             layerInfo={'capabilities':capabilities},
                                                                             description=description)
-                publishParameters.hasStaticData = definition['hasStaticData']
+                if 'hasStaticData' in definition:
+                    publishParameters.hasStaticData = definition['hasStaticData']
 
             if sd_Info is None:
-                return
+                print "Publishing SD or Zip not valid"
+                raise common.ArcRestHelperError({
+                    "function": "_publishFsFromConfig",
+                    "line": lineno(),
+                    "filename":  'publishingtools.py',
+                    "synerror": "Publishing SD or Zip not valid"
+                }
+                                                    )                   
 
             admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
 
@@ -1136,7 +1215,7 @@ class publishingtools(securityhandlerhelper):
             itemParams = arcrest.manageorg.ItemParameter()
             itemParams.title = service_name
             itemParams.thumbnail = thumbnail
-            itemParams.type = dataFileType
+            itemParams.type = searchType
             itemParams.overwrite = True
 
             content = admin.content
@@ -1150,7 +1229,7 @@ class publishingtools(securityhandlerhelper):
                 userInfo.currentFolder = folderName    
 
             sea = arcrest.find.search(securityHandler=self._securityHandler)
-            items = sea.findItem(title=service_name, itemType=dataFileType,searchorg=False)
+            items = sea.findItem(title=service_name, itemType=searchType,searchorg=False)
 
             if items['total'] >= 1:
                 itemId = items['results'][0]['id']            
@@ -1245,7 +1324,7 @@ class publishingtools(securityhandlerhelper):
                                 print "Item exist and cannot be found, probably owned by another user."
                                 raise common.ArcRestHelperError({
                                     "function": "_publishFsFromConfig",
-                                    "line": 1155,
+                                    "line": lineno(),
                                     "filename":  'publishingtools.py',
                                     "synerror": "Item exist and cannot be found, probably owned by another user."
                                 }
@@ -2380,356 +2459,163 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def _publishFSFromShape(self, config):
-        admin = None
-        fc_results = None
-        zipfile = None   
-        service_name = None
-        everyone = None
-        org = None
-        groupNames = None
-        folderName = None
-        thumbnail = None
-        loc_df = None
-        definition = None   
-        description = None    
-        datestring = None
-        service_name = None    
-        service_name_safe = None       
-     
-        itemParams = None
-        content = None
-        adminusercontent = None
-        userCommunity = None
-        userContent = None    
-        folderId = None   
-        folderContent = None               
-        itemId = None
-        resultSD = None
-        publishParameters = None
-        sea = None
-        items = None
-        status = None
-        delres = None           
-        group_ids = None
-        shareResults = None
-        groups = None
-      
-        updateParams = None
-        updateResults = None
+    def _publishFeatureCollection(self, config):
         try:
-            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-
-            fc_results = []
-        
+  
             # Service settings
-            zipfile = config['Zip']
-        
+            zipfile = config['Zip']  
             service_name = config['Title']
-        
-            everyone = config['ShareEveryone']
-            org = config['ShareOrg']
-            groupNames = config['Groups']  #Groups 
-            folderName = config['Folder']
-            thumbnail = config['Thumbnail']
             if config.has_key('DateTimeFormat'):
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
-            definition = ""
-            if 'Definition' in config:
-                definition = config['Definition']
+                
             description = ""
             if 'Description' in config:
                 description = config['Description']                    
+            
+            tags = config['Tags']
+            snippet = config['Summary']
+            extent = config['Extent']
+    
+            everyone = config['ShareEveryone']
+            org = config['ShareOrg']
+            groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
+    
+            folderName = config['Folder']
+            thumbnail = config['Thumbnail']
+    
+            typeKeywords = config['typeKeywords']                
+                
             datestring = datetime.datetime.now().strftime(loc_df)
             service_name = service_name.replace('{DATE}',datestring)
             service_name = service_name.replace('{Date}',datestring)
-    
+  
             service_name_safe = service_name.replace(' ','_')
             service_name_safe = service_name_safe.replace(':','_')
             service_name_safe = service_name_safe.replace('-','_')         
-          
+  
             if os.path.exists(path=zipfile) == False:
                 raise ValueError("Zip does not exit")
-              
+  
             admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
-    
-    
-            itemParams = arcrest.manageorg.ItemParameter()
-            itemParams.title = service_name
-            itemParams.thumbnail = thumbnail
-            itemParams.type = "Shapefile"
-            itemParams.overwrite = True
-    
-    
-           
             content = admin.content
+            feature_content = content.FeatureContent
 
+            publishParameters = arcrest.manageorg.GenerateParameter(
+                name=service_name,maxRecordCount=1000
+                )
+            
+                   
+            fcResults = feature_content.generate(publishParameters=publishParameters,
+                itemId=None,
+                filePath=zipfile,
+                fileType='shapefile')
+            if not 'featureCollection' in fcResults:
+                raise common.ArcRestHelperError({
+                    "function": "_publishFeatureCollection",
+                    "line": lineno(),
+                    "filename":  'publishingtools.py',
+                    "synerror": fcResults
+                })                   
+            itemParams = arcrest.manageorg.ItemParameter()
+            itemParams.type = "Feature Collection"
+            itemParams.title = service_name
+            itemParams.thumbnail = thumbnail            
+            itemParams.overwrite = True
+            itemParams.snippet = snippet
+            itemParams.description = description
+            itemParams.extent = extent
+            itemParams.tags = tags
+            itemParams.typeKeywords = ",".join(typeKeywords)
+            
             userInfo = content.users.user()
             userCommunity = admin.community
-            #users = content.users
-            #user = users.user()
-           
+            
+  
             if folderName is not None and folderName != "":               
                 if self.folderExist(name=folderName,folders=userInfo.folders) is None:
                     res = userInfo.createFolder(name=folderName)
                 userInfo.currentFolder = folderName
-            #folderContent = userInfo.items
             
-    
-            #item = self.getItem(userContent=folderContent,title=service_name,itemType='Shapefile')
             sea = arcrest.find.search(securityHandler=self._securityHandler)
-            items = sea.findItem(title=service_name, itemType='Shapefile',searchorg=False)
-    
+            items = sea.findItem(title=service_name, itemType='Feature Collection',searchorg=False)
+            itemId = None
             if items['total'] >= 1:
                 itemId = items['results'][0]['id']            
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 resultSD = item.updateItem(itemParameters=itemParams,
-                                           data=zipfile)
-    
+                                           text=fcResults['featureCollection'])
+  
             else:
-    
+  
                 resultSD = userInfo.addItem(itemParameters=itemParams,
-                                                     filePath=zipfile,
-                                                     overwrite=True,
-                                                     url=None,
-                                                     text=None,
-                                                     relationshipType=None,
-                                                     originItemId=None,
-                                                     destinationItemId=None,
-                                                     serviceProxyParams=None,
-                                                     metadata=None)
-                
-      
-      
-            if not 'error' in resultSD:
-                publishParameters = arcrest.manageorg.PublishFeatureCollectionParameter(name=service_name,
-                                                                                layerInfo=definition,
-                                                                                description=description)
-        
-                
-                resultFS = userInfo.publishItem(
-                    fileType="Shapefile",
-                    itemId=resultSD['id'],
-                    publishParameters=publishParameters)
-        
-                if 'services' in resultFS:
-                    if len(resultFS['services']) > 0:
-        
-                        if 'error' in resultFS['services'][0]:
-                            print "Overwrite failed"
-        
-                            sea = arcrest.find.search(securityHandler=self._securityHandler)
-                            items = sea.findItem(title =service_name, itemType='Feature Service',searchorg=False)
-        
-                            if items['total'] >= 1:
-                                itemId = items['results'][0]['id']
-        
-                            else:
-        
-                                sea = arcrest.find.search(securityHandler=self._securityHandler)
-                                items = sea.findItem(title =service_name_safe, itemType='Feature Service',searchorg=False)
-        
-                                if items['total'] >= 1:
-                                    itemId = items['results'][0]['id']
-        
-                            if not itemId is None:
-                              
-                                print "Attempting to delete"
-                                delres=userInfo.deleteItems(items=itemId)
-                                if 'error' in delres:
-                                    print delres
-                                    return delres
-                                print "Delete successful"                                
-                            else:
-                                print "Item exist and cannot be found, probably owned by another user."
-                                raise common.ArcRestHelperError({
-                                    "function": "_publishFsFromConfig",
-                                    "line": 1155,
-                                    "filename":  'publishingtools.py',
-                                    "synerror": "Item exist and cannot be found, probably owned by another user."
-                                }
-                                                                )       
-        
-                            resultFS = userInfo.publishItem(
-                                fileType="Shapefile",
-                                itemId=resultSD['id'],
-                                publishParameters=publishParameters)
-        
-                     
-                        if 'error' in resultFS or 'error' in resultFS['services'][0]:
-                            print "Item exist and cannot be found, probably owned by another user."
-                            raise common.ArcRestHelperError({
-                                "function": "_publishFsFromConfig",
-                                "line": 1155,
-                                "filename":  'publishingtools.py',
-                                "synerror": "Item exist and cannot be found, probably owned by another user."
-                            }
-                            ) 
-                        item = admin.content.getItem(itemId = resultFS['services'][0]['serviceItemId']).userItem
-                        
-                        status = item.status(jobId=resultFS['services'][0]['jobId'],
-                                                         jobType='publish')
-                        if 'error' in status:
-                            print  "%s" % status
-                        elif 'status' in status:
-                            while status['status'] == 'processing' or status['status'] == 'partial':
-                                time.sleep(.5)
-                                status = item.status(jobId=resultFS['services'][0]['jobId'],
-                                                         jobType='publish')
-                                if 'error' in status:
-                                    print status
-                            if status['status'] == 'failed':
-                                print "Publishing failed, attempting to delete, then recreate"
-        
-                                delres=userInfo.deleteItems(items=resultFS['services'][0]['serviceItemId'])
-                                if 'error' in delres:
-                                    print delres
-                                    return delres
-                                print "Delete successful"
-        
-                                resultFS = userInfo.publishItem(
-                                    fileType="Shapefile",
-                                    itemId=resultSD['id'],
-                                    publishParameters=publishParameters)
-                                if 'error' in resultFS:
-                                    return resultFS
-                                item = admin.content.getItem(itemId = resultFS['services'][0]['serviceItemId']).userItem
-
-                                status = item.status(jobId=resultFS['services'][0]['jobId'],
-                                                        jobType='publish')
-                                if 'error' in status:
-                                    print status
-                                    return status
-                                while status['status'] == 'processing' or status['status'] == 'partial':
-                                    time.sleep(.5)
-                                    status = item.status(jobId=resultFS['services'][0]['jobId'],
-                                        jobType='publish')
-                                    if 'error' in status:
-                                        print status
-                                        return status
-                            if status['status'] == 'completed':
-        
-                                group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                                shareResults = userInfo.shareItems(items=resultFS['services'][0]['serviceItemId'],
-                                                                           groups=','.join(group_ids),
-                                                                           everyone=everyone,
-                                                                           org=org)
-                                updateParams = arcrest.manageorg.ItemParameter()
-                                updateParams.title = service_name
-                                updateResults = item.updateItem(itemParameters=updateParams)
-                               
-        
-                                resultFS['services'][0]['folderId'] = folderId
-                               
-                                return resultFS['services'][0]
-                            else:
-                                return status
-                        else:
-                            return status
-                    else:
-                        return resultFS
+                                            overwrite=True,
+                                            url=None,
+                                            text=fcResults['featureCollection'],
+                                            relationshipType=None,
+                                            originItemId=None,
+                                            destinationItemId=None,
+                                            serviceProxyParams=None,
+                                            metadata=None)
+  
+  
+  
+            if 'error' in resultSD:
+                if not itemId is None:
+                    print "Attempting to delete"
+                    delres=userInfo.deleteItems(items=itemId)
+                    if 'error' in delres:
+                        print delres
+                        return delres
+                    print "Delete successful"                                
                 else:
-                    return resultFS
-                                        
-             
-              
+                    print "Item exist and cannot be found, probably owned by another user."
+                    raise common.ArcRestHelperError({
+                        "function": "_publishFeatureCollection",
+                        "line": lineno(),
+                        "filename":  'publishingtools.py',
+                        "synerror": "Item exist and cannot be found, probably owned by another user."
+                    })       
+  
+                resultSD = userInfo.addItem(itemParameters=itemParams,
+                                            overwrite=True,
+                                            url=None,
+                                            text=fcResults['featureCollection'],
+                                            relationshipType=None,
+                                            originItemId=None,
+                                            destinationItemId=None,
+                                            serviceProxyParams=None,
+                                            metadata=None)       
+                return resultSD
+            else:
+                return resultSD
+  
+  
+  
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                "function": "publishFcFromConfig",
+                "function": "_publishFeatureCollection",
                 "line": line,
                 "filename":  filename,
                 "synerror": synerror,
                 "arcpyError": arcpy.GetMessages(2),
-            }
-                                            )
+            })
+        except common.ArcRestHelperError, e:
+            raise e
+           
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                "function": "publishFcFromConfig",
+                "function": "_publishFeatureCollection",
                 "line": line,
                 "filename":  filename,
                 "synerror": synerror,
-            }
-                                            )
-
+            })
+  
         finally:
-
-            admin = None
-            fc_results = None
-            zipfile = None   
+  
            
-            everyone = None
-            org = None
-            groupNames = None
-            folderName = None
-            thumbnail = None
-            loc_df = None
-            definition = None   
-            description = None    
-            datestring = None
-            service_name = None    
-            service_name_safe = None       
-           
-            itemParams = None
-            content = None
-            adminusercontent = None
-            userCommunity = None
-            userContent = None    
-            folderId = None   
-            folderContent = None               
-            itemId = None
-            resultSD = None
-            publishParameters = None
-            sea = None
-            items = None
-            status = None
-            delres = None           
-            group_ids = None
-            shareResults = None
-            groups = None
-          
-            updateParams = None
-            updateResults = None
-            
-            del admin
-            del fc_results
-            del zipfile   
-           
-            del everyone
-            del org
-            del groupNames
-            del folderName
-            del thumbnail
-            del loc_df
-            del definition   
-            del description    
-            del datestring
-            del service_name    
-            del service_name_safe       
-           
-            del itemParams
-            del content
-            del adminusercontent
-            del userCommunity
-            del userContent    
-            del folderId   
-            del folderContent               
-            del itemId
-            del resultSD
-            del publishParameters
-            del sea
-            del items
-            del status
-            del delres           
-            del group_ids
-            del shareResults
-            del groups
-           
-            del updateParams
-            del updateResults
-            
             gc.collect()

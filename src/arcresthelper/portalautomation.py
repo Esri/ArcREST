@@ -375,11 +375,18 @@ class portalautomation(securityhandlerhelper):
                                 print "Error creating publishing tools: %s" % publishTools.message
                             else:
                                 print "Publishing tools created: %s" % publishTools.message
+                                resultFS = []
+                                if 'FeatureCollections' in publishingConfig:
+                                    startSectTime = datetime.datetime.now()
+                                    print " "
+                                    print "Creating Feature Collection: %s" % str(startSectTime.strftime(dateTimeFormat))
+                                    resultFS = publishTools.publishFeatureCollections(configs=publishingConfig['FeatureCollections'])
+                                    print "Feature Collection published, time to complete: %s" % str(datetime.datetime.now() - startSectTime)                         
                                 if 'FeatureServices' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating Feature Services: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultFS = publishTools.publishFsFromMXD(fs_config=publishingConfig['FeatureServices'])
+                                    resultFS = resultFS + publishTools.publishFsFromMXD(fs_config=publishingConfig['FeatureServices'])
                                     print "Feature Services published, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
                                 if 'ExistingServices' in publishingConfig:
     

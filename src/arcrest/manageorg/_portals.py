@@ -233,7 +233,10 @@ class Portal(BaseAGOLClass):
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
-        url = self.root + "/self"
+        if not self.root.lower().endswith("/self"):   
+            url = self.root + "/self"
+        else:
+            url = self.root
         params = {
             "f" : "json"
         }

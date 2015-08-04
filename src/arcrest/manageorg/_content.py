@@ -71,7 +71,7 @@ class Content(BaseAGOLClass):
     def FeatureContent(self):
         """Feature Content class id the parent resource for feature
         operations such as Analyze and Generate."""
-        return FeatureContent(url="%s/%s" % (self.root, "/features"),
+        return FeatureContent(url="%s/%s" % (self.root, "features"),
                               securityHandler=self._securityHandler,
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
@@ -1499,6 +1499,7 @@ class UserItem(BaseAGOLClass):
                    clearEmptyFields=False,
                    data=None,
                    metadata=None,
+                   text=None                 
                    ):
         """
         updates an item's properties using the ItemParameter class.
@@ -1514,7 +1515,8 @@ class UserItem(BaseAGOLClass):
             "f": "json",
             "clearEmptyFields": clearEmptyFields
         }
-
+        if text is not None:
+            params['text'] = text
         if isinstance(itemParameters, ItemParameter) == False:
             raise AttributeError("itemParameters must be of type parameter.ItemParameter")
         keys_to_delete = ['id', 'owner', 'size', 'numComments',
@@ -2557,7 +2559,8 @@ class FeatureContent(BaseAGOLClass):
                  publishParameters,
                  itemId=None,
                  filePath=None,
-                 fileType=None
+                 fileType=None,
+                 option='on'
                  ):
         """
         The Generate call helps a client generate features from a CSV file
@@ -2590,13 +2593,15 @@ class FeatureContent(BaseAGOLClass):
             "f" : "json"
         }
         params['publishParameters'] = publishParameters
+        params['option'] = option
+        
         parsed = urlparse.urlparse(url)
         if fileType.lower() not in allowedFileTypes and \
            filePath is not None:
             raise AttributeError("fileType must be either shapefile or csv when specifying a file")
         if filePath is not None:
-            params['type'] = fileType
-
+            params['filetype'] = fileType
+            #Changed from type to filetype to generate a FC from zip
             if fileType.lower() == "csv":
                 params['text'] = open(filePath,'rb').read()
                 return self._do_post(url=url, param_dict=params,
