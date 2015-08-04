@@ -270,7 +270,7 @@ class _Security(BaseAGOLClass):
                   Values: org_user | org_publisher | org_admin
            provider - The provider for the account. The default value is
                       arcgis.
-                      Values: arcgis | webadaptor
+                      Values: arcgis | webadaptor | enterprise
         """
         url = self._url + "/users/create"
         params = {
