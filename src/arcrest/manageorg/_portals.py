@@ -1,4 +1,4 @@
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalServerSecurityHandler
 from ..manageags import AGSAdministration
 from ..hostedservice import Services
 from ..common.general import local_time_to_online,online_time_to_string
@@ -943,13 +943,6 @@ class Portal(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def tileServers(self):
-        """gets the tile server base urls"""
-        if self.urls == {}:
-            return {}
-        return self.urls["urls"]['tiles']
-    #----------------------------------------------------------------------
-    @property
-    def tileServersF(self):
         """
           Returns the objects to manage site's tile hosted services/servers. It returns
           AGSAdministration object if the site is Portal and it returns a
@@ -966,7 +959,6 @@ class Portal(BaseAGOLClass):
         else:
             res = urls['http']
         for https in res:
-            #http://tiles.arcgis.com/tiles/PWJUSsdoJDp7SgLj/arcgis/admin/services/TileServiceTest.MapServer?f=pjson
             if ishttps:
                 scheme = "https"
             else:
@@ -982,48 +974,18 @@ class Portal(BaseAGOLClass):
                 servers = self.servers
                 for server in servers.servers:
                     url = server.adminUrl
-                    sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
+                    sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
                                                      serverUrl=url,
-                                                     referer=server['name'].replace(":6080", ":6443")
+                                                     referer=server.name.split(":")[0]
                                                      )
                     services.append(
                         AGSAdministration(url=url,
                                           securityHandler=sh,
                                           proxy_url=self._proxy_url,
                                           proxy_port=self._proxy_port,
-                                          initialize=False)
+                                          initialize=True)
                     )
-        print 'stop'
         return services
-        #if urls != {}:
-            #for https in portal.tileServers['https']:
-                ##http://tiles.arcgis.com/tiles/PWJUSsdoJDp7SgLj/arcgis/admin/services/TileServiceTest.MapServer?f=pjson
-                #if isinstance(self._securityHandler, AGOLTokenSecurityHandler):
-                    #url = "https://%s/tiles/%s/arcgis/rest/admin" % (https, portalId)
-                    #if url.endswith(r'/services') == False:
-                        #url = url
-                #else:
-                    #url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-                #services.append(Services(url=url,
-                                         #securityHandler=self._securityHandler,
-                                         #proxy_url=self._proxy_url,
-                                         #proxy_port=self._proxy_port))
-            #return services
-        #else:
-            #for server in portal.servers['servers']:
-                #url = server['adminUrl'] + "/admin"
-                #sh = PortalServerSecurityHandler(portalTokenHandler=self._securityHandler,
-                                                 #serverUrl=url,
-                                                 #referer=server['name'].replace(":6080", ":6443")
-                                                 #)
-                #services.append(
-                    #AGSAdministration(url=url,
-                                      #securityHandler=sh,
-                                      #proxy_url=self._proxy_url,
-                                      #proxy_port=self._proxy_port,
-                                      #initialize=False)
-                #)
-            #return services
     #----------------------------------------------------------------------
     @property
     def purchases(self):
@@ -1584,14 +1546,14 @@ class Servers(BaseAGOLClass):
         def __init(self):
             """loads the property data into the class"""
             params = {
-                "f" : "json"
+                "f" : "pjson"
             }
             json_dict = self._do_get(url=self._surl,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
                                      proxy_url=self._proxy_url)
-            self._json_dict = json.loads(json_dict)
+            self._json_dict = json_dict
             self._json = json.dumps(json_dict)
             attributes = [attr for attr in dir(self)
               if not attr.startswith('__') and \

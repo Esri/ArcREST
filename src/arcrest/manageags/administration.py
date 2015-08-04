@@ -49,6 +49,8 @@ class AGSAdministration(BaseAGSServer):
                  proxy_url=None, proxy_port=None,
                  initialize=False):
         """Constructor"""
+        if url.lower().endswith('/admin') == False:
+            url = "%s/admin" % url
         self._url = url
         if securityHandler is not None:
             if  isinstance(securityHandler, PKISecurityHandler):
@@ -68,7 +70,7 @@ class AGSAdministration(BaseAGSServer):
             elif  isinstance(securityHandler, PortalServerSecurityHandler):
                 self._securityHandler = securityHandler
             elif  isinstance(securityHandler,AGSTokenSecurityHandler):
-                self._securityHandler = securityHandler            
+                self._securityHandler = securityHandler
         self._proxy_url = proxy_url
         self._proxy_port =proxy_port
 
