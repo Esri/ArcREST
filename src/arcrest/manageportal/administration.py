@@ -923,6 +923,14 @@ class PortalAdministration(BaseAGOLClass):
             self.__init()
         return self._json
     #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the raw key/values for the object"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+
+    #----------------------------------------------------------------------
     @property
     def resources(self):
         """returns the admin sites resources"""
