@@ -110,7 +110,7 @@ class Server(BaseAGSServer):
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port,
-                                 initialize=True)
+                                 initialize=False)
     #----------------------------------------------------------------------
     @property
     def location(self):
