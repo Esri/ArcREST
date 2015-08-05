@@ -268,14 +268,14 @@ class BaseWebOperations(object):
         result = ""
         try:
             result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
+            if result =="":
+                return ""
             jres = json.loads(result)
         except urllib2.HTTPError,e:
             return {'error':{'code':e.code}}
         except Exception, f:
             print f
             return result
-        if result =="":
-            return ""
         #jres = json.loads(result)
         if 'error' in jres:
             if 'message' in jres['error']:
@@ -290,9 +290,9 @@ class BaseWebOperations(object):
                                              proxy_port=proxy_port)
                 else:
                     print jres['error']
-        if 'status' in result:
-            if result['status'] == 'error':
-                print str(result['code']) + " " + str(result['messages'])
+        if 'status' in jres:
+            if jres['status'] == 'error':
+                print str(jres['code']) + " " + str(jres['messages'])
         return self._unicode_convert(jres)
     #----------------------------------------------------------------------
     def _post_multipart(self, host, selector,
