@@ -276,7 +276,7 @@ class BaseWebOperations(object):
             return result
         if result =="":
             return ""
-        #jres = json.loads(result)
+        jres = json.loads(result)
         if 'error' in jres:
             if 'message' in jres['error']:
                 if jres['error']['message'] == 'Request not made over ssl':

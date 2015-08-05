@@ -253,7 +253,8 @@ class _Security(BaseAGOLClass):
                    email,
                    role="org_user",
                    provider="arcgis",
-                   description=""):
+                   description="",
+                   idpUsername=None):
         """
         This operation is used to create a new user account in the portal.
         Inputs:
@@ -271,8 +272,10 @@ class _Security(BaseAGOLClass):
            provider - The provider for the account. The default value is
                       arcgis.
                       Values: arcgis | webadaptor | enterprise
+           idpUsername - name of the user on the domain controller.
+                         Ex: domain\account
         """
-        url = self._url + "/users/create"
+        url = self._url + "/users/createUser"
         params = {
             "f" : "json",
             "username" : username,
@@ -283,11 +286,14 @@ class _Security(BaseAGOLClass):
             "provider" : provider,
             "description" : description
         }
+        if idpUsername is None:
+            params['idpUsername'] = idpUsername
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+
     #----------------------------------------------------------------------
     def updateSecurityConfiguration(self,
                                     enableAutomaticAccountCreation=False,
