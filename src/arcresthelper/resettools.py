@@ -44,31 +44,30 @@ class resetTools(securityhandlerhelper):
         folderContent = None
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            portal = admin.portals(portalId='self')
+            
+            portal = admin.portals.portalSelf
             if users is None:
                 users = portal.users(start=1, num=100)
             if users:
-                for user in users['users']:
-                    print user['username']
-                    adminusercontent = admin.content.usercontent(username=user['username'])
+                for user in admin.content.users:
+                    print user.username
+                    
+                
+                    for userItem in user.items:
 
-                    userContent = admin.content.getUserContent(username=user['username'])
-                    for userItem in userContent['items']:
+                        print user.deleteItems(items=userItem.id)
+                    if user.folders:
+                        for userFolder in user.folders:
+                            user.currentFolder = userFolder['name']
+                            for userItem in user.items:
+                                print user.deleteItems(items=userItem['id'])
 
-                        print adminusercontent.deleteItems(items=userItem['id'])
-                    if 'folders' in userContent:
-                        for userFolder in userContent['folders']:
-                            folderContent = admin.content.getUserContent(username=user['username'],folderId=userFolder['id'])
-                            if 'items' in folderContent:
-                                for userItem in folderContent['items']:
-                                    print adminusercontent.deleteItems(items=userItem['id'])
-
-                            print adminusercontent.deleteFolder(folderId=userFolder['id'])
+                            print user.deleteFolder(folderId=userFolder['id'])
        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
+                        "function": "removeUserData",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,

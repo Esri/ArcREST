@@ -592,6 +592,8 @@ class publishingtools(securityhandlerhelper):
                     res = userInfo.createFolder(name=folderName)
                     userInfo.refresh()
                 userInfo.currentFolder = folderName    
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
 
 
             sea = arcrest.find.search(securityHandler=self._securityHandler)
@@ -1146,7 +1148,9 @@ class publishingtools(securityhandlerhelper):
                     res = userInfo.createFolder(name=folderName)
                     userInfo.refresh()
                 userInfo.currentFolder = folderName    
-
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
+            
             sea = arcrest.find.search(securityHandler=self._securityHandler)
             items = sea.findItem(title=service_name, itemType=searchType,searchorg=False)
 
@@ -1521,31 +1525,32 @@ class publishingtools(securityhandlerhelper):
 
                     for mapDet in map_info:
                         if mapDet.has_key('ReplaceTag'):
-                            if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
-                               replaceItem['ReplaceType'] == 'Map':
+                            if 'ReplaceString' in replaceItem:
+                                if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
+                                   replaceItem['ReplaceType'] == 'Map':
+    
+                                    replaceItem['ItemID'] = mapDet['MapInfo']['Results']['id']
+                                    replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
+                                    replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
+                                elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
+                                    repInfo = replaceItem['ReplaceString'].split("|")
+                                    if len(repInfo) == 2:
+                                        if repInfo[0] == mapDet['ReplaceTag']:
+                                            for key,value in mapDet['MapInfo']['Layers'].iteritems():
+                                                if value["Name"] == repInfo[1]:
+                                                    replaceItem['ReplaceString'] = value["ID"]
 
-                                replaceItem['ItemID'] = mapDet['MapInfo']['Results']['id']
-                                replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
-                                replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
-                            elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
-                                repInfo = replaceItem['ReplaceString'].split("|")
-                                if len(repInfo) == 2:
-                                    if repInfo[0] == mapDet['ReplaceTag']:
-                                        for key,value in mapDet['MapInfo']['Layers'].iteritems():
-                                            if value["Name"] == repInfo[1]:
-                                                replaceItem['ReplaceString'] = value["ID"]
-
-                            elif replaceItem.has_key('ItemID'):
+                            if replaceItem.has_key('ItemID'):
                                 if replaceItem.has_key('ItemFolder') == False:
 
                                     itemId = replaceItem['ItemID']
-                                    itemInfo = admin.content.item(itemId=itemId)
-                                    if 'owner' in itemInfo:
-                                        
-                                        if itemInfo['owner'] == self._securityHandler.username and 'ownerFolder' in itemInfo:
-                                            replaceItem['ItemFolder'] = itemInfo['ownerFolder']
-                                        else:
-                                            replaceItem['ItemFolder'] = None
+                                 
+                                    itemInfo = admin.content.getItem(itemId=itemId)
+                                   
+                                    if itemInfo.owner == self._securityHandler.username and itemInfo.ownerFolder:
+                                        replaceItem['ItemFolder'] = itemInfo['ownerFolder']
+                                    else:
+                                        replaceItem['ItemFolder'] = None
 
 
             if appDet.has_key('ReplaceTag'):
@@ -1695,7 +1700,19 @@ class publishingtools(securityhandlerhelper):
 
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-
+            content = admin.content        
+            userInfo = content.users.user()
+            userCommunity = admin.community
+    
+            folderName = config['Folder']
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                    userInfo.refresh()
+                userInfo.currentFolder = folderName 
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
+            
             if os.path.exists(itemJson):
                 with open(itemJson) as json_data:
                     try:
@@ -1713,7 +1730,12 @@ class publishingtools(securityhandlerhelper):
                                             itemData['folderId'] = replaceItem['ItemFolder']
                         elif replaceItem['ReplaceType'] == 'Layer' and 'ReplaceString' in replaceItem:
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
-
+                        elif replaceItem['ReplaceType'] == 'Folder':
+                            if 'id' in  userInfo.currentFolder:
+                                folderID = userInfo.currentFolder['id']
+                            else:
+                                folderID = None
+                            itemData = common.find_replace(itemData,replaceItem['SearchString'],folderID)
                         elif replaceItem['ReplaceType'] == 'Global':
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
 
@@ -1741,7 +1763,7 @@ class publishingtools(securityhandlerhelper):
             org = config['ShareOrg']
             groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
 
-            folderName = config['Folder']
+            
             url = config['Url']
             thumbnail = config['Thumbnail']
 
@@ -1760,17 +1782,6 @@ class publishingtools(securityhandlerhelper):
             itemParams.description = description
             itemParams.typeKeywords = ",".join(typeKeywords)
         
-            content = admin.content        
-            userInfo = content.users.user()
-            userCommunity = admin.community
-
-            if folderName is not None and folderName != "":               
-                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
-                    res = userInfo.createFolder(name=folderName)
-                    userInfo.refresh()
-                userInfo.currentFolder = folderName    
-
-            
             sea = arcrest.find.search(securityHandler=self._securityHandler)
             items = sea.findItem(title=name, itemType=itemType,searchorg=False)
             
@@ -1778,7 +1789,7 @@ class publishingtools(securityhandlerhelper):
                 itemId = items['results'][0]['id']                    
             if not itemId is None:
                 item = content.getItem(itemId).userItem
-                resultApp['Results'] = item.updateItem(updateItemParameters=itemParams,
+                resultApp['Results'] = item.updateItem(itemParameters=itemParams,
                                             text=json.dumps(itemData))
 
             else:
@@ -1803,18 +1814,17 @@ class publishingtools(securityhandlerhelper):
                                        org=org)
                 updateParams = arcrest.manageorg.ItemParameter()
                 updateParams.title = name
-                portal = admin.portals()
+               
                 url = url.replace("{AppID}",resultApp['Results']['id'])
-                portalself = portal.portalSelf()
+                portalself = admin.portals.portalSelf
                 if portalself.urlKey is None or portalself.customBaseUrl is None:
                     parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
                     url = url.replace("{OrgURL}",parsedURL.netloc + parsedURL.path)
                 else:
                     url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
-            
+                updateParams.url = url
                 item = content.getItem(resultApp['Results']['id']).userItem
-                updateResults = item.updateItem(url=url,
-                                                itemParameters=updateParams)
+                updateResults = item.updateItem(itemParameters=updateParams)
                 resultApp['folderId'] = folderId
                 resultApp['Name'] = name
             return resultApp
@@ -2557,6 +2567,8 @@ class publishingtools(securityhandlerhelper):
                 if self.folderExist(name=folderName,folders=userInfo.folders) is None:
                     res = userInfo.createFolder(name=folderName)
                 userInfo.currentFolder = folderName
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
             
             sea = arcrest.find.search(securityHandler=self._securityHandler)
             items = sea.findItem(title=service_name, itemType='Feature Collection',searchorg=False)
