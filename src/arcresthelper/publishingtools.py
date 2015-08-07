@@ -165,10 +165,10 @@ class publishingtools(securityhandlerhelper):
                                         if replaceItem.has_key('ItemFolder') == False:
 
                                             itemId = replaceItem['ItemID']
-                                            itemInfo = admin.content.item(itemId=itemId)
-                                            if 'owner' in itemInfo:
-                                                if itemInfo['owner'] == self._securityHandler.username and 'ownerFolder' in itemInfo:
-                                                    replaceItem['ItemFolder'] = itemInfo['ownerFolder']
+                                            itemInfo = admin.content.getItem(itemId=itemId)
+                                            if itemInfo.owner:
+                                                if itemInfo.owner == self._securityHandler.username and itemInfo.ownerFolder:
+                                                    replaceItem['ItemFolder'] = itemInfo.ownerFolder
                                                 else:
                                                     replaceItem['ItemFolder'] = None
 
@@ -767,7 +767,7 @@ class publishingtools(securityhandlerhelper):
                 operationalLayers = []
                 tableLayers = []
                 for webmap in webmaps:
-                    item = admin.content.item(itemId=webmap)
+                    item = admin.content.getItem(itemId=webmap)
                     response = item.itemData()
                     if 'operationalLayers' in response:
 
@@ -791,9 +791,9 @@ class publishingtools(securityhandlerhelper):
                     itemInfo = {"ReplaceTag":"{WebMap}" }
 
                 itemInfo['MapInfo'] = self._publishMap(config=map_info,
-                                                                       replaceInfo=None,
-                                                                       operationalLayers=operationalLayers,
-                                                                       tableLayers=tableLayers)
+                                                        replaceInfo=None,
+                                                        operationalLayers=operationalLayers,
+                                                        tableLayers=tableLayers)
 
 
                 map_results.append(itemInfo)
@@ -1986,7 +1986,17 @@ class publishingtools(securityhandlerhelper):
                 print "            Error: %s does not exist" % itemJson
                 return None
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            adminusercontent = admin.content.usercontent()
+            content = admin.content        
+            userInfo = content.users.user()
+            userCommunity = admin.community
+            folderName = config['Folder']
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                    userInfo.refresh()
+                userInfo.currentFolder = folderName 
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
 
             layerIDSwitch = []
 
@@ -2001,7 +2011,7 @@ class publishingtools(securityhandlerhelper):
                         if replaceItem['ReplaceType'] == 'Global':
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
                         elif replaceItem['ReplaceType'] == 'Map' and 'ItemID' in replaceItem:
-                            item = admin.content.item(itemId=replaceItem['ItemID'])
+                            item = admin.content.getItem(itemId=replaceItem['ItemID'])
                             response = item.itemData()
 
                             layerNamesID = {}
@@ -2129,51 +2139,43 @@ class publishingtools(securityhandlerhelper):
             itemParams.snippet = snippet
             itemParams.typeKeywords = ",".join(typeKeywords)
 
-            adminusercontent = admin.content.usercontent()
-            userCommunity = admin.community
-            userContent = admin.content.getUserContent()
-
-            folderId = admin.content.getFolderID(name=folderName,userContent=userContent)
-            if folderId is None:
-                res = adminusercontent.createFolder(name=folderName)
-                if 'success' in res:
-                    folderId = res['folder']['id']
-                else:
-                    pass
-
-            folderContent = admin.content.getUserContent(folderId=folderId)
-
-            itemId = admin.content.getItemID(title=name,itemType=itemType,userContent=folderContent)
+            sea = arcrest.find.search(securityHandler=self._securityHandler)
+            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+        
+            if items['total'] >= 1:
+                itemId = items['results'][0]['id']                    
             if not itemId is None:
-                resultApp['Results'] = adminusercontent.updateItem(itemId=itemId,
-                                            updateItemParameters=itemParams,
-                                            folderId=folderId,
-                                            text=json.dumps(itemData))
-
+                item = content.getItem(itemId).userItem
+                resultApp['Results'] = item.updateItem(itemParameters=itemParams,
+                                                       text=json.dumps(itemData))
+        
             else:
 
-                resultApp['Results'] = adminusercontent.addItem( itemParameters=itemParams,
-                        folder=folderId,
-                        relationshipType=None,
-                        originItemId=None,
-                        destinationItemId=None,
-                        serviceProxyParams=None,
-                        metadata=None,
-                        text=json.dumps(itemData))
-
+                resultApp['Results']  = userInfo.addItem(
+                    itemParameters=itemParams,
+        
+                    relationshipType=None,
+                    originItemId=None,
+                    destinationItemId=None,
+                    serviceProxyParams=None,
+                    metadata=None,
+                    text=json.dumps(itemData))
+            
 
             if not 'error' in resultApp['Results']:
-
                 group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                shareResults = adminusercontent.shareItems(items=resultApp['Results']['id'],
-                                       groups=','.join(group_ids),
-                                       everyone=everyone,
-                                       org=org)
+                shareResults = userInfo.shareItems(items=resultApp['Results']['id'],
+                                                   groups=','.join(group_ids),
+                                                   everyone=everyone,
+                                                   org=org)
                 updateParams = arcrest.manageorg.ItemParameter()
                 updateParams.title = name
-                updateResults = adminusercontent.updateItem(itemId=resultApp['Results']['id'],
-                                                            updateItemParameters=updateParams,
-                                                            folderId=folderId)
+
+
+              
+                item = content.getItem(resultApp['Results']['id']).userItem
+                updateResults = item.updateItem(itemParameters=updateParams)
+                      
                 resultApp['folderId'] = folderId
                 resultApp['Name'] = name
             return resultApp
