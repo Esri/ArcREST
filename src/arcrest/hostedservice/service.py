@@ -246,6 +246,8 @@ class AdminMapService(BaseAGOLClass):
     _urlService = None
     _readonly = None
     _resampling = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -286,6 +288,8 @@ class AdminMapService(BaseAGOLClass):
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(self._json_dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -298,6 +302,19 @@ class AdminMapService(BaseAGOLClass):
             else:
                 print k,  " - attribute not implemented. Please log an support request."
             del k, v
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the key/value pair of the raw JSON"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns raw json from url query"""
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     @property
     def readonly(self):
@@ -654,6 +671,7 @@ class AdminFeatureService(BaseAGOLClass):
     _syncEnabled = None
     _dict = None
     _json = None
+    _json_dict = None
     _error = None
     #----------------------------------------------------------------------
     def __init__(self, url,
@@ -701,6 +719,7 @@ class AdminFeatureService(BaseAGOLClass):
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json_dict = json_dict
         self._dict = json_dict
         self._json = json.dumps(self._dict)
         attributes = [attr for attr in dir(self)
@@ -761,6 +780,14 @@ class AdminFeatureService(BaseAGOLClass):
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the key/value pair of the raw JSON"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
+
     #----------------------------------------------------------------------
     @property
     def status(self):
@@ -1228,6 +1255,13 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the key/value pair of the raw JSON"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
