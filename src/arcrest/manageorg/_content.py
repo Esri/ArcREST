@@ -1499,7 +1499,7 @@ class UserItem(BaseAGOLClass):
                    clearEmptyFields=False,
                    data=None,
                    metadata=None,
-                   text=None                 
+                   text=None
                    ):
         """
         updates an item's properties using the ItemParameter class.
@@ -2385,7 +2385,7 @@ class User(BaseAGOLClass):
         if itemParameters.overwrite is None:
             params['overwrite'] = json.dumps(overwrite)
         if itemParameters.overwrite != overwrite:
-            params['overwrite'] = overwrite
+            params['overwrite'] = json.dumps(overwrite)
         if url is not None:
             params['url'] = url
         if text is not None:
@@ -2594,7 +2594,7 @@ class FeatureContent(BaseAGOLClass):
         }
         params['publishParameters'] = publishParameters
         params['option'] = option
-        
+
         parsed = urlparse.urlparse(url)
         if fileType.lower() not in allowedFileTypes and \
            filePath is not None:

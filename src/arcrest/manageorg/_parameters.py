@@ -2092,20 +2092,20 @@ class GenerateParameter(BaseParameters):
         self._name = name
         self._maxRecordCount = maxRecordCount
         self._targetSR = targetSR
-    
+
         self._enforceOutputJsonSizeLimit = enforceOutputJsonSizeLimit
         self._enforceInputFileSizeLimit = enforceInputFileSizeLimit
         self._generalize = generalize
         self._maxAllowableOffset = maxAllowableOffset
         self._reducePrecision = reducePrecision
-        self._numberOfDigitsAfterDecimal = numberOfDigitsAfterDecimal    
-        self._locationType = locationType    
+        self._numberOfDigitsAfterDecimal = numberOfDigitsAfterDecimal
+        self._locationType = locationType
 
     #----------------------------------------------------------------------
     def generalizeDefaults():
         self._maxAllowableOffset = 10.58335450004355
         self._reducePrecision = True
-        self._numberOfDigitsAfterDecimal = 0             
+        self._numberOfDigitsAfterDecimal = 0
     #----------------------------------------------------------------------
     @property
     def enforceOutputJsonSizeLimit(self):
@@ -2128,7 +2128,7 @@ class GenerateParameter(BaseParameters):
         """gets/sets the enforceOutputJsonSizeLimit"""
         if self._locationType != value:
             self._locationType = value
-    
+
     #----------------------------------------------------------------------
     @property
     def enforceInputFileSizeLimit(self):
@@ -2150,8 +2150,8 @@ class GenerateParameter(BaseParameters):
     def generalize(self, value):
         """gets/sets the generalize"""
         if self._generalize != value:
-            self._generalize = value            
-            
+            self._generalize = value
+
     #----------------------------------------------------------------------
     @property
     def maxAllowableOffset(self):
@@ -2162,9 +2162,9 @@ class GenerateParameter(BaseParameters):
     def maxAllowableOffset(self, value):
         """gets/sets the maxAllowableOffset"""
         if self._maxAllowableOffset != value:
-            self._maxAllowableOffset = value    
-    
-    
+            self._maxAllowableOffset = value
+
+
     #----------------------------------------------------------------------
     @property
     def reducePrecision(self):
@@ -2176,7 +2176,7 @@ class GenerateParameter(BaseParameters):
         """gets/sets the reducePrecision"""
         if self._reducePrecision != value:
             self._reducePrecision = value
-            
+
     #----------------------------------------------------------------------
     @property
     def numberOfDigitsAfterDecimal(self):
@@ -2187,7 +2187,7 @@ class GenerateParameter(BaseParameters):
     def numberOfDigitsAfterDecimal(self, value):
         """gets/sets the numberOfDigitsAfterDecimal"""
         if self._numberOfDigitsAfterDecimal != value:
-            self._numberOfDigitsAfterDecimal = value            
+            self._numberOfDigitsAfterDecimal = value
     #----------------------------------------------------------------------
     @property
     def name(self):
@@ -2199,7 +2199,7 @@ class GenerateParameter(BaseParameters):
         """gets/sets the name"""
         if self._name != value:
             self._name = value
-   
+
     #----------------------------------------------------------------------
     @property
     def maxRecordCount(self):
@@ -2236,7 +2236,76 @@ class GenerateParameter(BaseParameters):
     def __str__(self):
         """returns object as a string"""
         return json.dumps(self.value)
-
+########################################################################
+class PublishGeoJSONParameter(BaseParameters):
+    """Allows users to provide the required information to
+    publish a geojson file.
+    """
+    _hasStaticData = True
+    _name = None
+    _maxRecordCount = 2000
+    _layerInfo = {"capabilities":"Query"}
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        pass
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns the object as a dictionary"""
+        return {
+            "hasStaticData":self._hasStaticData,
+            "name":self._name,
+            "maxRecordCount":self._maxRecordCount,
+            "layerInfo":self._layerInfo
+        }
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """gets/sets the name"""
+        return self._name
+    #----------------------------------------------------------------------
+    @name.setter
+    def name(self, value):
+        """gets/sets the name"""
+        self._name = value
+    #----------------------------------------------------------------------
+    @property
+    def hasStaticData(self):
+        """gets/set the hasStaticData value"""
+        return self._hasStaticData
+    #----------------------------------------------------------------------
+    @hasStaticData.setter
+    def hasStaticData(self, value):
+        """gets/sets the hasStaticData value"""
+        if self._hasStaticData != value:
+            self._hasStaticData = value
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """gets/sets the maxRecordCount to return to user on request"""
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @maxRecordCount.setter
+    def maxRecordCount(self, value):
+        """gets/sets the maxRecordCount to return to user on request"""
+        if value != self._maxRecordCount:
+            self._maxRecordCount = value
+    #----------------------------------------------------------------------
+    @property
+    def layerInfo(self):
+        """gets/sets the layerInfo"""
+        return self._layerInfo
+    #----------------------------------------------------------------------
+    @layerInfo.setter
+    def layerInfo(self, value):
+        """gets/sets the layerInfo"""
+        if self._layerInfo != value:
+            self._layerInfo = value
 ########################################################################
 class PublishFGDBParameter(BaseParameters):
     """
