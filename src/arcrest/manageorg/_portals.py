@@ -233,7 +233,7 @@ class Portal(BaseAGOLClass):
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
-        if not self.root.lower().endswith("/self"):   
+        if not self.root.lower().endswith("/self"):
             url = self.root + "/self"
         else:
             url = self.root
@@ -1200,7 +1200,8 @@ class Portal(BaseAGOLClass):
                     users.append(
                         com.users.user(r["username"])
                     )
-        return users
+        res['users'] = users
+        return res
     #----------------------------------------------------------------------
     def createRole(self, name, description):
         """

@@ -1550,6 +1550,7 @@ class UserItem(BaseAGOLClass):
                                    ssl=parsed.scheme.lower() == 'https',
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port)
+        self.__init()
         return res
     #----------------------------------------------------------------------
     def deleteInfo(self, infoFile="metadata/metadata.xml"):
@@ -2119,13 +2120,18 @@ class User(BaseAGOLClass):
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
             res = self._unicode_convert(res)
-            return res
+
         else:
-            return self._do_post(url=url,
+            res = self._do_post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        itemId = res['id']
+        return UserItem(url="%s/items/%s" % (self.location, itemId),
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def exportItem(self,
                    title,
@@ -2133,7 +2139,8 @@ class User(BaseAGOLClass):
                    exportFormat,
                    tags="export",
                    snippet=None,
-                   exportParameters=None):
+                   exportParameters=None,
+                   wait=False):
         """
         Exports a service item (POST only) to the specified output format.
         Available only to users with an organizational subscription.
@@ -2150,6 +2157,8 @@ class User(BaseAGOLClass):
            exportParameters - A JSON object describing the layers to be
                               exported and the export parameters for each
                               layer.
+        Output:
+           UserItem class
         """
         url = "%s/export" % self.location
         params = {
@@ -2163,11 +2172,25 @@ class User(BaseAGOLClass):
             params['snippet'] = snippet
         if exportParameters is not None:
             params["exportParameters"] = json.dumps(exportParameters)
-        return self._do_post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res = self._do_post(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
+        itemURL = "%s/items/%s" % (self.location, res['exportItemId'])
+        ui = UserItem(url=itemURL,
+                      securityHandler=self._securityHandler,
+                      proxy_url=self._proxy_url,
+                      proxy_port=self._proxy_port)
+        if wait:
+            status = "partial"
+            while status != "completed":
+                status = ui.status(jobId=res['jobId'], jobType="export")
+                if status['status'] == 'failed':
+                    raise Exception("Could not export item: %s" % itemId)
+                elif status['status'].lower() == "completed":
+                    break
+        return ui
     #----------------------------------------------------------------------
     def createService(self, createServiceParameter,
                       description=None,
@@ -2412,7 +2435,8 @@ class User(BaseAGOLClass):
                                 proxy_port=self._proxy_port)
             if 'id' in res.keys():
                 itemId = res['id']
-                ui = UserItem(url="%s/items/%s" % (self.location, itemId),
+                iUrl = "%s/items/%s" % (self.location, itemId)
+                ui = UserItem(url=iUrl,
                               securityHandler=self._securityHandler,
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
@@ -2425,8 +2449,7 @@ class User(BaseAGOLClass):
                 itemId = res['itemId']
                 if itemParameters is not None:
                     res = ui.updateItem(updateItemParameters=itemParameters)
-
-            return self._unicode_convert(res)
+                return ui
         else:
             if filePath is not None and os.path.isfile(filePath):
                 files.append(('file', filePath, os.path.basename(filePath)))
@@ -2457,8 +2480,14 @@ class User(BaseAGOLClass):
                                            ssl=parsed.scheme.lower() == 'https',
                                            proxy_port=self._proxy_port,
                                            proxy_url=self._proxy_url)
-            return self._unicode_convert(res)
-        return self._unicode_convert(res)
+        if "id" not in res:
+            raise Exception("Cannot add the item: %s" % res)
+        itemId = res['id']
+
+        return UserItem(url="%s/items/%s" % (self.location, itemId),
+                      securityHandler=self._securityHandler,
+                      proxy_url=self._proxy_url,
+                      proxy_port=self._proxy_port)
 ########################################################################
 class FeatureContent(BaseAGOLClass):
     """
