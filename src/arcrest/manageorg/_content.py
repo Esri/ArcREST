@@ -12,7 +12,14 @@ from os.path import splitext, basename
 
 ########################################################################
 class Content(BaseAGOLClass):
-    """"""
+    """
+    The Portal Content Root operation consists of items, user and group
+    content, and feature operations. It is a placeholder URI in that there
+    is no response available at this URI. It acts as a root to its child
+    resources and operations. All resources and operations (other than
+    publicly accessible items) under this URI require an authenticated
+    user (or a user token).
+    """
     _url = None
     _securityHandler = None
     _proxy_port = None
@@ -50,12 +57,13 @@ class Content(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def users(self):
-        """"""
+        """
+        Provides access to all user resources
+        """
         return Users(url="%s/users" % self.root,
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
     #----------------------------------------------------------------------
     def getItem(self, itemId):
         """gets the refernce to the Items class which manages content on a
