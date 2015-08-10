@@ -2224,11 +2224,18 @@ class User(BaseAGOLClass):
             params['snippet'] = snippet
         if description is not None:
             params['description'] = description
-        return self._do_post(url=url,
+        res =  self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+        if 'id' in res:
+            url = "%s/%s" % (self.location, res['id'])
+            return UserItem(url=url,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+        return res
     #----------------------------------------------------------------------
     def deleteFolder(self, folderId):
         """

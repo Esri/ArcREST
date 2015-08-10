@@ -206,7 +206,7 @@ class Community(BaseAGOLClass):
         files = []
         url = self._url + "/createGroup"
         parsed = urlparse.urlparse(url)
-
+        groups = self.groups
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
             files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
@@ -219,12 +219,15 @@ class Community(BaseAGOLClass):
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
-            return res
         else:
-            return self._do_post(url=url, param_dict=params,
+            res =  self._do_post(url=url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
+        if res['success']:
+            groupID = res['group']['id']
+            return groups.group(groupID)
+        return res
     #----------------------------------------------------------------------
     @property
     def root(self):
