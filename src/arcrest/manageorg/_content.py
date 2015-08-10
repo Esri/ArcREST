@@ -1645,11 +1645,11 @@ class UserItem(BaseAGOLClass):
                                 securityHandler=self._securityHandler,
                                 proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
-            res = self.status(itemId=res['id'])
+            res = self.status(jobId=res['id'])
             import time
             while res['status'].lower() in ["partial", "processing"]:
                 time.sleep(5)
-                res = self.status(itemId=res['itemId'])
+                res = self.status(jobId=res['itemId'])
             return res
         else:
             return self._do_post(url=url,
@@ -1696,7 +1696,7 @@ class UserItem(BaseAGOLClass):
         "f" : "json",
         'itemType' : 'file'
         }
-        url += '%s/addPart' % self.root
+        url = '%s/addPart' % self.root
         parsed = urlparse.urlparse(url)
         with open(filePath, 'rb') as f:
             mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
@@ -2443,12 +2443,12 @@ class User(BaseAGOLClass):
                 res = ui.addByPart(filePath=filePath)
                 itemId = res['id']
                 # need to pass 'type' on commit
-                res = self.commit(wait=True, additionalParams=\
+                res = ui.commit(wait=True, additionalParams=\
                                   {'type' : itemParameters.type }
                                   )
                 itemId = res['itemId']
                 if itemParameters is not None:
-                    res = ui.updateItem(updateItemParameters=itemParameters)
+                    res = ui.updateItem(itemParameters=itemParameters)
                 return ui
         else:
             if filePath is not None and os.path.isfile(filePath):
