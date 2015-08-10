@@ -49,8 +49,8 @@ def main():
             print shh.message
         else:        
           
-            portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-            portal = portalAdmin.portals(portalId='self')
+            admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+            portal = admin.portals.portalSelf
             res = portal.checkServiceName(name=new_service_name,
                                        serviceType='Feature Service')
             if 'available' in res:
@@ -63,7 +63,7 @@ def main():
             content = portalAdmin.content
             
                 
-            item = content.item(itemId)
+            item = admin.content.getItem(itemId)
             fs = arcrest.agol.FeatureService(url=item.url, securityHandler=shh.securityhandler, 
                                        initialize=True, 
                                        proxy_url=None, 
@@ -108,19 +108,18 @@ def main():
                                                                                       size =fs.size,
                                                                                       syncEnabled =fs.syncEnabled                                                                                              
             )
-            newServiceResult = uc.createService(createServiceParameter=createSerParams)
+            newServiceResult = admin.content.user.createService(createServiceParameter=createSerParams)
             print newServiceResult
-           
-            uc = content.usercontent()           
+            item = admin.content.getItem(itemId=newServiceResult['itemId']).userItem
+                 
             params = item.itemParameters
             params.title = new_service_name
-            updateItemResults = uc.updateItem(itemId=newServiceResult['itemId'],
-                   updateItemParameters=params,
-                   folderId=None,
-                   clearEmptyFields=True,
-                   filePath=None,
-                   url=None,
-                   text=None)
+            updateItemResults = item.updateItem(updateItemParameters=params,
+                                                folderId=None,
+                                                clearEmptyFields=True,
+                                                filePath=None,
+                                                url=None,
+                                                text=None)
             
             print updateItemResults
             

@@ -44,15 +44,13 @@ class resetTools(securityhandlerhelper):
         folderContent = None
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            
-            portal = admin.portals.portalSelf
             if users is None:
-                users = portal.users(start=1, num=100)
+                users = admin.portal.portalSelf.users(start=1, num=100)
+            
             if users:
-                for user in admin.content.users:
-                    print user.username
-                    
-                
+                for user in users['users']:
+                    print "Loading groups for user: %s" % user['username']
+                    user = admin.content.users.user(user)            
                     for userItem in user.items:
 
                         print user.deleteItems(items=userItem.id)
@@ -105,27 +103,20 @@ class resetTools(securityhandlerhelper):
         userCommData = None
         group = None
         try:
-            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            userCommunity = admin.community
-
-
-            portal = admin.portals(portalId='self')
             if users is None:
-                users = portal.users(start=1, num=100)
-
-            groupAdmin = userCommunity.groups
+                users = admin.portal.portalSelf.users(start=1, num=100)
+            
+            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
+        
             if users:
                 for user in users['users']:
                     print "Loading groups for user: %s" % user['username']
-                    userCommData = userCommunity.getUserCommunity(username=user['username'])
-
-                    if 'groups' in userCommData:
-                        if len(userCommData['groups']) == 0:
-                            print "No Groups Found"
-                        else:
-                            for group in userCommData['groups']:
-                                if group['owner'] == user['username']:
-                                    print groupAdmin.deleteGroup(groupID=group['id'])
+                    userCommData = admin.community.users.user(user)
+                    
+                    if userCommData.groups:
+                        for group in userCommData.groups:
+                            if group.owner == user:
+                                print group.delete()
                     else:
                         print "No Groups Found"
 
