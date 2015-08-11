@@ -8,6 +8,7 @@ import json
 import os
 import mmap
 import tempfile
+import time
 from os.path import splitext, basename
 
 ########################################################################
@@ -1657,7 +1658,7 @@ class UserItem(BaseAGOLClass):
             import time
             while res['status'].lower() in ["partial", "processing"]:
                 time.sleep(5)
-                res = self.status(jobId=res['itemId'])
+                res = self.status(jobId=res['id'])
             return res
         else:
             return self._do_post(url=url,
@@ -2062,7 +2063,9 @@ class User(BaseAGOLClass):
                     filePath=None,
                     text=None,
                     outputType=None,
-                    buildIntialCache=False
+                    buildIntialCache=False,
+                    wait=False,
+                    overwrite=False
                     ):
         """
         Publishes a hosted service based on an existing source item.
@@ -2103,6 +2106,7 @@ class User(BaseAGOLClass):
             "f" : "json",
             'fileType': fileType
         }
+        
         if isinstance(buildIntialCache, bool):
             params['buildInitialCache'] = buildIntialCache
         if publishParameters is not None and \
@@ -2110,10 +2114,13 @@ class User(BaseAGOLClass):
             params['publishParameters'] = json.dumps(publishParameters.value)
         elif isinstance(publishParameters, PublishCSVParameters):
             params['publishParameters'] = json.dumps(publishParameters.value)
+        
         if itemId is not None:
             params['itemId'] = itemId
         if text is not None and fileType.lower() == 'csv':
             params['text'] = text
+        if overwrite != False:
+            params['overwrite'] = overwrite
         if filePath is not None:
             parsed = urlparse.urlparse(url)
             files = []
@@ -2135,11 +2142,38 @@ class User(BaseAGOLClass):
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
-        itemId = res['id']
-        return UserItem(url="%s/items/%s" % (self.location, itemId),
-                        securityHandler=self._securityHandler,
-                        proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port)
+        if 'services' in res:
+            if len(res['services']) > 0:
+                if 'error' in res['services'][0]:
+                    print res
+                    raise Exception("Could not publish item: %s" % itemId)
+                else:
+                    itemId = res['services'][0]['serviceItemId']
+                    ui = UserItem(url="%s/items/%s" % (self.location, itemId),
+                                    securityHandler=self._securityHandler,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
+                    if wait:
+                        status = "partial"
+                        while status != "completed":
+                            status = ui.status(jobId=res['services'][0]['jobId'], jobType="publish")
+                            time.sleep(.5)
+                            if status['status'] == 'failed':
+                                if 'statusMessage' in status:
+                                    print status['statusMessage']                                 
+                                raise Exception("Could not publish item: %s" % itemId)
+                                
+                            elif status['status'].lower() == "completed":
+                                break    
+                    return ui
+            else:
+                print res
+                raise Exception("Could not publish item: %s" % itemId)            
+        else:
+            print res
+            raise Exception("Could not publish item: %s" % itemId)        
+        return None
+        
     #----------------------------------------------------------------------
     def exportItem(self,
                    title,
@@ -2363,6 +2397,7 @@ class User(BaseAGOLClass):
             "f" : "json",
             "title" : name
         }
+        self._folders = None
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
@@ -2456,12 +2491,12 @@ class User(BaseAGOLClass):
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
                 res = ui.addByPart(filePath=filePath)
-                itemId = res['id']
+                #itemId = res['id']
                 # need to pass 'type' on commit
                 res = ui.commit(wait=True, additionalParams=\
                                   {'type' : itemParameters.type }
                                   )
-                itemId = res['itemId']
+                #itemId = res['id']
                 if itemParameters is not None:
                     res = ui.updateItem(itemParameters=itemParameters)
                 return ui
