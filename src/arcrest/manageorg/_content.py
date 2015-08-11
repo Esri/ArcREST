@@ -443,7 +443,26 @@ def %s(self):
         if self._thumbnail is None:
             self.__init()
         return self._thumbnail
-
+    #----------------------------------------------------------------------
+    def saveThumbnail(self,fileName,filePath):
+        """ URL to the thumbnail used for the item """
+        if self._thumbnail is None:
+            self.__init()
+        param_dict = {}
+        if  self._thumbnail is not None:
+            imgUrl = self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail
+            onlineFileName, file_ext = splitext(self._thumbnail)
+            fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
+            result = self._download_file(imgUrl,
+                                         save_path=filePath, 
+                                         file_name=fileNameSafe, 
+                                         param_dict=param_dict,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=None,
+                                         proxy_port=None)
+            return result
+        else:
+            return None
     #----------------------------------------------------------------------
     @property
     def industries(self):

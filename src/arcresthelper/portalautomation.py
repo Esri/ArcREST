@@ -403,8 +403,8 @@ class portalautomation(securityhandlerhelper):
                                     for maps in resultMaps:
                                         if 'MapInfo' in maps:
                                             if 'Results' in maps['MapInfo']:
-                                                if 'id' in maps['MapInfo']['Results']:
-                                                    webmaps.append(maps['MapInfo']['Results']['id'])
+                                                if 'itemId' in maps['MapInfo']['Results']:
+                                                    webmaps.append(maps['MapInfo']['Results']['itemId'])
                                     print "Creating maps completed, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
                                 if 'AppDetails' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
