@@ -122,9 +122,7 @@ def main():
                                                 text=None)
             
             print updateItemResults
-            
-            #new_item = content.item(newServiceResult['itemId'])
-             
+                    
             adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult['encodedServiceURL'], securityHandler=shh.securityhandler)
             adminExistFS = fs.administration
             jsdic = {}

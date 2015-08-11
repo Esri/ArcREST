@@ -82,7 +82,7 @@ def main():
                     print "itemID could not be found if table"
                     return
                 itemid = row['itemid']
-                item = content.item(itemid)
+                item = content.getItem(itemid)
                 itemParams = arcrest.manageorg.ItemParameter()
             
             

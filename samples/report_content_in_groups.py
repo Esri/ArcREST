@@ -5,7 +5,7 @@
 import arcrest
 import os,io
 import json
-from arcresthelper import orgtools
+from arcresthelper import orgtools, common
 import csv
 def trace():
     """
@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = ""#<UserName>
-    securityinfo['password'] = ""#<Password>
+    securityinfo['username'] = "MikeSolutions"#<UserName>
+    securityinfo['password'] = "d0uble1pa"#<Password>
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     securityinfo['client_id'] = None
     securityinfo['secret_id'] = None   
       
-    groups = ["Network Services"] #Name of groups
+    groups = ["Demographic Content"] #Name of groups
     outputlocation = r"C:\TEMP"
     outputfilename = "group.json"
     outputitemID = "id.csv"
@@ -62,22 +62,30 @@ if __name__ == "__main__":
                 idwriter = csv.writer(csvfile, delimiter=',',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)                
                 for groupName in groups:
-                    results = orgt.getGroupContent(groupName=groupName)  
+                    results = orgt.getGroupContent(groupName=groupName,
+                                                   onlyInOrg=True,
+                                                   onlyInUser=True)  
                    
-                    if not results is None and 'results' in results:
-
-                      
-                        for result in results['results']:
-                            idwriter.writerow([result['title'],result['id']])
-                            thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],fileName=result['title'],filePath=iconPath)
-                            result['thumbnail']=thumbLocal
-                            groupRes.append(result)
-                           
+                    if not results is None:
+            
+                        idwriter.writerow([result.title,result.id])
+                        thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],
+                                                              fileName=result['title'],
+                                                              filePath=iconPath)
+                        result['thumbnail']=thumbLocal
+                        groupRes.append(result)
+                       
                 if len(groupRes) > 0:
                     print "%s items found" % str(len(groupRes))
                     file.write(unicode(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': '))))                                              
             file.close()
-            
+    except (common.ArcRestHelperError),e:
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
+        if 'arcpyError' in e[0]:
+            print "with arcpy message: %s" % e[0]['arcpyError']            
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

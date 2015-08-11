@@ -32,27 +32,18 @@ if __name__ == "__main__":
         agolSH = AGOLTokenSecurityHandler(username=username,
                                       password=password)
 
-        portalAdmin = arcrest.manageorg.Administration(securityHandler=agolSH)
-        content = portalAdmin.content
-        
-        item = content.item(itemId)
-        uc =  content.usercontent(username=item.owner)
-        res = uc.exportItem(title="TestExport",
+        admin = arcrest.manageorg.Administration(securityHandler=agolSH)
+         
+        item = admin.content.getItem(itemId)
+        user = admin.content.users.user(username=item.owner)
+       
+        exportItem = user.exportItem(title="TestExport",
                             itemId=itemId,
-                            exportFormat="File Geodatabase")
-        exportItemId = res['exportItemId']
-        jobId = res['jobId']
-        serviceItemId = res['serviceItemId']
-        status = uc.status(itemId=exportItemId, jobId=jobId, jobType="export")
-        while status['status'].lower() != 'completed':
-            status = uc.status(itemId=exportItemId, jobId=jobId, jobType="export")
-            if status['status'].lower() == 'failed':
-                print status                
-                break
-        del status
-        exportItem = content.item(exportItemId)
+                            exportFormat="File Geodatabase",
+                            wait=False)
+     
         itemDataPath = exportItem.itemData(f=None, savePath=savePath)
-        uc.deleteItem(item_id=exportItemId)
+        uc.deleteItem(item_id=exportItem.id)
         print itemDataPath
     except:
         line, filename, synerror = trace()
