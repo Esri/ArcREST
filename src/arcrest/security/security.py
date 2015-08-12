@@ -1144,12 +1144,10 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False               
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal
+                 
 #----------------------------------------------------------------------
     def __getRefererUrl(self, url=None):
         """

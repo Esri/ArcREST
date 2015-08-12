@@ -183,10 +183,8 @@ class orgtools(securityhandlerhelper):
             if 'total' in results and 'results' in results:
                 if results['total'] > 0:
                     for res in results['results']:
-                        group = admin.content.groups(groupId=res['id'])
-                        
-                        #return admin.query(q="group:" + res['id'] , bbox=None, start=1, num=100, sortField=None,
-                                           #sortOrder="asc")                        
+                        group = admin.content.group(groupId=res['id'])
+                        return group.items            
                     
             return None
         except:

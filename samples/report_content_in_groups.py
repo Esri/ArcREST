@@ -3,7 +3,7 @@
    of all items in a group
 """
 import arcrest
-import os,io
+import os
 import json
 from arcresthelper import orgtools, common
 import csv
@@ -23,6 +23,16 @@ def trace():
     #
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
+def _unicode_convert(obj):
+    """ converts unicode to anscii """
+    if isinstance(obj, dict):
+        return {_unicode_convert(key): _unicode_convert(value) for key, value in obj.iteritems()}
+    elif isinstance(obj, list):
+        return [_unicode_convert(element) for element in obj]
+    elif isinstance(obj, unicode):
+        return obj.encode('utf-8')
+    else:
+        return obj
 
 if __name__ == "__main__":
     proxy_port = None
@@ -30,8 +40,8 @@ if __name__ == "__main__":
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "MikeSolutions"#<UserName>
-    securityinfo['password'] = "d0uble1pa"#<Password>
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -57,7 +67,7 @@ if __name__ == "__main__":
             iconPath = os.path.join(outputlocation,"icons")  
             if not os.path.exists(iconPath):
                 os.makedirs(iconPath)                                                    
-            file = io.open(fileName, "w", encoding='utf-8')  
+            file = open(fileName, "w")  
             with open(csvFile, 'wb') as csvfile:
                 idwriter = csv.writer(csvfile, delimiter=',',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)                
@@ -67,17 +77,18 @@ if __name__ == "__main__":
                                                    onlyInUser=True)  
                    
                     if not results is None:
-            
-                        idwriter.writerow([result.title,result.id])
-                        thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],
-                                                              fileName=result['title'],
+                        for result in results:
+                            idwriter.writerow([result['title'],result['id']])
+                            thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],
+                                                                  fileName=result['title'],
                                                               filePath=iconPath)
-                        result['thumbnail']=thumbLocal
-                        groupRes.append(result)
+                            result['thumbnail']=thumbLocal
+                            groupRes.append(result)
                        
                 if len(groupRes) > 0:
                     print "%s items found" % str(len(groupRes))
-                    file.write(unicode(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': '))))                                              
+                    groupRes = _unicode_convert(groupRes)
+                    file.write(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': ')))                                              
             file.close()
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']

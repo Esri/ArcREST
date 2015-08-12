@@ -237,7 +237,8 @@ class Community(BaseAGOLClass):
         return Groups(url="%s/groups" % self.root,
                        securityHandler=self._securityHandler,
                        proxy_url=self._proxy_url,
-                       proxy_port=self._proxy_port)
+                       proxy_port=self._proxy_port,
+                       initalize=False)
     #----------------------------------------------------------------------
     @property
     def users(self):
@@ -277,12 +278,15 @@ class Groups(BaseAGOLClass):
     _securityHandler = None
     _proxy_port = None
     _proxy_url = None
+    _json = None
+    _json_dict = None    
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
                  securityHandler,
                  proxy_url=None,
-                 proxy_port=None):
+                 proxy_port=None,
+                 initalize=False):
         """Constructor"""
         self._url = url
         self._securityHandler = securityHandler
@@ -290,19 +294,64 @@ class Groups(BaseAGOLClass):
             self._referer_url = securityHandler.referer_url
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
+        if initalize:
+            self.__init() 
+            
+    _currentUser = None
+    _portalId = None
     #----------------------------------------------------------------------
+    def __init(self):
+        """loads the property data into the class"""
+       
+        if self._portalId is None:
+                
+            from administration import Administration
+            portalSelf = Administration(url=self._securityHandler.org_url,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port).portals.portalSelf       
+          
+            self._portalId = portalSelf.id 
+            self._currentUser = portalSelf.user['username']
+            
+        q = " orgid: %s" % self._portalId
+        q = q + " owner: %s" % self._currentUser
+        
+        #Mike - Not sure what is the correct way to hydrate this object. 
+        json_dict = self.search(q=q, start=1, num=10, sortField="title", 
+                               sortOrder="asc")
+        if 'total' in json_dict and 'results' in json_dict:
+            if json_dict['total'] > 0:
+                self._json_dict = json_dict['results']
+                self._json = json.dumps(json_dict['results'])
+        #attributes = [attr for attr in dir(self)
+                      #if not attr.startswith('__') and \
+                      #not attr.startswith('_')]
+        #for k,v in json_dict.iteritems():
+            #if k in attributes:
+                #setattr(self, "_"+ k, json_dict[k])
+            #else:
+                #print k, " - attribute not implemented in Content.Groups class."
+    
+    #----------------------------------------------------------------------
+    
     @property
     def root(self):
         """returns the url for the class"""
         return self._url
     #----------------------------------------------------------------------
     def __str__(self):
-        """returns the string of the class"""
-        return ""
+        """returns raw JSON response as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
-        """returns an iterator object for the class"""
-        yield None
+        """returns properties (key/values) from the JSON response"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.iteritems():
+            yield [k,v]
     #----------------------------------------------------------------------
     def search(self, q, start=1, num=10, sortField="title",
                sortOrder="asc"):

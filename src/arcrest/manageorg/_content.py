@@ -86,7 +86,7 @@ class Content(BaseAGOLClass):
                               proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
-    def groups(self, groupId):
+    def group(self, groupId):
         """
         The group's content provides access to the items that are shared
         with the group.
@@ -100,8 +100,8 @@ class Content(BaseAGOLClass):
            groupId - unique group identifier
         """
         url = self._url + "/groups/%s" % groupId
-        return Groups(groupID=groupId,
-                      contentURL=self.root,
+        return Group(groupID=groupId,
+                      contentURL=url,
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
                       proxy_port=self._proxy_port)
@@ -450,7 +450,7 @@ def %s(self):
             self.__init()
         param_dict = {}
         if  self._thumbnail is not None:
-            imgUrl = self._baseUrl + "/" + self._itemId + "/info/" + self._thumbnail
+            imgUrl = self.root + "/info/" + self._thumbnail
             onlineFileName, file_ext = splitext(self._thumbnail)
             fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
             result = self._download_file(imgUrl,
@@ -2723,7 +2723,7 @@ class FeatureContent(BaseAGOLClass):
 
 
 ########################################################################
-class Groups(BaseAGOLClass):
+class Group(BaseAGOLClass):
     """
     The group's content provides access to the items that are shared with
     the group. Group items are stored by reference and are not physically
@@ -2803,6 +2803,8 @@ class Groups(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.iteritems():
             yield [k,v]
+        #Should this actually iterate over Items, not the return, which is 
+        #always ['items', [{'extent': [[-1.....
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the group's items"""
