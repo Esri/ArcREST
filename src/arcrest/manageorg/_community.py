@@ -396,11 +396,11 @@ class Groups(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def group(self, groupID):
+    def group(self, groupId):
         """
         gets a group based on it's ID
         """
-        url = "%s/%s" % (self.root, groupID)
+        url = "%s/%s" % (self.root, groupId)
         return Group(url=url,
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,

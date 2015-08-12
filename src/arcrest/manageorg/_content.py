@@ -100,7 +100,7 @@ class Content(BaseAGOLClass):
            groupId - unique group identifier
         """
         url = self._url + "/groups/%s" % groupId
-        return Group(groupID=groupId,
+        return Group(groupId=groupId,
                       contentURL=url,
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
@@ -2731,7 +2731,7 @@ class Group(BaseAGOLClass):
     item (/content/items/<itemId>).Available only to the users of the group
     """
     _contentURL = None
-    _groupID = None
+    _groupId = None
     _url = None
     _securityHandler = None
     _proxy_port = None
@@ -2742,15 +2742,15 @@ class Group(BaseAGOLClass):
     _communityUrl = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 groupID,
+                 groupId,
                  contentURL,
                  securityHandler,
                  proxy_url=None,
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
-        self._url = "%s/%s" % (contentURL, groupID)
-        self._groupID = groupID
+        self._url = "%s/%s" % (contentURL, groupId)
+        self._groupId = groupId
         self._contentURL = contentURL
         self._securityHandler = securityHandler
         if not securityHandler is None:
@@ -2789,7 +2789,7 @@ class Group(BaseAGOLClass):
     @property
     def id(self):
         """gets the group id"""
-        return self._groupID
+        return self._groupId
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
@@ -2818,21 +2818,21 @@ class Group(BaseAGOLClass):
             self.__init()
         return self._items
     #----------------------------------------------------------------------
-    def __assembleURL(self, url, groupID):
+    def __assembleURL(self, url, groupId):
         """private function that assembles the URL for the community.Group
         class"""
         from urlparse import urlparse
         parsed = urlparse(url)
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
-                                                                        groupID)
+                                                                        groupId)
         return ""
 
     #----------------------------------------------------------------------
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        gURL = self.__assemblyurl(self._contentURL, self._groupID)
+        gURL = self.__assemblyurl(self._contentURL, self._groupId)
 
         return Group(url=gURL,
                      securityHandler=self._securityHandler,

@@ -29,10 +29,10 @@ def main():
     proxy_url = None    
 
     securityinfo = {}
-    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "<username>"
-    securityinfo['password'] = "<password>"
-    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['security_type'] = 'NTLM'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = "mich3661"#Username
+    securityinfo['password'] = "220seahorses"#Password
+    securityinfo['org_url'] = "https://arcrestdev2.esri.com/portal"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
     securityinfo['referer_url'] = None
@@ -46,7 +46,8 @@ def main():
         
         rst = resettools.resetTools(securityinfo=securityinfo)
         if rst.valid:
-            users = {'users':[{'username':securityinfo['username']}]}
+            
+            users = rst.securityhandler.username# comma delimited list of users  ex: 'User1, User2'
             
             rst.removeUserData(users=users)
             rst.removeUserGroups(users=users) 

@@ -34,6 +34,16 @@ class resetTools(securityhandlerhelper):
   
     #----------------------------------------------------------------------
     def removeUserData(self,users=None):
+        """
+            This function deletes content for the list of users,
+            if no users are specified, all users in the org are queried
+            and their content is deleted.
+    
+            Inputs:
+            users - Comma delimited list of user names
+            
+        """          
+        
         admin = None
         portal = None
         user = None
@@ -45,22 +55,32 @@ class resetTools(securityhandlerhelper):
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
-                users = admin.portal.portalSelf.users(start=1, num=100)
-            
-            if users:
-                for user in users['users']:
-                    print "Loading groups for user: %s" % user['username']
-                    user = admin.content.users.user(user)            
+                usersObj = admin.portals.portalSelf.users(start=1, num=100)
+            else:
+                usersObj = []
+                userStr = users.split(',')
+                for user in userStr:
+                    usersObj.append(admin.content.users.user(user))
+            if usersObj:
+                for user in usersObj:
+                    print "Loading content for user: %s" % user.username
+                     
+                    itemsToDel = []
                     for userItem in user.items:
-
-                        print user.deleteItems(items=userItem.id)
+                        itemsToDel.append(userItem.id)
+                    if len(itemsToDel) > 0:
+                        print user.deleteItems(items=",".join(itemsToDel))    
                     if user.folders:
                         for userFolder in user.folders:
-                            user.currentFolder = userFolder['name']
-                            for userItem in user.items:
-                                print user.deleteItems(items=userItem['id'])
-
-                            print user.deleteFolder(folderId=userFolder['id'])
+                            if (user.currentFolder['title'] != userFolder['title']):
+                                user.currentFolder = userFolder['title']
+                                itemsToDel = []
+                                for userItem in user.items:
+                                    itemsToDel.append(userItem.id)
+                                if len(itemsToDel) > 0:
+                                    print user.deleteItems(items=",".join(itemsToDel))                               
+    
+                                print user.deleteFolder(folderId=userFolder['id'])
        
         except:
             line, filename, synerror = trace()
@@ -95,6 +115,15 @@ class resetTools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def removeUserGroups(self,users=None):
+        """
+            This function deletes all groups for the list of users,
+            if no users are specified, all users in the org are queried
+            and their groups is deleted.
+    
+            Inputs:
+            users - Comma delimted list of user names
+            
+            """        
         admin = None
         userCommunity = None
         portal = None
@@ -103,20 +132,25 @@ class resetTools(securityhandlerhelper):
         userCommData = None
         group = None
         try:
-            if users is None:
-                users = admin.portal.portalSelf.users(start=1, num=100)
-            
+           
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-        
-            if users:
-                for user in users['users']:
-                    print "Loading groups for user: %s" % user['username']
-                    userCommData = admin.community.users.user(user)
+            if users is None:
+                usersObj = admin.portals.portalSelf.users(start=1, num=100)
+            else:
+                usersObj = []
+                userStr = users.split(',')
+                for user in userStr:
+                    usersObj.append(admin.content.users.user(user))  
+            if usersObj:
+                for user in usersObj:
+                    print "Loading groups for user: %s" % user.username
+                    userCommData = admin.community.users.user(user.username)
                     
                     if userCommData.groups:
                         for group in userCommData.groups:
-                            if group.owner == user:
-                                print group.delete()
+                            groupObj = admin.community.groups.group(groupId=group['id'])
+                            if groupObj.owner == user.username:
+                                print groupObj.delete()
                     else:
                         print "No Groups Found"
 
