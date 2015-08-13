@@ -4,7 +4,9 @@
 
 """
 import arcrest
-from arcrest.security import AGOLTokenSecurityHandler
+from arcresthelper import securityhandlerhelper
+from arcresthelper import common
+
 def trace():
     """
         trace finds the line, the filename
@@ -23,28 +25,51 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "<username>"
-    password = "<password>"
-    url = "<portal or AGOL url>"
-    itemId = "<Id of feature service item>"    
-    savePath = "<Path to save replica>"
-    try:      
-        agolSH = AGOLTokenSecurityHandler(username=username,
-                                      password=password)
+    proxy_port = None
+    proxy_url = None    
 
-        admin = arcrest.manageorg.Administration(securityHandler=agolSH)
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = "MikeSolutions"#<UserName>
+    securityinfo['password'] = "d0uble1pa"#<Password>
+    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None  
+    
+    itemId = "36a708b8532c497d8ddcb0f4237a21d1"#<Id of feature service item>
+    savePath = r"c:\temp"#<Path to save replica>
+    try:      
+        shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
+        if shh.valid == False:
+            print shh.message
+        else:
+            admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+             
+            item = admin.content.getItem(itemId)
+            user = admin.content.users.user(username=item.owner)
+           
+            exportItem = user.exportItem(title="TestExport",
+                                itemId=itemId,
+                                exportFormat="File Geodatabase",
+                                wait=True)
          
-        item = admin.content.getItem(itemId)
-        user = admin.content.users.user(username=item.owner)
-       
-        exportItem = user.exportItem(title="TestExport",
-                            itemId=itemId,
-                            exportFormat="File Geodatabase",
-                            wait=False)
-     
-        itemDataPath = exportItem.itemData(f=None, savePath=savePath)
-        uc.deleteItem(item_id=exportItem.id)
-        print itemDataPath
+            itemDataPath = exportItem.item.itemData(f=None, savePath=savePath)
+            print user.deleteItems(items=exportItem.id)
+            print itemDataPath
+    except (common.ArcRestHelperError),e:
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
+        if 'arcpyError' in e[0]:
+            print "with arcpy message: %s" % e[0]['arcpyError']
+
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

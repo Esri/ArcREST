@@ -1667,7 +1667,7 @@ class UserItem(BaseAGOLClass):
         }
         for key, value in additionalParams.iteritems():
             params[key] = value
-        if wait:
+        if wait == True:
             res = self._do_post(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
@@ -1676,7 +1676,7 @@ class UserItem(BaseAGOLClass):
             res = self.status(jobId=res['id'])
             import time
             while res['status'].lower() in ["partial", "processing"]:
-                time.sleep(5)
+                time.sleep(2)
                 res = self.status(jobId=res['id'])
             return res
         else:
@@ -2172,18 +2172,19 @@ class User(BaseAGOLClass):
                                     securityHandler=self._securityHandler,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
-                    if wait:
+                    if wait == True:
                         status = "partial"
                         while status != "completed":
                             status = ui.status(jobId=res['services'][0]['jobId'], jobType="publish")
-                            time.sleep(.5)
+                            
                             if status['status'] == 'failed':
                                 if 'statusMessage' in status:
                                     print status['statusMessage']                                 
                                 raise Exception("Could not publish item: %s" % itemId)
                                 
                             elif status['status'].lower() == "completed":
-                                break    
+                                break
+                            time.sleep(2)
                     return ui
             else:
                 print res
@@ -2243,7 +2244,7 @@ class User(BaseAGOLClass):
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
                       proxy_port=self._proxy_port)
-        if wait:
+        if wait == True:
             status = "partial"
             while status != "completed":
                 status = ui.status(jobId=res['jobId'], jobType="export")
@@ -2251,6 +2252,7 @@ class User(BaseAGOLClass):
                     raise Exception("Could not export item: %s" % itemId)
                 elif status['status'].lower() == "completed":
                     break
+                time.sleep(2)
         return ui
     #----------------------------------------------------------------------
     def createService(self, createServiceParameter,
