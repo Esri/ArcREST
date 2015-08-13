@@ -684,7 +684,7 @@ def %s(self):
         if self.type in ["Shapefile", "CityEngine Web Scene", "Web Scene", "KML",
                          "Code Sample",
                          "Code Attachment", "Operations Dashboard Add In",
-                         "CSV", "CAD Drawing", "Service Definition",
+                         "CSV", "CSV Collection", "CAD Drawing", "Service Definition",
                          "Microsoft Word", "Microsoft Powerpoint",
                          "Microsoft Excel", "PDF", "Image",
                          "Visio Document", "iWork Keynote", "iWork Pages",
