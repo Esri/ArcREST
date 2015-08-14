@@ -105,7 +105,7 @@ class GeometryFilter(BaseFilter):
         if not bufferDistance is None and \
            isinstance(bufferDistance, (int, float)) and \
            not units is None and \
-           units.lower() in [d.lower() for f in self._allowed_units]:
+           units.lower() in [f.lower() for f in self._allowed_units]:
             self._buffer = bufferDistance
             self._units = units
 

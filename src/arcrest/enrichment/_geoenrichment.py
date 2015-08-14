@@ -38,9 +38,9 @@ class GeoEnrichment(BaseGeoEnrichment):
         admin = Administration(securityHandler=securityHandler,
                                proxy_url=proxy_url,
                                proxy_port=proxy_port)
-        self._base_url = admin.portals().portalSelf().helperServices['geoenrichment']['url']
+        self._base_url = admin.portals.portalSelf.helperServices['geoenrichment']['url']
         del admin
-        self._securityHandler = securityHanlder
+        self._securityHandler = securityHandler
         self._countryCodeFile = os.path.join(os.path.dirname(__file__),
                                              "__countrycodes.csv")
         self._dataCollectionFile = os.path.join(os.path.dirname(__file__),

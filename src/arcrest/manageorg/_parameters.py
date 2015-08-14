@@ -2102,7 +2102,7 @@ class GenerateParameter(BaseParameters):
         self._locationType = locationType
 
     #----------------------------------------------------------------------
-    def generalizeDefaults():
+    def generalizeDefaults(self):
         self._maxAllowableOffset = 10.58335450004355
         self._reducePrecision = True
         self._numberOfDigitsAfterDecimal = 0

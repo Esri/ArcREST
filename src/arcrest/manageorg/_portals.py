@@ -1906,7 +1906,7 @@ class Roles(BaseAGOLClass):
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_post)
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def updateRole(self, roleID, name, description):
         """allows for the role name or description to be modified"""
@@ -1915,7 +1915,7 @@ class Roles(BaseAGOLClass):
             "description" : description,
             "f" : "json"
         }
-        url = url + "/%s/update"
+        url = self._url + "/%s/update"
         return self._do_post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,

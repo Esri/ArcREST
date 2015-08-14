@@ -1,6 +1,7 @@
 """
 handles the upload functions for all viable services
 """
+import os
 import mmap
 import json
 import urlparse
@@ -125,6 +126,7 @@ class Uploads(abstract.BaseAGOLClass):
                 del writer
                 files.append(('file', tempFile, os.path.basename(tempFile)))
                 params['partNum'] = i + 1
+                parsed = urlparse.urlparse(url)
                 res = self._post_multipart(host=parsed.hostname,
                                            selector=parsed.path,
                                            files = files,
