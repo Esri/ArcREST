@@ -240,10 +240,10 @@ class portalautomation(securityhandlerhelper):
                                             result = orgTools.createGroup(title=row['title'],description=row['description'],tags=row['tags'],snippet=row['snippet'],phone=row['phone'],access=row['access'],sortField=row['sortField'],sortOrder=row['sortOrder'], \
                                                              isViewOnly=row['isViewOnly'],isInvitationOnly=row['isInvitationOnly'])
     
-                                        if 'error' in result:
-                                            print "Error Creating Group %s" % result['error']
+                                        if result is None:
+                                            pass
                                         else:
-                                            print "Group created: " + row['title']
+                                            print "Group created: " + result.title
     
     
     
@@ -425,7 +425,7 @@ class portalautomation(securityhandlerhelper):
                 if os.path.exists(combinedApp):
                     print " "
                     startSectTime = datetime.datetime.now()
-                    print "Creating combind result: %s" % str(startSectTime.strftime(dateTimeFormat))
+                    print "Creating combined result: %s" % str(startSectTime.strftime(dateTimeFormat))
     
                     config = common.init_config_json(config_file=combinedApp)
                     combinedResults = publishTools.publishCombinedWebMap(maps_info=config['PublishingDetails']['MapDetails'],webmaps=webmaps)

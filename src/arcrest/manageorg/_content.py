@@ -238,6 +238,7 @@ class Item(BaseAGOLClass):
     _accessInformation = None
     _orgId = None
     _itemControl = None
+    _sourceUrl = None
     #----------------------------------------------------------------------
     def __init__(self,url,
                  securityHandler,
@@ -798,6 +799,12 @@ def %s(self):
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+    @property
+    def sourceUrl(self):
+        '''gets the property value for sourceUrl'''
+        if self._sourceUrl is None:
+            self.__init()
+        return self._sourceUrl    
     #----------------------------------------------------------------------
     def shareItem(self,
                   groups="",
@@ -2285,7 +2292,7 @@ class User(BaseAGOLClass):
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def deleteFolder(self, folderId):
+    def deleteFolder(self):
         """
         The delete user folder operation (POST only) is available only on
         the user's non-root folders. The user's root folder cannot be
@@ -2293,12 +2300,10 @@ class User(BaseAGOLClass):
         Deleting a folder also deletes all items that it contains (both the
         items and the links are removed).
 
-        Inputs:
-           folderId - id of folder to remove
+       
         """
         if self.currentFolder is not None and \
-           (self.currentFolder != "/" or \
-            self.currentFolder != ""):
+           self.currentFolder['id'] != None:
             url = "%s/delete" % self.location
             params = {
                 "f" : "json"

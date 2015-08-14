@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "MikeSolutions"#<UserName>
-    securityinfo['password'] = "d0uble1pa"#<Password>
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     securityinfo['client_id'] = None
     securityinfo['secret_id'] = None  
     
-    itemId = "36a708b8532c497d8ddcb0f4237a21d1"#<Id of feature service item>
+    itemId = ""#<Id of feature service item>
     savePath = r"c:\temp"#<Path to save replica>
     try:      
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
