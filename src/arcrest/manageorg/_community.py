@@ -219,15 +219,33 @@ class Community(BaseAGOLClass):
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
+<<<<<<< .mine
+
+=======
+
+>>>>>>> .theirs
         else:
+<<<<<<< .mine
             res =  self._do_post(url=url, param_dict=params,
+=======
+            res = self._do_post(url=url, param_dict=params,
+>>>>>>> .theirs
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
-        if res['success']:
-            groupID = res['group']['id']
-            return groups.group(groupID)
-        return res
+
+        if "group" not in res:
+            raise Exception("%s" % res)
+        if "id" not in res['group']:
+            raise Exception("%s" % res)
+        groupId = res['group']['id']
+        url = "%s/groups/%s" % (self.root, groupId)
+        return Group(url=url,
+                     securityHandler=self._securityHandler,
+                     proxy_url=self._proxy_url,
+                     proxy_port=self._proxy_port,
+                     initalize=False)
+
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -332,7 +350,6 @@ class Groups(BaseAGOLClass):
         """returns Group objects"""
         self.__init()
         q = " orgid: %s" % self._portalId
-        #q = q + " owner: %s" % self._currentUser
 
         nextStart = 0
         while nextStart > -1:

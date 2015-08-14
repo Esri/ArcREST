@@ -55,6 +55,8 @@ class resetTools(securityhandlerhelper):
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
+                print "You have selected to remove all users data, you must modify the code to do this"
+                return
                 usersObj = admin.portals.portalSelf.users(start=1, num=100)
             else:
                 usersObj = []
@@ -80,7 +82,7 @@ class resetTools(securityhandlerhelper):
                                 if len(itemsToDel) > 0:
                                     print user.deleteItems(items=",".join(itemsToDel))                               
     
-                                print user.deleteFolder(folderId=userFolder['id'])
+                                print user.deleteFolder()
        
         except:
             line, filename, synerror = trace()

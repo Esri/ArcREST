@@ -61,18 +61,22 @@ class orgtools(securityhandlerhelper):
                     results.append(res)
             if not groups is None:
                 for group in groups:
-                    groupContent = admin.content.groupContent(groupId=group)
-                    if 'error' in groupContent:
-                        print groupContent
+                    group = admin.content.group(groupId=group)
+                    if group is None:
+                        print "Group not found"
                     else:
-                        for result in groupContent['items']:
-                            item = admin.content.getItem(itemId = result['id'])
-                            res = item.shareItem(",".join(group_ids),everyone=False,org=False)
-                            if 'error' in res:
-                                print res
-                            else:
-                                print "%s shared with %s" % (result['title'],shareToGroupName)
-                            results.append(res)
+                        for itemJSON in group.items:
+                            if 'id' in itemJSON:                          
+                                item = admin.content.getItem(itemId = itemJSON['id'])
+                                res = item.shareItem(",".join(group_ids),everyone=False,org=False)
+                                if 'error' in res:
+                                    print res
+                                elif 'notSharedWith' in res:
+                                    print "%s shared with %s, not Shared With %s" % \
+                                          (item.title,shareToGroupName,",".join(res['notSharedWith']))
+                                else:
+                                    print "%s shared with %s" % (item.title,shareToGroupName)
+                                results.append(res)
         
         except:
             line, filename, synerror = trace()
@@ -251,17 +255,26 @@ class orgtools(securityhandlerhelper):
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             userCommunity = admin.community
-            return userCommunity.createGroup(title=title,
-                        tags=tags,
-                        description=description,
-                        snippet=snippet,
-                        phone=phone,
-                        access=access,
-                        sortField=sortField,
-                        sortOrder=sortOrder,
-                        isViewOnly=isViewOnly,
-                        isInvitationOnly=isInvitationOnly,
-                        thumbnail=thumbnail)
+            try:
+                groupExist = userCommunity.getGroupIDs(groupNames=title)
+                if len(groupExist) > 0:
+                    print "Group %s already exist" % title
+                    return None
+                return userCommunity.createGroup(title=title,
+                            tags=tags,
+                            description=description,
+                            snippet=snippet,
+                            phone=phone,
+                            access=access,
+                            sortField=sortField,
+                            sortOrder=sortOrder,
+                            isViewOnly=isViewOnly,
+                            isInvitationOnly=isInvitationOnly,
+                            thumbnail=thumbnail)
+            except Exception,e:
+                print e
+                return None
+           
         
         except:
             line, filename, synerror = trace()
