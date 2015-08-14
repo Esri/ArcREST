@@ -219,17 +219,9 @@ class Community(BaseAGOLClass):
                                        ssl=parsed.scheme.lower() == 'https',
                                        proxy_url=self._proxy_url,
                                        proxy_port=self._proxy_port)
-<<<<<<< .mine
 
-=======
-
->>>>>>> .theirs
         else:
-<<<<<<< .mine
-            res =  self._do_post(url=url, param_dict=params,
-=======
             res = self._do_post(url=url, param_dict=params,
->>>>>>> .theirs
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -1530,6 +1522,7 @@ class User(BaseAGOLClass):
         url = "%s/invalidateSessions" % self.root
         params = {"f": "json"}
         return self._do_post(url=url,
+                             param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -1541,6 +1534,7 @@ class User(BaseAGOLClass):
         params = {
             "f" : "json"
         }
+        expiration = -1
         if isinstance(hours, str):
             if expiration == "now":
                 expiration = -1
@@ -1556,6 +1550,7 @@ class User(BaseAGOLClass):
         params['expiration'] = expiration
         url = "%s/expirePassword" % self.root
         return self._do_post(url=url,
+                             param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

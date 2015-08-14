@@ -143,6 +143,8 @@ class Users(BaseAGOLClass):
         return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
+        #TODO Implement Iterator for users
+        
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
@@ -961,17 +963,17 @@ def %s(self):
         Output:
          dictionary
         """
-        url = self._baseUrl.replace("/items", "/users")
-        uc = UserContent(url=url,
-                         username=self.owner,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        #url = self.root.replace("/items", "/users")
+        #uc = Item(url=url,
+                         #username=self.owner,
+                         #securityHandler=self._securityHandler,
+                         #proxy_url=self._proxy_url,
+                         #proxy_port=self._proxy_port)
+        #Need to verify TODO
         ip = ItemParameter()
         ip.metadata = metadataFile
-        res = uc.updateItem(itemId=self.itemId,
-                            updateItemParameters=ip)
-        del uc
+        res = self.userItem.updateItem(itemParameters=ip)
+       
         del ip
         return res
 ########################################################################
@@ -2846,7 +2848,7 @@ class Group(BaseAGOLClass):
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        gURL = self.__assemblyurl(self._contentURL, self._groupId)
+        gURL = self.__assembleURL(self._contentURL, self._groupId)
 
         return Group(url=gURL,
                      securityHandler=self._securityHandler,
