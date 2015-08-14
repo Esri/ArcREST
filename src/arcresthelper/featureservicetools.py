@@ -205,7 +205,7 @@ class featureservicetools(securityhandlerhelper):
 
 
             item = admin.content.getItem(itemId=itemId)
-            if item.itemType == "Feature Service":
+            if item.type == "Feature Service":
                 if returnURLOnly:
                     return item.url
                 else:
