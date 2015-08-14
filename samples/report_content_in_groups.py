@@ -3,9 +3,9 @@
    of all items in a group
 """
 import arcrest
-import os,io
+import os
 import json
-from arcresthelper import orgtools
+from arcresthelper import orgtools, common
 import csv
 def trace():
     """
@@ -23,6 +23,16 @@ def trace():
     #
     synerror = traceback.format_exc().splitlines()[-1]
     return line, filename, synerror
+def _unicode_convert(obj):
+    """ converts unicode to anscii """
+    if isinstance(obj, dict):
+        return {_unicode_convert(key): _unicode_convert(value) for key, value in obj.iteritems()}
+    elif isinstance(obj, list):
+        return [_unicode_convert(element) for element in obj]
+    elif isinstance(obj, unicode):
+        return obj.encode('utf-8')
+    else:
+        return obj
 
 if __name__ == "__main__":
     proxy_port = None
@@ -42,7 +52,7 @@ if __name__ == "__main__":
     securityinfo['client_id'] = None
     securityinfo['secret_id'] = None   
       
-    groups = ["Network Services"] #Name of groups
+    groups = ["Demographic Content"] #Name of groups
     outputlocation = r"C:\TEMP"
     outputfilename = "group.json"
     outputitemID = "id.csv"
@@ -57,27 +67,36 @@ if __name__ == "__main__":
             iconPath = os.path.join(outputlocation,"icons")  
             if not os.path.exists(iconPath):
                 os.makedirs(iconPath)                                                    
-            file = io.open(fileName, "w", encoding='utf-8')  
+            file = open(fileName, "w")  
             with open(csvFile, 'wb') as csvfile:
                 idwriter = csv.writer(csvfile, delimiter=',',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)                
                 for groupName in groups:
-                    results = orgt.getGroupContent(groupName=groupName)  
+                    results = orgt.getGroupContent(groupName=groupName,
+                                                   onlyInOrg=True,
+                                                   onlyInUser=True)  
                    
-                    if not results is None and 'results' in results:
-
-                      
-                        for result in results['results']:
+                    if not results is None:
+                        for result in results:
                             idwriter.writerow([result['title'],result['id']])
-                            thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],fileName=result['title'],filePath=iconPath)
+                            thumbLocal = orgt.getThumbnailForItem(itemId=result['id'],
+                                                                  fileName=result['title'],
+                                                              filePath=iconPath)
                             result['thumbnail']=thumbLocal
                             groupRes.append(result)
-                           
+                       
                 if len(groupRes) > 0:
                     print "%s items found" % str(len(groupRes))
-                    file.write(unicode(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': '))))                                              
+                    groupRes = _unicode_convert(groupRes)
+                    file.write(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': ')))                                              
             file.close()
-            
+    except (common.ArcRestHelperError),e:
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
+        if 'arcpyError' in e[0]:
+            print "with arcpy message: %s" % e[0]['arcpyError']            
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

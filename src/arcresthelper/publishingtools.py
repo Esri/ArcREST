@@ -182,13 +182,7 @@ class publishingtools(securityhandlerhelper):
                 itemInfo['MapInfo']  = self._publishMap(config=map_info,
                                                    replaceInfo=replaceInfo)
                 map_results.append(itemInfo)
-                if not itemInfo is None:
-                    if not 'error' in itemInfo['MapInfo']['Results']:
-                        print "%s webmap created" % itemInfo['MapInfo']['Name']
-                    else:
-                        print str(itemInfo['MapInfo']['Results'])
-                else:
-                    print "Map not created"
+                print "%s webmap created" % itemInfo['MapInfo']['Name']
             return map_results
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
@@ -284,7 +278,7 @@ class publishingtools(securityhandlerhelper):
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
             update_service = 'FALSE'
             
-            resultMap = {'Layers':[],'Tables':[],'Results':None}
+            resultMap = {'Layers':[],'Tables':[],'Results':{}}
 
             with open(itemJson) as json_data:
                 layersInfo= {}
@@ -602,10 +596,10 @@ class publishingtools(securityhandlerhelper):
                 itemId = items['results'][0]['id']            
             if not itemId is None:
                 item = content.getItem(itemId).userItem
-                resultMap['Results'] = item.updateItem(itemParameters=itemParams,
+                results = item.updateItem(itemParameters=itemParams,
                                             text=json.dumps(webmap_data))
-                if 'error' in resultMap['Results']:
-                    return resultMap['Results']
+                if 'error' in results:
+                    return results
             else:
                 try:
                     item = userInfo.addItem(itemParameters=itemParams,
@@ -617,21 +611,21 @@ class publishingtools(securityhandlerhelper):
                             serviceProxyParams=None,
                             metadata=None,
                             text=json.dumps(webmap_data))
+                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+                    shareResults = userInfo.shareItems(items=item.id,
+                                                       groups=','.join(group_ids),
+                                                       everyone=everyone,
+                                                       org=org)
+                    updateParams = arcrest.manageorg.ItemParameter()
+                    updateParams.title = name
+                    updateResults = item.updateItem(itemParameters=updateParams)                    
                 except Exception,e: 
                     print e
             if item is None:
-                return "Item could not be added "
+                return "Item could not be added"
 
-            group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-            shareResults = userInfo.shareItems(items=resultMap['Results']['id'],
-                                   groups=','.join(group_ids),
-                                   everyone=everyone,
-                                   org=org)
-            updateParams = arcrest.manageorg.ItemParameter()
-            updateParams.title = name
-            item = content.getItem(resultMap['Results']['id']).userItem
-            updateResults = item.updateItem(itemParameters=updateParams)
-            
+           
+            resultMap['Results']['itemId'] = item.id
             resultMap['folderId'] = folderId
             resultMap['Name'] = name
             return resultMap
@@ -1224,7 +1218,7 @@ class publishingtools(securityhandlerhelper):
                             enableResults = adminFS.updateDefinition(json_dict=existingDef)
                     
                             if 'error' in enableResults:
-                                delres = userInfo.deleteItems(items=existingItem)
+                                delres = userInfo.deleteItems(items=existingItem.id)
                                 if 'error' in delres:
                                     print delres
                                     return delres
@@ -1233,7 +1227,7 @@ class publishingtools(securityhandlerhelper):
                                 print "Sync Disabled"
                         else:
                             print "Attempting to delete"
-                            delres = userInfo.deleteItems(items=existingItem)
+                            delres = userInfo.deleteItems(items=existingItem.id)
                             if 'error' in delres:
                                 print delres
                                 return delres
@@ -1242,7 +1236,7 @@ class publishingtools(securityhandlerhelper):
                         del adminFS                                  
                     else:
                         print "Attempting to delete"
-                        delres = userInfo.deleteItems(items=existingItem)
+                        delres = userInfo.deleteItems(items=existingItem.id)
                         if 'error' in delres:
                             print delres
                             return delres
@@ -1267,7 +1261,7 @@ class publishingtools(securityhandlerhelper):
                 except Exception, e:
            
                     print "Overwrite failed, deleting"
-                    delres = userInfo.deleteItems(items=existingItem)  
+                    delres = userInfo.deleteItems(items=existingItem.id)  
                     if 'error' in delres:
                         print delres
                         return delres
@@ -1480,7 +1474,7 @@ class publishingtools(securityhandlerhelper):
                                 if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
                                    replaceItem['ReplaceType'] == 'Map':
     
-                                    replaceItem['ItemID'] = mapDet['MapInfo']['Results']['id']
+                                    replaceItem['ItemID'] = mapDet['MapInfo']['Results']['itemId']
                                     replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
                                     replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
                                 elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
@@ -1640,7 +1634,7 @@ class publishingtools(securityhandlerhelper):
         updateResults = None
         portal = None
         try:
-            resultApp = {'Results':None}
+            resultApp = {'Results':{}}
             name = ''
             tags = ''
             description = ''
@@ -1659,7 +1653,6 @@ class publishingtools(securityhandlerhelper):
             if folderName is not None and folderName != "":               
                 if self.folderExist(name=folderName,folders=userInfo.folders) is None:
                     res = userInfo.createFolder(name=folderName)
-                    userInfo.refresh()
                 userInfo.currentFolder = folderName 
             if 'id' in userInfo.currentFolder:
                 folderId = userInfo.currentFolder['id']
@@ -1691,7 +1684,7 @@ class publishingtools(securityhandlerhelper):
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
 
             else:
-                print "%s does not exist." %itemJson
+                print "%s does not exist." % itemJson
                 itemData = None
 
             name = config['Title']
@@ -1713,8 +1706,7 @@ class publishingtools(securityhandlerhelper):
             everyone = config['ShareEveryone']
             org = config['ShareOrg']
             groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
-
-            
+         
             url = config['Url']
             thumbnail = config['Thumbnail']
 
@@ -1737,47 +1729,49 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=name, itemType=itemType,searchorg=False)
             
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']                    
+                itemId = items['results'][0]['id']  
+                
             if not itemId is None:
                 item = content.getItem(itemId).userItem
-                resultApp['Results'] = item.updateItem(itemParameters=itemParams,
+                results = item.updateItem(itemParameters=itemParams,
                                             text=json.dumps(itemData))
-
+ 
+                if 'error' in results:
+                    return results
             else:
+                try:
+                    item = userInfo.addItem(
+                            itemParameters=itemParams,
+                            overwrite=True,
+                            relationshipType=None,
+                            originItemId=None,
+                            destinationItemId=None,
+                            serviceProxyParams=None,
+                            metadata=None,
+                            text=json.dumps(itemData))
 
-                resultApp['Results']  = userInfo.addItem(
-                        itemParameters=itemParams,
-                    
-                        relationshipType=None,
-                        originItemId=None,
-                        destinationItemId=None,
-                        serviceProxyParams=None,
-                        metadata=None,
-                        text=json.dumps(itemData))
-
-
-            if not 'error' in resultApp['Results']:
-
-                group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                shareResults = userInfo.shareItems(items=resultApp['Results']['id'],
-                                       groups=','.join(group_ids),
-                                       everyone=everyone,
-                                       org=org)
-                updateParams = arcrest.manageorg.ItemParameter()
-                updateParams.title = name
-               
-                url = url.replace("{AppID}",resultApp['Results']['id'])
-                portalself = admin.portals.portalSelf
-                if portalself.urlKey is None or portalself.customBaseUrl is None:
-                    parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
-                    url = url.replace("{OrgURL}",parsedURL.netloc + parsedURL.path)
-                else:
-                    url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
-                updateParams.url = url
-                item = content.getItem(resultApp['Results']['id']).userItem
-                updateResults = item.updateItem(itemParameters=updateParams)
-                resultApp['folderId'] = folderId
-                resultApp['Name'] = name
+                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+                    shareResults = userInfo.shareItems(items=item.id,
+                                                       groups=','.join(group_ids),
+                                                       everyone=everyone,
+                                                       org=org)
+                    updateParams = arcrest.manageorg.ItemParameter()
+                    updateParams.title = name
+    
+                    url = url.replace("{AppID}",item.id)
+                    portalself = admin.portals.portalSelf
+                    if portalself.urlKey is None or portalself.customBaseUrl is None:
+                        parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                        url = url.replace("{OrgURL}",parsedURL.netloc + parsedURL.path)
+                    else:
+                        url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
+                    updateParams.url = url                    
+                    updateResults = item.updateItem(itemParameters=updateParams)                    
+                except Exception,e: 
+                    print e                 
+            resultApp['Results']['itemId'] = item.id
+            resultApp['folderId'] = folderId
+            resultApp['Name'] = name
             return resultApp
 
         except arcpy.ExecuteError:
@@ -1925,7 +1919,7 @@ class publishingtools(securityhandlerhelper):
         resultApp = None
         updateResults = None
         try:
-            resultApp = {'Results':None}
+            resultApp = {'Results':{}}
 
             tags = ''
             description = ''
@@ -1934,8 +1928,8 @@ class publishingtools(securityhandlerhelper):
 
             itemJson = config['ItemJSON']
             if os.path.exists(itemJson) == False:
-                print "            Error: %s does not exist" % itemJson
-                return None
+                return {"Results":{"error": "%s does not exist" % itemJson}  }
+
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             content = admin.content        
             userInfo = content.users.user()
@@ -2097,38 +2091,37 @@ class publishingtools(securityhandlerhelper):
                 itemId = items['results'][0]['id']                    
             if not itemId is None:
                 item = content.getItem(itemId).userItem
-                resultApp['Results'] = item.updateItem(itemParameters=itemParams,
+                results = item.updateItem(itemParameters=itemParams,
                                                        text=json.dumps(itemData))
-        
+                if 'error' in results:
+                    return results
             else:
+                try:
 
-                resultApp['Results']  = userInfo.addItem(
-                    itemParameters=itemParams,
+                    item = userInfo.addItem(
+                        itemParameters=itemParams,    
+                        relationshipType=None,
+                        originItemId=None,
+                        destinationItemId=None,
+                        serviceProxyParams=None,
+                        metadata=None,
+                        text=json.dumps(itemData))
+                except Exception,e: 
+                    print e                 
+             
+            group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+            shareResults = userInfo.shareItems(items=item.id,
+                                               groups=','.join(group_ids),
+                                               everyone=everyone,
+                                               org=org)
+            updateParams = arcrest.manageorg.ItemParameter()
+            updateParams.title = name
         
-                    relationshipType=None,
-                    originItemId=None,
-                    destinationItemId=None,
-                    serviceProxyParams=None,
-                    metadata=None,
-                    text=json.dumps(itemData))
-            
-
-            if not 'error' in resultApp['Results']:
-                group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                shareResults = userInfo.shareItems(items=resultApp['Results']['id'],
-                                                   groups=','.join(group_ids),
-                                                   everyone=everyone,
-                                                   org=org)
-                updateParams = arcrest.manageorg.ItemParameter()
-                updateParams.title = name
-
-
-              
-                item = content.getItem(resultApp['Results']['id']).userItem
-                updateResults = item.updateItem(itemParameters=updateParams)
-                      
-                resultApp['folderId'] = folderId
-                resultApp['Name'] = name
+            updateResults = item.updateItem(itemParameters=updateParams)
+            resultApp['Results']['itemId'] = item.id
+                  
+            resultApp['folderId'] = folderId
+            resultApp['Name'] = name
             return resultApp
         except arcpy.ExecuteError:
             line, filename, synerror = trace()

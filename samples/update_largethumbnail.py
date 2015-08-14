@@ -51,7 +51,7 @@ def main():
             portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
             content = portalAdmin.content
             adminusercontent = content.usercontent()
-            item = content.item(itemId)
+            item = content.getItem(itemId)
             itemParams = arcrest.manageorg.ItemParameter()
            
             itemParams.largeThumbnail = r"<Path to Image>"

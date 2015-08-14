@@ -86,7 +86,7 @@ class Content(BaseAGOLClass):
                               proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
-    def groups(self, groupId):
+    def group(self, groupId):
         """
         The group's content provides access to the items that are shared
         with the group.
@@ -100,8 +100,8 @@ class Content(BaseAGOLClass):
            groupId - unique group identifier
         """
         url = self._url + "/groups/%s" % groupId
-        return Groups(groupID=groupId,
-                      contentURL=self.root,
+        return Group(groupId=groupId,
+                      contentURL=url,
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
                       proxy_port=self._proxy_port)
@@ -443,7 +443,26 @@ def %s(self):
         if self._thumbnail is None:
             self.__init()
         return self._thumbnail
-
+    #----------------------------------------------------------------------
+    def saveThumbnail(self,fileName,filePath):
+        """ URL to the thumbnail used for the item """
+        if self._thumbnail is None:
+            self.__init()
+        param_dict = {}
+        if  self._thumbnail is not None:
+            imgUrl = self.root + "/info/" + self._thumbnail
+            onlineFileName, file_ext = splitext(self._thumbnail)
+            fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
+            result = self._download_file(imgUrl,
+                                         save_path=filePath, 
+                                         file_name=fileNameSafe, 
+                                         param_dict=param_dict,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=None,
+                                         proxy_port=None)
+            return result
+        else:
+            return None
     #----------------------------------------------------------------------
     @property
     def industries(self):
@@ -665,7 +684,7 @@ def %s(self):
         if self.type in ["Shapefile", "CityEngine Web Scene", "Web Scene", "KML",
                          "Code Sample",
                          "Code Attachment", "Operations Dashboard Add In",
-                         "CSV", "CAD Drawing", "Service Definition",
+                         "CSV", "CSV Collection", "CAD Drawing", "Service Definition",
                          "Microsoft Word", "Microsoft Powerpoint",
                          "Microsoft Excel", "PDF", "Image",
                          "Visio Document", "iWork Keynote", "iWork Pages",
@@ -1648,7 +1667,7 @@ class UserItem(BaseAGOLClass):
         }
         for key, value in additionalParams.iteritems():
             params[key] = value
-        if wait:
+        if wait == True:
             res = self._do_post(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
@@ -1657,7 +1676,7 @@ class UserItem(BaseAGOLClass):
             res = self.status(jobId=res['id'])
             import time
             while res['status'].lower() in ["partial", "processing"]:
-                time.sleep(5)
+                time.sleep(2)
                 res = self.status(jobId=res['id'])
             return res
         else:
@@ -2153,18 +2172,19 @@ class User(BaseAGOLClass):
                                     securityHandler=self._securityHandler,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
-                    if wait:
+                    if wait == True:
                         status = "partial"
                         while status != "completed":
                             status = ui.status(jobId=res['services'][0]['jobId'], jobType="publish")
-                            time.sleep(.5)
+                            
                             if status['status'] == 'failed':
                                 if 'statusMessage' in status:
                                     print status['statusMessage']                                 
                                 raise Exception("Could not publish item: %s" % itemId)
                                 
                             elif status['status'].lower() == "completed":
-                                break    
+                                break
+                            time.sleep(2)
                     return ui
             else:
                 print res
@@ -2224,7 +2244,7 @@ class User(BaseAGOLClass):
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
                       proxy_port=self._proxy_port)
-        if wait:
+        if wait == True:
             status = "partial"
             while status != "completed":
                 status = ui.status(jobId=res['jobId'], jobType="export")
@@ -2232,6 +2252,7 @@ class User(BaseAGOLClass):
                     raise Exception("Could not export item: %s" % itemId)
                 elif status['status'].lower() == "completed":
                     break
+                time.sleep(2)
         return ui
     #----------------------------------------------------------------------
     def createService(self, createServiceParameter,
@@ -2711,7 +2732,7 @@ class FeatureContent(BaseAGOLClass):
 
 
 ########################################################################
-class Groups(BaseAGOLClass):
+class Group(BaseAGOLClass):
     """
     The group's content provides access to the items that are shared with
     the group. Group items are stored by reference and are not physically
@@ -2719,7 +2740,7 @@ class Groups(BaseAGOLClass):
     item (/content/items/<itemId>).Available only to the users of the group
     """
     _contentURL = None
-    _groupID = None
+    _groupId = None
     _url = None
     _securityHandler = None
     _proxy_port = None
@@ -2730,15 +2751,15 @@ class Groups(BaseAGOLClass):
     _communityUrl = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 groupID,
+                 groupId,
                  contentURL,
                  securityHandler,
                  proxy_url=None,
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
-        self._url = "%s/%s" % (contentURL, groupID)
-        self._groupID = groupID
+        self._url = "%s/%s" % (contentURL, groupId)
+        self._groupId = groupId
         self._contentURL = contentURL
         self._securityHandler = securityHandler
         if not securityHandler is None:
@@ -2777,7 +2798,7 @@ class Groups(BaseAGOLClass):
     @property
     def id(self):
         """gets the group id"""
-        return self._groupID
+        return self._groupId
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
@@ -2791,6 +2812,8 @@ class Groups(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.iteritems():
             yield [k,v]
+        #Should this actually iterate over Items, not the return, which is 
+        #always ['items', [{'extent': [[-1.....
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the group's items"""
@@ -2804,21 +2827,21 @@ class Groups(BaseAGOLClass):
             self.__init()
         return self._items
     #----------------------------------------------------------------------
-    def __assembleURL(self, url, groupID):
+    def __assembleURL(self, url, groupId):
         """private function that assembles the URL for the community.Group
         class"""
         from urlparse import urlparse
         parsed = urlparse(url)
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
-                                                                        groupID)
+                                                                        groupId)
         return ""
 
     #----------------------------------------------------------------------
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        gURL = self.__assemblyurl(self._contentURL, self._groupID)
+        gURL = self.__assemblyurl(self._contentURL, self._groupId)
 
         return Group(url=gURL,
                      securityHandler=self._securityHandler,

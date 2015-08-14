@@ -70,12 +70,9 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False             
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal       
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -176,14 +173,13 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
                                    securityHandler=self,
                                    proxy_url=self._proxy_url,
                                    proxy_port=self._proxy_port)     
-            portal = admin.portals()
-            props = portal.portalProperties
-            if props is not None:
-                self._username = props['user']['username']
+            portal = admin.portals.portalSelf
+          
+            if 'username' in portal.user:
+                self._username = portal.user['username']
             else:
                 self._username = self._login_username
-                
-            del props
+          
             del portal, admin   
         
     #----------------------------------------------------------------------
@@ -231,18 +227,18 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
         >>> ms = arcrest.ags.MapService(url=msUrl, securityHandler=newSH)
         >>> print ms.mapName
         """
+        
+        
         from ..manageorg import Administration
         admin = Administration(url=self._org_url,
                                securityHandler=self,
                                proxy_url=self._proxy_url,
                                proxy_port=self._proxy_port)
 
-        token_url = None
-        info = admin.info
-        if info['authInfo']['isTokenBasedSecurity']:
-            token_url = info["authInfo"]['tokenServicesUrl']
+        token_url = admin.tokenURL
+      
         if username is None:
-            username = self._username
+            username = self._login_username
 
         ptsh = PortalTokenSecurityHandler(username=username,
                                           password=self._password,
@@ -252,7 +248,7 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
                                           proxy_port=self._proxy_port,
                                           jar=self.cookiejar,
                                           handler=self.handler)
-      
+     
         pssh = PortalServerSecurityHandler(tokenHandler=ptsh,
                                            serverUrl=serverUrl,
                                            referer=self._referer_url,
@@ -371,12 +367,9 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False                       
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal                  
     #----------------------------------------------------------------------
     @property
     def org_url(self):
@@ -668,12 +661,9 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False           
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal     
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -894,12 +884,9 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False               
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal              
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -1144,12 +1131,10 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False               
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal
+                 
 #----------------------------------------------------------------------
     def __getRefererUrl(self, url=None):
         """
@@ -1625,12 +1610,9 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         admin = Administration(url=self._org_url,
                                securityHandler=self)
-        portal = admin.portals()      
-        if 'isPortal' in portal.portalProperties:
-            if portal.portalProperties['isPortal'] == True:
-                self._is_portal = True
-            else:
-                self._is_portal = False                  
+        portal = admin.portals.portalSelf      
+        
+        self._is_portal = portal.isPortal  
     #----------------------------------------------------------------------
     @property
     def method(self):
@@ -1856,6 +1838,13 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._token_expires_on = None
             self._expires_in = None
 
+            return token
+        elif 'status' in token:
+            self._token = None
+            self._token_created_on = None
+            self._token_expires_on = None
+            self._expires_in = None
+            #print token['message']
             return token
 
         else:

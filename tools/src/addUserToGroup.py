@@ -55,7 +55,7 @@ def main(*argv):
         #   Add the User to the Group
         #
         group = community.groups
-        res = group.addUsersToGroups(users=username, groupID=groupId)
+        res = group.addUsersToGroups(users=username, groupId=groupId)
         if len(res['notAdded'] ) == 0:
             arcpy.SetParameterAsText(5, True)
         else:
