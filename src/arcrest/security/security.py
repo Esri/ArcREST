@@ -312,6 +312,7 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
     _surl = None
     _referer_url = None
     _method = "HANDLER"
+    _username = None
     #----------------------------------------------------------------------
     def __init__(self, org_url, keyfile, certificatefile,
                  proxy_url=None, proxy_port=None, referer_url=None):
@@ -355,6 +356,21 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
         if referer_url is None:
             parsed_org = urlparse(self._org_url)
             self._referer_url = parsed_org.netloc
+            
+            url = '{}/portals/self'.format( self._url)
+        
+        parameters = {
+            'f': 'json'
+        }
+        portal_info = self._do_post(url=url,
+                                    param_dict=parameters,
+                                    securityHandler=self,
+                                    proxy_port=self._proxy_port,
+                                    proxy_url=self._proxy_url)
+
+        if 'user' in portal_info:
+            if 'username' in portal_info['user']:
+                self._username = portal_info['user']['username']            
     _is_portal = None
     #----------------------------------------------------------------------
     @property            
@@ -371,6 +387,12 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
         
         self._is_portal = portal.isPortal                  
     #----------------------------------------------------------------------
+    @property
+    def username(self):
+        """ returns the username """
+        return self._username
+    #----------------------------------------------------------------------
+       
     @property
     def org_url(self):
         """gets the org_url"""
@@ -857,7 +879,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
-                self._username = portal_info['user']
+                self._username = portal_info['user']['username']
 
 
         results = self._do_get(url= self._surl + '/portals/info',

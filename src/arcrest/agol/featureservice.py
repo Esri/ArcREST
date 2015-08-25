@@ -86,8 +86,7 @@ class FeatureService(abstract.BaseAGOLClass):
             else:
                 self._securityHandler = securityHandler
     
-        else:
-            raise AttributeError("Admin only supports AGOL, ArcGIS, Portal, NTLM, LDAP, PKI and OAuth security handlers")       
+
         if initialize:
             self.__init()
     #----------------------------------------------------------------------

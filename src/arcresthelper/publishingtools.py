@@ -1117,7 +1117,7 @@ class publishingtools(securityhandlerhelper):
             if sd_Info is None:
                 print "Publishing SD or Zip not valid"
                 raise common.ArcRestHelperError({
-                    "function": "_publishFsFromConfig",
+                    "function": "_publishFsFromMXD",
                     "line": lineno(),
                     "filename":  'publishingtools.py',
                     "synerror": "Publishing SD or Zip not valid"
