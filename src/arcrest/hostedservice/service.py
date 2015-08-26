@@ -751,7 +751,15 @@ class AdminFeatureService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in AdminFeatureService."
+                #print k, " - attribute not implemented in AdminFeatureService."
+                print """#------attribute not implemented in AdminFeatureService class--------------------------
+                        @property
+                        def %s(self):
+                            '''gets the property value for %s'''
+                            if self._%s is None:
+                                self.__init()
+                            return self._%s
+                        """ % (k,k,k, k)                                
     #----------------------------------------------------------------------
     @property
     def error(self):
@@ -1298,7 +1306,15 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented AdminFeatureServiceLayer."
+                #print k, " - attribute not implemented AdminFeatureServiceLayer."
+                print """#------attribute not implemented in AdminFeatureServiceLayer class--------------------------
+            @property
+            def %s(self):
+                '''gets the property value for %s'''
+                if self._%s is None:
+                    self.__init()
+                return self._%s
+            """ % (k,k,k, k)                
             del k, v
     #----------------------------------------------------------------------
     def refresh(self):

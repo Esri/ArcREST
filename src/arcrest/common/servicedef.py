@@ -9,7 +9,15 @@ from arcpy import mapping
 from arcpy import env
 
 ########################################################################
-def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=None,folder_name=None,capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',maxRecordCount=1000,server_type='MY_HOSTED_SERVICES'):
+def MXDtoFeatureServiceDef( mxd_path, 
+                            service_name=None,
+                            tags=None, 
+                            description=None,
+                            folder_name=None,
+                            capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',
+                            maxRecordCount=1000,
+                            server_type='MY_HOSTED_SERVICES',
+                            url='http://www.arcgis.com'):
     """
         converts an MXD to a service defenition
         Inputs:
@@ -58,16 +66,20 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
     res['service_name'] = service_name
     res['tags'] = tags
     res['description'] = description
-    analysis = mapping.CreateMapSDDraft(map_document=mxd, out_sddraft=sddraft,
+    analysis = mapping.CreateMapSDDraft(map_document=mxd,
+                                       out_sddraft=sddraft,
                                        service_name=service_name,
                                        server_type=server_type,
                                        connection_file_path=None,
-                                       copy_data_to_server=False,
+                                       copy_data_to_server=True,
                                        folder_name=folder_name,
                                        summary=description,
                                        tags=tags)
 
-    sddraft = _modify_sddraft(sddraft=sddraft,capabilities=capabilities,maxRecordCount=maxRecordCount)
+    sddraft = _modify_sddraft(sddraft=sddraft,
+                              capabilities=capabilities,
+                              maxRecordCount=maxRecordCount,
+                              url=url)
     analysis = mapping.AnalyzeForSD(sddraft)
     if os.path.isdir(sdFolder):
         shutil.rmtree(sdFolder, ignore_errors=True)
@@ -86,7 +98,10 @@ def MXDtoFeatureServiceDef( mxd_path, service_name=None, tags=None, description=
 
 
 
-def _modify_sddraft(sddraft,capabilities,maxRecordCount='1000'):
+def _modify_sddraft(sddraft,
+                    capabilities,
+                    maxRecordCount='1000',
+                    url='http://www.arcgis.com'):
     """ modifies the sddraft for agol publishing
     """
 
@@ -134,9 +149,16 @@ def _modify_sddraft(sddraft,capabilities,maxRecordCount='1000'):
     for prop in doc.findall("./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty"):
         if prop.find("Key").text == 'WebCapabilities':
             prop.find("Value").text = capabilities
-
+            
+    # Update url for portal
+    for prop in doc.findall("./StagingSettings/PropertyArray/PropertySetProperty"):
+        if prop.find("Key").text == 'ServerConnectionString':
+            prop.find("Value").text = prop.find("Value").text.toString().replace('www.arcgis.com',url)    
+    # Update url for portal
+    for prop in doc.findall("./itemInfo/url"):
+        prop.text = prop.text.toString().replace('www.arcgis.com',url) 
     # Add the namespaces which get stripped, back into the .SD
-    root_elem.attrib["xmlns:typens"] = 'http://www.esri.com/schemas/ArcGIS/10.1'
+    root_elem.attrib["xmlns:typens"] = 'http://www.esri.com/schemas/ArcGIS/10.2'
     root_elem.attrib["xmlns:xs"] = 'http://www.w3.org/2001/XMLSchema'
     newSDdraft = os.path.dirname(sddraft) + os.sep + "draft_mod.sddraft"
     # Write the new draft to disk

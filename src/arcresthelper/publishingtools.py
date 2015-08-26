@@ -861,6 +861,10 @@ class publishingtools(securityhandlerhelper):
         fs = None
         res = None
         resItm = None
+        if self.securityhandler.is_portal:
+            url = self.securityhandler.org_url
+        else:
+            url = 'http://www.arcgis.com'
         try:
             res = []
             if isinstance(fs_config, list):
@@ -871,7 +875,7 @@ class publishingtools(securityhandlerhelper):
                     else:
                         resItm = {"ReplaceTag":"{FeatureService}" }
 
-                    resItm['FSInfo'] = self._publishFSFromMXD(config=fs)
+                    resItm['FSInfo'] = self._publishFSFromMXD(config=fs, url=url)
                     
                     if not resItm['FSInfo'] is None and 'url' in resItm['FSInfo']:
                         print "%s created" % resItm['FSInfo']['url']
@@ -886,7 +890,7 @@ class publishingtools(securityhandlerhelper):
                 else:
                     resItm = {"ReplaceTag":"{FeatureService}" }
 
-                resItm['FSInfo'] = self._publishFSfromConfig(config=fs_config)
+                resItm['FSInfo'] = self._publishFSFromMXD(config=fs_config, url=url)
               
                 if 'url' in resItm['FSInfo']:
                     print "%s created" % resItm['FSInfo']['url']
@@ -992,7 +996,7 @@ class publishingtools(securityhandlerhelper):
             gc.collect()
     
     #----------------------------------------------------------------------
-    def _publishFSFromMXD(self,config):
+    def _publishFSFromMXD(self,config,url='http://www.arcgis.com'):
         mxd = None
         q = None
         everyone = None
@@ -1098,7 +1102,8 @@ class publishingtools(securityhandlerhelper):
                                                                      folder_name=None,
                                                                      capabilities=capabilities,
                                                                      maxRecordCount=maxRecordCount,
-                                                                     server_type='MY_HOSTED_SERVICES')
+                                                                     server_type='MY_HOSTED_SERVICES',
+                                                                     url=url)
                 publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=sd_Info['tags'],
                                                                           overwrite='true')                
             elif (extension == ".zip"):
