@@ -1537,7 +1537,8 @@ class UserItem(BaseAGOLClass):
                    clearEmptyFields=False,
                    data=None,
                    metadata=None,
-                   text=None
+                   text=None,
+                   serviceUrl=None
                    ):
         """
         updates an item's properties using the ItemParameter class.
@@ -1546,6 +1547,9 @@ class UserItem(BaseAGOLClass):
            itemParameters - property class to update
            clearEmptyFields - boolean, cleans up empty values
            data - updates the file property of the service like a .sd file
+           metadata - this is an xml file that contains metadata information
+           text - The text content for the item to be updated.
+           serviceUrl - this is a service url endpoint.
         """
         thumbnail = None
         files = []
@@ -1553,6 +1557,8 @@ class UserItem(BaseAGOLClass):
             "f": "json",
             "clearEmptyFields": clearEmptyFields
         }
+        if serviceUrl is not None:
+            params['url'] = serviceUrl
         if text is not None:
             params['text'] = text
         if isinstance(itemParameters, ItemParameter) == False:
@@ -2222,7 +2228,7 @@ class User(BaseAGOLClass):
            title - name of export item
            itemId - id of the item to export
            exportFormat - out format. Values: Shapefile, CSV or File
-                          Geodatabase, Feature Collection, GeoJson
+                          Geodatabase, feature collection, GeoJson
            tags - comma seperated list of quick descriptors, the default is
             export.
            snippet - short explination of the exported item
