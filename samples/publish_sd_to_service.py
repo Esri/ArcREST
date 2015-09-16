@@ -1,36 +1,41 @@
 """
    This sample shows how to publish and
-   Item to AGOL as a Hosted Feature Service
+   Item to AGOL/Portal as a Hosted Feature Service.
+
+   It assumes you have ALREADY added the item to the site.
 
 """
 import arcrest
 
 if __name__ == "__main__":
+    #   Inputs
+    #
     username = "<username>"
     password = "<password>"
-    portalId = "<portal Id>"
     url = "<portal or AGOL url>"
-    itemId = "<item id>"
+    itemId = "<item id>" # item id of SD file
     tags = "Demo, Publishing"
-    securityHandler = arcrest.AGOLTokenSecurityHandler(username,
-                                                       password)
-    #   Create the administration connection
+    siteType = "AGOL" # can be AGOL or PORTAL
+    #   Logic
     #
-    admin = arcrest.manageorg.Administration(url, securityHandler)
-    #   Connect to the portal
-    #
-    portal = admin.portals(portalId)
-    #   Access the content properties to add the item
+    if siteType == "AGOL":
+        securityHandler = arcrest.AGOLTokenSecurityHandler(username,
+                                                           password)
+        admin = arcrest.manageorg.Administration(securityHandler=securityHanlder)
+    else:
+        securityHandler = arcrest.PortalTokenSecurityHandler(username, password, org_url=url)
+        admin = arcrest.manageorg.Administration(url, securityHandler)
+    #   Access the User to gain access the the publishItem()
     #
     content = admin.content
+    users = content.users()
+    user = users.user(username=username)
     #   Provide the Publish parameters
     #
-
     publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=tags)
-    #   Enter in the username you wish to load the item to
+    #   Publish the service to the site
     #
-    usercontent = content.usercontent(username=username)
-    print usercontent.publishItem(
+    print user.publishItem(
         fileType="serviceDefinition",
         itemId=itemId,
         publishParameters=publishParameters)
