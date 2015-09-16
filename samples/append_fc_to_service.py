@@ -3,8 +3,9 @@
    to a feature service using ArcRest and ArcRestHelper
 
 """
-import arcrest
+import arcrest, json
 from arcresthelper import featureservicetools
+from arcresthelper import common
 def trace():
     """
         trace finds the line, the filename
@@ -23,22 +24,38 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "<username>"
-    password = "<password>"
-    url = "<portal or AGOL url>"
-    itemId = "<Id of feature service item>"    
-    layerName='<Name of layer in Feature Service>'
-    fc=r'<Path to Feature Class to append>'
-    atTable=r'<Attachment table of Feature Class - Optional>'    
+   
+    proxy_port = None
+    proxy_url = None    
+
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
+    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None   
+
+    
+    itemId = ""#<Item ID>
+    layerName=''#Name of layer in the service
+    fc=r''#Path to Feature Class
+    atTable=None   
     try:   
-        fst = featureservicetools.featureservicetools(username = username, password=password,org_url=url,
-                                           token_url=None, 
-                                           proxy_url=None, 
-                                           proxy_port=None)
-        if fst.valid:
+        fst = featureservicetools.featureservicetools(securityinfo)
+        if fst.valid == False:
+            print fst.message
+        else:         
+
             fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
-          
-            if not fs is None:                
+            if not fs is None:
+
                 fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                 if not fl is None:
                     results = fl.addFeatures(fc=fc,attachmentTable=atTable)        
