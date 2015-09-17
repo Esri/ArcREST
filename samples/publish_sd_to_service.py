@@ -10,10 +10,11 @@ import arcrest
 if __name__ == "__main__":
     #   Inputs
     #
-    username = "<username>"
-    password = "<password>"
-    url = "<portal or AGOL url>"
-    itemId = "<item id>" # item id of SD file
+    username = ""
+    password = ""
+    url = "" #URL to ArcGIS Online or your portal
+    itemId = "" # item id of SD file
+    itemFolder = None # If you item is in a folder, you need to specify its name here
     tags = "Demo, Publishing"
     siteType = "AGOL" # can be AGOL or PORTAL
     #   Logic
@@ -21,15 +22,17 @@ if __name__ == "__main__":
     if siteType == "AGOL":
         securityHandler = arcrest.AGOLTokenSecurityHandler(username,
                                                            password)
-        admin = arcrest.manageorg.Administration(securityHandler=securityHanlder)
+        admin = arcrest.manageorg.Administration(securityHandler=securityHandler)
     else:
         securityHandler = arcrest.PortalTokenSecurityHandler(username, password, org_url=url)
-        admin = arcrest.manageorg.Administration(url, securityHandler)
+        admin = arcrest.manageorg.Administration(url=url, securityHandler=securityHandler)
     #   Access the User to gain access the the publishItem()
     #
     content = admin.content
-    users = content.users()
+    users = content.users
     user = users.user(username=username)
+    if itemFolder is not None:
+        user.currentFolder = itemFolder
     #   Provide the Publish parameters
     #
     publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=tags)
@@ -40,7 +43,4 @@ if __name__ == "__main__":
         itemId=itemId,
         publishParameters=publishParameters)
 
-    # sample result message
-    #   {'services': [{'encodedServiceURL': '<url>', 'jobId': '<job id>',
-    #   'serviceurl': '<url>', 'type': 'Feature Service',
-    #   'serviceItemId': '<id value>', 'size': <int>}]}
+    #a UserItem is a valid return object
