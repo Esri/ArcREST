@@ -1,5 +1,4 @@
 from ..web import _base
-import arcrest
 _url = None
 _securityHandler = None
 
