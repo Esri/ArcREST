@@ -30,7 +30,7 @@ class securityhandlerhelper(object):
     _client_id = None
     _secret_id = None
     _is_portal = False
-  
+
     #----------------------------------------------------------------------
     def __init__(self, securityinfo):
 
@@ -58,27 +58,27 @@ class securityhandlerhelper(object):
                             - client_id: Only required for OAuth
                             - secret_id: Only required for OAuth
         """
-    
-        if not securityinfo is None: 
+
+        if not securityinfo is None:
             if isinstance(securityinfo,securityhandlerhelper):
-                
+
                 self._securityHandler = securityinfo.securityhandler
                 self._username = securityinfo._username
                 self._password = securityinfo._password
                 self._proxy_url = securityinfo._proxy_url
-                self._proxy_port = securityinfo._proxy_port 
-                self._token_url = securityinfo._token_url 
+                self._proxy_port = securityinfo._proxy_port
+                self._token_url = securityinfo._token_url
                 self._security_type = securityinfo._security_type
                 self._featureServiceFieldCase = securityinfo._featureServiceFieldCase
                 self._keyfile = securityinfo._keyfile
-                self._certificatefile = securityinfo._certificatefile 
+                self._certificatefile = securityinfo._certificatefile
                 self._referer_url = securityinfo._referer_url
                 self._client_id = securityinfo._client_id
                 self._secret_id = securityinfo._secret_id
                 self._is_portal = securityinfo._is_portal
                 self._message = securityinfo._message
                 self._valid = securityinfo._valid
-                
+
                 #self._securityHandler = securityinfo
                 return
             else:
@@ -87,54 +87,54 @@ class securityhandlerhelper(object):
                 securityinfo = common.init_config_json(config_file=securityinfo)
                 if 'Credentials' in securityinfo:
                     securityinfo = securityinfo['Credentials']
-                           
+
             if 'security_type' in securityinfo:
                 self._security_type = securityinfo['security_type']
             else:
                 self._message = 'Security type not specified'
                 self._valid = False
                 return
-    
+
             if 'proxy_url' in securityinfo:
                 self._proxy_url = securityinfo['proxy_url']
-    
+
             if 'proxy_port' in securityinfo:
                 self._proxy_port = securityinfo['proxy_port']
-    
+
             if 'referer_url' in securityinfo:
                 self._referer_url = securityinfo['referer_url']
-    
+
             if 'token_url' in securityinfo and securityinfo['token_url'] is not None:
                 self._token_url = securityinfo['token_url']
                 if not self._token_url.startswith('http://') and \
                    not self._token_url.startswith('https://'):
                     self._token_url = 'https://' + self._token_url
-    
+
             if 'org_url' in securityinfo and securityinfo['org_url'] is not None:
                 self._org_url = securityinfo['org_url']
                 if not self._org_url.startswith('http://') and not self._org_url.startswith('https://'):
                     self._org_url = 'http://' + self._org_url
-    
+
             if 'username' in securityinfo:
                 self._username = securityinfo['username']
             if 'password' in securityinfo:
                 self._password = securityinfo['password']
-    
+
             if 'certificatefile' in securityinfo:
                 self._certificatefile = securityinfo['certificatefile']
             if 'keyfile' in securityinfo:
                 self._keyfile = securityinfo['keyfile']
-    
+
             if 'client_id' in securityinfo:
                 self._client_id = securityinfo['client_id']
             if 'secret_id' in securityinfo:
                 self._secret_id = securityinfo['secret_id']
-    
+
             if str(securityinfo['security_type']).upper() == 'ArcGIS'.upper():
-    
+
                 self._securityHandler = security.ArcGISTokenSecurityHandler(proxy_url=self._proxy_url,
                                             proxy_port=self._proxy_port)
-               
+
                 self._org_url = self._securityHandler.org_url
                 self._username = self._securityHandler.username
                 self._valid = True
@@ -162,7 +162,7 @@ class securityhandlerhelper(object):
                                                                                    proxy_url=self._proxy_url,
                                                                                    proxy_port=self._proxy_port)
                         self._message = "Portal security handler created"
-                    
+
             elif str(securityinfo['security_type']).upper() == 'NTLM'.upper():
                 if self._username == "" or self._password == "":
                     self._message = "Username and password required for NTLM"
@@ -173,27 +173,27 @@ class securityhandlerhelper(object):
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
                                                     referer_url=self._referer_url
-                                                     )  
+                                                     )
                 self._message = "NTLM security handler created"
             elif str(securityinfo['security_type']).upper() == 'LDAP'.upper():
                 if self._username == "" or self._password == "":
                     self._message = "Username and password required for LDAP"
-                    self._valid = False            
+                    self._valid = False
                 self._securityHandler = security.LDAPSecurityHandler(username=self._username,
                                                     password=self._password,
                                                     org_url=self._org_url,
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
                                                     referer_url=self._referer_url
-                                                    )           
+                                                    )
                 self._message = "LDAP security handler created"
             elif str(securityinfo['security_type']).upper() == 'PKI'.upper():
                 if self._keyfile == "" or self._certificatefile == "":
                     self._message = "key file and certification file required for PKI"
-                    self._valid = False            
-                self._securityHandler = security.PKISecurityHandler(keyfile = self._keyfile, 
-                                                    certificatefile = self._certificatefile, 
-                                                    org_url=self._org_url,                                                  
+                    self._valid = False
+                self._securityHandler = security.PKISecurityHandler(keyfile = self._keyfile,
+                                                    certificatefile = self._certificatefile,
+                                                    org_url=self._org_url,
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
                                                     referer_url=self._referer_url
@@ -202,29 +202,29 @@ class securityhandlerhelper(object):
             elif str(securityinfo['security_type']).upper() == 'OAUTH'.upper():
                 if self._secret_id == "" or self._client_id == "":
                     self._message = "client_id and secret_id required for OAUTH"
-                    self._valid = False             
-                self._securityHandler = security.OAuthSecurityHandler(client_id=self._client_id, 
+                    self._valid = False
+                self._securityHandler = security.OAuthSecurityHandler(client_id=self._client_id,
                                                     secret_id = self._secret_id,
-                                                    org_url=self._org_url,                                                  
+                                                    org_url=self._org_url,
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port
-                                                    ) 
-                
+                                                    )
+
                 self._message = "OAuth security handler created"
             else:
                 print "No valid security type set"
                 self._message = "No valid security type set"
-            
+
             admin = Administration(url=self._org_url,
                                    securityHandler=self._securityHandler)
-            
+
             try:
                 portal = admin.portals.portalSelf
-                for hostingServer in portal.featureServers:                
+                for hostingServer in portal.featureServers:
                     if isinstance(hostingServer, AGSAdministration):
-                        try:                        
+                        try:
                             serData = hostingServer.data
-                
+
                             dataItems = serData.rootDataItems
                             if 'rootItems' in dataItems:
                                 for rootItem in dataItems['rootItems']:
@@ -247,28 +247,31 @@ class securityhandlerhelper(object):
                         except Exception, e:
                             print e
                         except Exception, e:
-                            print e            
-                        
+                            print e
+
             except urllib2.HTTPError, err:
-                print err
+                if err.code == 403:
+                    print "Admistrative access denied, unable to check if hosting servers"
+                else:
+                    print err
             except Exception, e:
                 print e
             except Exception, e:
-                print e            
+                print e
 
-          
-        
+
+
             if 'error' in self._securityHandler.message:
                 self._message = self._securityHandler.message
                 self._valid = False
-    
+
             else:
                 if self._securityHandler.message is not None:
                     self._message = self._securityHandler.message
                 self._valid = True
         else:
             self._message = 'Security info not set'
-            self._valid = True                
+            self._valid = True
     #----------------------------------------------------------------------
     def dispose(self):
         self._username = None
@@ -317,4 +320,4 @@ class securityhandlerhelper(object):
         return self._securityHandler
     #@property
     #def is_portal(self):
-        #return self._is_portal    
+        #return self._is_portal
