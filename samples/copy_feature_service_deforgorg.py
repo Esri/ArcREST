@@ -219,10 +219,10 @@ def main():
         if fs.editorTrackingInfo is not None:
       
             json_dict = {'editorTrackingInfo':{}}
-            json_dict['editorTrackingInfo']['allowOthersToDelete'] = fs.editorTrackingInfo['enableEditorTracking']
-            json_dict['editorTrackingInfo']['allowOthersToUpdate'] = fs.editorTrackingInfo['enableOwnershipAccessControl']
-            json_dict['editorTrackingInfo']['enableEditorTracking'] = fs.editorTrackingInfo['allowOthersToUpdate']
-            json_dict['editorTrackingInfo']['enableOwnershipAccessControl'] = fs.editorTrackingInfo['allowOthersToDelete']
+            json_dict['editorTrackingInfo']['enableEditorTracking'] = fs.editorTrackingInfo['enableEditorTracking']          
+            json_dict['editorTrackingInfo']['allowOthersToDelete'] = fs.editorTrackingInfo['allowOthersToDelete']
+            json_dict['editorTrackingInfo']['allowOthersToUpdate'] =  fs.editorTrackingInfo['allowOthersToUpdate']
+            json_dict['editorTrackingInfo']['enableOwnershipAccessControl'] = fs.editorTrackingInfo['enableOwnershipAccessControl']
             res = adminNewFS.updateDefinition(json_dict=json_dict)
             print res   
      
