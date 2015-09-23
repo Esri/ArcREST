@@ -1,8 +1,11 @@
 """
-   This sample shows how to copy a feature service
 
+   This sample shows how to copy a feature service
 """
 import arcrest
+import tempfile
+import os
+import uuid
 from arcresthelper import securityhandlerhelper
 def trace():
     """
@@ -52,9 +55,10 @@ def main():
     securityinfoTarget['keyfile'] = None
     securityinfoTarget['client_id'] = None
     securityinfoTarget['secret_id'] = None   
- 
-    itemId = "25c33e7f5d2242e18a7503bbe3306450"    
-    new_service_name = "MovementAnalysisCopy"
+
+  
+    itemId = ""#Item ID of item to copy    
+    new_service_name = "" #name of new item
     try:      
         
         shhSource = securityhandlerhelper.securityhandlerhelper(securityinfoSource)
@@ -78,6 +82,7 @@ def main():
                 return
                 
             itemSource = adminSource.content.getItem(itemId)
+            
             fs = arcrest.agol.FeatureService(url=itemSource.url, securityHandler=shhSource.securityhandler, 
                                        initialize=True, 
                                        proxy_url=None, 
@@ -97,17 +102,13 @@ def main():
                 xssPreventionEnabled = None
                 xssPreventionRule = None
                 xssInputRule = None            
-                
-            if fs.editorTrackingInfo is not None:
-                enableEditorTracking= fs.editorTrackingInfo['enableEditorTracking']
-                enableOwnershipAccessControl = fs.editorTrackingInfo['enableOwnershipAccessControl']
-                allowOthersToUpdate = fs.editorTrackingInfo['allowOthersToUpdate']
-                allowOthersToDelete = fs.editorTrackingInfo['allowOthersToDelete']
-            else:
-                enableEditorTracking = None
-                enableOwnershipAccessControl = None
-                allowOthersToUpdate = None
-                allowOthersToDelete = None 
+            
+            #Edit tracking needs to be turned off when item is created    
+            enableEditorTracking = False
+            enableOwnershipAccessControl = False
+            allowOthersToUpdate = False
+            allowOthersToDelete = False
+
             if fs.syncCapabilities is not None:     
                 supportsAsync = fs.syncCapabilities['supportsAsync']
                 supportsRegisteringExistingData = fs.syncCapabilities['supportsRegisteringExistingData']
@@ -121,7 +122,8 @@ def main():
                 supportsSyncDirectionControl = None 
                 supportsPerLayerSync = None 
                 supportsPerReplicaSync = None 
-                supportsRollbackOnFailure = None                
+                supportsRollbackOnFailure = None
+
             createSerParams = arcrest.manageorg.CreateServiceParameters(
                         name=new_service_name, 
                         spatialReference=arcrest.geometry.SpatialReference(wkid=wkid, wkt=wkt), 
@@ -131,7 +133,7 @@ def main():
                         supportedQueryFormats=fs.supportedQueryFormats, 
                         capabilities=fs.capabilities, 
                         description=fs.description, 
-                        copyrightText=fs.copyrightText, 
+                        copyrightText=fs.copyrightText,
                         initialExtent=arcrest.geometry.Envelope(
                                                                xmin=fs.initialExtent['xmin'], 
                                                                ymin=fs.initialExtent['ymin'], 
@@ -165,9 +167,23 @@ def main():
             newServiceResult = userTarget.createService(createServiceParameter=createSerParams)
             print newServiceResult
             item = adminTarget.content.getItem(itemId=newServiceResult['itemId']).userItem
+          
                  
             params = arcrest.manageorg.ItemParameter()
             params.title = new_service_name
+            params.licenseInfo = itemSource.licenseInfo
+            params.description = itemSource.description
+            params.snippet = itemSource.snippet
+            params.tags = itemSource.tags
+            params.accessInformation = itemSource.accessInformation
+            params.extent = itemSource.extent
+            params.spatialReference = itemSource.spatialReference
+            
+            tempDir =  tempfile.gettempdir()
+            filename = new_service_name #"%s" % uuid.uuid4().get_hex()
+            tempFile = itemSource.saveThumbnail(fileName = filename, filePath= tempDir)
+            params.thumbnail =  tempFile
+            
             updateItemResults = item.updateItem(itemParameters=params,
                                                 clearEmptyFields=True,
                                                 data=None,
@@ -176,6 +192,9 @@ def main():
             
             print updateItemResults
                     
+            if itemSource.protected:
+                print item.protect()
+            
             adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult['encodedServiceURL'], securityHandler=shhTarget.securityhandler)
             adminExistFS = fs.administration
             jsdic = {}
@@ -196,6 +215,17 @@ def main():
             res=adminNewFS.addToDefinition(json_dict=jsdic)
             print res
             
+            
+        if fs.editorTrackingInfo is not None:
+      
+            json_dict = {'editorTrackingInfo':{}}
+            json_dict['editorTrackingInfo']['allowOthersToDelete'] = fs.editorTrackingInfo['enableEditorTracking']
+            json_dict['editorTrackingInfo']['allowOthersToUpdate'] = fs.editorTrackingInfo['enableOwnershipAccessControl']
+            json_dict['editorTrackingInfo']['enableEditorTracking'] = fs.editorTrackingInfo['allowOthersToUpdate']
+            json_dict['editorTrackingInfo']['enableOwnershipAccessControl'] = fs.editorTrackingInfo['allowOthersToDelete']
+            res = adminNewFS.updateDefinition(json_dict=json_dict)
+            print res   
+     
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

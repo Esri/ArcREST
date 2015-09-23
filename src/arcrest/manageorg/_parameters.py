@@ -199,16 +199,18 @@ class CreateServiceParameters(BaseParameters):
                  syncEnabled =True
                  ):
         """Constructor"""
+        
+        
         self._name = name
         if isinstance(spatialReference, SpatialReference):
             self._spatialReference = spatialReference.value
         else:
             raise AttributeError('spatialReference must be of type geometry.SpatialReference')
-        self._serviceDescription = serviceDescription
-        self._hasStaticData = hasStaticData
+        self._serviceDescription= serviceDescription
+        self._hasStaticData= hasStaticData
         self._maxRecordCount=maxRecordCount
         self._supportedQueryFormats= supportedQueryFormats
-        self._capabilities= capabilities
+        self._capabilities = capabilities
         self._description= description
         self._copyrightText= copyrightText
         if initialExtent is not None:
@@ -216,11 +218,30 @@ class CreateServiceParameters(BaseParameters):
                 self._initialExtent= initialExtent.value
             else:
                 raise AttributeError('initialExtent must be of type geometry.Envelope')
-        self._allowGeometryUpdates = allowGeometryUpdates
-        self._units = units
-        self._xssPreventionEnabled =  xssPreventionEnabled
-        self._xssPreventionRule = xssPreventionRule
-        self._xssInputRule = xssInputRule
+        self._allowGeometryUpdates=allowGeometryUpdates
+        self._units=units
+        self._xssPreventionEnabled=xssPreventionEnabled
+        self._xssPreventionRule=xssPreventionRule
+        self._xssInputRule=xssInputRule
+        self._currentVersion=currentVersion
+        self._enableEditorTracking = enableEditorTracking
+        self._enableOwnershipAccessControl = enableOwnershipAccessControl 
+        self._allowOthersToUpdate = allowOthersToUpdate
+        self._allowOthersToDelete = allowOthersToDelete
+        self._supportsAsync = supportsAsync
+        self._supportsRegisteringExistingData = supportsRegisteringExistingData
+        self._supportsSyncDirectionControl = supportsSyncDirectionControl
+        self._supportsPerLayerSync = supportsPerLayerSync
+        self._supportsPerReplicaSync = supportsPerReplicaSync 
+        self._supportsRollbackOnFailure = supportsRollbackOnFailure
+        self._hasVersionedData = hasVersionedData
+        self._supportsDisconnectedEditing = supportsDisconnectedEditing
+        self._size =size 
+        self._syncEnabled =syncEnabled 
+        
+        
+        
+        
     #----------------------------------------------------------------------
     @property
     def value(self):
