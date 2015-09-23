@@ -6,6 +6,9 @@ import arcrest
 from arcrest.agol import FeatureLayer
 from arcrest.agol import FeatureService
 from arcrest.hostedservice import AdminFeatureService
+from arcrest.common.spatial import scratchFolder, scratchGDB, json_to_featureclass
+from arcrest.common.general import FeatureSet
+
 import datetime, time
 import json
 import os
@@ -446,3 +449,81 @@ class featureservicetools(securityhandlerhelper):
             del fl
 
             gc.collect()
+            
+    #----------------------------------------------------------------------
+    def QueryAllFeatures(self,url,sql,chunksize=0,saveLocation="",outName=""):
+        fl = None
+        try:
+            fl = FeatureLayer(
+                   url=url,
+                   securityHandler=self._securityHandler)
+            totalQueried = 0
+            if chunksize > 0:
+                qRes = fl.query(where=sql, returnIDsOnly=True)
+                if 'error' in qRes:
+                    print qRes
+                    return qRes
+                elif 'objectIds' in qRes:
+                    oids = qRes['objectIds']
+                    total = len(oids)
+                    if total == 0:
+                        return  {'success':'true','message': "No features matched the query"}
+                        
+                    minId = min(oids)
+                    maxId = max(oids)
+                   
+                    i = 0
+                    print "%s features to be downloaded" % total
+                    combinedResults = None
+                                                            
+                    while(i <= len(oids)):
+                        oidsQuery = ','.join(str(e) for e in oids[i:i+chunksize])
+                        if oidsQuery == '':
+                            continue
+                        else:
+                            results = fl.query(objectIds=oidsQuery,
+                                               returnGeometry=True,
+                                               out_fields='*')
+                            if isinstance(results,FeatureSet):
+                                if combinedResults is None:
+                                    combinedResults = results
+                                else:
+                                
+                                    for feature in results.features:
+                                    
+                                        combinedResults.features.append(feature)
+                             
+                                totalQueried += len(results.features)
+                                
+                                print "%s%% Completed: %s/%s " % (int(totalQueried / float(total) *100), totalQueried, total)
+                                i += chunksize                            
+                            else:
+                                print results
+                  
+                    print combinedResults.save(saveLocation=saveLocation, outName=outName)
+                else:
+                    print qRes
+            else:
+                return  fl.query(where=sql, 
+                                 returnFeatureClass=True,
+                                 returnGeometry=True,
+                                 out_fields='*',                               
+                                 out_fc=os.path.join(saveLocation,outName)
+                                 )
+            
+       
+        except:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                        "function": "QueryFeatureLayer",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                                        }
+                                        )
+        finally:
+            fl = None
+
+            del fl
+
+            gc.collect()            

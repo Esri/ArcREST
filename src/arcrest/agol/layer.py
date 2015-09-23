@@ -677,7 +677,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnIDsOnly=False,
               returnCountOnly=False,
               returnFeatureClass=False,
-              out_fc=None):
+              out_fc=None,
+              objectIds=""):
         """ queries a feature service based on a sql statement
             Inputs:
                where - the selection sql statement
@@ -721,6 +722,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['geometryType'] = gf['geometryType']
             params['spatialRelationship'] = gf['spatialRel']
             params['inSR'] = gf['inSR']
+        if objectIds is not None and objectIds != "":
+            params['objectIds'] = objectIds        
         fURL = self._url + "/query"
         results = self._do_get(fURL, params,
                                securityHandler=self._securityHandler,
@@ -729,7 +732,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if 'error' in results:
             raise ValueError (results)
         if not returnCountOnly and not returnIDsOnly:
-            if returnFeatureClass:
+            if returnFeatureClass == True:
                 json_text = json.dumps(results)
                 temp = scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
                 with open(temp, 'wb') as writer:
