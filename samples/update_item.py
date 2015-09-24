@@ -48,19 +48,17 @@ def main():
             print shh.message
         else:        
             portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-            uc = portalAdmin.content.usercontent()
+            item = portalAdmin.content.getItem(itemId=itemId).userItem
+            
             itemParams = arcrest.manageorg.ItemParameter()
             
             itemParams.filename = upload_file        
-            res = uc.updateItem(itemId=itemId,
-                                              updateItemParameters=itemParams,
-                                              folderId=None,
-                                              clearEmptyFields=True,
-                                              filePath=upload_file,
-                                              url=None,
-                                              text=None,
-                                              multipart = False
-                                              )
+            res = item.updateItem(itemParameters=itemParams,
+                                    clearEmptyFields=True,
+                                    data=None,
+                                    serviceUrl=None,
+                                    text=None
+                                    )
 
             print res
 
