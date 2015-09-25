@@ -1084,7 +1084,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
                  password,
                  org_url ="https://www.arcgis.com",
                  token_url=None,
-                 proxy_url=None, proxy_port=None):
+                 proxy_url=None, 
+                 proxy_port=None):
         """Constructor"""
         self._username = username
         self._password = password
@@ -1136,6 +1137,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         if referer_url is None:
             self._referer_url = parsed_url.netloc    
+        
                 #if referer_url is None or \
             #referer_url.lower().find('www.arcgis.com') > -1:
             #self._referer_url = "arcgis.com"

@@ -20,7 +20,8 @@ import re
 import binascii
 from socket import gethostname
 
-import six
+
+import repSix as six
 
 from . import des
 
