@@ -56,8 +56,12 @@ class resetTools(securityhandlerhelper):
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
                 print "You have selected to remove all users data, you must modify the code to do this"
-                return
-                usersObj = admin.portals.portalSelf.users(start=1, num=100)
+                usersObj = []
+                commUsers = admin.portals.portalSelf.users(start=1, num=100)
+                commUsers = commUsers['users']
+                for user in commUsers:
+                    usersObj.append(user.userContent)            
+                #return
             else:
                 usersObj = []
                 userStr = users.split(',')
@@ -137,17 +141,21 @@ class resetTools(securityhandlerhelper):
            
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
-                usersObj = admin.portals.portalSelf.users(start=1, num=100)
+                print "You have selected to remove all users groups, you must modify the code to do this"
+                usersObj = []
+                commUsers = admin.portals.portalSelf.users(start=1, num=100)
+                commUsers = commUsers['users']
+            
+                #return
             else:
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    usersObj.append(admin.content.users.user(user))  
+                    usersObj.append(admin.community.users.user(user))  
             if usersObj:
-                for user in usersObj:
-                    print "Loading groups for user: %s" % user.username
-                    userCommData = admin.community.users.user(user.username)
-                    
+                for userCommData in usersObj:
+                    print "Loading groups for user: %s" % userCommData.username
+                     
                     if userCommData.groups:
                         for group in userCommData.groups:
                             groupObj = admin.community.groups.group(groupId=group['id'])

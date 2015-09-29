@@ -1931,7 +1931,7 @@ class User(BaseAGOLClass):
     @currentFolder.setter
     def currentFolder(self, value):
         """gets/sets the current folder (folder id)"""
-        if value.lower() == self._currentFolder['title']:
+        if value is not None and value.lower() == self._currentFolder['title']:
             return
         if value is None:
             self._location = self.root
@@ -2324,11 +2324,16 @@ class User(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            return self._do_post(url=url,
+            res = self._do_post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+            self._folders = None
+            self.currentFolder = None
+            self.refresh
+            return res
+            
         else:
             return "Cannot delete root folder."
     #----------------------------------------------------------------------
