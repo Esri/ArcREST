@@ -61,7 +61,7 @@ class resetTools(securityhandlerhelper):
                 commUsers = commUsers['users']
                 for user in commUsers:
                     usersObj.append(user.userContent)            
-                #return
+                return
             else:
                 usersObj = []
                 userStr = users.split(',')
@@ -144,9 +144,9 @@ class resetTools(securityhandlerhelper):
                 print "You have selected to remove all users groups, you must modify the code to do this"
                 usersObj = []
                 commUsers = admin.portals.portalSelf.users(start=1, num=100)
-                commUsers = commUsers['users']
+                usersObj = commUsers['users']
             
-                #return
+                return
             else:
                 usersObj = []
                 userStr = users.split(',')
@@ -159,7 +159,7 @@ class resetTools(securityhandlerhelper):
                     if userCommData.groups:
                         for group in userCommData.groups:
                             groupObj = admin.community.groups.group(groupId=group['id'])
-                            if groupObj.owner == user.username:
+                            if groupObj.owner == userCommData.username:
                                 print groupObj.delete()
                     else:
                         print "No Groups Found"
