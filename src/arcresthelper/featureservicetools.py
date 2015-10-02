@@ -71,6 +71,8 @@ class featureservicetools(securityhandlerhelper):
             idlist = []
             print arcpy.GetCount_management(in_rows=pathToFeatureClass).getOutput(0) + " features in the layer"
             with arcpy.da.SearchCursor(pathToFeatureClass, (id_field)) as cursor:
+                allidlist = []
+                
                 for row in cursor:
                     
                     if (strFld):
@@ -78,46 +80,51 @@ class featureservicetools(securityhandlerhelper):
                     else:
                         idlist.append(row[0])
                     if len(idlist) >= chunksize:
-                        idstring = ' in (' + ','.join(idlist) + ')'
-                        sql = id_field + idstring
-                        sqlLocalFC = id_field_local + idstring
-                        results = fl.deleteFeatures(where=sql, 
-                                          rollbackOnFailure=True)
-                        
-                        if 'error' in results:
-                            raise common.ArcRestHelperError({
-                            "function": "RemoveAndAddFeatures",
-                            "line": inspect.currentframe().f_back.f_lineno,
-                            "filename":  'featureservicetools',
-                            "synerror":results['error']
-                            })                               
-                        elif 'deleteResults' in results:
-                            print "%s features deleted" % len(results['deleteResults'])
-                            for itm in results['deleteResults']:
-                                if itm['success'] != True:
-                                    print itm                            
-                        else:
-                            print results                                                        
-                        
-                        arcpy.MakeFeatureLayer_management(pathToFeatureClass,tempaddlayer,sqlLocalFC)
-                        results = fl.addFeatures(fc=tempaddlayer)
-                        
-                        if 'error' in results:
-                            raise common.ArcRestHelperError({
-                            "function": "RemoveAndAddFeatures",
-                            "line": inspect.currentframe().f_back.f_lineno,
-                            "filename":  'featureservicetools',
-                            "synerror":results['error']
-                            })                               
-                        elif 'addResults' in results:
-                            print "%s features added" % len(results['addResults'])
-                            for itm in results['addResults']:
-                                if itm['success'] != True:
-                                    print itm
-                        else:
-                            print results                               
+                        allidlist.append(idlist)
                         idlist = []     
-          
+                
+                if len(idlist) > 0:
+                    allidlist.append(idlist)
+                for idlist in allidlist:
+                    idstring = ' in (' + ','.join(idlist) + ')'
+                    sql = id_field + idstring
+                    sqlLocalFC = id_field_local + idstring
+                    results = fl.deleteFeatures(where=sql, 
+                                                rollbackOnFailure=True)
+                
+                    if 'error' in results:
+                        raise common.ArcRestHelperError({
+                            "function": "RemoveAndAddFeatures",
+                            "line": inspect.currentframe().f_back.f_lineno,
+                            "filename":  'featureservicetools',
+                            "synerror":results['error']
+                        })                               
+                    elif 'deleteResults' in results:
+                        print "%s features deleted" % len(results['deleteResults'])
+                        for itm in results['deleteResults']:
+                            if itm['success'] != True:
+                                print itm                            
+                    else:
+                        print results                                                        
+                
+                    arcpy.MakeFeatureLayer_management(pathToFeatureClass,tempaddlayer,sqlLocalFC)
+                    results = fl.addFeatures(fc=tempaddlayer)
+                
+                    if 'error' in results:
+                        raise common.ArcRestHelperError({
+                            "function": "RemoveAndAddFeatures",
+                            "line": inspect.currentframe().f_back.f_lineno,
+                            "filename":  'featureservicetools',
+                            "synerror":results['error']
+                        })                               
+                    elif 'addResults' in results:
+                        print "%s features added" % len(results['addResults'])
+                        for itm in results['addResults']:
+                            if itm['success'] != True:
+                                print itm
+                    else:
+                        print results                               
+                    idlist = []                 
             if 'error' in results:
                 raise common.ArcRestHelperError({
                     "function": "RemoveAndAddFeatures",
@@ -148,7 +155,8 @@ class featureservicetools(securityhandlerhelper):
                                         )
         finally:
             
-            gc.collect()        
+            gc.collect()    
+        
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)

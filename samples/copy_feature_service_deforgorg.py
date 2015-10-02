@@ -6,6 +6,7 @@ import arcrest
 import tempfile
 import os
 import uuid
+import json
 from arcresthelper import securityhandlerhelper
 def trace():
     """
@@ -29,10 +30,10 @@ def main():
     proxy_url = None    
     
     securityinfoSource = {}
-    securityinfoSource['security_type'] = 'NTLM'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfoSource['username'] = "domain\\username"
+    securityinfoSource['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfoSource['username'] = ""
     securityinfoSource['password'] = ""
-    securityinfoSource['org_url'] = ""
+    securityinfoSource['org_url'] = "http://www.arcgis.com"
     securityinfoSource['proxy_url'] = proxy_url
     securityinfoSource['proxy_port'] = proxy_port
     securityinfoSource['referer_url'] = None
@@ -95,9 +96,9 @@ def main():
             else:
                 wkt = fs.initialExtent['spatialReference']['wkt']
             if fs.xssPreventionInfo is not None:
-                xssPreventionEnabled = fs['xssPreventionEnabled']
-                xssPreventionRule = fs['xssPreventionRule']
-                xssInputRule = fs['xssInputRule']
+                xssPreventionEnabled = fs.xssPreventionInfo['xssPreventionEnabled']
+                xssPreventionRule = fs.xssPreventionInfo['xssPreventionRule']
+                xssInputRule = fs.xssPreventionInfo['xssInputRule']
             else:
                 xssPreventionEnabled = None
                 xssPreventionRule = None
@@ -205,6 +206,13 @@ def main():
             else:
                 jsdic['tables'] = []
             for k in jsdic['layers']:
+                k['spatialReference'] = {}
+                if wkt is not None:
+                    
+                    k['spatialReference']['wkt'] = wkt
+                if wkid is not None:
+                                        
+                    k['spatialReference']['wkid'] = wkid                    
                 if 'adminLayerInfo' in k:
                     if 'tableName' in k['adminLayerInfo']:
                         k['adminLayerInfo'].pop('tableName',None)

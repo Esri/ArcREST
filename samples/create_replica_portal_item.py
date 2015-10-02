@@ -54,9 +54,16 @@ if __name__ == "__main__":
             item = admin.content.getItem(itemId)
             user = admin.content.users.user(username=item.owner)
            
+            exportParameters = {"layers":[
+                                   {
+                                       "id": 0, 
+                                       "where": "OBJECTID = 1"
+                                       }]
+                               }
             exportItem = user.exportItem(title="TestExport",
                                 itemId=itemId,
                                 exportFormat="File Geodatabase",
+                                exportParameters=exportParameters,
                                 wait=True)
          
             itemDataPath = exportItem.item.itemData(f=None, savePath=savePath)

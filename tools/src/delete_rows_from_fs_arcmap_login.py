@@ -81,6 +81,7 @@ def main(*argv):
                 if str(toggleEditCapabilities).upper() == 'TRUE':
                     existingDef = fst.EnableEditingOnService(url=fs.url)
                 for layerName in layerNames.split(','):
+                    layerName = layerName.strip()
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
                         outputPrinter(message="Attempting to delete features matching this query: %s " % sql)
