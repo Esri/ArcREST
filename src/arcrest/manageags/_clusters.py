@@ -369,7 +369,7 @@ class Cluster(BaseAGSServer):
         url = self._url + "/editProtocol"
         params = {
             "f" : "json",
-            "clusterProtocol" : str(clusterProtocolObj)
+            "tcpClusterPort" : str(clusterProtocolObj)
         }
         return self._do_post(url=url,
                              param_dict=params,

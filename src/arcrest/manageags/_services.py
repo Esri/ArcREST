@@ -282,7 +282,7 @@ class Services(BaseAGSServer):
             "f" : "json"
         }
         if folderName in self.folders:
-            uURL = self._url + "/%s/delete" % folderName
+            uURL = self._url + "/%s/deleteFolder" % folderName
             return self._do_post(url=uURL, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
