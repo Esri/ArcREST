@@ -60,14 +60,16 @@ if __name__ == "__main__":
                                        "where": "OBJECTID = 1"
                                        }]
                                }
-            exportItem = user.exportItem(title="TestExport",
+            res  = user.exportItem(title="TestExport",
                                 itemId=itemId,
                                 exportFormat="File Geodatabase",
                                 exportParameters=exportParameters,
                                 wait=True)
-         
-            itemDataPath = exportItem.item.itemData(f=None, savePath=savePath)
-            print user.deleteItems(items=exportItem.id)
+            exportItemId = res.id
+            exportItem = content.getItem(exportItemId)
+            itemDataPath = exportItem.itemData(f=None, savePath=savePath)
+            print exportItem.userItem.deleteItem()         
+            
             print itemDataPath
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
