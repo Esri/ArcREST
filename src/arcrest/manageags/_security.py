@@ -69,7 +69,7 @@ class Security(BaseAGSServer):
             If the name of the role exists in the role store, an error will
             be returned.
             Input:
-               name - The name of the role. The name must be unique in the
+               rolename - The name of the role. The name must be unique in the
                       role store.
                description - An optional field to add comments or a
                              description for the role.
@@ -78,7 +78,7 @@ class Security(BaseAGSServer):
         """
         params = {
             "f" : "json",
-            "name" : name,
+            "rolename" : name,
             "description" : description
         }
         aURL = self._url + "/roles/add"
