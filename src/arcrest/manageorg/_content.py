@@ -2218,7 +2218,7 @@ class User(BaseAGOLClass):
                    tags="export",
                    snippet=None,
                    exportParameters=None,
-                   wait=False):
+                   wait=True):
         """
         Exports a service item (POST only) to the specified output format.
         Available only to users with an organizational subscription.
@@ -2235,8 +2235,14 @@ class User(BaseAGOLClass):
            exportParameters - A JSON object describing the layers to be
                               exported and the export parameters for each
                               layer.
+           wait - optional - default false. Export item is an a synchronus
+            operation. If true is specified, the process will wait till the
+            operation is completed.
         Output:
-           UserItem class
+           If wait is True:
+              UserItem class
+           else:
+              job id for the export item.
         """
         url = "%s/export" % self.location
         params = {
@@ -2269,6 +2275,8 @@ class User(BaseAGOLClass):
                 elif status['status'].lower() == "completed":
                     break
                 time.sleep(2)
+        else:
+            return res['jobId'], ui
         return ui
     #----------------------------------------------------------------------
     def createService(self, createServiceParameter,
@@ -2333,7 +2341,7 @@ class User(BaseAGOLClass):
             self.currentFolder = None
             self.refresh
             return res
-            
+
         else:
             return "Cannot delete root folder."
     #----------------------------------------------------------------------
