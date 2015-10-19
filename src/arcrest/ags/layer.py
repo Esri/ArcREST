@@ -648,7 +648,6 @@ class FeatureLayer(BaseAGSServer):
               maxAllowableOffset=None,
               geometryPrecision=None,
               outSR=None,
-
               out_fc=None):
         """ queries a feature service based on a sql statement
             Inputs:
