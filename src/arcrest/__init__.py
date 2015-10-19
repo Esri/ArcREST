@@ -11,4 +11,9 @@ import hostedservice
 #import webmap
 from geometryservice import *
 from enrichment import GeoEnrichment
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
 __version__ = "3.0.0"

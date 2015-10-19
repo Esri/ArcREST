@@ -2262,6 +2262,8 @@ class User(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
         itemURL = "%s/items/%s" % (self.location, res['exportItemId'])
+        if self.currentFolder is not None or self.currentFolder['title'] != "root":
+            self.moveItems(items=res['exportItemId'], folder=self.currentFolder['id'])
         ui = UserItem(url=itemURL,
                       securityHandler=self._securityHandler,
                       proxy_url=self._proxy_url,
