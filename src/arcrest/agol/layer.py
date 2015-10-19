@@ -112,13 +112,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-                    
+
             else:
-                self._securityHandler = securityHandler           
-           
+                self._securityHandler = securityHandler
+
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -677,6 +677,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnIDsOnly=False,
               returnCountOnly=False,
               returnFeatureClass=False,
+              returnDistinctValues=False,
+              returnExtentOnly=False,
               out_fc=None,
               objectIds=""):
         """ queries a feature service based on a sql statement
@@ -711,6 +713,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnGeometry" : returnGeometry,
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
+                  "returnDistinctValues" : returnDistinctValues,
+                  "returnExtentOnly" : returnExtentOnly
                   }
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
@@ -723,7 +727,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['spatialRelationship'] = gf['spatialRel']
             params['inSR'] = gf['inSR']
         if objectIds is not None and objectIds != "":
-            params['objectIds'] = objectIds        
+            params['objectIds'] = objectIds
         fURL = self._url + "/query"
         results = self._do_get(fURL, params,
                                securityHandler=self._securityHandler,
@@ -1144,6 +1148,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 if len(js) % max_chunk > 0:
                     bins += 1
             chunks = self._chunks(l=js, n=bins)
+            import urllib
+
             for chunk in chunks:
                 params = {
                     "f" : 'json',
