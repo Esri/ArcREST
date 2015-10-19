@@ -13,9 +13,11 @@ import json
 import os
 import arcresthelper.common as common
 import gc
-from . import arcpyFound
-if arcpyFound:
+try:
     import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
 
 from urlparse import urlparse
 
