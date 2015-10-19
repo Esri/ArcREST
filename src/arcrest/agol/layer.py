@@ -678,6 +678,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnCountOnly=False,
               returnFeatureClass=False,
               returnDistinctValues=False,
+              returnExtentOnly=False,
               out_fc=None,
               objectIds=""):
         """ queries a feature service based on a sql statement
@@ -712,7 +713,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnGeometry" : returnGeometry,
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
-                  "returnDistinctValues" : returnDistinctValues
+                  "returnDistinctValues" : returnDistinctValues,
+                  "returnExtentOnly" : returnExtentOnly
                   }
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
