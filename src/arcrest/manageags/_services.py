@@ -248,7 +248,7 @@ class Services(BaseAGSServer):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)                             
     #----------------------------------------------------------------------
-    def cleanPermsissions(self, principal):
+    def cleanPermissions(self, principal):
         """
            Cleans all permissions that have been assigned to a role
            (principal). This is typically used when a role is deleted.
