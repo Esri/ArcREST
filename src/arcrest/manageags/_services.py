@@ -230,8 +230,25 @@ class Services(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------                         
+    def listFolderPermissions(self,folderName):
+        """
+           Lists principals which have permissions for the folder.
+           Input:
+              folderName - name of the folder to list permissions for
+           Output:
+              JSON Message as Dictionary
+        """
+        uURL = self._url + "/%s/permissions" % folderName
+        params = {
+            "f" : "json",
+        }
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)                             
     #----------------------------------------------------------------------
-    def cleanPermsissions(self, principal):
+    def cleanPermissions(self, principal):
         """
            Cleans all permissions that have been assigned to a role
            (principal). This is typically used when a role is deleted.
