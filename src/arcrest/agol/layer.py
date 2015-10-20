@@ -1130,6 +1130,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
 
         """
         messages = {'addResults':[]}
+
         if attachmentTable is None:
             count = 0
             bins = 1
@@ -1137,7 +1138,6 @@ class FeatureLayer(abstract.BaseAGOLClass):
             max_chunk = 250
             js = json.loads(self._unicode_convert(
                  featureclass_to_json(fc)))
-
             js = js['features']
             if len(js) == 0:
                 return {'addResults':None}
@@ -1148,8 +1148,6 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 if len(js) % max_chunk > 0:
                     bins += 1
             chunks = self._chunks(l=js, n=bins)
-            import urllib
-
             for chunk in chunks:
                 params = {
                     "f" : 'json',

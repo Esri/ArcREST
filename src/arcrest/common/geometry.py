@@ -1,6 +1,10 @@
 import os
 import json
-import arcpy
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
 import types
 import general
 from .._abstract import abstract
@@ -31,14 +35,14 @@ class SpatialReference(abstract.AbstractGeometry):
     @wkt.setter
     def wkt(self, wkt):
         """ get/set the wkt """
-        self._wkt = wkt        
+        self._wkt = wkt
     @property
     def asDictionary(self):
         """returns the wkid id for use in json calls"""
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}        
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def value(self):
@@ -46,7 +50,7 @@ class SpatialReference(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}      
+            return {"wkid": self._wkid}
 
 ########################################################################
 class Point(abstract.AbstractGeometry):
@@ -72,7 +76,7 @@ class Point(abstract.AbstractGeometry):
         if isinstance(coord, list):
             self._x = float(coord[0])
             self._y = float(coord[1])
-        elif isinstance(coord, arcpy.Geometry):
+        elif arcpyFound and isinstance(coord, arcpy.Geometry):
             self._x = coord.centroid.X
             self._y = coord.centroid.Y
             self._z = coord.centroid.Z
@@ -97,7 +101,7 @@ class Point(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}    
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
@@ -117,6 +121,8 @@ class Point(abstract.AbstractGeometry):
     @property
     def asArcPyObject(self):
         """ returns the Point as an ESRI arcpy.Point object """
+        if arcpyFound == False:
+            raise Exception("ArcPy is required to use this function")
         return arcpy.AsShape(self.asDictionary, True)
     #----------------------------------------------------------------------
     @property
@@ -198,7 +204,7 @@ class Point(abstract.AbstractGeometry):
     @wkt.setter
     def wkt(self, wkt):
         """ get/set the wkt """
-        self._wkt = wkt         
+        self._wkt = wkt
 ########################################################################
 class MultiPoint(abstract.AbstractGeometry):
     """ Implements the ArcGIS JSON MultiPoint Geometry Object """
@@ -215,7 +221,7 @@ class MultiPoint(abstract.AbstractGeometry):
         """Constructor"""
         if isinstance(points, list):
             self._points = points
-        elif isinstance(points, arcpy.Geometry):
+        elif arcpyFound and isinstance(points, arcpy.Geometry):
             self._points = self.__geomToPointList(points)
         self._wkid = wkid
         self._wkt = wkt
@@ -224,7 +230,7 @@ class MultiPoint(abstract.AbstractGeometry):
     #----------------------------------------------------------------------
     def __geomToPointList(self, geom):
         """ converts a geometry object to a common.Geometry object """
-        if isinstance(geom, arcpy.Multipoint):
+        if arcpyFound and isinstance(geom, arcpy.Multipoint):
             feature_geom = []
             fPart = []
             for part in geom:
@@ -242,7 +248,7 @@ class MultiPoint(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}    
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
@@ -262,6 +268,8 @@ class MultiPoint(abstract.AbstractGeometry):
     @property
     def asArcPyObject(self):
         """ returns the Point as an ESRI arcpy.MultiPoint object """
+        if arcpyFound == False:
+            raise Exception("ArcPy is required to use this function")
         return arcpy.AsShape(self.asDictionary, True)
     #----------------------------------------------------------------------
     @property
@@ -302,7 +310,7 @@ class Polyline(abstract.AbstractGeometry):
         """Constructor"""
         if isinstance(paths, list):
             self._paths = paths
-        elif isinstance(paths, arcpy.Geometry):
+        elif arcpyFound and isinstance(paths, arcpy.Geometry):
             self._paths = self.__geomToPointList(paths)
         self._wkid = wkid
         self._wkt = wkt
@@ -311,7 +319,7 @@ class Polyline(abstract.AbstractGeometry):
     #----------------------------------------------------------------------
     def __geomToPointList(self, geom):
         """ converts a geometry object to a common.Geometry object """
-        if isinstance(geom, arcpy.Polyline):
+        if arcpyFound and isinstance(geom, arcpy.Polyline):
             feature_geom = []
             fPart = []
             wkt = None
@@ -339,7 +347,7 @@ class Polyline(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}    
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
@@ -359,6 +367,8 @@ class Polyline(abstract.AbstractGeometry):
     @property
     def asArcPyObject(self):
         """ returns the Polyline as an ESRI arcpy.Polyline object """
+        if arcpyFound == False:
+            raise Exception("ArcPy is required to use this function")
         return arcpy.AsShape(self.asDictionary, True)
     #----------------------------------------------------------------------
     @property
@@ -396,7 +406,7 @@ class Polygon(abstract.AbstractGeometry):
         """Constructor"""
         if isinstance(rings, list):
             self._rings = rings
-        elif isinstance(rings, arcpy.Geometry):
+        elif arcpyFound and isinstance(rings, arcpy.Geometry):
             self._rings = self.__geomToPointList(rings)
 ##            self._json = rings.JSON
 ##            self._dict = _unicode_convert(json.loads(self._json))
@@ -446,7 +456,7 @@ class Polygon(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}      
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
@@ -466,6 +476,8 @@ class Polygon(abstract.AbstractGeometry):
     @property
     def asArcPyObject(self):
         """ returns the Polyline as an ESRI arcpy.Polyline object """
+        if arcpyFound == False:
+            raise Exception("ArcPy is required to use this function")
         return arcpy.AsShape(self.asDictionary, True)
     #----------------------------------------------------------------------
     @property
@@ -531,7 +543,7 @@ class Envelope(abstract.AbstractGeometry):
         if self._wkid == None and self._wkt is not None:
             return {"wkt": self._wkt}
         else:
-            return {"wkid": self._wkid}      
+            return {"wkid": self._wkid}
     #----------------------------------------------------------------------
     @property
     def type(self):
@@ -606,8 +618,8 @@ class Envelope(abstract.AbstractGeometry):
             Point(env['xmax'], env['ymax'], self._wkid),
             Point(env['xmin'], env['ymax'], self._wkid)
             ]]
-        return Polygon(rings=ring, 
+        return Polygon(rings=ring,
                        wkid=self._wkid,
                        wkt=self._wkid,
-                       hasZ=False, 
+                       hasZ=False,
                        hasM=False).asArcPyObject
