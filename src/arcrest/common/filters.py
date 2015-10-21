@@ -5,7 +5,60 @@ import calendar
 import datetime
 from ..common.geometry import Polygon, Polyline, Point, MultiPoint
 from .._abstract.abstract import AbstractGeometry, BaseFilter
-import arcpy
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
+########################################################################
+class StatisticFilter(BaseFilter):
+    """
+    The definitions for one or more field-based statistics to be calculated
+    """
+    _json = None
+    _array = []
+
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        pass
+    #----------------------------------------------------------------------
+    def add(self, statisticType, onStatisticField, outStatisticFieldName=None):
+        """
+        Adds the statistics group to the filter.
+
+        outStatistics - is supported on only those layers/tables that
+          indicate supportsStatistics is true.
+        outStatisticFieldName is empty or missing, the map server assigns a
+          field name to the returned statistic field. A valid field name
+          can only contain alphanumeric characters and an underscore.
+        outStatisticFieldName is a reserved keyword of the underlying DBMS,
+          the operation can fail. Try specifying an alternative
+          outStatisticFieldName. When using outStatistics, the only other
+          parameters that can be used are groupByFieldsForStatistics,
+          orderByFields, time, and where.
+        """
+        val = {
+            "statisticType" : statisticType,
+            "onStatisticField" : onStatisticField,
+            "outStatisticFieldName" : outStatisticFieldName
+        }
+        if outStatisticFieldName is None:
+            del val['outStatisticFieldName']
+        self._array.append(val)
+    #----------------------------------------------------------------------
+    def remove(self, index):
+        """removes the filter by index"""
+        self._array.remove(index)
+    #----------------------------------------------------------------------
+    def clear(self):
+        """removes all the filters"""
+        self._array = []
+    #----------------------------------------------------------------------
+    @property
+    def filter(self):
+        """ returns the key/value pair of a geometry filter """
+        return self._array
 ########################################################################
 class LayerDefinitionFilter(BaseFilter):
     """
@@ -141,16 +194,16 @@ class GeometryFilter(BaseFilter):
         if isinstance(geometry, AbstractGeometry):
             self._geomObject = geometry
             self._geomType = geometry.type
-        elif isinstance(geometry, arcpy.Polygon):
+        elif arcpyFound and isinstance(geometry, arcpy.Polygon):
             self._geomObject = Polygon(geometry, wkid=geometry.spatialReference.factoryCode)
             self._geomType = "esriGeometryPolygon"
-        elif isinstance(geometry, arcpy.Point):
+        elif arcpyFound and isinstance(geometry, arcpy.Point):
             self._geomObject = Point(geometry, wkid=geometry.spatialReference.factoryCode)
             self._geomType = "esriGeometryPoint"
-        elif isinstance(geometry, arcpy.Polyline):
+        elif arcpyFound and isinstance(geometry, arcpy.Polyline):
             self._geomObject = Polyline(geometry, wkid=geometry.spatialReference.factoryCode)
             self._geomType = "esriGeometryPolyline"
-        elif isinstance(geometry, arcpy.Multipoint):
+        elif arcpyFound and isinstance(geometry, arcpy.Multipoint):
             self._geomObject = MultiPoint(geometry, wkid=geometry.spatialReference.factoryCode)
             self._geomType = "esriGeometryMultipoint"
         else:
