@@ -281,7 +281,7 @@ class Data(BaseAGSServer):
         url = self._url + "/unregisterItem"
         params = {
             "f" : "json",
-            "path" : path
+            "itempath" : path
         }
         return self._do_post(url, param_dict=params,
                              securityHandler=self._securityHandler,
