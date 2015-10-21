@@ -679,8 +679,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnFeatureClass=False,
               returnDistinctValues=False,
               returnExtentOnly=False,
+              groupByFieldsForStatistics=None,
+              statisticFilter=None,
               out_fc=None,
-              objectIds=""):
+              objectIds="",
+              **kwargs):
         """ queries a feature service based on a sql statement
             Inputs:
                where - the selection sql statement
@@ -701,8 +704,17 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                  based on the sql statement
                returnFeatureClass - Default False. If true, query will be
                                     returned as feature class
+               groupByFieldsForStatistics - One or more field names on
+                                    which the values need to be grouped for
+                                    calculating the statistics.
+               statisticFilter - object that performs statistic queries
                out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
+               kwargs - optional parameters that can be passed to the Query
+                 function.  This will allow users to pass additional
+                 parameters not explicitly implemented on the function. A
+                 complete list of functions available is documented on the
+                 Query REST API.
             Output:
                A list of Feature Objects (default) or a path to the output featureclass if
                returnFeatureClass is set to True.
@@ -716,6 +728,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnDistinctValues" : returnDistinctValues,
                   "returnExtentOnly" : returnExtentOnly
                   }
+        for key, value in kwargs.iteritems():
+            params[key] = value
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
             params['time'] = timeFilter.filter
@@ -728,6 +742,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['inSR'] = gf['inSR']
         if objectIds is not None and objectIds != "":
             params['objectIds'] = objectIds
+        if not groupByFieldsForStatistics is None:
+            params['groupByFieldsForStatistics'] = groupByFieldsForStatistics
+        if not statisticFilter is None and \
+           isinstance(statisticFilter, filters.StatisticFilter):
+            params['outStatistics'] = statisticFilter.filter
         fURL = self._url + "/query"
         results = self._do_get(fURL, params,
                                securityHandler=self._securityHandler,
