@@ -185,13 +185,13 @@ class Data(BaseAGSServer):
            Input:
               item - The JSON representing the data item.
            Output:
-              dicationary
+              dictionary
         """
         params = {
             "f" : "json",
             "item" : item
         }
-        url = self._url + "/ validateDataItem"
+        url = self._url + "/validateDataItem"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
@@ -281,7 +281,7 @@ class Data(BaseAGSServer):
         url = self._url + "/unregisterItem"
         params = {
             "f" : "json",
-            "path" : path
+            "itempath" : path
         }
         return self._do_post(url, param_dict=params,
                              securityHandler=self._securityHandler,
