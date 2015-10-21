@@ -1,7 +1,8 @@
 """
    This sample shows how to create a 
    replica from portal of a feature service.
-   The replica is saved locally in a .zip file.
+   The replica is saved locally and on the
+   portal in a .zip file.
 
 """
 import arcrest
