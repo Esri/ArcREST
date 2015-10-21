@@ -1,6 +1,7 @@
 """
    This sample shows how to create a 
-   replica from portal of a feature service
+   replica from portal of a feature service.
+   The replica is saved locally in a .zip file.
 
 """
 import arcrest
@@ -66,7 +67,7 @@ if __name__ == "__main__":
                                 exportParameters=exportParameters,
                                 wait=True)
             exportItemId = res.id
-            exportItem = content.getItem(exportItemId)
+            exportItem = admin.content.getItem(exportItemId)
             itemDataPath = exportItem.itemData(f=None, savePath=savePath)
             print exportItem.userItem.deleteItem()         
             
