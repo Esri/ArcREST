@@ -1552,6 +1552,7 @@ class UserItem(BaseAGOLClass):
            serviceUrl - this is a service url endpoint.
         """
         thumbnail = None
+        largeThumbnail = None
         files = []
         params = {
             "f": "json",
@@ -1574,7 +1575,9 @@ class UserItem(BaseAGOLClass):
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
                 files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-
+            elif key == "largeThumbnail":
+                largeThumbnail = dictItem['largeThumbnail']
+                files.append(('largeThumbnail', largeThumbnail, os.path.basename(largeThumbnail)))
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
             else:
