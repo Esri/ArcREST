@@ -6,16 +6,15 @@ from datetime import timedelta
 from arcrest.common.general import local_time_to_online,online_time_to_string
 
 if __name__ == "__main__":
-    url = 'URL to Service'
-    sql = 'where clause'
+    url = ''# URL to Service
+    sql = ''# where clause
     
     dt = local_time_to_online(datetime.datetime.now())
    
-    fieldInfo =[
-               
+    fieldInfo =[            
                 {
-                    'FieldName':'dischrgtyp',
-                    'ValueToSet':'Alert'
+                    'FieldName':'NAME',
+                    'ValueToSet':'test'
                 }
                ]
     
@@ -24,9 +23,9 @@ if __name__ == "__main__":
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI, ArcGIS
-    securityinfo['username'] = "<User Name>"
-    securityinfo['password'] = "<Password>"
-    securityinfo['org_url'] = "<Org or portal url>"
+    securityinfo['username'] = "" #User Name
+    securityinfo['password'] = "" #password
+    securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
     securityinfo['referer_url'] = None
