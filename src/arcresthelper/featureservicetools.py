@@ -16,6 +16,7 @@ import common
 import gc
 import arcpy
 import traceback, inspect, sys 
+import collections        
 #----------------------------------------------------------------------
 def trace():
     """
@@ -160,18 +161,26 @@ class featureservicetools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
-
+       
         if definition is None:
-            definition = {}
-
-            definition['capabilities'] = "Create,Delete,Query,Update,Editing"
+            definition = collections.OrderedDict()
+            definition['hasStaticData'] = False
+         
+           
             definition['allowGeometryUpdates'] = True
-
+           
+            definition['editorTrackingInfo'] = {}
+            definition['editorTrackingInfo']['enableEditorTracking'] = False
+            definition['editorTrackingInfo']['enableOwnershipAccessControl'] = False
+            definition['editorTrackingInfo']['allowOthersToUpdate'] = True
+            definition['editorTrackingInfo']['allowOthersToDelete'] = True
+            definition['capabilities'] = "Query,Editing,Create,Update,Delete"
+    
+          
         existingDef = {}
 
         existingDef['capabilities']  = adminFS.capabilities
         existingDef['allowGeometryUpdates'] = adminFS.allowGeometryUpdates
-
         enableResults = adminFS.updateDefinition(json_dict=definition)
 
         if 'error' in enableResults:
@@ -179,7 +188,7 @@ class featureservicetools(securityhandlerhelper):
         adminFS = None
         del adminFS
 
-
+        print enableResults
         return existingDef
     #----------------------------------------------------------------------
     def disableSync(self, url, definition = None):
