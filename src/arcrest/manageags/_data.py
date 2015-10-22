@@ -166,7 +166,7 @@ class Data(BaseAGSServer):
         params = {
         "f" : "json"}
         url = self._url + "/validateAllDataItems"
-        return self._do_get(url=url, param_dict=params,
+        return self._do_post(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
