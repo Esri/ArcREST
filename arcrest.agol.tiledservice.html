@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.agol.tiledservice module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.agol.tiledservice">
+<span id="arcrest-agol-tiledservice-module"></span><h1>arcrest.agol.tiledservice module<a class="headerlink" href="#module-arcrest.agol.tiledservice" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-admin"></span><dl class="class">
+<dt id="arcrest.agol.tiledservice.TiledService">
+<em class="property">class </em><code class="descclassname">arcrest.agol.tiledservice.</code><code class="descname">TiledService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>AGOL Tiled Map Service</p>
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.access">
+<code class="descname">access</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.access" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the access value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.created">
+<code class="descname">created</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.created" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the created value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.documentInfo">
+<code class="descname">documentInfo</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.documentInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the document information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.exportTilesAllowed">
+<code class="descname">exportTilesAllowed</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.exportTilesAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>export tiles allowed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.id">
+<code class="descname">id</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the ID</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>initial extent of tile service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.mapName">
+<code class="descname">mapName</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.mapName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.maxExportTilesCount">
+<code class="descname">maxExportTilesCount</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.maxExportTilesCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max export tiles count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the maximum scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the minimum scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.modified">
+<code class="descname">modified</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the modified value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.server">
+<code class="descname">server</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.server" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the server information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.singleFusedMapCache">
+<code class="descname">singleFusedMapCache</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.singleFusedMapCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>information about the single fused map cache</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatial reference value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.status">
+<code class="descname">status</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the status</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.storageFormat">
+<code class="descname">storageFormat</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.storageFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the storage format</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.supportedImageFormatTypes">
+<code class="descname">supportedImageFormatTypes</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.supportedImageFormatTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported image format types</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tables in the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.tileInfo">
+<code class="descname">tileInfo</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.tileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tile information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.tileServers">
+<code class="descname">tileServers</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.tileServers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tile services value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.type">
+<code class="descname">type</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.tiledservice.TiledService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.agol.tiledservice.TiledService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the units</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.agol.tiledservice.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.agol.tiledservice.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

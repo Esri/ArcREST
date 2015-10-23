@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.common.spatial module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.common.spatial">
+<span id="arcrest-common-spatial-module"></span><h1>arcrest.common.spatial module<a class="headerlink" href="#module-arcrest.common.spatial" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="arcrest.common.spatial.create_feature_class">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">create_feature_class</code><span class="sig-paren">(</span><em>out_path</em>, <em>out_name</em>, <em>geom_type</em>, <em>wkid</em>, <em>fields</em>, <em>objectIdField</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.create_feature_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a feature class in a given gdb or folder</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.create_feature_layer">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">create_feature_layer</code><span class="sig-paren">(</span><em>ds</em>, <em>sql</em>, <em>name='layer'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.create_feature_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a feature layer object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.featureclass_to_json">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">featureclass_to_json</code><span class="sig-paren">(</span><em>fc</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.featureclass_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a feature class to JSON</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.getDateFields">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">getDateFields</code><span class="sig-paren">(</span><em>fc</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.getDateFields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of fields that are of type DATE
+Input:</p>
+<blockquote>
+<div>fc - feature class or table path</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>List of date field names as strings</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.get_OID_field">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">get_OID_field</code><span class="sig-paren">(</span><em>fs</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.get_OID_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a featureset&#8217;s object id field</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.get_attachment_data">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">get_attachment_data</code><span class="sig-paren">(</span><em>attachmentTable</em>, <em>sql</em>, <em>nameField='ATT_NAME'</em>, <em>blobField='DATA'</em>, <em>contentTypeField='CONTENT_TYPE'</em>, <em>rel_object_field='REL_OBJECTID'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.get_attachment_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets all the data to pass to a feature service</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.get_records_with_attachments">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">get_records_with_attachments</code><span class="sig-paren">(</span><em>attachment_table</em>, <em>rel_object_field='REL_OBJECTID'</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.get_records_with_attachments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.insert_rows">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">insert_rows</code><span class="sig-paren">(</span><em>fc</em>, <em>features</em>, <em>fields</em>, <em>includeOIDField=False</em>, <em>oidField=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.insert_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>inserts rows based on a list features object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.json_to_featureclass">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">json_to_featureclass</code><span class="sig-paren">(</span><em>json_file</em>, <em>out_fc</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.json_to_featureclass" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a json file (.json) to a feature class</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.lookUpFieldType">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">lookUpFieldType</code><span class="sig-paren">(</span><em>field_type</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.lookUpFieldType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the ArcGIS REST field types to Python Types
+Input:</p>
+<blockquote>
+<div>field_type - string - type of field as string</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>Python field type as string</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.lookUpGeometry">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">lookUpGeometry</code><span class="sig-paren">(</span><em>geom_type</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.lookUpGeometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts ArcRest API geometry name to Python names
+Input:</p>
+<blockquote>
+<div>geom_type - string - name of geometry</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>name of python geometry type for create feature class function</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.merge_feature_class">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">merge_feature_class</code><span class="sig-paren">(</span><em>merges</em>, <em>out_fc</em>, <em>cleanUp=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.merge_feature_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>merges featureclass into a single feature class</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.recordset_to_json">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">recordset_to_json</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.recordset_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the table to JSON</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.scratchFolder">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">scratchFolder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.scratchFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the scratch foldre</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.scratchGDB">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">scratchGDB</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.scratchGDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the arcpy scratch file geodatabase</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.table_to_json">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">table_to_json</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.table_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a table as JSON</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.common.spatial.toDateTime">
+<code class="descclassname">arcrest.common.spatial.</code><code class="descname">toDateTime</code><span class="sig-paren">(</span><em>unix_timestamp</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.common.spatial.toDateTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a unix time stamp to a datetime object</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.common.spatial.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.common.spatial.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

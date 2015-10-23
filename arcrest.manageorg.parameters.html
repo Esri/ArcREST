@@ -1,0 +1,1170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.manageorg.parameters module &mdash; ArcREST 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-arcrest.manageorg.parameters">
+<span id="arcrest-manageorg-parameters-module"></span><h1>arcrest.manageorg.parameters module<a class="headerlink" href="#module-arcrest.manageorg.parameters" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">AnalyzeParameters</code><span class="sig-paren">(</span><em>sourcelocale='en'</em>, <em>geocodeServiceUrl=None</em>, <em>sourcecountry='world'</em>, <em>sourcecountryhint=None</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The analyzeParameters JSON object used to analyze a CSV file are
+described below.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">sourcelocale - The locale used for the geocoding service source.
+geocodeServiceUrl - The URL of the geocoding service that supports</p>
+<blockquote>
+<div>batch geocoding.
+Note: ArcGIS for Portal 10.3 supports
+configuring multiple geocoding services. If the
+client application requires a specific locator,
+the URL of this service should be specified in
+this parameter.</div></blockquote>
+<dl class="last docutils">
+<dt>sourcecountry - The two character country code associated with the</dt>
+<dd>geocoding service, default is &#8220;world&#8221;.</dd>
+<dt>sourcecountryhint - If first time analyzing, the hint is used. If</dt>
+<dd>source country is already specified than
+sourcecountry is used.</dd>
+</dl>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters.geocodeServiceUrl">
+<code class="descname">geocodeServiceUrl</code><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters.geocodeServiceUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the geocodeServiceUrl</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters.sourcecountry">
+<code class="descname">sourcecountry</code><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters.sourcecountry" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the sourcecountry</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters.sourcecountryhint">
+<code class="descname">sourcecountryhint</code><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters.sourcecountryhint" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the sourcecountryhint</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters.sourcelocale">
+<code class="descname">sourcelocale</code><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters.sourcelocale" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the locale for geocoding serouce source</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.AnalyzeParameters.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.AnalyzeParameters.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns object as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.CreateServiceParameters">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">CreateServiceParameters</code><span class="sig-paren">(</span><em>name</em>, <em>spatialReference</em>, <em>serviceDescription=''</em>, <em>hasStaticData=False</em>, <em>maxRecordCount=1000</em>, <em>supportedQueryFormats='JSON'</em>, <em>capabilities='Query'</em>, <em>description=''</em>, <em>copyrightText=''</em>, <em>initialExtent=None</em>, <em>allowGeometryUpdates=False</em>, <em>units='esriDecimalDegrees'</em>, <em>xssPreventionEnabled=False</em>, <em>xssPreventionRule='InputOnly'</em>, <em>xssInputRule='sanitizeInvalid'</em>, <em>currentVersion='10.3'</em>, <em>enableEditorTracking=False</em>, <em>enableOwnershipAccessControl=False</em>, <em>allowOthersToUpdate=True</em>, <em>allowOthersToDelete=True</em>, <em>supportsAsync=True</em>, <em>supportsRegisteringExistingData=True</em>, <em>supportsSyncDirectionControl=True</em>, <em>supportsPerLayerSync=True</em>, <em>supportsPerReplicaSync=True</em>, <em>supportsRollbackOnFailure=True</em>, <em>hasVersionedData=False</em>, <em>supportsDisconnectedEditing=False</em>, <em>size=49152</em>, <em>syncEnabled=True</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.CreateServiceParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The createParameters JSON object</p>
+<dl class="docutils">
+<dt>name (Required) Name of the service to be created. This name must be</dt>
+<dd>unique. If the name already exists, the operation will
+fail.</dd>
+</dl>
+<p>serviceDescription  - Description given to the service.
+hasStaticData - Boolean value indicating whether the data changes.
+maxRecordCount - A double value indicating any constraints enforced on</p>
+<blockquote>
+<div>query operations.</div></blockquote>
+<p>supportedQueryFormats - The formats in which query results are returned
+capabilities - Specify feature service editing capabilities for Create,</p>
+<blockquote>
+<div>Delete, Query, Update, and Sync.</div></blockquote>
+<p>description - A user-friendly description for the published dataset.
+copyrightText - Copyright information associated with the dataset.
+spatialReference - All layers added to a hosted feature service need to</p>
+<blockquote>
+<div>have the same spatial reference defined for the
+feature service. When creating a new empty service
+without specifying its spatial reference, the
+spatial reference of the hosted feature service is
+set to the first layer added to that feature service</div></blockquote>
+<p>initialExtent - The initial extent set for the service.
+allowGeometryUpdates - Boolean value indicating if updating the</p>
+<blockquote>
+<div>geometry of the service is permitted.</div></blockquote>
+<p>units - Units used by the feature service
+xssPreventionEnabled - Boolean value indicating whether cross-site</p>
+<blockquote>
+<div>scripting prevention is enabled.</div></blockquote>
+<p>xssPreventionRule - Either InputOnly | InputOutput
+xssInputRule - Either rejectInvalid | sanitizeInvalid</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.CreateServiceParameters.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.CreateServiceParameters.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.ItemParameter">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">ItemParameter</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>Item parameters correspond to properties of an item that are available
+to update on the Add Item and Update Item operations.</p>
+<dl class="docutils">
+<dt>Allowed Parameters:</dt>
+<dd><dl class="first docutils">
+<dt>title - The title of the item. This is the only name that users and</dt>
+<dd>applications use for the item. There is no concept of
+display names or aliases in the ArcGIS Portal API.</dd>
+<dt>thumbnail - Enter the pathname to the thumbnail image to be used for</dt>
+<dd>the item. The recommended image size is 200 pixels wide
+by 133 pixels high. Acceptable image formats are PNG,
+GIF, and JPEG. The maximum file size for an image is 1
+MB. This is not a reference to the file but the file
+itself, which will be stored on the sharing servers.</dd>
+<dt>thumbnailurl - Enter the URL to the thumbnail image to be used for</dt>
+<dd>the item. The recommended image size is 200 pixels
+wide by 133 pixels high. Acceptable image formats are
+PNG, GIF, and JPEG. The maximum file size for an
+image is 1 MB.</dd>
+<dt>metadata - The file that stores the metadata information on an item.</dt>
+<dd>It&#8217;s stored in the metadata folder under esriinfo, e.g.,
+/sharing/content/items/&lt;itemid&gt;/info/metadata/metadata.xml.</dd>
+<dt>type - The type of the item. Must be drawn from the list of</dt>
+<dd>supported types. See Items and item types for a list of the
+supported types.</dd>
+<dt>typeKeywords - Type keywords describe the type and should logically</dt>
+<dd>apply to all items of that type. See Items and item
+types for a list of the different predefined type
+keywords that will be automatically added based on
+the supplied type. Use this parameter only if you
+want to add additional type keywords. typeKeywords
+can be applied to any type of item, in addition to
+hosted feature services.</dd>
+</dl>
+<p>description - An item description can be of any length.
+tags - Tags are words or short phrases that describe the specific</p>
+<blockquote>
+<div>item. Separate with commas.</div></blockquote>
+<dl class="docutils">
+<dt>snippet - Snippet or summary for the item. Limit this brief</dt>
+<dd>descriptive text to 250 characters.</dd>
+</dl>
+<p>extent - boudning box as Syntax: extent=&lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+spatialReference - coordinate system of the item
+accessInformation - credits the source of the item
+licenseInfo - includes any license information or restrictions
+culture -The item locale (language and country) information.
+serviceUsername - Set the username on a secure on-premise ArcGIS</p>
+<blockquote>
+<div>Server service. It is valid on Map Services,
+Feature Services and Image Services only.</div></blockquote>
+<dl class="docutils">
+<dt>servicePassword - Set the password on a secure on-premise ArcGIS</dt>
+<dd>Server service. It is valid on Map Services,
+Feature Services, and Image Services only.</dd>
+</dl>
+<p class="last">fileName - name of the file updating (optional)</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.accessInformation">
+<code class="descname">accessInformation</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.accessInformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets for the credits of the source of the item.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.culture">
+<code class="descname">culture</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.culture" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the item locale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets an item description of any length</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.extent">
+<code class="descname">extent</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.extent" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the bounding rectangle of the item</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.filename">
+<code class="descname">filename</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the file name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.licenseInfo">
+<code class="descname">licenseInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.licenseInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the license information or restrictions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the metadata file
+The file that stores the metadata information on an item. It&#8217;s
+stored in the metadata folder under esriinfo, e.g.,
+/sharing/content/items/&lt;itemid&gt;/info/metadata/metadata.xml</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.overwrite">
+<code class="descname">overwrite</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>overwrites an existing item.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.servicePassword">
+<code class="descname">servicePassword</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.servicePassword" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets - Set the password on a secure on-premise ArcGIS Server
+service. It is valid on Map Services, Feature Services, and Image
+Services only.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.serviceUsername">
+<code class="descname">serviceUsername</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.serviceUsername" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/Set the username on a secure on-premise ArcGIS Server service.
+It is valid on Map Services, Feature Services and Image Services
+only</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.snippet">
+<code class="descname">snippet</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.snippet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Snippet or summary for the item. Limit this brief descriptive text
+to 250 characters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the coordinate system of the item</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.tags">
+<code class="descname">tags</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the tags that describe the item</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.thumbnail">
+<code class="descname">thumbnail</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the thumbnail
+Enter the pathname to the thumbnail image to be used for the item.
+The recommended image size is 200 pixels wide by 133 pixels high.
+Acceptable image formats are PNG, GIF, and JPEG. The maximum file
+size for an image is 1 MB. This is not a reference to the file but
+the file itself, which will be stored on the sharing servers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.thumbnailurl">
+<code class="descname">thumbnailurl</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.thumbnailurl" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the thumbnail url
+Enter the URL to the thumbnail image to be used for the item. The
+recommended image size is 200 pixels wide by 133 pixels high.
+Acceptable image formats are PNG, GIF, and JPEG. The maximum file
+size for an image is 1 MB</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.title">
+<code class="descname">title</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/set the title</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.type">
+<code class="descname">type</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the type
+The type of the item. Must be drawn from the list of supported types.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.typeKeywords">
+<code class="descname">typeKeywords</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.typeKeywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the typeKeywords
+Type keywords describe the type and should logically apply to all
+items of that type. See Items and item types for a list of the
+different predefined type keywords that will be automatically added
+based on the supplied type. Use this parameter only if you want to
+add additional type keywords. typeKeywords can be applied to any
+type of item, in addition to hosted feature services.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.ItemParameter.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.ItemParameter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the class as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PortalParameters">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PortalParameters</code><span class="sig-paren">(</span><em>**kwargv</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The following parameters represent the properties of a portal</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.access">
+<code class="descname">access</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.access" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value access</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.allSSL">
+<code class="descname">allSSL</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.allSSL" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value allSSL</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.availableCredits">
+<code class="descname">availableCredits</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.availableCredits" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value availableCredits</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.basemapGalleryGroupQuery">
+<code class="descname">basemapGalleryGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.basemapGalleryGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value basemapGalleryGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canListApps">
+<code class="descname">canListApps</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canListApps" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canListApps</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canListData">
+<code class="descname">canListData</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canListData" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canListData</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canListPreProvisionedItems">
+<code class="descname">canListPreProvisionedItems</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canListPreProvisionedItems" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canListPreProvisionedItems</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canProvisionDirectPurchase">
+<code class="descname">canProvisionDirectPurchase</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canProvisionDirectPurchase" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canProvisionDirectPurchase</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canSearchPublic">
+<code class="descname">canSearchPublic</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canSearchPublic" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canSearchPublic</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canShareBingPublic">
+<code class="descname">canShareBingPublic</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canShareBingPublic" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canShareBingPublic</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canSharePublic">
+<code class="descname">canSharePublic</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canSharePublic" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canSharePublic</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canSignInArcGIS">
+<code class="descname">canSignInArcGIS</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canSignInArcGIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canSignInArcGIS</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.canSignInIDP">
+<code class="descname">canSignInIDP</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.canSignInIDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value canSignInIDP</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.colorSetsGroupQuery">
+<code class="descname">colorSetsGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.colorSetsGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value colorSetsGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.commentsEnabled">
+<code class="descname">commentsEnabled</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.commentsEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value commentsEnabled</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.created">
+<code class="descname">created</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.created" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value created</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.culture">
+<code class="descname">culture</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.culture" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value culture</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.customBaseUrl">
+<code class="descname">customBaseUrl</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.customBaseUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value customBaseUrl</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.databaseQuota">
+<code class="descname">databaseQuota</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.databaseQuota" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value databaseQuota</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.databaseUsage">
+<code class="descname">databaseUsage</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.databaseUsage" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value databaseUsage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.defaultBasemap">
+<code class="descname">defaultBasemap</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.defaultBasemap" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value defaultBasemap</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.defaultExtent">
+<code class="descname">defaultExtent</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.defaultExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value defaultExtent</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.featuredGroups">
+<code class="descname">featuredGroups</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.featuredGroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value featuredGroups</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.featuredGroupsId">
+<code class="descname">featuredGroupsId</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.featuredGroupsId" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value featuredGroupsId</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.featuredItemsGroupQuery">
+<code class="descname">featuredItemsGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.featuredItemsGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value featuredItemsGroupQuery</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="arcrest.manageorg.parameters.PortalParameters.fromDictionary">
+<em class="property">static </em><code class="descname">fromDictionary</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.fromDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates the portal properties object from a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.galleryTemplatesGroupQuery">
+<code class="descname">galleryTemplatesGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.galleryTemplatesGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value galleryTemplatesGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.helpBase">
+<code class="descname">helpBase</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.helpBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value helpBase</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.helpMap">
+<code class="descname">helpMap</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.helpMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value helpMap</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.helperServices">
+<code class="descname">helperServices</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.helperServices" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value helperServices</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.homePageFeaturedContent">
+<code class="descname">homePageFeaturedContent</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.homePageFeaturedContent" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value homePageFeaturedContent</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.homePageFeaturedContentCount">
+<code class="descname">homePageFeaturedContentCount</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.homePageFeaturedContentCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value homePageFeaturedContentCount</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.httpPort">
+<code class="descname">httpPort</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.httpPort" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value httpPort</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.httpsPort">
+<code class="descname">httpsPort</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.httpsPort" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value httpsPort</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.id">
+<code class="descname">id</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.ipCntryCode">
+<code class="descname">ipCntryCode</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.ipCntryCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value ipCntryCode</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.isPortal">
+<code class="descname">isPortal</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.isPortal" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value isPortal</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.layerTemplatesGroupQuery">
+<code class="descname">layerTemplatesGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.layerTemplatesGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value layerTemplatesGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.livingAtlasGroupQuery">
+<code class="descname">livingAtlasGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.livingAtlasGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value livingAtlasGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.maxTokenExpirationMinutes">
+<code class="descname">maxTokenExpirationMinutes</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.maxTokenExpirationMinutes" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value maxTokenExpirationMinutes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.metadataEditable">
+<code class="descname">metadataEditable</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.metadataEditable" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value metadataEditable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.metadataFormats">
+<code class="descname">metadataFormats</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.metadataFormats" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value metadataFormats</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.mfaAdmins">
+<code class="descname">mfaAdmins</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.mfaAdmins" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value mfaAdmins</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.mfaEnabled">
+<code class="descname">mfaEnabled</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.mfaEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value mfaEnabled</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.modified">
+<code class="descname">modified</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value modified</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.portalHostname">
+<code class="descname">portalHostname</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.portalHostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value portalHostname</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.portalMode">
+<code class="descname">portalMode</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.portalMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value portalMode</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.portalName">
+<code class="descname">portalName</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.portalName" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value portalName</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.portalProperties">
+<code class="descname">portalProperties</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.portalProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value portalProperties</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.portalThumbnail">
+<code class="descname">portalThumbnail</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.portalThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value portalThumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.region">
+<code class="descname">region</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.region" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value region</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.rotatorPanels">
+<code class="descname">rotatorPanels</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.rotatorPanels" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value rotatorPanels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.showHomePageDescription">
+<code class="descname">showHomePageDescription</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.showHomePageDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value showHomePageDescription</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.staticImagesUrl">
+<code class="descname">staticImagesUrl</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.staticImagesUrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value staticImagesUrl</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.storageQuota">
+<code class="descname">storageQuota</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.storageQuota" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value storageQuota</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.storageUsage">
+<code class="descname">storageUsage</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.storageUsage" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value storageUsage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.stylesGroupQuery">
+<code class="descname">stylesGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.stylesGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value stylesGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.subscriptionInfo">
+<code class="descname">subscriptionInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.subscriptionInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value subscriptionInfo</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.supportsHostedServices">
+<code class="descname">supportsHostedServices</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.supportsHostedServices" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value supportsHostedServices</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.supportsOAuth">
+<code class="descname">supportsOAuth</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.supportsOAuth" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value supportsOAuth</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.symbolSetsGroupQuery">
+<code class="descname">symbolSetsGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.symbolSetsGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value symbolSetsGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.templatesGroupQuery">
+<code class="descname">templatesGroupQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.templatesGroupQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value templatesGroupQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.thumbnail">
+<code class="descname">thumbnail</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value thumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value units</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.urlKey">
+<code class="descname">urlKey</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.urlKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value urlKey</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.useStandardizedQuery">
+<code class="descname">useStandardizedQuery</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.useStandardizedQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value useStandardizedQuery</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.user">
+<code class="descname">user</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the property value user</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PortalParameters.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PortalParameters.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the class as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PublishCSVParameters</code><span class="sig-paren">(</span><em>name</em>, <em>locationType</em>, <em>layerInfo</em>, <em>latitudeFieldName=None</em>, <em>longitudeFieldName=None</em>, <em>addressTemplate=None</em>, <em>lookupType=None</em>, <em>lookupFields=None</em>, <em>description=''</em>, <em>maxRecordCount=-1</em>, <em>copyrightText=''</em>, <em>columnNames=None</em>, <em>columnDelimiter='</em>, <em>'</em>, <em>sourceSR=4326</em>, <em>targetSR=102100</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The publishParameters JSON object used to publish a CSV file</p>
+<dl class="docutils">
+<dt>name - (Required) - Name of the service to be created. The same name is</dt>
+<dd>reused as the name for the single layer within the service if
+the layerInfo parameter is not provided.</dd>
+<dt>locationType - (Required) - coordinates | address | lookup | none</dt>
+<dd><p class="first">-When locationType == coordinates, the CSV data contains
+X,Y information.
+-When locationType == address, the CSV data contains
+address fields that will be geocoded to a single point.
+-When locationType == lookup, the CSV data contains
+fields that can be mapped to well-known sets of
+geographies.
+-When locationType == none, the CSV data contains no
+spatial content and data will be loaded and subsequently
+queried as tabular data.</p>
+<p class="last">Based on this parameter, additional parameters will be
+required, e.g., when specifying locationType ==
+coordinates, the latitude and longitude field names must
+be specified.</p>
+</dd>
+<dt>latitudeFieldName - (Required if locationType = coordinates) - If</dt>
+<dd>locationType = coordinates, the name of the field
+that contains the Y coordinate.</dd>
+<dt>longitudeFieldName - (Required if locationType = coordinates) - If</dt>
+<dd>locationType = coordinates, the name of the field
+that contains the X coordinate.</dd>
+<dt>addressTemplate - (Required if locationType = address) - A string value</dt>
+<dd>that defines the address to find based on CSV field
+values.
+Example: &#8220;{Address} {City}, {State} {Zip}&#8221;</dd>
+<dt>lookupType - (Required if locationType == lookup) - The type of place</dt>
+<dd>to look up. To be supported in a follow on phase.</dd>
+<dt>lookupFields (Required if locationType == lookup) - A JSON object with</dt>
+<dd>name value pairs that define the fields used to look up
+the location.</dd>
+<dt>layerInfo - (Required) - A JSON object that provides additional</dt>
+<dd>information about the dataset. The JSON format resembles
+the layerDescriptor used in publishing feature services to
+an on-premise spatial data server or ArcGIS Server. All
+parameters except fields are optional.</dd>
+</dl>
+<p>description - A user-friendly description for the published dataset.
+maxRecordCount - A double value indicating any constraints enforced on</p>
+<blockquote>
+<div>query operations.
+Default is -1 or int.MaxValue indicating no constraint.</div></blockquote>
+<p>copyrightText - Copyright information associated with the dataset.
+columnNames - [&lt;array of column names], overridden if layerInfo fields</p>
+<blockquote>
+<div>is specified.
+If columnNames are omitted, the field names are inferred
+from the first line in source CSV.</div></blockquote>
+<dl class="docutils">
+<dt>columnDelimiter - A delimiter between data fields in each row of text.</dt>
+<dd>Default is the comma character.</dd>
+<dt>sourceSR - Spatial reference of the input coordinates.</dt>
+<dd>Default is WKID 4326.</dd>
+<dt>targetSR - Target spatial reference of the coordinates as stored in the</dt>
+<dd>database.
+Default is WKID 102100.</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.addressTemplate">
+<code class="descname">addressTemplate</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.addressTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the address tempalte value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.columnDelimiter">
+<code class="descname">columnDelimiter</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.columnDelimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the columnDelimiter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.columnNames">
+<code class="descname">columnNames</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.columnNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the columnNames</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/set the decription</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.latitudeFieldName">
+<code class="descname">latitudeFieldName</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.latitudeFieldName" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the latitude field name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.layerInfo">
+<code class="descname">layerInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.layerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the layer info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.locationType">
+<code class="descname">locationType</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.locationType" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the location type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.longitudeFieldName">
+<code class="descname">longitudeFieldName</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.longitudeFieldName" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the longitude field name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.lookupField">
+<code class="descname">lookupField</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.lookupField" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the lookup field</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/set the max record count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the name property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.sourceSR">
+<code class="descname">sourceSR</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.sourceSR" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/set the source spatialreference</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.targetSR">
+<code class="descname">targetSR</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.targetSR" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the target spatial reference</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishCSVParameters.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishCSVParameters.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the values as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PublishFGDBParameter</code><span class="sig-paren">(</span><em>name</em>, <em>layerInfo</em>, <em>description=''</em>, <em>maxRecordCount=-1</em>, <em>copyrightText=''</em>, <em>targetSR=102100</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The publishParameters JSON object used to publish file geodatabase</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the copyrightText</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.layerInfo">
+<code class="descname">layerInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.layerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the layer info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the max record count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.overwrite">
+<code class="descname">overwrite</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the overwrite value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.targetSR">
+<code class="descname">targetSR</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.targetSR" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the targetSR</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFGDBParameter.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFGDBParameter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PublishFeatureCollectionParameter</code><span class="sig-paren">(</span><em>name</em>, <em>layerInfo</em>, <em>description=''</em>, <em>maxRecordCount=-1</em>, <em>copyrightText=''</em>, <em>targetSR=102100</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The publishParameters JSON object used to publish feature collections</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the copyrightText</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.layerInfo">
+<code class="descname">layerInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.layerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the layer info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the max record count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.targetSR">
+<code class="descname">targetSR</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.targetSR" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the targetSR</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishFeatureCollectionParameter.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishFeatureCollectionParameter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PublishSDParmaeters">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PublishSDParmaeters</code><span class="sig-paren">(</span><em>tags</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PublishSDParmaeters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>Required parameters to publish SD Parameters</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishSDParmaeters.overwrite">
+<code class="descname">overwrite</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishSDParmaeters.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>overwrites an item</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishSDParmaeters.tags">
+<code class="descname">tags</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishSDParmaeters.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the tags value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishSDParmaeters.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishSDParmaeters.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the parameter value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.parameters.</code><code class="descname">PublishShapefileParameter</code><span class="sig-paren">(</span><em>name</em>, <em>layerInfo</em>, <em>description=''</em>, <em>maxRecordCount=-1</em>, <em>copyrightText=''</em>, <em>targetSR=102100</em><span class="sig-paren">)</span><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseParameters</span></code></p>
+<p>The publishParameters JSON object used to publish shapefiles</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the copyrightText</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.hasStaticData">
+<code class="descname">hasStaticData</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.hasStaticData" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets hasStaticData</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.layerInfo">
+<code class="descname">layerInfo</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.layerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the layer info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the max record count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.targetSR">
+<code class="descname">targetSR</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.targetSR" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the targetSR</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.parameters.PublishShapefileParameter.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageorg.parameters.PublishShapefileParameter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.manageorg.parameters.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Andrew Chapkowski, Mike Miller.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.manageorg.parameters.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
