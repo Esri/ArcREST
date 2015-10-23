@@ -1122,7 +1122,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['features'] = json.dumps([features.asDictionary],
                                             default=_date_handler)
         elif isinstance(features, FeatureSet):
-            params['features'] = json.dumps([feature.asDictionary for feature in feature.features],
+            params['features'] = json.dumps([feature.asDictionary for feature in features.features],
                                             default=_date_handler)
         else:
             return None
