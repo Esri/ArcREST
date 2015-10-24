@@ -537,6 +537,30 @@ class Security(BaseAGSServer):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def updatePrimarySiteAdministrator(self, username, password):
+        """
+           Updates account properties of the primary site administrator
+           Input:
+              username - You can optionally provide a new name for the
+              primary site administrator account.
+              password - The password for the new primary site
+              administrator account.
+           Output:
+              JSON message as dictionary
+        """
+        params = {
+            "f" : "json",
+        }
+        if username is not None:
+            params['username'] = username
+        if password is not None:
+            params['password'] = password
+        uURL = self._url + "/psa/update"
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def updateRole(self, rolename, description):
         """ Updates a role description in the role store
            Input:
