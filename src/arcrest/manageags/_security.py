@@ -510,7 +510,7 @@ class Security(BaseAGSServer):
             "maxCount" : maxCount
         }
         uURL = self._url + "/roles/search"
-        return self._do_get(url=uURL, param_dict=params,
+        return self._do_post(url=uURL, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -532,7 +532,80 @@ class Security(BaseAGSServer):
             "maxCount" : maxCount
         }
         uURL = self._url + "/users/search"
-        return self._do_get(url=uURL, param_dict=params,
+        return self._do_post(url=uURL, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updatePrimarySiteAdministrator(self, username, password):
+        """
+           Updates account properties of the primary site administrator
+           Input:
+              username - You can optionally provide a new name for the
+              primary site administrator account.
+              password - The password for the new primary site
+              administrator account.
+           Output:
+              JSON message as dictionary
+        """
+        params = {
+            "f" : "json",
+        }
+        if username is not None:
+            params['username'] = username
+        if password is not None:
+            params['password'] = password
+        uURL = self._url + "/psa/update"
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateRole(self, rolename, description):
+        """ Updates a role description in the role store
+           Input:
+              rolename - the name of the role. The name must be unique in
+                         the role store.
+              description - an optional field to add comments or description
+                            for the role.
+        """
+        params = {
+            "f" : "json",
+            "rolename" : rolename
+        }
+        if description is not None:
+            params['description'] = description
+        uURL = self._url + "/roles/update"
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateUser(self, username, password, fullname, description, email):
+        """ Updates a user account in the user store
+           Input:
+              username - the name of the user. The name must be unique in
+                         the user store.
+              password - the password for this user.
+              fullname - an optional full name for the user.
+              description - an optional field to add comments or description
+                            for the user account.
+              email - an optional email for the user account.
+        """
+        params = {
+            "f" : "json",
+            "username" : username
+        }
+        if password is not None:
+            params['password'] = password
+        if fullname is not None:
+            params['fullname'] = fullname
+        if description is not None:
+            params['description'] = description
+        if email is not None:
+            params['email'] = email
+        uURL = self._url + "/users/update"
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
