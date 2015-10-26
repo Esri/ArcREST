@@ -1573,7 +1573,9 @@ class UserItem(BaseAGOLClass):
         for key in dictItem:
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
-                files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+                if thumbnail is not None and \
+                   os.path.isfile(thumbnail):
+                    files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
 
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
@@ -2864,8 +2866,7 @@ class Group(BaseAGOLClass):
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
                                                                         groupId)
-        return ""
-
+        return communityURL
     #----------------------------------------------------------------------
     @property
     def group(self):

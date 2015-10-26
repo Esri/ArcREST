@@ -768,7 +768,9 @@ class Group(BaseAGOLClass):
         files = []
         url = self._url + "/update"
         parsed = urlparse.urlparse(url)
-        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+        if thumbnail is not None and \
+           os.path.isfile(thumbnail):
+            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
         res = None
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
@@ -1671,7 +1673,9 @@ class User(BaseAGOLClass):
 
         url =  "%s/update" % self.root
         parsed = urlparse.urlparse(url)
-        files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+        if thumbnail is not None and \
+           os.path.isfile(thumbnail):
+            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
         res = None
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
