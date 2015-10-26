@@ -14,8 +14,8 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 * Publish an MXD to AGOL as a feature service
 * Get AGOL,AGS item information
 
-## Instructions
-
+## Documentation
+ The help documents are hosted here: http://esri.github.io/ArcREST/index.html
 ### General Help
 
 [New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
