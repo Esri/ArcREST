@@ -1,30 +1,21 @@
+
+"""
+   This sample shows how update a row based on its objectID
+"""
+
 from arcresthelper import securityhandlerhelper
 from arcrest.agol import FeatureLayer
-from arcrest.common.filters import LayerDefinitionFilter
-import datetime
-from datetime import timedelta
-from arcrest.common.general import local_time_to_online,online_time_to_string
+from arcrest.common.general import Feature
 
 if __name__ == "__main__":
     url = ''# URL to Service
-    sql = ''# where clause
-    
-    dt = local_time_to_online(datetime.datetime.now())
-   
-    fieldInfo =[            
-                {
-                    'FieldName':'NAME',
-                    'ValueToSet':'test'
-                }
-               ]
-    
     proxy_port = None
     proxy_url = None    
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI, ArcGIS
     securityinfo['username'] = "" #User Name
-    securityinfo['password'] = "" #password
+    securityinfo['password'] = "" #Password
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -46,15 +37,18 @@ if __name__ == "__main__":
             proxy_url=proxy_url,
             initialize=True)
         
-        out_fields = ['objectid']
-        for fld in fieldInfo:
-            out_fields.append(fld['FieldName'])
-        
-        resFeats = fl.query(where=sql,
-                            out_fields=",".join(out_fields))
-        for feat in resFeats:
-        
-            for fld in fieldInfo:
-                feat.set_value(fld["FieldName"],fld['ValueToSet'])
-                   
-        print fl.updateFeature(features=resFeats)
+        features = []
+        json_string={'geometry': 
+                        {
+                            'y': 1885855.2531960313, 
+                            'x': 1034495.0035156211}
+                        ,
+                     'attributes': 
+                     {  'NAME': 'NameChange', 
+                        'OBJECTID': 1
+                     }}
+
+        features.append(Feature(json_string=json_string))
+      
+       
+        print fl.updateFeature(features=features)

@@ -1552,6 +1552,7 @@ class UserItem(BaseAGOLClass):
            serviceUrl - this is a service url endpoint.
         """
         thumbnail = None
+        largeThumbnail = None
         files = []
         params = {
             "f": "json",
@@ -1573,10 +1574,10 @@ class UserItem(BaseAGOLClass):
         for key in dictItem:
             if key == "thumbnail":
                 thumbnail = dictItem['thumbnail']
-                if thumbnail is not None and \
-                   os.path.isfile(thumbnail):
-                    files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-
+                files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+            elif key == "largeThumbnail":
+                largeThumbnail = dictItem['largeThumbnail']
+                files.append(('largeThumbnail', largeThumbnail, os.path.basename(largeThumbnail)))
             elif key == "metadata":
                 files.append(('metadata', metadata, 'metadata.xml'))
             else:
@@ -2866,7 +2867,8 @@ class Group(BaseAGOLClass):
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
                                                                         groupId)
-        return communityURL
+        return ""
+
     #----------------------------------------------------------------------
     @property
     def group(self):

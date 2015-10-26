@@ -41,7 +41,7 @@ def main():
     securityinfo['secret_id'] = None   
     
     itemId = "" #Item ID
-    pathToImage = "" #Path to image
+    pathToImage = r"" #Path to image
       
     try:
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)

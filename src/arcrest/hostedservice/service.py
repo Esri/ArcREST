@@ -1010,6 +1010,7 @@ class AdminFeatureService(BaseAGOLClass):
         if self._dict is None:
             self.__init()
         return self._dict
+  
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """
@@ -1060,7 +1061,7 @@ class AdminFeatureService(BaseAGOLClass):
 
         params = {
             "f" : "json",
-            "updateDefinition" : json.dumps(json_dict),
+            "updateDefinition" : json.dumps(obj=json_dict,separators=(',', ':')),
             "async" : False
         }
         uURL = self._url + "/updateDefinition"
