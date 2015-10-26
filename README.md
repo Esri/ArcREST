@@ -1,9 +1,9 @@
-# ArcREST Version 3
-*If you are using an older version(v2) of ArcRest, you can find it here:https://github.com/Esri/ArcREST/tree/FinalV2
+# ArcREST Version 3.0.1
+*If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
 
-*If you are using an older version(v1) of ArcRest, you can find it here:https://github.com/Esri/ArcREST/tree/October2014v1.0Final
- 
-A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.  
+*If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
+
+A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.
 
 This is not a full implementation of the Esri REST API.  Please feel free to contribute.
 
@@ -17,7 +17,7 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 ## Instructions
 
 ### General Help
-	
+
 [New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
 
 ## Requirements
@@ -25,7 +25,7 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 * Python 2.7.x
 * ArcPy
 * ArcGIS Desktop 10.2.x, 10.3.x
-	
+
 ## Installation
 
 To install the package, run the setup.py.  This should copy it to your python's site-package folder.
