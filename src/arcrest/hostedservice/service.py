@@ -673,6 +673,8 @@ class AdminFeatureService(BaseAGOLClass):
     _json = None
     _json_dict = None
     _error = None
+    _serviceItemId = None
+    _supportsApplyEditsWithGlobalIds = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -760,6 +762,20 @@ class AdminFeatureService(BaseAGOLClass):
                                 self.__init()
                             return self._%s
                         """ % (k,k,k, k)                                
+    #----------------------------------------------------------------------
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        '''gets the property value for supportsApplyEditsWithGlobalIds'''
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds    
+    #----------------------------------------------------------------------      
+    @property
+    def serviceItemId(self):
+        '''gets the property value for serviceItemId'''
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId    
     #----------------------------------------------------------------------
     @property
     def error(self):
@@ -1229,6 +1245,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _useStandardizedQueries = None
     _definitionQuery = None
     _zDefault = None
+    _supportsApplyEditsWithGlobalIds = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1328,6 +1345,14 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
                             proxy_url=self._proxy_url)
         self.__init()
         return res
+    #----------------------------------------------------------------------
+
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        '''gets the property value for supportsApplyEditsWithGlobalIds'''
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds    
     #----------------------------------------------------------------------
     @property
     def supportsValidateSql(self):
