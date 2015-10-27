@@ -48,12 +48,12 @@ def main():
     matchEntireName = None
     projection = None
     scratchGDB = None
-    scratchProj = None
+    scratchLayer = None
     fst = None
     rows = None
     fieldList = None
     layerToServiceLayer = None
-
+    matches = False
     try:
 
         proxy_port = None
@@ -77,14 +77,16 @@ def main():
         matchEntireName = arcpy.GetParameterAsText(3)
         projection = arcpy.GetParameterAsText(4)
         if projection is not None and projection != '#' and projection != '':
-            pass#outputPrinter(message="Projecting " % projection)
+            #outputPrinter(message="Projecting %s" % str(projection))
+            pass
         else:
             projection = None
             #outputPrinter(message="No Projection defined")
         arcpy.SetParameterAsText(5, "true")
 
         scratchGDB = arcpy.env.scratchWorkspace
-        scratchProj = os.path.join(scratchGDB,"tempPrjAppend")
+        scratchLayName = "tempAppGrpFS"
+        scratchLayer = os.path.join(scratchGDB,scratchLayName)
 
         groupLayer = arcpy.mapping.Layer(groupLayer)
         fst = featureservicetools.featureservicetools(securityinfo)
@@ -111,27 +113,48 @@ def main():
                     for lyr in groupLayer:
                         for key, value in layerToServiceLayer.iteritems():
                             if matchEntireName =='true' and key == lyr.name:
-                               if projection is not None:
-                                    outputPrinter(message="Projecting " % lyr.name)
-                                    arcpy.Project_management(lyr,scratchProj, projection, "", "", "NO_PRESERVE_SHAPE", "")
-                                    syncLayer(fst, fs, scratchProj, value, lyr.name)
-                               else:
-                                    syncLayer(fst, fs, lyr.name, value, lyr.name)
-
-                                #syncLayer(fst, fs, os.path.join(groupLayer.longName,lyr.longName), value)
-
+                                matches = True
                             elif matchEntireName =='false' and key in lyr.name:
-                                if projection is not None:
-                                    outputPrinter(message="Projecting " % lyr.name)
-                                    arcpy.Project_management(lyr,scratchProj, projection, "", "", "NO_PRESERVE_SHAPE", "")
-                                    syncLayer(fst, fs, scratchProj, value, lyr.name)
+                                matches = True
+                            else:
+                                matches = False
+                            if matches:
+                                if arcpy.Exists(lyr.name) == True:
+                                    result =  arcpy.GetCount_management(lyr.name)
+                                    count = int(result.getOutput(0))
+                                    if count > 0:
+                                        layerNameFull = groupLayer.name + '\\' + lyr.name
+
+                                        if projection is not None:
+                                            outputPrinter(message="Projecting %s" % lyr.name)
+                                            arcpy.Project_management(layerNameFull,
+                                                                    scratchLayer,
+                                                                    projection,
+                                                                    "",
+                                                                    "",
+                                                                    "NO_PRESERVE_SHAPE",
+                                                                    "")
+
+                                        else:
+                                            outputPrinter(message="Copying %s" % lyr.name)
+                                            arcpy.FeatureClassToFeatureClass_conversion(layerNameFull,scratchGDB,scratchLayName)
+
+                                        desc = arcpy.Describe(scratchLayer)
+                                        if desc.shapeType == 'Polygon':
+                                            outputPrinter(message="Densifying %s" % lyr.name)
+                                            arcpy.Densify_edit(scratchLayer, "ANGLE", "33 Unknown", "0.33 Unknown", "4")
+                                        syncLayer(fst, fs, scratchLayer, value, lyr.name)
+
+                                    else:
+                                        outputPrinter (message="%s does not contain any features, skipping" % lyr.name)
                                 else:
-                                    syncLayer(fst, fs, lyr.name, value, lyr.name)
+                                    outputPrinter (message="%s does not exist, skipping" % lyr.name)
+                                break
 
-
-
+                else:
+                    outputPrinter (message="Group layer is not a group layer", typeOfMessage='error')
             else:
-                outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
+                outputPrinter(message="Feature Service with id %s was not found" % fsId, typeOfMessage='error')
                 arcpy.SetParameterAsText(5, "false")
         else:
             outputPrinter(fst.message,typeOfMessage='error')
@@ -156,9 +179,9 @@ def main():
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         arcpy.SetParameterAsText(5, "false")
     finally:
-        if scratchProj is not None:
-            if arcpy.Exists(scratchProj):
-                arcpy.Delete_management(scratchProj)
+        if scratchLayer is not None:
+            if arcpy.Exists(scratchLayer):
+                arcpy.Delete_management(scratchLayer)
 
         fsId = None
         groupLayer = None
@@ -166,7 +189,7 @@ def main():
         matchEntireName = None
         projection = None
         scratchGDB = None
-        scratchProj = None
+        scratchLayer = None
 
         fst = None
         rows = None
@@ -179,7 +202,7 @@ def main():
         del matchEntireName
         del projection
         del scratchGDB
-        del scratchProj
+        del scratchLayer
         del fst
         del rows
         del fieldList
@@ -187,56 +210,23 @@ def main():
 
         gc.collect()
 def syncLayer(fst, fs, layer, layerName, displayName):
-    if arcpy.Exists(layer) == True:
-        result =  arcpy.GetCount_management(layer)
-        count = int(result.getOutput(0))
-        if count > 0:
-            outputPrinter (message="Attemping to sync %s to %s" % (displayName,layerName))
-            fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
-            if not fl is None:
-                results = fl.addFeatures(fc=layer)
 
-                if 'error' in results:
-                    outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
-                    arcpy.SetParameterAsText(5, "false")
-                else:
-                    if results['addResults'] is not None:
-                        outputPrinter (message="%s features added to %s" % (len(results['addResults']),layerName) )
-                    else:
-                        outputPrinter (message="0 features added to %s" % layerName)
-            else:
-                outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
-                arcpy.SetParameterAsText(5, "false")
+    outputPrinter (message="Attemping to sync %s to %s" % (displayName,layerName))
+    fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
+    if not fl is None:
+        results = fl.addFeatures(fc=layer)
+
+        if 'error' in results:
+            outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
+            arcpy.SetParameterAsText(5, "false")
         else:
-            outputPrinter (message="%s does not contain any features, skipping" % displayName)
+            if results['addResults'] is not None:
+                outputPrinter (message="%s features added to %s" % (len(results['addResults']),layerName) )
+            else:
+                outputPrinter (message="0 features added to %s" % layerName)
     else:
-        outputPrinter (message="%s does not exist, skipping" % displayName)
+        outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
+        arcpy.SetParameterAsText(5, "false")
+
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
