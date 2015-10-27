@@ -16,4 +16,4 @@ try:
     arcpyFound = True
 except:
     arcpyFound = False
-__version__ = "3.0.0"
+__version__ = "3.0.1"

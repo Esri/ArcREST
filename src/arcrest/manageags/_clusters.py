@@ -58,7 +58,7 @@ class Clusters(BaseAGSServer):
             del k
             del v
     #----------------------------------------------------------------------
-    def createCluster(self, clusterName, machineNames="", tcpClusterPort=None):
+    def createCluster(self, clusterName, machineNames="", tcpClusterPort=""):
         """
         Creating a new cluster involves defining a clustering protocol that
         will be shared by all server machines participating in the cluster.
