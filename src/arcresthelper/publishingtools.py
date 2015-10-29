@@ -13,6 +13,7 @@ import json
 import os
 import arcresthelper.common as common
 import gc
+import sys
 try:
     import arcpy
     arcpyFound = True
@@ -262,6 +263,12 @@ class publishingtools(securityhandlerhelper):
             thumbnail = config['Thumbnail']
             itemType = config['Type']
             typeKeywords = config['typeKeywords']  
+            skipIfExist = False
+            if config.has_key('SkipIfExist'):
+                skipIfExist = config['SkipIfExist']
+                if str(skipIfExist).lower() == 'true':
+                    skipIfExist = True
+            
             
             itemParams = arcrest.manageorg.ItemParameter()
             itemParams.title = name
@@ -296,7 +303,16 @@ class publishingtools(securityhandlerhelper):
                     if res['title'] == name:    
                         itemId = items['results'][0]['id']            
             if not itemId is None:
+                
                 item = content.getItem(itemId).userItem
+                
+                if skipIfExist == True:
+                    resultItem['itemId'] = item.id
+                    resultItem['url'] = item.item._curl + "/data"
+                    resultItem['folderId'] = folderId
+                    resultItem['name'] = name
+                    return resultItem
+                    
                 results = item.updateItem(itemParameters=itemParams,
                                             data=itemData)
                 if 'error' in results:
@@ -317,9 +333,9 @@ class publishingtools(securityhandlerhelper):
                                                        groups=','.join(group_ids),
                                                        everyone=everyone,
                                                        org=org)
-                    updateParams = arcrest.manageorg.ItemParameter()
-                    updateParams.title = name
-                    updateResults = item.updateItem(itemParameters=updateParams)                    
+                    #updateParams = arcrest.manageorg.ItemParameter()
+                    #updateParams.title = name
+                    #updateResults = item.updateItem(itemParameters=updateParams)                    
                 except Exception,e: 
                     print e
             if item is None:
@@ -1430,7 +1446,12 @@ class publishingtools(securityhandlerhelper):
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
-
+            skipIfExist = False
+            if config.has_key('SkipIfExist'):
+                skipIfExist = config['SkipIfExist']
+                if str(skipIfExist).lower() == 'true':
+                    skipIfExist = True                
+                            
 
             datestring = datetime.datetime.now().strftime(loc_df)
             service_name = service_name.replace('{DATE}',datestring)
@@ -1444,6 +1465,37 @@ class publishingtools(securityhandlerhelper):
                 raise ValueError("data file does not exit")
            
             extension = os.path.splitext(dataFile)[1]
+            
+            
+            admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)            
+            content = admin.content
+            userInfo = content.users.user()
+            userCommunity = admin.community
+
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                userInfo.currentFolder = folderName    
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
+            
+            if skipIfExist == True:
+                sea = arcrest.find.search(securityHandler=self._securityHandler)
+                items = sea.findItem(title=service_name, itemType='Feature Service',searchorg=False)
+    
+                if items['total'] >= 1:
+                    itemId = items['results'][0]['id']  
+                    defItem = content.getItem(itemId)      
+
+                    results = {
+                        "url": defItem.url,
+                        "folderId": folderId,
+                        "itemId": defItem.id,
+                        "convertCase": self._featureServiceFieldCase,
+                        "messages":"Exist"
+                    }                             
+                    return results
+    
             
             if (extension == ".mxd"):
                 dataFileType = "serviceDefinition"
@@ -1481,27 +1533,13 @@ class publishingtools(securityhandlerhelper):
                     "synerror": "Publishing SD or Zip not valid"
                 })                   
 
-            admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
-
-
+        
             itemParams = arcrest.manageorg.ItemParameter()
             itemParams.title = service_name
             itemParams.thumbnail = thumbnail
             itemParams.type = searchType
             itemParams.overwrite = True
-
-            content = admin.content
-
-            userInfo = content.users.user()
-            userCommunity = admin.community
-
-            if folderName is not None and folderName != "":               
-                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
-                    res = userInfo.createFolder(name=folderName)
-                userInfo.currentFolder = folderName    
-            if 'id' in userInfo.currentFolder:
-                folderId = userInfo.currentFolder['id']
-            
+                   
             sea = arcrest.find.search(securityHandler=self._securityHandler)
             items = sea.findItem(title=service_name, itemType=searchType,searchorg=False)
 
@@ -1512,6 +1550,7 @@ class publishingtools(securityhandlerhelper):
             
             if not itemId is None:
                 defItem = content.getItem(itemId).userItem
+               
                 resultSD = defItem.updateItem(itemParameters=itemParams,
                                             data=sd_Info['servicedef'])
                 if 'error' in resultSD:
