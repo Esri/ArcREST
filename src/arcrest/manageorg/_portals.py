@@ -193,6 +193,8 @@ class Portal(BaseAGOLClass):
     _ipCntryCode = None
     _livingAtlasGroupQuery = None
     _region = None
+    _contacts = None
+    _appInfo = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -265,7 +267,21 @@ class Portal(BaseAGOLClass):
         if self._subscriptionInfo is None:
             self.__init()
         return self._subscriptionInfo
-
+    #----------------------------------------------------------------------
+    @property
+    def appInfo(self):
+        '''gets the property value for appInfo'''
+        if self._appInfo is None:
+            self.__init()
+        return self._appInfo
+    #----------------------------------------------------------------------
+    @property
+    def contacts(self):
+        '''gets the property value for contacts'''
+        if self._contacts is None:
+            self.__init()
+        return self._contacts
+    
     #----------------------------------------------------------------------
     @property
     def urlKey(self):

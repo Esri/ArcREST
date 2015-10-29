@@ -1319,8 +1319,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             return token
 
 
-        self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] /1000) - \
-            datetime.timedelta(seconds=1)
+        self._token_expires_on = datetime.datetime.fromtimestamp(token['expires'] / 1000) - \
+            datetime.timedelta(seconds=10)
 
         #if token['expires'] > 86400:
             #seconds = 86400

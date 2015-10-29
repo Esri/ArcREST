@@ -132,7 +132,296 @@ class publishingtools(securityhandlerhelper):
             return False
 
     #----------------------------------------------------------------------
-    def publishMap(self,maps_info,fsInfo=None):
+    def publishItems(self,items_info):
+        itemInfo = None  
+        item_results = None
+        item_info = None
+        admin = None
+        try:
+            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
+            item_results = []
+            for item_info in items_info:
+                if item_info.has_key('ReplaceTag'):
+
+                    itemInfo = {"ReplaceTag":item_info['ReplaceTag'] }
+                else:
+                    itemInfo = {"ReplaceTag":"{FeatureService}" }
+
+                itemInfo['ItemInfo']  = self._publishItems(config=item_info)
+  
+                if not itemInfo['ItemInfo'] is None and 'name' in itemInfo['ItemInfo']:
+                    print "%s created" % itemInfo['ItemInfo']['name']
+                    item_results.append(itemInfo)
+                else:
+                    print str(itemInfo['ItemInfo'])
+              
+            return item_results 
+       
+        except common.ArcRestHelperError,e:
+            raise e
+        except Exception as e:
+            if (arcpyFound):
+                if isinstance(e,(arcpy.ExecuteError)):
+                    line, filename, synerror = trace()
+                    raise common.ArcRestHelperError({
+                        "function": "publishItems",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                        "arcpyError": arcpy.GetMessages(2),
+                    })
+                else:
+                    line, filename, synerror = trace()
+                    raise common.ArcRestHelperError({
+                        "function": "publishItems",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                    })
+    
+            else:
+                line, filename, synerror = trace()
+                raise common.ArcRestHelperError({
+                    "function": "publishItems",
+                    "line": line,
+                    "filename":  filename,
+                    "synerror": synerror,
+                })
+        finally:
+            itemInfo = None  
+            item_results = None
+            item_info = None
+            admin = None
+
+            del itemInfo
+            del item_results
+            del item_info
+            del admin
+       
+            gc.collect()
+    #----------------------------------------------------------------------
+    def _publishItems(self,config):
+        name = None
+        tags = None
+        description = None
+        extent = None
+        admin = None
+        adminusercontent = None
+        itemData = None
+        itemId = None
+        datestring = None
+        snippet = None
+        everyone = None
+        org = None
+        groupNames = None
+        folderName = None
+        thumbnail = None
+        itemType = None
+        itemParams = None        
+        content = None
+        userInfo = None
+        userCommunity = None
+        results = None        
+        folderName = None
+        folderId = None
+        res = None
+        sea = None
+        group_ids = None
+        shareResults = None
+        updateParams = None
+        
+        resultItem = {}
+        try:
+            name = ''
+            tags = ''
+            description = ''
+            extent = ''
+            webmap_data = ''
+
+            if config.has_key('Data'):
+                itemData = config['Data']
+            
+            name = config['Title']
+
+            if config.has_key('DateTimeFormat'):
+                loc_df = config['DateTimeFormat']
+            else:
+                loc_df = dateTimeFormat
+
+            datestring = datetime.datetime.now().strftime(loc_df)
+            name = name.replace('{DATE}',datestring)
+            name = name.replace('{Date}',datestring)
+
+            description = config['Description']
+            tags = config['Tags']
+            snippet = config['Summary'] 
+            everyone = config['ShareEveryone']
+            org = config['ShareOrg']
+            groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
+            folderName = config['Folder']
+            thumbnail = config['Thumbnail']
+            itemType = config['Type']
+            typeKeywords = config['typeKeywords']  
+            
+            itemParams = arcrest.manageorg.ItemParameter()
+            itemParams.title = name
+            itemParams.thumbnail = thumbnail
+            itemParams.type = itemType
+            itemParams.overwrite = True
+            itemParams.snippet = snippet
+            itemParams.description = description
+            itemParams.extent = extent
+            
+            itemParams.tags = tags
+            itemParams.typeKeywords = ",".join(typeKeywords)
+            
+            admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
+            
+            content = admin.content        
+            userInfo = content.users.user()
+            userCommunity = admin.community
+            
+            if folderName is not None and folderName != "":               
+                if self.folderExist(name=folderName,folders=userInfo.folders) is None:
+                    res = userInfo.createFolder(name=folderName)
+                userInfo.currentFolder = folderName    
+            if 'id' in userInfo.currentFolder:
+                folderId = userInfo.currentFolder['id']
+
+            sea = arcrest.find.search(securityHandler=self._securityHandler)
+            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+            
+            if items['total'] >= 1:
+                for res in items['results']:
+                    if res['title'] == name:    
+                        itemId = items['results'][0]['id']            
+            if not itemId is None:
+                item = content.getItem(itemId).userItem
+                results = item.updateItem(itemParameters=itemParams,
+                                            data=itemData)
+                if 'error' in results:
+                    return results
+            else:
+                try:
+                    item = userInfo.addItem(itemParameters=itemParams,
+                            overwrite=True,
+                            url=None,
+                            relationshipType=None,
+                            originItemId=None,
+                            destinationItemId=None,
+                            serviceProxyParams=None,
+                            metadata=None,
+                            filePath=itemData)
+                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+                    shareResults = userInfo.shareItems(items=item.id,
+                                                       groups=','.join(group_ids),
+                                                       everyone=everyone,
+                                                       org=org)
+                    updateParams = arcrest.manageorg.ItemParameter()
+                    updateParams.title = name
+                    updateResults = item.updateItem(itemParameters=updateParams)                    
+                except Exception,e: 
+                    print e
+            if item is None:
+                return "Item could not be added"
+            
+            resultItem['itemId'] = item.id
+            resultItem['url'] = item.item._curl + "/data"
+            resultItem['folderId'] = folderId
+            resultItem['name'] = name
+            return resultItem
+
+        except Exception as e:
+            if (arcpyFound):
+                if isinstance(e,(arcpy.ExecuteError)):
+                    line, filename, synerror = trace()
+                    raise common.ArcRestHelperError({
+                        "function": "_publishMap",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                        "arcpyError": arcpy.GetMessages(2),
+                    })
+                else:
+                    line, filename, synerror = trace()
+                    raise common.ArcRestHelperError({
+                        "function": "_publishItems",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                    })
+    
+            else:
+                line, filename, synerror = trace()
+                raise common.ArcRestHelperError({
+                    "function": "_publishItems",
+                    "line": line,
+                    "filename":  filename,
+                    "synerror": synerror,
+                })
+
+        finally:
+            name = None
+            tags = None
+            description = None
+            extent = None
+            admin = None
+            adminusercontent = None
+            itemData = None
+            datestring = None
+            snippet = None
+            everyone = None
+            org = None
+            groupNames = None
+            itemId = None    
+            thumbnail = None
+            itemType = None
+            itemParams = None        
+            content = None
+            userInfo = None
+            userCommunity = None
+            results = None        
+            folderName = None
+            folderId = None
+            res = None
+            sea = None
+            group_ids = None
+            shareResults = None
+            updateParams = None          
+
+            del name
+            del tags
+            del description
+            del extent
+            del admin
+            del adminusercontent
+            del itemData
+            del datestring
+            del snippet
+            del everyone
+            del org
+            del groupNames
+            del itemId
+            del thumbnail
+            del itemType
+            del itemParams        
+            del content
+            del userInfo
+            del userCommunity
+            del results        
+            del folderName
+            del folderId
+            del res
+            del sea
+            del group_ids
+            del shareResults
+            del updateParams
+            
+            gc.collect()
+
+
+    #----------------------------------------------------------------------
+    def publishMap(self,maps_info,fsInfo=None,itInfo=None):
         itemInfo = None
         itemId = None
         map_results = None
@@ -176,6 +465,17 @@ class publishingtools(securityhandlerhelper):
                                                     replaceItem['ItemFolder'] = itemInfo.ownerFolder
                                                 else:
                                                     replaceItem['ItemFolder'] = None
+                        elif replaceItem['ReplaceType'] == 'Global':
+
+                            if itInfo is not None:
+
+                                for itm in itInfo:
+                                    if itm is not None: 
+                                        
+                                        if replaceItem['ReplaceString'] == itm['ReplaceTag']:
+                                            if 'ItemInfo' in itm:
+                                                if 'url' in itm['ItemInfo']:
+                                                    replaceItem['ReplaceString'] = itm['ItemInfo']['url']
 
 
                 if map_info.has_key('ReplaceTag'):

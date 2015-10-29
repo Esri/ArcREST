@@ -314,6 +314,7 @@ class portalautomation(securityhandlerhelper):
         publishTools = None
         webmaps = None
         config = None
+        resultsItems = None
         resultFS = None
         resultMaps = None
         resultApps = None
@@ -376,6 +377,13 @@ class portalautomation(securityhandlerhelper):
                             else:
                                 print "Publishing tools created: %s" % publishTools.message
                                 resultFS = []
+                                if 'Items' in publishingConfig:
+                                    startSectTime = datetime.datetime.now()
+                                    print " "
+                                    print "Creating Items: %s" % str(startSectTime.strftime(dateTimeFormat))
+                                    resultsItems = publishTools.publishItems(items_info=publishingConfig['Items'])
+                                    print "Items created, time to complete: %s" % str(datetime.datetime.now() - startSectTime)                         
+                                
                                 if 'FeatureCollections' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
                                     print " "
@@ -399,7 +407,7 @@ class portalautomation(securityhandlerhelper):
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating maps: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultMaps = publishTools.publishMap(maps_info=publishingConfig['MapDetails'],fsInfo=resultFS)
+                                    resultMaps = publishTools.publishMap(maps_info=publishingConfig['MapDetails'],fsInfo=resultFS,itInfo=resultsItems)
                                     for maps in resultMaps:
                                         if 'MapInfo' in maps:
                                             if 'Results' in maps['MapInfo']:
@@ -484,6 +492,7 @@ class portalautomation(securityhandlerhelper):
             webmaps = None
             config = None
             resultFS = None
+            resultsItems = None
             resultMaps = None
             resultApps = None
             combinedResults = None
@@ -495,5 +504,5 @@ class portalautomation(securityhandlerhelper):
             del resultMaps
             del resultApps
             del combinedResults
-    
+            del resultsItems
             gc.collect()
