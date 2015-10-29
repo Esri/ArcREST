@@ -2844,8 +2844,6 @@ class Group(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.iteritems():
             yield [k,v]
-        #Should this actually iterate over Items, not the return, which is
-        #always ['items', [{'extent': [[-1.....
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the group's items"""
@@ -2867,7 +2865,7 @@ class Group(BaseAGOLClass):
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
                                                                         groupId)
-        return ""
+        return communityURL
 
     #----------------------------------------------------------------------
     @property
