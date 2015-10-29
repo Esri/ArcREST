@@ -1414,6 +1414,29 @@ class Portal(BaseAGOLClass):
                                     proxy_port=self._proxy_port,
                                     initalize=False)
     #----------------------------------------------------------------------
+    def addUser(self, invitationList,
+                subject, html):
+        """
+        adds a user without sending an invitation email
+
+        Inputs:
+           invitationList - InvitationList class used to add users without
+            sending an email
+           subject - email subject
+           html - email message sent to users in invitation list object
+        """
+        url = self._url + "/invite"
+        params = {"f" : "json"}
+        if isinstance(invitationList, parameters.InvitationList):
+            params['invitationList'] = invitationList.value()
+        params['html'] = html
+        params['subject'] = subject
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def inviteByEmail(self,
                    emails,
                    subject,

@@ -3,6 +3,42 @@ from ..common.geometry import SpatialReference, Envelope
 import os
 import json
 ########################################################################
+class InvitationList(object):
+    """Used for Inviting users to a site"""
+    _invites = []
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        self._invites = []
+    #----------------------------------------------------------------------
+    def addUser(self, username, password,
+                firstname, lastname,
+                email, role):
+        """adds a user to the invitation list"""
+        self._invites.append({
+            "username":username,
+            "password":password,
+            "firstname":firstname,
+            "lastname":lastname,
+            "fullname":"%s %s" % (firstname, lastname),
+            "email":email,
+            "role":role
+        })
+    #----------------------------------------------------------------------
+    def removeByIndex(self, index):
+        """removes a user from the invitation list by position"""
+        if index < len(self._invites) -1 and \
+           index >=0:
+            self._invites.remove(index)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self._value)
+    #----------------------------------------------------------------------
+    def value(self):
+        """returns object as dictionary"""
+        return {"invitations": self._invites}
+########################################################################
 class AnalyzeParameters(BaseParameters):
     """
     The analyzeParameters JSON object used to analyze a CSV file are
@@ -199,8 +235,8 @@ class CreateServiceParameters(BaseParameters):
                  syncEnabled =True
                  ):
         """Constructor"""
-        
-        
+
+
         self._name = name
         if isinstance(spatialReference, SpatialReference):
             self._spatialReference = spatialReference.value
@@ -225,23 +261,23 @@ class CreateServiceParameters(BaseParameters):
         self._xssInputRule=xssInputRule
         self._currentVersion=currentVersion
         self._enableEditorTracking = enableEditorTracking
-        self._enableOwnershipAccessControl = enableOwnershipAccessControl 
+        self._enableOwnershipAccessControl = enableOwnershipAccessControl
         self._allowOthersToUpdate = allowOthersToUpdate
         self._allowOthersToDelete = allowOthersToDelete
         self._supportsAsync = supportsAsync
         self._supportsRegisteringExistingData = supportsRegisteringExistingData
         self._supportsSyncDirectionControl = supportsSyncDirectionControl
         self._supportsPerLayerSync = supportsPerLayerSync
-        self._supportsPerReplicaSync = supportsPerReplicaSync 
+        self._supportsPerReplicaSync = supportsPerReplicaSync
         self._supportsRollbackOnFailure = supportsRollbackOnFailure
         self._hasVersionedData = hasVersionedData
         self._supportsDisconnectedEditing = supportsDisconnectedEditing
-        self._size =size 
-        self._syncEnabled =syncEnabled 
-        
-        
-        
-        
+        self._size =size
+        self._syncEnabled =syncEnabled
+
+
+
+
     #----------------------------------------------------------------------
     @property
     def value(self):
