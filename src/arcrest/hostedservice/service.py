@@ -198,7 +198,7 @@ class Services(BaseAGOLClass):
                     name = item['serviceName']
                     typefs = item['type']
 
-                surl = url + r"/%s.%s" % (name,
+                surl = url + r"/%s/%s" % (name,
                                            typefs)
                 self._services.append(
                     AdminFeatureService(url=surl,
