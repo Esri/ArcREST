@@ -431,7 +431,7 @@ class Services(BaseAGSServer):
                         [{
                           "folderName" : "",
                           "serviceName" : "SampleWorldCities",
-                          "type" : "MapService
+                          "type" : "MapServer"
                         }]
         """
         url = self._url + "/stopServices"
@@ -470,7 +470,7 @@ class Services(BaseAGSServer):
                         [{
                           "folderName" : "",
                           "serviceName" : "SampleWorldCities",
-                          "type" : "MapService
+                          "type" : "MapServer"
                         }]
         """
         url = self._url + "/startServices"
