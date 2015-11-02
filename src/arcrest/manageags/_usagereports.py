@@ -492,7 +492,7 @@ class UsageReport(BaseAGSServer):
             "f" : "json",
             "filter" : queryFilter
         }
-        url = self._url + "/query"
+        url = self._url + "/data"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
