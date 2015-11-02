@@ -230,7 +230,7 @@ class Services(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------                         
+    #----------------------------------------------------------------------
     def listFolderPermissions(self,folderName):
         """
            Lists principals which have permissions for the folder.
@@ -246,7 +246,7 @@ class Services(BaseAGSServer):
         return self._do_post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)                             
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def cleanPermissions(self, principal):
         """
@@ -435,16 +435,62 @@ class Services(BaseAGSServer):
                         }]
         """
         url = self._url + "/stopServices"
+        if isinstance(services, dict):
+            services = [services]
+        elif isinstance(services, (list, tuple)):
+            services = list(services)
+        else:
+            Exception("Invalid input for parameter services")
         params = {
             "f" : "json",
-            "service" : json.dumps(services)
+            "services" : {
+                "services":services
+            }
         }
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-
+    #----------------------------------------------------------------------
+    def startServices(self, services ):
+        """
+        starts serveral services on a single server
+        Inputs:
+           services - is a list of dictionary objects. Each dictionary
+                      object is defined as:
+                        folderName - The name of the folder containing the
+                        service, for example, "Planning". If the service
+                        resides in the root folder, leave the folder
+                        property blank ("folderName": "").
+                        serviceName - The name of the service, for example,
+                        "FireHydrants".
+                        type - The service type, for example, "MapServer".
+                     Example:
+                        [{
+                          "folderName" : "",
+                          "serviceName" : "SampleWorldCities",
+                          "type" : "MapService
+                        }]
+        """
+        url = self._url + "/startServices"
+        if isinstance(services, dict):
+            services = [services]
+        elif isinstance(services, (list, tuple)):
+            services = list(services)
+        else:
+            Exception("Invalid input for parameter services")
+        params = {
+            "f" : "json",
+            "services" : {
+                "services":services
+            }
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
 ########################################################################
 class AGSService(BaseAGSServer):
     """ Defines a AGS Admin Service """
