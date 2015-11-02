@@ -491,6 +491,33 @@ class Services(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def editFolder(self, description, webEncrypted=False):
+        """
+        This operation allows you to change the description of an existing
+        folder or change the web encrypted property.
+        The web encrypted property indicates if all the services contained
+        in the folder are only accessible over a secure channel (SSL). When
+        setting this property to true, you also need to enable the virtual
+        directory security in the security configuration.
+
+        Inputs:
+           description - a description of the folder
+           webEncrypted - boolean to indicate if the services are
+            accessible over SSL only.
+        """
+        url = self._url + "/editFolder"
+        params = {
+            "f" : "json",
+            "webEncrypted" : webEncrypted,
+            "description" : "%s" % description
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+
 ########################################################################
 class AGSService(BaseAGSServer):
     """ Defines a AGS Admin Service """
