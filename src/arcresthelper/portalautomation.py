@@ -418,7 +418,7 @@ class portalautomation(securityhandlerhelper):
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating apps: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultApps = publishTools.publishApp(app_info=publishingConfig['AppDetails'],map_info=resultMaps)
+                                    resultApps = publishTools.publishApp(app_info=publishingConfig['AppDetails'],map_info=resultMaps,fsInfo=resultFS)
                                     print "Creating apps completed, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
     
     
