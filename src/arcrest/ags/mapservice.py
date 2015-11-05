@@ -507,24 +507,167 @@ class MapService(BaseAGSServer):
         )
     #----------------------------------------------------------------------
     def identify(self,
-                 geometryFilter,
+                 geometry,
                  mapExtent,
                  imageDisplay,
+                 tolerance,
+                 geometryType="esriGeometryPoint",
+                 sr=None,
                  layerDefs=None,
-                 timeFilter=None,
+                 time=None,
                  layerTimeOptions=None,
                  layers="top",
-                 tolerance=None,
                  returnGeometry=True,
                  maxAllowableOffset=None,
                  geometryPrecision=None,
                  dynamicLayers=None,
                  returnZ=False,
                  returnM=False,
-                 gdbVersion=None
-                 ):
-        """ performs the map service's identify operation """
-        pass
+                 gdbVersion=None):
+
+        """
+            The identify operation is performed on a map service resource
+            to discover features at a geographic location. The result of this
+            operation is an identify results resource. Each identified result
+            includes its name, layer ID, layer name, geometry and geometry type,
+            and other attributes of that result as name-value pairs.
+
+            Inputs:
+            geometry - The geometry to identify on. The type of the geometry is
+                       specified by the geometryType parameter. The structure of
+                       the geometries is same as the structure of the JSON geometry
+                       objects returned by the ArcGIS REST API. In addition to the
+                       JSON structures, for points and envelopes, you can specify
+                       the geometries with a simpler comma-separated syntax.
+                       Syntax:
+                       JSON structures:
+                       <geometryType>&geometry={ geometry}
+                       Point simple syntax:
+                       esriGeometryPoint&geometry=<x>,<y>
+                       Envelope simple syntax:
+                       esriGeometryEnvelope&geometry=<xmin>,<ymin>,<xmax>,<ymax>
+
+            geometryType - The type of geometry specified by the geometry parameter.
+                           The geometry type could be a point, line, polygon, or
+                           an envelope.
+                           Values:
+                           esriGeometryPoint | esriGeometryMultipoint |
+                           esriGeometryPolyline | esriGeometryPolygon |
+                           esriGeometryEnvelope
+
+            sr - The well-known ID of the spatial reference of the input and
+                 output geometries as well as the mapExtent. If sr is not specified,
+                 the geometry and the mapExtent are assumed to be in the spatial
+                 reference of the map, and the output geometries are also in the
+                 spatial reference of the map.
+
+            layerDefs - Allows you to filter the features of individual layers in
+                        the exported map by specifying definition expressions for
+                        those layers. Definition expression for a layer that is
+                        published with the service will be always honored.
+
+            time - The time instant or the time extent of the features to be
+            identified.
+
+            layerTimeOptions - The time options per layer. Users can indicate
+                               whether or not the layer should use the time extent
+                               specified by the time parameter or not, whether to
+                               draw the layer features cumulatively or not and the
+                               time offsets for the layer.
+
+            layers - The layers to perform the identify operation on. There are
+                     three ways to specify which layers to identify on:
+                     top: Only the top-most layer at the specified location.
+                     visible: All visible layers at the specified location.
+                     all: All layers at the specified location.
+
+            tolerance - The distance in screen pixels from the specified geometry
+                        within which the identify should be performed. The value for
+                        the tolerance is an integer.
+
+            mapExtent - The extent or bounding box of the map currently being viewed.
+                        Unless the sr parameter has been specified, the mapExtent is
+                        assumed to be in the spatial reference of the map.
+                        Syntax: <xmin>, <ymin>, <xmax>, <ymax>
+                        The mapExtent and the imageDisplay parameters are used by the
+                        server to determine the layers visible in the current extent.
+                        They are also used to calculate the distance on the map to
+                        search based on the tolerance in screen pixels.
+
+            imageDisplay - The screen image display parameters (width, height, and DPI)
+                           of the map being currently viewed. The mapExtent and the
+                           imageDisplay parameters are used by the server to determine
+                           the layers visible in the current extent. They are also used
+                           to calculate the distance on the map to search based on the
+                           tolerance in screen pixels.
+                           Syntax: <width>, <height>, <dpi>
+
+            returnGeometry - If true, the resultset will include the geometries
+                             associated with each result. The default is true.
+
+            maxAllowableOffset - This option can be used to specify the maximum allowable
+                                 offset to be used for generalizing geometries returned by
+                                 the identify operation. The maxAllowableOffset is in the units
+                                 of the sr. If sr is not specified, maxAllowableOffset is
+                                 assumed to be in the unit of the spatial reference of the map.
+
+            geometryPrecision - This option can be used to specify the number of decimal places
+                                in the response geometries returned by the identify operation.
+                                This applies to X and Y values only (not m or z-values).
+
+            dynamicLayers - Use dynamicLayers property to reorder layers and change the layer
+                            data source. dynamicLayers can also be used to add new layer that
+                            was not defined in the map used to create the map service. The new
+                            layer should have its source pointing to one of the registered
+                            workspaces that was defined at the time the map service was created.
+                            The order of dynamicLayers array defines the layer drawing order.
+                            The first element of the dynamicLayers is stacked on top of all
+                            other layers. When defining a dynamic layer, source is required.
+
+            returnZ - If true, Z values will be included in the results if the features have
+                      Z values. Otherwise, Z values are not returned. The default is false.
+                      This parameter only applies if returnGeometry=true.
+
+            returnM - If true, M values will be included in the results if the features have
+                      M values. Otherwise, M values are not returned. The default is false.
+                      This parameter only applies if returnGeometry=true.
+
+            gdbVersion - Switch map layers to point to an alternate geodatabase version.
+        """
+
+        params= {'f': 'json',
+                 'geometry': geometry,
+                 'geometryType': geometryType,
+                 'tolerance': tolerance,
+                 'mapExtent': mapExtent,
+                 'imageDisplay': imageDisplay
+                 }
+
+        if layerDefs is not None:
+            params['layerDefs'] = layerDefs
+        if layers is not None:
+            params['layers'] = layers
+        if sr is not None:
+            params['sr'] = sr
+        if time is not None:
+            params['time'] = time
+        if layerTimeOptions is not None:
+            params['layerTimeOptions'] = layerTimeOptions
+        if maxAllowableOffset is not None:
+            params['maxAllowableOffset'] = maxAllowableOffset
+        if geometryPrecision is not None:
+            params['geometryPrecision'] = geometryPrecision
+        if dynamicLayers is not None:
+            params['dynamicLayers'] = dynamicLayers
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
+
+        identifyURL = self._url + "/identify"
+        return self._do_get(url=identifyURL,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def _convert_boolean(self, value):
         """ converts a boolean value to json value """
