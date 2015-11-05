@@ -300,8 +300,13 @@ class publishingtools(securityhandlerhelper):
             
             if items['total'] >= 1:
                 for res in items['results']:
-                    if res['title'] == name:    
-                        itemId = items['results'][0]['id']            
+                    if 'type' in res and res['type'] == itemType:
+                        if 'name' in res and res['name'] == name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == name:
+                            itemId = res['id']
+                            break                        
             if not itemId is None:
                 
                 item = content.getItem(itemId).userItem
@@ -601,21 +606,46 @@ class publishingtools(securityhandlerhelper):
             tags = ''
             description = ''
             extent = ''
-            webmap_data = ''
+            webmap_data = None
 
-            itemJson = config['ItemJSON']
-            if os.path.exists(itemJson) == False:
-                return {"Results":{"error": "%s does not exist" % itemJson}  }
+            mapJson = config['ItemJSON']
+            if isinstance(mapJson,list):
+                webmap_data = []
+                for jsonItem in mapJson:
+                    #if os.path.exists(jsonItem) == False:
+                        #return {"Results":{"error": "%s does not exist" % jsonItem}}                    
+                    #if webmap_data is None:
+                        #try:
+                            #with open(jsonItem) as webMapInfo:
+                                #webmap_data = json.load(webMapInfo)
+                        #except:
+                            #raise ValueError("%s is not a valid JSON File" % jsonItem)                                                
+                    #else:
+                    try:
+                        with open(jsonItem) as webMapInfo:
+                        
+                            webmap_data.append(json.load(webMapInfo))
+                    except:
+                        raise ValueError("%s is not a valid JSON File" % jsonItem)                        
+                webmap_data = common.merge_dicts(webmap_data)
+                        
+                
+            else:    
+                if os.path.exists(mapJson) == False:
+                    return {"Results":{"error": "%s does not exist" % mapJson}}
+                try:  
+                    with open(mapJson) as webMapInfo:
+                          
+                        webmap_data = json.load(webMapInfo)
+                except:
+                    raise ValueError("%s is not a valid JSON File" % mapJson)        
             update_service = 'FALSE'
             
             resultMap = {'Layers':[],'Tables':[],'Results':{}}
 
-            with open(itemJson) as json_data:
+            if webmap_data is not None:
                 layersInfo= {}
-                try:
-                    webmap_data = json.load(json_data)
-                except:
-                    raise ValueError("%s is not a valid JSON File" % itemJson)
+               
                 if operationalLayers:
                     webmap_data['operationalLayers'] = operationalLayers
                 if tableLayers:
@@ -923,7 +953,14 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=name, itemType=itemType,searchorg=False)
             
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']            
+                for res in items['results']:
+                    if 'type' in res and res['type'] == itemType:
+                        if 'name' in res and res['name'] == name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == name:
+                            itemId = res['id']
+                            break                             
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 results = item.updateItem(itemParameters=itemParams,
@@ -1484,17 +1521,25 @@ class publishingtools(securityhandlerhelper):
                 items = sea.findItem(title=service_name, itemType='Feature Service',searchorg=False)
     
                 if items['total'] >= 1:
-                    itemId = items['results'][0]['id']  
-                    defItem = content.getItem(itemId)      
-
-                    results = {
-                        "url": defItem.url,
-                        "folderId": folderId,
-                        "itemId": defItem.id,
-                        "convertCase": self._featureServiceFieldCase,
-                        "messages":"Exist"
-                    }                             
-                    return results
+                    for res in items['results']:
+                        if 'type' in res and res['type'] == 'Feature Service':
+                            if 'name' in res and res['name'] == service_name:
+                                itemId = res['id']
+                                break
+                            if 'title' in res and res['title'] == service_name:
+                                itemId = res['id']
+                                break                             
+                    if itemId is not None:
+                        defItem = content.getItem(itemId)      
+    
+                        results = {
+                            "url": defItem.url,
+                            "folderId": folderId,
+                            "itemId": defItem.id,
+                            "convertCase": self._featureServiceFieldCase,
+                            "messages":"Exist"
+                        }                             
+                        return results
     
             
             if (extension == ".mxd"):
@@ -1544,7 +1589,15 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=service_name, itemType=searchType,searchorg=False)
 
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']  
+                for res in items['results']:
+                    if 'type' in res and res['type'] == searchType:
+                        if 'name' in res and res['name'] == service_name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == service_name:
+                            itemId = res['id']
+                            break                                        
+                #itemId = items['results'][0]['id']  
             
             defItem = None
             
@@ -1588,16 +1641,28 @@ class publishingtools(securityhandlerhelper):
                 items = sea.findItem(title =service_name, itemType='Feature Service',searchorg=False)
               
                 if items['total'] >= 1:
-                    itemId = items['results'][0]['id']
-
-                else:
+                    for res in items['results']:
+                        if 'type' in res and res['type'] == 'Feature Service':
+                            if 'name' in res and res['name'] == service_name:
+                                itemId = res['id']
+                                break
+                            if 'title' in res and res['title'] == service_name:
+                                itemId = res['id']
+                                break                       
+                if not itemId is None:
                 
                     sea = arcrest.find.search(securityHandler=self._securityHandler)
                     items = sea.findItem(title =service_name_safe, itemType='Feature Service',searchorg=False)
 
                     if items['total'] >= 1:
-                        itemId = items['results'][0]['id']
-                    
+                        for res in items['results']:
+                            if 'type' in res and res['type'] == 'Feature Service':
+                                if 'name' in res and res['name'] == service_name_safe:
+                                    itemId = res['id']
+                                    break
+                                if 'title' in res and res['title'] == service_name_safe:
+                                    itemId = res['id']
+                                    break                             
                 if not itemId is None:
                     existingItem = admin.content.getItem(itemId = itemId).userItem        
                     if existingItem.url is not None:
@@ -1851,7 +1916,7 @@ class publishingtools(securityhandlerhelper):
             del enableResults
             gc.collect()
     #----------------------------------------------------------------------
-    def _publishAppLogic(self,appDet,map_info=None):
+    def _publishAppLogic(self,appDet,map_info=None,fsInfo=None):
         itemInfo = None
         replaceInfo = None
         replaceItem = None
@@ -1871,36 +1936,48 @@ class publishingtools(securityhandlerhelper):
             if replaceInfo != None:
 
                 for replaceItem in replaceInfo:
-
-                    for mapDet in map_info:
-                        if mapDet.has_key('ReplaceTag'):
-                            if 'ReplaceString' in replaceItem:
-                                if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
-                                   replaceItem['ReplaceType'] == 'Map':
+                    if fsInfo is not None:
+                        for fsDet in fsInfo:
+                            if fsDet.has_key('ReplaceTag'):
+                                if 'ReplaceString' in replaceItem:
+                                    if fsDet is not None and replaceItem['ReplaceString'] == fsDet['ReplaceTag'] and \
+                                       replaceItem['ReplaceType'] == 'Service':
+                                        replaceItem['ReplaceString'] = fsDet['FSInfo']['url']
+                                        replaceItem['ItemID'] = fsDet['FSInfo']['itemId']
+                                        replaceItem['ItemFolder'] = fsDet['FSInfo']['folderId']
+                                        if 'convertCase' in fsDet['FSInfo']:
+                                            replaceItem['convertCase'] = fsDet['FSInfo']['convertCase']
+                                        replaceItem['ReplaceType'] = "Global"
+                    if map_info is not None:                    
+                        for mapDet in map_info:
+                            if mapDet.has_key('ReplaceTag'):
+                                if 'ReplaceString' in replaceItem:
+                                    if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
+                                       replaceItem['ReplaceType'] == 'Map':
+        
+                                        replaceItem['ItemID'] = mapDet['MapInfo']['Results']['itemId']
+                                        replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
+                                        replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
+                                    elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
+                                        repInfo = replaceItem['ReplaceString'].split("|")
+                                        if len(repInfo) == 2:
+                                            if repInfo[0] == mapDet['ReplaceTag']:
+                                                for key,value in mapDet['MapInfo']['Layers'].iteritems():
+                                                    if value["Name"] == repInfo[1]:
+                                                        replaceItem['ReplaceString'] = value["ID"]
     
-                                    replaceItem['ItemID'] = mapDet['MapInfo']['Results']['itemId']
-                                    replaceItem['ItemFolder'] = mapDet['MapInfo']['folderId']
-                                    replaceItem['LayerInfo'] = mapDet['MapInfo']['Layers']
-                                elif mapDet is not None and replaceItem['ReplaceType'] == 'Layer':
-                                    repInfo = replaceItem['ReplaceString'].split("|")
-                                    if len(repInfo) == 2:
-                                        if repInfo[0] == mapDet['ReplaceTag']:
-                                            for key,value in mapDet['MapInfo']['Layers'].iteritems():
-                                                if value["Name"] == repInfo[1]:
-                                                    replaceItem['ReplaceString'] = value["ID"]
-
-                            if replaceItem.has_key('ItemID'):
-                                if replaceItem.has_key('ItemFolder') == False:
-
-                                    itemId = replaceItem['ItemID']
-                                 
-                                    itemInfo = admin.content.getItem(itemId=itemId)
-                                   
-                                    if itemInfo.owner == self._securityHandler.username and itemInfo.ownerFolder:
-                                        replaceItem['ItemFolder'] = itemInfo['ownerFolder']
-                                    else:
-                                        replaceItem['ItemFolder'] = None
-
+                                if replaceItem.has_key('ItemID'):
+                                    if replaceItem.has_key('ItemFolder') == False:
+    
+                                        itemId = replaceItem['ItemID']
+                                     
+                                        itemInfo = admin.content.getItem(itemId=itemId)
+                                       
+                                        if itemInfo.owner == self._securityHandler.username and itemInfo.ownerFolder:
+                                            replaceItem['ItemFolder'] = itemInfo['ownerFolder']
+                                        else:
+                                            replaceItem['ItemFolder'] = None
+    
 
             if appDet.has_key('ReplaceTag'):
 
@@ -1973,15 +2050,15 @@ class publishingtools(securityhandlerhelper):
             del itemId
             gc.collect()
     #----------------------------------------------------------------------
-    def publishApp(self,app_info,map_info=None):
+    def publishApp(self,app_info,map_info=None,fsInfo=None):
         appDet = None
         try:
             app_results = []
             if isinstance(app_info, list):
                 for appDet in app_info:
-                    app_results.append(self._publishAppLogic(appDet=appDet,map_info=map_info))
+                    app_results.append(self._publishAppLogic(appDet=appDet,map_info=map_info,fsInfo=fsInfo))
             else:
-                app_results.append(self._publishAppLogic(appDet=app_info,map_info=map_info))
+                app_results.append(self._publishAppLogic(appDet=app_info,map_info=map_info,fsInfo=fsInfo))
             return app_results 
        
         except (common.ArcRestHelperError), e:
@@ -2069,6 +2146,15 @@ class publishingtools(securityhandlerhelper):
 
                 return {"Results":{"error": "%s does not exist" % itemJson}  }
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
+            portalself = admin.portals.portalSelf
+            
+            if portalself.urlKey is None or portalself.customBaseUrl is None:
+                parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                orgURL = parsedURL.netloc + parsedURL.path
+            else:
+                orgURL =  portalself.urlKey + '.' +  portalself.customBaseUrl
+                
+                
             content = admin.content        
             userInfo = content.users.user()
             userCommunity = admin.community
@@ -2096,6 +2182,10 @@ class publishingtools(securityhandlerhelper):
                                         itemData['values']['webmap'] = replaceItem['ItemID']
                                         if 'folderId' in itemData:
                                             itemData['folderId'] = replaceItem['ItemFolder']
+                            if 'map' in itemData:
+                                if 'itemId' in itemData['map']:
+                                    if itemData['map']['itemId'] == replaceItem['SearchString']:
+                                        itemData['map']['itemId'] = replaceItem['ItemID']                                    
                         elif replaceItem['ReplaceType'] == 'Layer' and 'ReplaceString' in replaceItem:
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
                         elif replaceItem['ReplaceType'] == 'Folder':
@@ -2104,6 +2194,14 @@ class publishingtools(securityhandlerhelper):
                             else:
                                 folderID = None
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],folderID)
+                        elif replaceItem['ReplaceType'] == 'Org':
+                            
+                            itemData = common.find_replace(itemData,replaceItem['SearchString'],orgURL)                        
+                        elif replaceItem['ReplaceType'] == 'GeoService':
+                            if 'geometry' in portalself.helperServices:
+                                if 'url' in portalself.helperServices["geometry"]:
+                                    
+                                    itemData = common.find_replace(itemData,replaceItem['SearchString'],portalself.helperServices["geometry"]['url'])                                                    
                         elif replaceItem['ReplaceType'] == 'Global':
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
 
@@ -2153,8 +2251,14 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=name, itemType=itemType,searchorg=False)
             
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']  
-                
+                for res in items['results']:
+                    if 'type' in res and res['type'] == itemType:
+                        if 'name' in res and res['name'] == name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == name:
+                            itemId = res['id']
+                            break
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 results = item.updateItem(itemParameters=itemParams,
@@ -2183,12 +2287,12 @@ class publishingtools(securityhandlerhelper):
                     updateParams.title = name
     
                     url = url.replace("{AppID}",item.id)
-                    portalself = admin.portals.portalSelf
-                    if portalself.urlKey is None or portalself.customBaseUrl is None:
-                        parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
-                        url = url.replace("{OrgURL}",parsedURL.netloc + parsedURL.path)
-                    else:
-                        url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
+                    url = url.replace("{OrgURL}",orgURL)
+                    #if portalself.urlKey is None or portalself.customBaseUrl is None:
+                        #parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                        
+                    #else:
+                        #url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
                     updateParams.url = url                    
                     updateResults = item.updateItem(itemParameters=updateParams)                    
                 except Exception,e: 
@@ -2522,7 +2626,14 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=name, itemType=itemType,searchorg=False)
         
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']                    
+                for res in items['results']:
+                    if 'type' in res and res['type'] == itemType:
+                        if 'name' in res and res['name'] == name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == name:
+                            itemId = res['id']
+                            break                        
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 results = item.updateItem(itemParameters=itemParams,
@@ -2974,7 +3085,14 @@ class publishingtools(securityhandlerhelper):
             items = sea.findItem(title=service_name, itemType='Feature Collection',searchorg=False)
             itemId = None
             if items['total'] >= 1:
-                itemId = items['results'][0]['id']            
+                for res in items['results']:
+                    if 'type' in res and res['type'] == 'Feature Collection':
+                        if 'name' in res and res['name'] == service_name:
+                            itemId = res['id']
+                            break
+                        if 'title' in res and res['title'] == service_name:
+                            itemId = res['id']
+                            break
             if not itemId is None:
                 item = content.getItem(itemId).userItem
                 resultSD = item.updateItem(itemParameters=itemParams,
