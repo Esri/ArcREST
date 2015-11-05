@@ -10,6 +10,7 @@ import time
 from urlparse import urlparse
 import gc
 
+import operator
 #----------------------------------------------------------------------
 def trace():
     """
@@ -31,6 +32,37 @@ def trace():
 class ArcRestHelperError(Exception):
     """ raised when error occurs in utility module functions """
     pass
+def merge_dicts(dicts, op=operator.add):
+    a = None
+    for b in dicts:
+        
+        if a is None:
+            a = b.copy()
+        else:
+            a = dict(a.items() + b.items() + [(k, op(a[k], b[k])) for k in set(b) & set(a)])
+    return a
+
+##----------------------------------------------------------------------  
+#def merge_dicts(dicts):
+    #'''
+    #Given any number of dicts, shallow copy and merge into a new dict,
+    #precedence goes to key value pairs in latter dicts.
+    #'''
+   ## result = {}
+    #z = None
+    #for dictionary in dicts:
+        ##result.update(dictionary)
+        #if z is None:
+            #z = dictionary.copy()
+        #else:    
+            #z.update(dictionary)
+           
+    #return z
+#def merge_two_dicts(x, y):
+    #'''Given two dicts, merge them into a new dict as a shallow copy.'''
+    #z = x.copy()
+    #z.update(y)
+    #return z
 #----------------------------------------------------------------------  
 def noneToValue(value,newValue):
     if value is None:
