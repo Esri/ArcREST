@@ -379,7 +379,7 @@ class FeatureService(BaseAGSServer):
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
 
-        res = self._do_get(url=qurl,
+        res = self._do_post(url=qurl,
                            param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
