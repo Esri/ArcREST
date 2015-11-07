@@ -13,8 +13,6 @@ import sys, os, datetime
 import json
 import csv
 
-from arcpy import env
-
 import publishingtools
 import orgtools
 import common
@@ -73,7 +71,6 @@ class portalautomation(securityhandlerhelper):
         
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True    
         
        
         scriptStartTime = datetime.datetime.now()
@@ -192,7 +189,6 @@ class portalautomation(securityhandlerhelper):
         
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True    
         
         scriptStartTime = datetime.datetime.now()
         try:
@@ -322,8 +318,7 @@ class portalautomation(securityhandlerhelper):
     
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True
-    
+      
         scriptStartTime = datetime.datetime.now()
         try:
             
