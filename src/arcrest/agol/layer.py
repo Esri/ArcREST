@@ -748,7 +748,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
            isinstance(statisticFilter, filters.StatisticFilter):
             params['outStatistics'] = statisticFilter.filter
         fURL = self._url + "/query"
-        results = self._do_get(fURL, params,
+        results = self._do_post(fURL, params,
                                securityHandler=self._securityHandler,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
