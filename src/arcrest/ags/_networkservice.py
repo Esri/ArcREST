@@ -39,6 +39,7 @@ class NetworkService(BaseAGSServer):
         self._proxy_url = proxy_url
         if initialize:
             self.__init()
+
     #----------------------------------------------------------------------
     def __init(self):
         """ initializes the properties """
@@ -54,24 +55,32 @@ class NetworkService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
+
         for k,v in json_dict.iteritems():
             if k in attributes:
-                if k == "routeLayers":
+                if k == "routeLayers" and json_dict[k]:
                     self._routeLayers = []
                     for rl in v:
                         self._routeLayers.append(
-                            NetworkLayer(url=self._url + "/%s" % rl,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port,
-                                         initialize=False)
-                        )
+                            RouteNetworkLayer(url=self._url + "/%s" % rl,
+                                              securityHandler=self._securityHandler,
+                                              proxy_url=self._proxy_url,
+                                              proxy_port=self._proxy_port,
+                                              initialize=False))
+
+                elif k == "serviceAreaLayers" and json_dict[k]:
+                    self._serviceAreaLayers = []
+                    for sal in v:
+                        self._serviceAreaLayers.append(
+                            ServiceAreaNetworkLayer(url=self._url + "/%s" % sal,
+                                                    securityHandler=self._securityHandler,
+                                                    proxy_url=self._proxy_url,
+                                                    proxy_port=self._proxy_port,
+                                                    initialize=False))
                 else:
                     setattr(self, "_"+ k, v)
             else:
                 print "attribute %s is not implemented." % k
-
-
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -125,6 +134,7 @@ class NetworkService(BaseAGSServer):
         return self._serviceLimits
 
 
+
 ########################################################################
 class NetworkLayer(BaseAGSServer):
     """
@@ -134,10 +144,8 @@ class NetworkLayer(BaseAGSServer):
     classes. Additionally, depending on the layer type, it provides different
     pieces of information.
 
-    The solve operation is performed on a network layer resource. The solve
-    operation is supported on a network layer whose layerType is
-    esriNAServerRouteLayer. You can provide arguments to the solve route
-    operation as query parameters.
+    It is a base class for RouteNetworkLayer, ServiceAreaNetworkLayer, and
+    ClosestFacilityNetworkLayer.
     """
     _url = None
     _proxy_url = None
@@ -145,6 +153,8 @@ class NetworkLayer(BaseAGSServer):
     _securityHandler = None
     _json = None
     _json_dict = None
+
+    #common attrs for all Network Layer types
     _currentVersion = None
     _layerName = None
     _layerType = None
@@ -168,19 +178,6 @@ class NetworkLayer(BaseAGSServer):
     _hasM = None
     _hasZ = None
     _supportedTravelModes = None
-    _findBestSequence = None
-    _useStartTime = None
-    _startTime = None
-    _startTimeIsUTC = None
-    _useTimeWindows = None
-    _preserveFirstStop = None
-    _preserveLastStop = None
-    _outputLineType = None
-    _directionsLanguage = None
-    _directionsSupportedLanguages = None
-    _directionsStyleNames = None
-    _directionsLengthUnits = None
-    _directionsTimeAttribute = None
     _serviceLimits = None
 
     #----------------------------------------------------------------------
@@ -354,10 +351,96 @@ class NetworkLayer(BaseAGSServer):
         return self._supportedTravelModes
     #----------------------------------------------------------------------
     @property
-    def findBestSequence(self):
-        if self._findBestSequence is None:
+    def serviceLimits(self):
+        if self._serviceLimits is None:
             self.__init()
-        return self._findBestSequence
+        return self._serviceLimits
+
+
+########################################################################
+class RouteNetworkLayer(NetworkLayer):
+    """
+    The Route Network Layer which has common properties of any Network
+    Layer as well as some attributes unique to Route Network Layer only.
+    """
+
+    #specific to Route
+    _findBestSequence = None
+    _useStartTime = None
+    _startTime = None
+    _startTimeIsUTC = None
+    _useTimeWindows = None
+    _preserveFirstStop = None
+    _preserveLastStop = None
+    _outputLineType = None
+    _directionsLanguage = None
+    _directionsSupportedLanguages = None
+    _directionsStyleNames = None
+    _directionsLengthUnits = None
+    _directionsTimeAttribute = None
+
+    #----------------------------------------------------------------------
+    def __init__(self, url, securityHandler=None,
+                 proxy_url=None, proxy_port=None,
+                 initialize=False):
+        """ initializes all properties """
+        NetworkLayer.__init__(self,url)
+
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+        json_dict = self._do_get(url=self._url, param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implemented in RouteNetworkLayer."
+
+    #----------------------------------------------------------------------
+    @property
+    def directionsTimeAttribute(self):
+        if self._directionsTimeAttribute is None:
+            self.__init()
+        return self._directionsTimeAttribute
+    #----------------------------------------------------------------------
+    @property
+    def directionsLengthUnits(self):
+        if self._directionsLengthUnits is None:
+            self.__init()
+        return self._directionsLengthUnits
+    #----------------------------------------------------------------------
+    @property
+    def outputLineType(self):
+        if self._outputLineType is None:
+            self.__init()
+        return self._outputLineType
+    #----------------------------------------------------------------------
+    @property
+    def directionsLanguage(self):
+        if self._directionsLanguage is None:
+            self.__init()
+        return self._directionsLanguage
+    #----------------------------------------------------------------------
+    @property
+    def directionsSupportedLanguages(self):
+        if self._directionsSupportedLanguages is None:
+            self.__init()
+        return self._directionsSupportedLanguages
+    #----------------------------------------------------------------------
+    @property
+    def directionsStyleNames(self):
+        if self._directionsStyleNames is None:
+            self.__init()
+        return self._directionsStyleNames
     #----------------------------------------------------------------------
     @property
     def useStartTime(self):
@@ -396,43 +479,299 @@ class NetworkLayer(BaseAGSServer):
         return self._preserveLastStop
     #----------------------------------------------------------------------
     @property
-    def outputLineType(self):
-        if self._outputLineType is None:
+    def findBestSequence(self):
+        if self._findBestSequence is None:
             self.__init()
-        return self._outputLineType
+        return self._findBestSequence
+
+    #----------------------------------------------------------------------
+    def solve(self,stops,
+              method="POST",
+              barriers=None,
+              polylineBarriers=None,
+              polygonBarriers=None,
+              travelMode=None,
+              attributeParameterValues=None,
+              returnDirections=None,
+              returnRoutes=True,
+              returnStops=False,
+              returnBarriers=False,
+              returnPolylineBarriers=True,
+              returnPolygonBarriers=True,
+              outSR=None,
+              ignoreInvalidLocations=True,
+              outputLines=None,
+              findBestSequence=False,
+              preserveFirstStop=True,
+              preserveLastStop=True,
+              useTimeWindows=False,
+              startTime=None,
+              startTimeIsUTC=False,
+              accumulateAttributeNames=None,
+              impedanceAttributeName=None,
+              restrictionAttributeNames=None,
+              restrictUTurns=None,
+              useHierarchy=True,
+              directionsLanguage=None,
+              directionsOutputType=None,
+              directionsStyleName=None,
+              directionsLengthUnits=None,
+              directionsTimeAttributeName=None,
+              outputGeometryPrecision=None,
+              outputGeometryPrecisionUnits=None,
+              returnZ=False
+              ):
+        """The solve operation is performed on a network layer resource.
+        The solve operation is supported on a network layer whose layerType
+        is esriNAServerRouteLayer. You can provide arguments to the solve
+        route operation as query parameters"""
+
+        if not self.layerType == "esriNAServerRouteLayer":
+            raise ValueError("The solve operation is supported on a network "
+                             "layer of Route type only")
+
+        url = self._url + "/solve"
+        params = {
+                    "f" : "json",
+                    "stops": stops
+                 }
+
+        if not barriers is None:
+            params['barriers'] = barriers
+        if not polylineBarriers is None:
+            params['polylineBarriers'] = polylineBarriers
+        if not polygonBarriers is None:
+            params['polygonBarriers'] = polygonBarriers
+        if not travelMode is None:
+            params['travelMode'] = travelMode
+        if not attributeParameterValues is None:
+            params['attributeParameterValues'] = attributeParameterValues
+        if not returnDirections is None:
+            params['returnDirections'] = returnDirections
+        if not returnRoutes is None:
+            params['returnRoutes'] = returnRoutes
+        if not returnStops is None:
+            params['returnStops'] = returnStops
+        if not returnBarriers is None:
+            params['returnBarriers'] = returnBarriers
+        if not returnPolylineBarriers is None:
+            params['returnPolylineBarriers'] = returnPolylineBarriers
+        if not returnPolygonBarriers is None:
+            params['returnPolygonBarriers'] = returnPolygonBarriers
+        if not outSR is None:
+            params['outSR'] = outSR
+        if not ignoreInvalidLocations is None:
+            params['ignoreInvalidLocations'] = ignoreInvalidLocations
+        if not outputLines is None:
+            params['outputLines'] = outputLines
+        if not findBestSequence is None:
+            params['findBestSequence'] = findBestSequence
+        if not preserveFirstStop is None:
+            params['preserveFirstStop'] = preserveFirstStop
+        if not preserveLastStop is None:
+            params['preserveLastStop'] = preserveLastStop
+        if not useTimeWindows is None:
+            params['useTimeWindows'] = useTimeWindows
+        if not startTime is None:
+            params['startTime'] = startTime
+        if not startTimeIsUTC is None:
+            params['startTimeIsUTC'] = startTimeIsUTC
+        if not accumulateAttributeNames is None:
+            params['accumulateAttributeNames'] = accumulateAttributeNames
+        if not impedanceAttributeName is None:
+            params['impedanceAttributeName'] = impedanceAttributeName
+        if not restrictionAttributeNames is None:
+            params['restrictionAttributeNames'] = restrictionAttributeNames
+        if not restrictUTurns is None:
+            params['restrictUTurns'] = restrictUTurns
+        if not useHierarchy is None:
+            params['useHierarchy'] = useHierarchy
+        if not directionsLanguage is None:
+            params['directionsLanguage'] = directionsLanguage
+        if not directionsOutputType is None:
+            params['directionsOutputType'] = directionsOutputType
+        if not directionsStyleName is None:
+            params['directionsStyleName'] = directionsStyleName
+        if not directionsLengthUnits is None:
+            params['directionsLengthUnits'] = directionsLengthUnits
+        if not directionsTimeAttributeName is None:
+            params['directionsTimeAttributeName'] = directionsTimeAttributeName
+        if not outputGeometryPrecision is None:
+            params['outputGeometryPrecision'] = outputGeometryPrecision
+        if not outputGeometryPrecisionUnits is None:
+            params['outputGeometryPrecisionUnits'] = outputGeometryPrecisionUnits
+        if not returnZ is None:
+            params['returnZ'] = returnZ
+
+        if method.lower() == "post":
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        else:
+            return self._do_get(url=url,
+                                param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+
+
+########################################################################
+class ServiceAreaNetworkLayer(NetworkLayer):
+    """
+    The Service Area Network Layer which has common properties of Network
+    Layer as well as some attributes unique to Service Area Network Layer
+    only.
+    """
+
+    #specific to Service Area
+    _outputLines = None
+    _timeOfDayIsUTC = None
+    _travelDirection = None
+    _trimOuterPolygon = None
+    _trimPolygonDistanceUnits = None
+    _defaultBreaks = None
+    _includeSourceInformationOnLines = None
+    _overlapPolygons = None
+    _timeOfDay = None
+    _excludeSourcesFromPolygons = None
+    _splitPolygonsAtBreaks = None
+    _outputPolygons = None
+    _overlapLines = None
+    _trimPolygonDistance = None
+    _splitLinesAtBreaks = None
+    _timeOfDayUsage = None
+    _mergeSimilarPolygonRanges = None
+
+    #----------------------------------------------------------------------
+    def __init__(self, url, securityHandler=None,
+                 proxy_url=None, proxy_port=None,
+                 initialize=False):
+        """initializes all properties"""
+        NetworkLayer.__init__(self, url)
+
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+
+        # TODO handle spaces in the url, 'Service Area' should be 'Service+Area'
+        self._url = self._url.replace(' ','+')
+        json_dict = self._do_get(url=self._url, param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implemented in ServiceAreaNetworkLayer."
+
     #----------------------------------------------------------------------
     @property
-    def directionsLanguage(self):
-        if self._directionsLanguage is None:
+    def outputLines(self):
+        if self._outputLines is None:
             self.__init()
-        return self._directionsLanguage
+        return self._outputLines
     #----------------------------------------------------------------------
     @property
-    def directionsSupportedLanguages(self):
-        if self._directionsSupportedLanguages is None:
+    def timeOfDayIsUTC(self):
+        if self._timeOfDayIsUTC is None:
             self.__init()
-        return self._directionsSupportedLanguages
+        return self._timeOfDayIsUTC
     #----------------------------------------------------------------------
     @property
-    def directionsStyleNames(self):
-        if self._directionsStyleNames is None:
+    def travelDirection(self):
+        if self._travelDirection is None:
             self.__init()
-        return self._directionsStyleNames
+        return self._travelDirection
     #----------------------------------------------------------------------
     @property
-    def directionsLengthUnits(self):
-        if self._directionsLengthUnits is None:
+    def trimOuterPolygon(self):
+        if self._trimOuterPolygon is None:
             self.__init()
-        return self._directionsLengthUnits
+        return self._trimOuterPolygon
     #----------------------------------------------------------------------
     @property
-    def directionsTimeAttribute(self):
-        if self._directionsTimeAttribute is None:
+    def trimPolygonDistanceUnits(self):
+        if self._trimPolygonDistanceUnits is None:
             self.__init()
-        return self._directionsTimeAttribute
+        return self._trimPolygonDistanceUnits
     #----------------------------------------------------------------------
     @property
-    def serviceLimits(self):
-        if self._serviceLimits is None:
+    def defaultBreaks(self):
+        if self._defaultBreaks is None:
             self.__init()
-        return self._serviceLimits
+        return self._defaultBreaks
+    #----------------------------------------------------------------------
+    @property
+    def includeSourceInformationOnLines(self):
+        if self._includeSourceInformationOnLines is None:
+            self.__init()
+        return self._includeSourceInformationOnLines
+    #----------------------------------------------------------------------
+    @property
+    def overlapPolygons(self):
+        if self._overlapPolygons is None:
+            self.__init()
+        return self._overlapPolygons
+    #----------------------------------------------------------------------
+    @property
+    def timeOfDay(self):
+        if self._timeOfDay is None:
+            self.__init()
+        return self._timeOfDay
+    #----------------------------------------------------------------------
+    @property
+    def excludeSourcesFromPolygons(self):
+        if self._excludeSourcesFromPolygons is None:
+            self.__init()
+        return self._excludeSourcesFromPolygons
+    #----------------------------------------------------------------------
+    @property
+    def splitPolygonsAtBreaks(self):
+        if self._splitPolygonsAtBreaks is None:
+            self.__init()
+        return self._splitPolygonsAtBreaks
+    #----------------------------------------------------------------------
+    @property
+    def outputPolygons(self):
+        if self._outputPolygons is None:
+            self.__init()
+        return self._outputPolygons
+    #----------------------------------------------------------------------
+    @property
+    def overlapLines(self):
+        if self._overlapLines is None:
+            self.__init()
+        return self._overlapLines
+    #----------------------------------------------------------------------
+    @property
+    def trimPolygonDistance(self):
+        if self._trimPolygonDistance is None:
+            self.__init()
+        return self._trimPolygonDistance
+    #----------------------------------------------------------------------
+    @property
+    def splitLinesAtBreaks(self):
+        if self._splitLinesAtBreaks is None:
+            self.__init()
+        return self._splitLinesAtBreaks
+    #----------------------------------------------------------------------
+    @property
+    def timeOfDayUsage(self):
+        if self._timeOfDayUsage is None:
+            self.__init()
+        return self._timeOfDayUsage
+    #----------------------------------------------------------------------
+    @property
+    def mergeSimilarPolygonRanges(self):
+        if self._mergeSimilarPolygonRanges is None:
+            self.__init()
+        return self._mergeSimilarPolygonRanges
