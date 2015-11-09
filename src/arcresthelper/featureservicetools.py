@@ -14,7 +14,11 @@ import json
 import os
 import common 
 import gc
-import arcpy
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
 import traceback, inspect, sys 
 import collections        
 #----------------------------------------------------------------------
@@ -40,7 +44,14 @@ class featureservicetools(securityhandlerhelper):
     def RemoveAndAddFeatures(self, url, pathToFeatureClass,id_field,chunksize=1000):
         fl = None
 
-        try:    
+        try:  
+            if arcpyFound == False:
+                raise common.ArcRestHelperError({
+                    "function": "RemoveAndAddFeatures",
+                    "line": inspect.currentframe().f_back.f_lineno,
+                    "filename":  'featureservicetools',
+                    "synerror": "ArcPy required for this function"
+                })                                  
             arcpy.env.overwriteOutput = True
             tempaddlayer= 'ewtdwedfew'
             if not arcpy.Exists(pathToFeatureClass):
@@ -325,6 +336,13 @@ class featureservicetools(securityhandlerhelper):
             gc.collect()
     #----------------------------------------------------------------------
     def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0):
+        if arcpyFound == False:
+            raise common.ArcRestHelperError({
+                "function": "AddFeaturesToFeatureLayer",
+                "line": inspect.currentframe().f_back.f_lineno,
+                "filename":  'featureservicetools',
+                "synerror": "ArcPy required for this function"
+            })               
         fl = None
         try:
             fl = FeatureLayer(

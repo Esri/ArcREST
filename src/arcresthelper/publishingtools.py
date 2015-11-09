@@ -14,11 +14,6 @@ import os
 import arcresthelper.common as common
 import gc
 import sys
-try:
-    import arcpy
-    arcpyFound = True
-except:
-    arcpyFound = False
 
 from urlparse import urlparse
 
@@ -161,33 +156,14 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishItems",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishItems",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "publishItems",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+        
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishItems",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
             itemInfo = None  
             item_results = None
@@ -353,33 +329,14 @@ class publishingtools(securityhandlerhelper):
             return resultItem
 
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishItems",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishItems",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishItems",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
 
         finally:
             name = None
@@ -514,33 +471,14 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
     
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "publishMap",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+             line, filename, synerror = trace()
+             raise common.ArcRestHelperError({
+                 "function": "publishMap",
+                 "line": line,
+                 "filename":  filename,
+                 "synerror": synerror,
+             })
         finally:
             itemInfo = None
             itemId = None
@@ -999,33 +937,14 @@ class publishingtools(securityhandlerhelper):
 
        
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishMap",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishMap",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
 
         finally:
             name = None
@@ -1179,33 +1098,14 @@ class publishingtools(securityhandlerhelper):
 
                 return map_results
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishedCombinedWebMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishedCombinedWebMap",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "publishedCombinedWebMap",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })        
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishedCombinedWebMap",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })        
         finally:
             admin = None
 
@@ -1287,35 +1187,15 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
                         "function": "publishFsFromMXD",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                                "function": "publishFsFromMXD",
-                                "line": line,
-                                "filename":  filename,
-                                "synerror": synerror,
-                                                }
-                                                )
-                
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                            "function": "publishFsFromMXD",
-                            "line": line,
-                            "filename":  filename,
-                            "synerror": synerror,
-                                            }
-                                            )
+                                        }
+                                        )
 
         finally:
             resItm = None
@@ -1364,33 +1244,14 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishFeatureCollections",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishFeatureCollections",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-        
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "publishFeatureCollections",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishFeatureCollections",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
 
         finally:
             resItm = None
@@ -1804,33 +1665,14 @@ class publishingtools(securityhandlerhelper):
             return results
    
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishFsFromConfig",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishFsFromConfig",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-        
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishFsFromConfig",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishFsFromConfig",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
             definition = None
             mxd = None
@@ -2007,33 +1849,14 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError, e:
             raise e                                               
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishAppLogic",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishAppLogic",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-        
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishAppLogic",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishAppLogic",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
             replaceInfo = None
             replaceItem = None
@@ -2064,33 +1887,14 @@ class publishingtools(securityhandlerhelper):
         except (common.ArcRestHelperError), e:
             raise e        
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishApp",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "publishApp",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-        
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "publishApp",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "publishApp",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
 
         finally:
             appDet = None
@@ -2248,7 +2052,11 @@ class publishingtools(securityhandlerhelper):
             itemParams.typeKeywords = ",".join(typeKeywords)
         
             sea = arcrest.find.search(securityHandler=self._securityHandler)
-            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+            items = sea.findItem(title=name, 
+                                 itemType=
+                                 ["Web Mapping Application",
+                                  "Application"],
+                                 searchorg=False)
             
             if items['total'] >= 1:
                 for res in items['results']:
@@ -2304,33 +2112,14 @@ class publishingtools(securityhandlerhelper):
 
      
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishApp",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishApp",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishApp",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+           
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishApp",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
 
         finally:
 
@@ -2623,7 +2412,11 @@ class publishingtools(securityhandlerhelper):
             itemParams.typeKeywords = ",".join(typeKeywords)
 
             sea = arcrest.find.search(securityHandler=self._securityHandler)
-            items = sea.findItem(title=name, itemType=itemType,searchorg=False)
+            items = sea.findItem(title=name, itemType=
+                                 ["Web Mapping Application",
+                                  "Application",
+                                  "Operation View"],
+                                 searchorg=False)
         
             if items['total'] >= 1:
                 for res in items['results']:
@@ -2671,33 +2464,14 @@ class publishingtools(securityhandlerhelper):
             
         
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishDashboard",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishDashboard",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishDashboard",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+           
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishDashboard",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
 
             tags = None
@@ -2858,33 +2632,14 @@ class publishingtools(securityhandlerhelper):
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "updateFeatureService",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "updateFeatureService",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "updateFeatureService",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+            
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "updateFeatureService",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
             fst = None
             fURL = None
@@ -3149,33 +2904,14 @@ class publishingtools(securityhandlerhelper):
             raise e
            
         except Exception as e:
-            if (arcpyFound):
-                if isinstance(e,(arcpy.ExecuteError)):
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishFeatureCollection",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                        "arcpyError": arcpy.GetMessages(2),
-                    })
-                else:
-                    line, filename, synerror = trace()
-                    raise common.ArcRestHelperError({
-                        "function": "_publishFeatureCollection",
-                        "line": line,
-                        "filename":  filename,
-                        "synerror": synerror,
-                    })
-    
-            else:
-                line, filename, synerror = trace()
-                raise common.ArcRestHelperError({
-                    "function": "_publishFeatureCollection",
-                    "line": line,
-                    "filename":  filename,
-                    "synerror": synerror,
-                })
+           
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                "function": "_publishFeatureCollection",
+                "line": line,
+                "filename":  filename,
+                "synerror": synerror,
+            })
         finally:
   
            

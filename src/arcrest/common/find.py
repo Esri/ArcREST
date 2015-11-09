@@ -40,69 +40,91 @@ class search(_base.BaseWebOperations):
         #
         # Find the itemID of whats being updated
         #
-        types = ('"ArcPad Package"',
-              '"Basemap Package"',
-              '"Code Attachment"',
-              '"Code Sample"',
-              '"Color Set"',
-              '"Desktop Add In"',
-              '"Desktop Application Template"',
-              '"Desktop Style"',
-              '"Explorer Add In"',
-              '"Explorer Layer"',
-              '"Explorer Map"',
-              '"Feature Collection Template"',
-              '"Feature Collection"',
-              '"Feature Service"',
-              '"Featured Items"',
-              '"File Geodatabase"',
-              '"Geodata Service"',
-              '"Geoprocessing Package"',
-              '"Geoprocessing Sample"',
-              '"Globe Document"',
-              '"Image"',
-              '"Image Service"',
-              '"KML"',
-              '"Layer Package"',
-              '"Layer"',
-              '"Layout"',
-              '"Locator Package"',
-              '"Map Document"',
-              '"Map Service"',
-              '"Map Template"',
-              '"Mobile Basemap Package"',
-              '"Mobile Map Package"',
-              '"Pro Map"',             
-              '"Project Package"',
-              '"Project Template"',
-              '"Published Map"',
-              '"Scene Documen"',
-              '"Scene Package"',
-              '"Scene Service"',
-              '"Stream Service"',
-              '"Symbol Set"',
-              '"Tile Package"',
-              '"Windows Mobile Package"',
-              '"Windows Viewer Add In"',
-              '"Windows Viewer Configuration"',
-              '"WMS"',
-              '"Workflow Manager Package"',
-              '"web mapping application"',
-              '"Web Map"')
+        types = [
+              'Application',
+              'ArcPad Package',
+              'Basemap Package',
+              'Code Attachment',
+              'Code Sample',
+              'Color Set',
+              'Desktop Add In',
+              'Desktop Application Template',
+              'Desktop Style',
+              'Explorer Add In',
+              'Explorer Layer',
+              'Explorer Map',
+              'Feature Collection Template',
+              'Feature Collection',
+              'Feature Service',
+              'Featured Items',
+              'File Geodatabase',
+              'Geodata Service',
+              'Geoprocessing Package',
+              'Geoprocessing Sample',
+              'Globe Document',
+              'Image',
+              'Image Service',
+              'KML',
+              'Layer Package',
+              'Layer',
+              'Layout',
+              'Locator Package',
+              'Map Document',
+              'Map Service',
+              'Map Template',
+              'Mobile Basemap Package',
+              'Mobile Map Package',
+              'Pro Map',             
+              'Project Package',
+              'Project Template',
+              'Published Map',
+              'Scene Document',
+              'Scene Package',
+              'Scene Service',
+              'Stream Service',
+              'Symbol Set',
+              'Tile Package',
+              'Windows Mobile Package',
+              'Windows Viewer Add In',
+              'Windows Viewer Configuration',
+              'WMS',
+              'Workflow Manager Package',
+              'Web Mapping Application',
+              'Web Map']
         if username is None:
             username = self._securityHandler.username
         if searchorg == True:
             params = {'f': 'json',
-               'q': "(title:\""+ title + "\" AND type:\"" + itemType + "\")"}               
+               'q': title}
+            #'q': "(title:\""+ title}        
         else:
             params = {'f': 'json',
-               'q': "(title:\""+ title + "\" AND owner:\"" + username + "\" AND type:\"" + itemType + "\")"}
-        typstr = ''
-        for ty in types:
-            if ty !=  '"' + itemType + '"':
-                typstr = typstr + " -type: " + ty
+               'q': title + " owner:" + username }
+        if itemType is not None:
+            if isinstance(itemType,list):
+                typstr = None
+                for ty in itemType:
+                    if typstr is None:
+                        typstr = " (type:\"" + ty + "\""
+                    else:
+                        typstr = typstr + " OR type:\"" + ty + "\""
+                    if ty in types:
+                        types.remove(ty)
+                typstr = typstr + ")"
+                params['q'] = params['q'] + typstr
+               
+            else:
+                if itemType in types:
+                    types.remove(itemType)                
+                params['q'] = params['q'] + " (type:\"" + itemType + "\")"
             
-        params['q'] = params['q'] + typstr
+            #itemType = ""
+            #for ty in types:
+                #itemType = itemType + " -type:\"" + ty + "\""
+            #params['q'] = params['q'] + itemType   
+            
+        else:
+            pass
         jsonResponse = self._do_get(url=self._url,
                                    securityHandler=self._securityHandler,
                                    param_dict=params,
