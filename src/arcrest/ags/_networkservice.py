@@ -77,6 +77,16 @@ class NetworkService(BaseAGSServer):
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
                                                     initialize=False))
+                                                    
+                elif k == "closestFacilityLayers" and json_dict[k]:
+                    self._closestFacilityLayers = []
+                    for cf in v:
+                        self._closestFacilityLayers.append(
+                            ClosestFacilityNetworkLayer(url=self._url + "/%s" % cf,
+                                                    securityHandler=self._securityHandler,
+                                                    proxy_url=self._proxy_url,
+                                                    proxy_port=self._proxy_port,
+                                                    initialize=False))                
                 else:
                     setattr(self, "_"+ k, v)
             else:
@@ -1159,6 +1169,400 @@ class ServiceAreaNetworkLayer(NetworkLayer):
             params['timeOfDayIsUTC'] = timeOfDayIsUTC
         if not travelDirection is None:
             params['travelDirection'] = travelDirection
+        if not returnZ is None:
+            params['returnZ'] = returnZ
+
+        if method.lower() == "post":
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        else:
+            return self._do_get(url=url,
+                                param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+
+
+########################################################################
+class ClosestFacilityNetworkLayer(NetworkLayer):
+    """
+    The Closest Facility Network Layer which has common properties of Network
+    Layer as well as some attributes unique to Closest Facility Network Layer
+    only.
+    """
+
+    #specific to Closest Facility
+    directionsLanguage = None
+    directionsLengthUnits = None
+    outputLineType = None
+    timeOfDayIsUTC = None
+    travelDirection = None
+    defaultCutoffValue = None
+    facilityCount = None
+    directionsTimeAttribute = None
+    timeOfDayUsage = None
+    directionsSupportedLanguages = None
+    directionsStyleNames = None
+    timeOfDay = None
+
+    #----------------------------------------------------------------------
+    def __init__(self, url, securityHandler=None,
+                 proxy_url=None, proxy_port=None,
+                 initialize=False):
+        """initializes all properties"""
+        NetworkLayer.__init__(self, url)
+
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+
+        # TODO handle spaces in the url, 'Closest Facility' should be 'Closest+Facility'
+        self._url = self._url.replace(' ','+')
+        json_dict = self._do_get(url=self._url, param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.iteritems():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print k, " - attribute not implemented in ClosestFacilityNetworkLayer."
+
+    #----------------------------------------------------------------------
+    @property
+    def directionsLanguage(self):
+        if self._directionsLanguage is None:
+            self.__init()
+        return self._directionsLanguage
+    #----------------------------------------------------------------------
+    @property
+    def directionsLengthUnits(self):
+        if self._directionsLengthUnits is None:
+            self.__init()
+        return self._directionsLengthUnits
+    #----------------------------------------------------------------------
+    @property
+    def outputLineType(self):
+        if self._outputLineType is None:
+            self.__init()
+        return self._outputLineType
+    #----------------------------------------------------------------------
+    @property
+    def timeOfDayIsUTC(self):
+        if self._timeOfDayIsUTC is None:
+            self.__init()
+        return self._timeOfDayIsUTC
+    #----------------------------------------------------------------------
+    @property
+    def travelDirection(self):
+        if self._travelDirection is None:
+            self.__init()
+        return self._travelDirection
+    #----------------------------------------------------------------------
+    @property
+    def defaultCutoffValue(self):
+        if self._defaultCutoffValue is None:
+            self.__init()
+        return self._defaultCutoffValue
+    #----------------------------------------------------------------------
+    @property
+    def facilityCount(self):
+        if self._facilityCount is None:
+            self.__init()
+        return self._facilityCount
+    #----------------------------------------------------------------------
+    @property
+    def directionsTimeAttribute(self):
+        if self._directionsTimeAttribute is None:
+            self.__init()
+        return self._directionsTimeAttribute
+    #----------------------------------------------------------------------
+    @property
+    def timeOfDayUsage(self):
+        if self._timeOfDayUsage is None:
+            self.__init()
+        return self._timeOfDayUsage
+    #----------------------------------------------------------------------
+    @property
+    def directionsSupportedLanguages(self):
+        if self._directionsSupportedLanguages is None:
+            self.__init()
+        return self._directionsSupportedLanguages
+    #----------------------------------------------------------------------
+    @property
+    def directionsStyleNames(self):
+        if self._directionsStyleNames is None:
+            self.__init()
+        return self._directionsStyleNames
+    #----------------------------------------------------------------------
+    @property
+    def timeOfDay(self):
+        if self._timeOfDay is None:
+            self.__init()
+        return self._timeOfDay
+
+    #----------------------------------------------------------------------
+    def solveClosestFacility(self,incidents,facilities,method="POST",
+                             barriers=None,
+                             polylineBarriers=None,
+                             polygonBarriers=None,
+                             travelMode=None,
+                             attributeParameterValues=None,
+                             returnDirections=None,
+                             directionsLanguage=None,
+                             directionsStyleName=None,
+                             directionsLengthUnits=None,
+                             directionsTimeAttributeName=None,
+                             returnCFRoutes=True,
+                             returnFacilities=False,
+                             returnIncidents=False,
+                             returnBarriers=False,
+                             returnPolylineBarriers=False,
+                             returnPolygonBarriers=False,
+                             outputLines=None,
+                             defaultCutoff=None,
+                             defaultTargetFacilityCount=None,
+                             travelDirection=None,
+                             outSR=None,
+                             accumulateAttributeNames=None,
+                             impedanceAttributeName=None,
+                             restrictionAttributeNames=None,
+                             restrictUTurns=None,
+                             useHierarchy=True,
+                             outputGeometryPrecision=None,
+                             outputGeometryPrecisionUnits=None,
+                             timeOfDay=None,
+                             timeOfDayIsUTC=None,
+                             timeOfDayUsage=None,
+                             returnZ=False):
+        """The solve operation is performed on a network layer resource of
+        type closest facility (layerType is esriNAServerClosestFacilityLayer).
+        You can provide arguments to the solve route operation as query
+        parameters.
+        Inputs:
+            facilities  - The set of facilities loaded as network locations
+                          during analysis. Facilities can be specified using
+                          a simple comma / semi-colon based syntax or as a
+                          JSON structure. If facilities are not specified,
+                          preloaded facilities from the map document are used
+                          in the analysis.
+            incidents - The set of incidents loaded as network locations
+                        during analysis. Incidents can be specified using
+                        a simple comma / semi-colon based syntax or as a
+                        JSON structure. If incidents are not specified,
+                        preloaded incidents from the map document are used
+                        in the analysis.
+            barriers - The set of barriers loaded as network locations during
+                       analysis. Barriers can be specified using a simple comma
+                       / semi-colon based syntax or as a JSON structure. If
+                       barriers are not specified, preloaded barriers from the
+                       map document are used in the analysis. If an empty json
+                       object is passed ('{}') preloaded barriers are ignored.
+            polylineBarriers - The set of polyline barriers loaded as network
+                               locations during analysis. If polyline barriers
+                               are not specified, preloaded polyline barriers
+                               from the map document are used in the analysis.
+                               If an empty json object is passed ('{}')
+                               preloaded polyline barriers are ignored.
+            polygonBarriers - The set of polygon barriers loaded as network
+                              locations during analysis. If polygon barriers
+                              are not specified, preloaded polygon barriers
+                              from the map document are used in the analysis.
+                              If an empty json object is passed ('{}') preloaded
+                              polygon barriers are ignored.
+            travelMode - Travel modes provide override values that help you
+                         quickly and consistently model a vehicle or mode of
+                         transportation. The chosen travel mode must be
+                         preconfigured on the network dataset that the routing
+                         service references.
+            attributeParameterValues - A set of attribute parameter values that
+                                       can be parameterized to determine which
+                                       network elements can be used by a vehicle.
+            returnDirections - If true, directions will be generated and returned
+                               with the analysis results. Default is true.
+            directionsLanguage - The language to be used when computing directions.
+                                 The default is as defined in the network layer. The
+                                 list of supported languages can be found in REST
+                                 layer description.
+            directionsOutputType -  Defines content, verbosity of returned
+                                    directions. The default is esriDOTStandard.
+                                    Values: esriDOTComplete | esriDOTCompleteNoEvents
+                                    | esriDOTInstructionsOnly | esriDOTStandard |
+                                    esriDOTSummaryOnly
+            directionsStyleName - The style to be used when returning the directions.
+                                  The default is as defined in the network layer. The
+                                  list of supported styles can be found in REST
+                                  layer description.
+            directionsLengthUnits - The length units to use when computing directions.
+                                    The default is as defined in the network layer.
+                                    Values: esriNAUFeet | esriNAUKilometers |
+                                    esriNAUMeters | esriNAUMiles |
+                                    esriNAUNauticalMiles | esriNAUYards |
+                                    esriNAUUnknown
+            directionsTimeAttributeName - The name of network attribute to use for
+                                          the drive time when computing directions.
+                                          The default is as defined in the network
+                                          layer.
+            returnCFRoutes - If true, closest facilities routes will be returned
+                             with the analysis results. Default is true.
+            returnFacilities -  If true, facilities  will be returned with the
+                                analysis results. Default is false.
+            returnIncidents - If true, incidents will be returned with the
+                              analysis results. Default is false.
+            returnBarriers -  If true, barriers will be returned with the analysis
+                              results. Default is false.
+            returnPolylineBarriers -  If true, polyline barriers will be returned
+                                      with the analysis results. Default is false.
+            returnPolygonBarriers - If true, polygon barriers will be returned with
+                                    the analysis results. Default is false.
+            outputLines - The type of output lines to be generated in the result.
+                          The default is as defined in the network layer.
+            defaultCutoff - The default cutoff value to stop traversing.
+            defaultTargetFacilityCount - The default number of facilities to find.
+            travelDirection - Options for traveling to or from the facility.
+                              The default is defined in the network layer.
+                              Values: esriNATravelDirectionFromFacility |
+                              esriNATravelDirectionToFacility
+            outSR - The spatial reference of the geometries returned with the
+                    analysis results.
+            accumulateAttributeNames - The list of network attribute names to be
+                                       accumulated with the analysis. The default is
+                                       as defined in the network layer. The value
+                                       should be specified as a comma separated list
+                                       of attribute names. You can also specify a
+                                       value of none to indicate that no network
+                                       attributes should be accumulated.
+            impedanceAttributeName - The network attribute name to be used as the
+                                     impedance attribute in analysis. The default is
+                                     as defined in the network layer.
+            restrictionAttributeNames -The list of network attribute names to be
+                                       used as restrictions with the analysis. The
+                                       default is as defined in the network layer.
+                                       The value should be specified as a comma
+                                       separated list of attribute names. You can
+                                       also specify a value of none to indicate that
+                                       no network attributes should be used as
+                                       restrictions.
+            restrictUTurns -  Specifies how U-Turns should be restricted in the
+                              analysis. The default is as defined in the network
+                              layer. Values: esriNFSBAllowBacktrack |
+                              esriNFSBAtDeadEndsOnly | esriNFSBNoBacktrack |
+                              esriNFSBAtDeadEndsAndIntersections
+            useHierarchy -  If true, the hierarchy attribute for the network should
+                            be used in analysis. The default is as defined in the
+                            network layer.
+            outputGeometryPrecision -  The precision of the output geometry after
+                                       generalization. If 0, no generalization of
+                                       output geometry is performed. The default is
+                                       as defined in the network service
+                                       configuration.
+            outputGeometryPrecisionUnits - The units of the output geometry
+                                           precision. The default value is
+                                           esriUnknownUnits. Values: esriUnknownUnits
+                                           | esriCentimeters | esriDecimalDegrees |
+                                           esriDecimeters | esriFeet | esriInches |
+                                           esriKilometers | esriMeters | esriMiles |
+                                           esriMillimeters | esriNauticalMiles |
+                                           esriPoints | esriYards
+            timeOfDay - Arrival or departure date and time. Values: specified by
+                        number of milliseconds since midnight Jan 1st, 1970, UTC.
+            timeOfDayIsUTC - The time zone of the timeOfDay parameter. By setting
+                             timeOfDayIsUTC to true, the timeOfDay parameter refers
+                             to Coordinated Universal Time (UTC). Choose this option
+                             if you want to find what's nearest for a specific time,
+                             such as now, but aren't certain in which time zone the
+                             facilities or incidents will be located.
+            timeOfDayUsage - Defines the way timeOfDay value is used. The default
+                             is as defined in the network layer.
+                             Values: esriNATimeOfDayUseAsStartTime |
+                             esriNATimeOfDayUseAsEndTime
+            returnZ - If true, Z values will be included in the returned routes and
+                       compressed geometry if the network dataset is Z-aware.
+                       The default is false.
+    """
+
+        if not self.layerType == "esriNAServerClosestFacilityLayer":
+            raise ValueError("The solveClosestFacility operation is supported on a network "
+                             "layer of Closest Facility type only")
+
+        url = self._url + "/solveClosestFacility"
+        params = {
+                "f" : "json",
+                "facilities": facilities,
+                "incidents": incidents
+                }
+
+        if not barriers is None:
+            params['barriers'] = barriers
+        if not polylineBarriers is None:
+            params['polylineBarriers'] = polylineBarriers
+        if not polygonBarriers is None:
+            params['polygonBarriers'] = polygonBarriers
+        if not travelMode is None:
+            params['travelMode'] = travelMode
+        if not attributeParameterValues is None:
+            params['attributeParameterValues'] = attributeParameterValues
+        if not returnDirections is None:
+            params['returnDirections'] = returnDirections
+        if not directionsLanguage is None:
+            params['directionsLanguage'] = directionsLanguage
+        if not directionsStyleName is None:
+            params['directionsStyleName'] = directionsStyleName
+        if not directionsLengthUnits is None:
+            params['directionsLengthUnits'] = directionsLengthUnits
+        if not directionsTimeAttributeName is None:
+            params['directionsTimeAttributeName'] = directionsTimeAttributeName
+        if not returnCFRoutes is None:
+            params['returnCFRoutes'] = returnCFRoutes
+        if not returnFacilities is None:
+            params['returnFacilities'] = returnFacilities
+        if not returnIncidents is None:
+            params['returnIncidents'] = returnIncidents
+        if not returnBarriers is None:
+            params['returnBarriers'] = returnBarriers
+        if not returnPolylineBarriers is None:
+            params['returnPolylineBarriers'] = returnPolylineBarriers
+        if not returnPolygonBarriers is None:
+            params['returnPolygonBarriers'] = returnPolygonBarriers
+        if not outputLines is None:
+            params['outputLines'] = outputLines
+        if not defaultCutoff is None:
+            params['defaultCutoff'] = defaultCutoff
+        if not defaultTargetFacilityCount is None:
+            params['defaultTargetFacilityCount'] = defaultTargetFacilityCount
+        if not travelDirection is None:
+            params['travelDirection'] = travelDirection
+        if not outSR is None:
+            params['outSR'] = outSR
+        if not accumulateAttributeNames is None:
+            params['accumulateAttributeNames'] = accumulateAttributeNames
+        if not impedanceAttributeName is None:
+            params['impedanceAttributeName'] = impedanceAttributeName
+        if not restrictionAttributeNames is None:
+            params['restrictionAttributeNames'] = restrictionAttributeNames
+        if not restrictUTurns is None:
+            params['restrictUTurns'] = restrictUTurns
+        if not useHierarchy is None:
+            params['useHierarchy'] = useHierarchy
+        if not outputGeometryPrecision is None:
+            params['outputGeometryPrecision'] = outputGeometryPrecision
+        if not outputGeometryPrecisionUnits is None:
+            params['outputGeometryPrecisionUnits'] = outputGeometryPrecisionUnits
+        if not timeOfDay is None:
+            params['timeOfDay'] = timeOfDay
+        if not timeOfDayIsUTC is None:
+            params['timeOfDayIsUTC'] = timeOfDayIsUTC
+        if not timeOfDayUsage is None:
+            params['timeOfDayUsage'] = timeOfDayUsage
         if not returnZ is None:
             params['returnZ'] = returnZ
 
