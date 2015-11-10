@@ -517,7 +517,37 @@ class Services(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def exists(self, folderName, serviceName=None, serviceType=None):
+        """
+        This operation allows you to check whether a folder or a service
+        exists. To test if a folder exists, supply only a folderName. To
+        test if a service exists in a root folder, supply both serviceName
+        and serviceType with folderName=None. To test if a service exists 
+        in a folder, supply all three parameters.
 
+        Inputs:
+           folderName - a folder name
+           serviceName - a service name
+           serviceType - a service type. Allowed values:
+                "GPSERVER", "GLOBESERVER", "MAPSERVER",
+                "GEOMETRYSERVER", "IMAGESERVER", "SEARCHSERVER",
+                "GEODATASERVER", "GEOCODESERVER"
+        """
+
+        url = self._url + "/exists"
+        params = {
+            "f" : "json",
+            "folderName" : folderName,
+            "serviceName" : serviceName,
+            "type" : serviceType
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+                             
 ########################################################################
 class AGSService(BaseAGSServer):
     """ Defines a AGS Admin Service """
