@@ -1659,7 +1659,7 @@ class publishingtools(securityhandlerhelper):
 
             if definition is not None:
                 enableResults = adminFS.updateDefinition(json_dict=definition)
-                if 'error' in enableResults:
+                if enableResults is not None and 'error' in enableResults:
                     results['messages'] += enableResults
         
             return results

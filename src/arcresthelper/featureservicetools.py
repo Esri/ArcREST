@@ -352,6 +352,9 @@ class featureservicetools(securityhandlerhelper):
             if chunksize > 0:
                 messages = {'addResults':[]}
                 total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
+                if total == '0':
+                    print "0 features in %s" % pathToFeatureClass
+                    return "0 features in %s" % pathToFeatureClass                
                 arcpy.env.overwriteOutput = True
                 inDesc = arcpy.Describe(pathToFeatureClass)
                 oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)

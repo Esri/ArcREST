@@ -175,6 +175,108 @@ class portalautomation(securityhandlerhelper):
             del orgTools
             
             gc.collect()
+ 
+    #----------------------------------------------------------------------
+    def createRoles(self,configFiles,dateTimeFormat=None):
+       
+        
+        if dateTimeFormat is None:
+            dateTimeFormat = '%Y-%m-%d %H:%M'
+        
+        scriptStartTime = datetime.datetime.now()
+        try:
+    
+            print "********************Create Roles********************"
+    
+            print "Script started at %s" % scriptStartTime.strftime(dateTimeFormat)
+         
+            if self.securityhandler.valid == False:
+                print "Login required"
+            else:
+                orgTools = orgtools.orgtools(securityinfo=self)
+    
+                if orgTools is None:
+                    print "Error creating orgtools"
+                else:
+    
+                    for configFile in configFiles:
+    
+                        config = common.init_config_json(config_file=configFile)
+                        if config is not None:
+                           
+                            startTime = datetime.datetime.now()
+                            print "Processing config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))
+    
+                            roleInfos = config['Roles']
+                            for roleInfo in roleInfos:
+                                createRoleResults = orgTools.createRole(roleInfo['Name'],roleInfo['Description'],roleInfo['Privileges'])
+                                if result is None:
+                                    pass
+                                else:
+                                    print "Role created: " + result.title                                   
+                            #print "Config %s completed, time to complete: %s" % (configFile, str(datetime.datetime.now() - startTime))
+    
+                        else:
+                            print "Config %s not found" % configFile
+    
+    
+        except(TypeError,ValueError,AttributeError),e:
+            print e
+        except (common.ArcRestHelperError),e:
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
+            if 'arcpyError' in e[0]:
+                print "with arcpy message: %s" % e[0]['arcpyError']
+    
+        except Exception as e:
+            if (reportToolsInstalled):
+                if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
+                    if 'arcpyError' in e[0]:
+                        print "with arcpy message: %s" % e[0]['arcpyError']
+                else:
+                    line, filename, synerror = trace()
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
+            else:
+                line, filename, synerror = trace()
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
+        finally:
+            print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
+            print "###############Create Groups Completed#################"
+            print ""
+           
+            #if orgTools is not None:
+                #orgTools.dispose()
+            groupInfo = None
+            groupFile = None
+            iconPath = None
+            startTime = None
+            thumbnail = None
+            result = None
+            config = None
+            sciptPath = None
+            orgTools = None
+            del groupInfo
+            del groupFile
+            del iconPath
+            del startTime
+            del thumbnail
+            del result
+            del config
+            del sciptPath
+            del orgTools  
+    
+            gc.collect()
+
     #----------------------------------------------------------------------
     def createGroups(self,configFiles,dateTimeFormat=None):
         groupInfo = None    

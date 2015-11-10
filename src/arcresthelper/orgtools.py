@@ -295,3 +295,51 @@ class orgtools(securityhandlerhelper):
 
 
             gc.collect()
+    #----------------------------------------------------------------------
+    def createRole(self,
+                    name,
+                    description="",
+                    privileges=None):
+        admin = None
+        userCommunity = None
+        try:
+            admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
+            portal = admin.portals.portalSelf
+            try:
+                roleID = portal.roles.findRoleID(name)
+                if roleID is None:
+                    createResults = portal.createRole(name=name,description=description)
+                    if 'success' in createResults:
+                        if createResults['success'] == True:
+                            setPrivResults = roles.setPrivileges(createResults['id'],privileges)
+                        else:
+                            print createResults
+                    else:
+                        print createResults
+                else:
+                    print "%s role already exist" % name
+               
+            except Exception,e:
+                print e
+                return None
+           
+        
+        except:
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
+                        "function": "createGroup",
+                        "line": line,
+                        "filename":  filename,
+                        "synerror": synerror,
+                                        }
+                                        )
+        finally:
+            admin = None
+            userCommunity = None
+
+
+            del admin
+            del userCommunity
+
+
+            gc.collect()

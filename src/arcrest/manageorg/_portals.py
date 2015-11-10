@@ -1973,7 +1973,7 @@ class Roles(BaseAGOLClass):
     def findRoleID(self, name):
         """searches the roles by name and returns the role's ID"""
         for r in self:
-            if r['name'].lower == name.lower():
+            if r['name'].lower() == name.lower():
                 return r['id']
             del r
         return None
