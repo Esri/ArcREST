@@ -13,6 +13,7 @@ from _imageservice import ImageService
 from _mobileservice import MobileService
 from ..geometryservice import GeometryService
 from _geocodeservice import GeocodeService
+from _geodataservice import GeoDataService
 from _networkservice import NetworkService
 from _globeservice import GlobeService
 ########################################################################
@@ -188,6 +189,11 @@ class Server(BaseAGSServer):
                                                securityHandler=self._securityHandler,
                                                proxy_port=self._proxy_port,
                                                proxy_url=self._proxy_url))
+            elif service['type'] == "GeoDataServer":
+                services.append(GeoDataService(url=url,
+                                               securityHandler=self._securityHandler,
+                                               proxy_port=self._proxy_port,
+                                               proxy_url=self._proxy_url))                                               
             elif service['type'] == "GlobeServer":
                 services.append(GlobeService(url=url,
                                                securityHandler=self._securityHandler,
