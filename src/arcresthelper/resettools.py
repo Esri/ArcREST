@@ -66,7 +66,7 @@ class resetTools(securityhandlerhelper):
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    usersObj.append(admin.content.users.user(user))
+                    usersObj.append(admin.content.users.user(str(user).strip()))
             if usersObj:
                 for user in usersObj:
                     print "Loading content for user: %s" % user.username
@@ -151,7 +151,7 @@ class resetTools(securityhandlerhelper):
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    usersObj.append(admin.community.users.user(user))  
+                    usersObj.append(admin.community.users.user(str(user).strip()))
             if usersObj:
                 for userCommData in usersObj:
                     print "Loading groups for user: %s" % userCommData.username
@@ -168,7 +168,7 @@ class resetTools(securityhandlerhelper):
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
+                        "function": "removeUserGroups",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,
