@@ -3,11 +3,7 @@
 """
 import json
 from ..common.general import local_time_to_online
-class BaseGPObject(object):
-    """ base geoprocessing object """
-    _value = None
-    _paramName = None
-    _dataType = None
+from .._abstract.abstract import BaseGPObject
 ########################################################################
 class GPMultiValue(BaseGPObject):
     """
