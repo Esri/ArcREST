@@ -25,8 +25,7 @@ try:
     reportToolsInstalled = True
 except:
     reportToolsInstalled = False
-
-
+   
 #----------------------------------------------------------------------
 def trace():
     """
@@ -210,12 +209,7 @@ class portalautomation(securityhandlerhelper):
                             roleInfos = config['Roles']
                             for roleInfo in roleInfos:
                                 createRoleResults = orgTools.createRole(roleInfo['Name'],roleInfo['Description'],roleInfo['Privileges'])
-                                if result is None:
-                                    pass
-                                else:
-                                    print "Role created: " + result.title                                   
-                            #print "Config %s completed, time to complete: %s" % (configFile, str(datetime.datetime.now() - startTime))
-    
+                              
                         else:
                             print "Config %s not found" % configFile
     
@@ -278,6 +272,7 @@ class portalautomation(securityhandlerhelper):
             gc.collect()
 
     #----------------------------------------------------------------------
+    
     def createGroups(self,configFiles,dateTimeFormat=None):
         groupInfo = None    
         groupFile = None    

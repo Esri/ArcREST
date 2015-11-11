@@ -1999,10 +1999,13 @@ class Roles(BaseAGOLClass):
         """
         params = {
             "f" : "json",
-            "privileges" : {"privileges": privileges}
+            "privileges" : {"privileges": privileges},
+            "id": roleID
+            
         }
         url = self._url + "/%s/setPrivileges" % roleID
         return self._do_post(url=url,
                              param_dict=params,
+                             securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

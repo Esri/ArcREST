@@ -301,7 +301,10 @@ class orgtools(securityhandlerhelper):
                     description="",
                     privileges=None):
         admin = None
-        userCommunity = None
+        portal = None
+        setPrivResults = None
+        roleID = None
+        createResults = None
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             portal = admin.portals.portalSelf
@@ -311,7 +314,12 @@ class orgtools(securityhandlerhelper):
                     createResults = portal.createRole(name=name,description=description)
                     if 'success' in createResults:
                         if createResults['success'] == True:
-                            setPrivResults = roles.setPrivileges(createResults['id'],privileges)
+                            
+                            setPrivResults = portal.roles.setPrivileges(createResults['id'],privileges)
+                            if 'success' in setPrivResults:
+                                print "%s role created" % name
+                            else:
+                                print setPrivResults
                         else:
                             print createResults
                     else:
@@ -335,11 +343,15 @@ class orgtools(securityhandlerhelper):
                                         )
         finally:
             admin = None
-            userCommunity = None
-
-
+            portal = None
+            setPrivResults = None
+            roleID = None
+            createResults = None
+            
             del admin
-            del userCommunity
-
-
+            del portal
+            del setPrivResults
+            del roleID
+            del createResults
+            
             gc.collect()
