@@ -77,7 +77,8 @@ class BaseWebOperations(object):
                     file_name = os.path.basename(file_data.geturl().split('?')[0])
             if hasattr(file_data, "status") and \
                (int(file_data.status) >= 300 and int(file_data.status) < 400):
-                if securityHandler.method.lower() == "token":
+                if securityHandler is None or \
+                   securityHandler.method.lower() == "token":
                     self._download_file(url=file_data.geturl(),
                                         save_path=save_path,
                                         file_name=file_name,

@@ -895,7 +895,7 @@ def %s(self):
                  saveFolder=None,
                  fileName=None):
         """
-        exports metadat to the various supported formats
+        exports metadata to the various supported formats
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
            inspire, iso19139, iso19139-3.2, iso19115, and default.
@@ -964,17 +964,9 @@ def %s(self):
         Output:
          dictionary
         """
-        #url = self.root.replace("/items", "/users")
-        #uc = Item(url=url,
-                         #username=self.owner,
-                         #securityHandler=self._securityHandler,
-                         #proxy_url=self._proxy_url,
-                         #proxy_port=self._proxy_port)
-        #Need to verify TODO
         ip = ItemParameter()
         ip.metadata = metadataFile
         res = self.userItem.updateItem(itemParameters=ip)
-
         del ip
         return res
 ########################################################################
