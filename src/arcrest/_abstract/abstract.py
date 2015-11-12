@@ -27,8 +27,10 @@ class BaseOperationalLayerObject(object):
     pass
 ########################################################################
 class BaseGPObject(object):
-    """ base geoprocessing object class """
-    pass
+    """ base geoprocessing object """
+    _value = None
+    _paramName = None
+    _dataType = None
 ########################################################################
 class BaseDomain(object):
     """ all domain values inherit this class """
@@ -55,7 +57,7 @@ class BaseSecurityHandler(_base.BaseWebOperations):
     _token = None
     _valid = True
     _message = ""
-    _is_portal = False    
+    _is_portal = False
     #----------------------------------------------------------------------
     @property
     def message(self):
@@ -65,8 +67,8 @@ class BaseSecurityHandler(_base.BaseWebOperations):
     @property
     def valid(self):
         """ returns boolean wether handler is valid """
-        return self._valid    
-   
+        return self._valid
+
 ########################################################################
 class AbstractGeometry(object):
     """ Base Geometry Class """
