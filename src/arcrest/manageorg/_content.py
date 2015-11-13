@@ -1684,11 +1684,11 @@ class UserItem(BaseAGOLClass):
                                 securityHandler=self._securityHandler,
                                 proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
-            res = self.status(jobId=res['id'])
+            res = self.status()
             import time
             while res['status'].lower() in ["partial", "processing"]:
                 time.sleep(2)
-                res = self.status(jobId=res['id'])
+                res = self.status()
             return res
         else:
             return self._do_post(url=url,
