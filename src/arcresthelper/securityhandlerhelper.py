@@ -214,61 +214,62 @@ class securityhandlerhelper(object):
             else:
                 print "No valid security type set"
                 self._message = "No valid security type set"
-
-            admin = Administration(url=self._org_url,
-                                   securityHandler=self._securityHandler)
-
-            try:
-                portal = admin.portals.portalSelf
-                for hostingServer in portal.featureServers:
-                    if isinstance(hostingServer, AGSAdministration):
-                        try:
-                            serData = hostingServer.data
-
-                            dataItems = serData.rootDataItems
-                            if 'rootItems' in dataItems:
-                                for rootItem in dataItems['rootItems']:
-                                    if rootItem == '/enterpriseDatabases':
-                                        rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
-                                        if not rootItems is None and 'items' in rootItems:
-                                            for item in rootItems['items']:
-                                                if 'info' in item:
-                                                    if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
-                                                        conStrDic = {}
-                                                        conStr = item['info']['connectionString'].split(";")
-                                                        for conStrValue in conStr:
-                                                            spltval = conStrValue.split("=")
-                                                            conStrDic[spltval[0]] = spltval[1]
-                                                        if 'DBCLIENT' in conStrDic:
-                                                            if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
-                                                                self._featureServiceFieldCase = 'lower'
-                        except urllib2.HTTPError, err:
-                            print err
-                        except Exception, e:
-                            print e
-                        except Exception, e:
-                            print e
-
-            except urllib2.HTTPError, err:
-                if err.code == 403:
-                    print "Admistrative access denied, unable to check if hosting servers"
-                else:
-                    print err
-            except Exception, e:
-                print e
-            except Exception, e:
-                print e
-
-
-
-            if 'error' in self._securityHandler.message:
-                self._message = self._securityHandler.message
-                self._valid = False
-
-            else:
-                if self._securityHandler.message is not None:
+            if self._securityHandler is not None:
+            
+                admin = Administration(url=self._org_url,
+                                       securityHandler=self._securityHandler)
+    
+                try:
+                    portal = admin.portals.portalSelf
+                    for hostingServer in portal.featureServers:
+                        if isinstance(hostingServer, AGSAdministration):
+                            try:
+                                serData = hostingServer.data
+    
+                                dataItems = serData.rootDataItems
+                                if 'rootItems' in dataItems:
+                                    for rootItem in dataItems['rootItems']:
+                                        if rootItem == '/enterpriseDatabases':
+                                            rootItems = serData.findDataItems(ancestorPath=rootItem,type='fgdb,egdb')
+                                            if not rootItems is None and 'items' in rootItems:
+                                                for item in rootItems['items']:
+                                                    if 'info' in item:
+                                                        if 'isManaged' in item['info'] and item['info']['isManaged'] == True:
+                                                            conStrDic = {}
+                                                            conStr = item['info']['connectionString'].split(";")
+                                                            for conStrValue in conStr:
+                                                                spltval = conStrValue.split("=")
+                                                                conStrDic[spltval[0]] = spltval[1]
+                                                            if 'DBCLIENT' in conStrDic:
+                                                                if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
+                                                                    self._featureServiceFieldCase = 'lower'
+                            except urllib2.HTTPError, err:
+                                print err
+                            except Exception, e:
+                                print e
+                            except Exception, e:
+                                print e
+    
+                except urllib2.HTTPError, err:
+                    if err.code == 403:
+                        print "Admistrative access denied, unable to check if hosting servers"
+                    else:
+                        print err
+                except Exception, e:
+                    print e
+                except Exception, e:
+                    print e
+    
+    
+    
+                if 'error' in self._securityHandler.message:
                     self._message = self._securityHandler.message
-                self._valid = True
+                    self._valid = False
+    
+                else:
+                    if self._securityHandler.message is not None:
+                        self._message = self._securityHandler.message
+                    self._valid = True
         else:
             self._message = 'Security info not set'
             self._valid = True
