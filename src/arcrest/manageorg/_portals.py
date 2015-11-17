@@ -195,6 +195,7 @@ class Portal(BaseAGOLClass):
     _region = None
     _contacts = None
     _appInfo = None
+    __creditAssignments = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -923,6 +924,13 @@ class Portal(BaseAGOLClass):
         return self._mfaAdmins
     #----------------------------------------------------------------------
     @property
+    def creditAssignments(self):
+        '''gets the property value for creditAssignments'''
+        if self._creditAssignments is None:
+            self.__init()
+        return self._creditAssignments
+    #----------------------------------------------------------------------   
+    @property
     def urls(self):
         """gets the urls for a portal"""
         url = "%s/urls" % self.root
@@ -1156,6 +1164,36 @@ class Portal(BaseAGOLClass):
                        securityHandler=self._securityHandler,
                        proxy_url=self._proxy_url,
                        proxy_port=self._proxy_port)
+    
+    
+    #----------------------------------------------------------------------
+    def assignUserCredits(self, usernames, credits):
+        """
+        assigns credit to a user.
+        Inputs:
+           usernames - list of users
+           credits - number of credits to assign to the users
+        Ouput:
+           dictionary
+        """
+        userAssignments = []
+        for name in usernames:
+            userAssignments.append(
+                {
+                    "username" : name,
+                    "credits" : credits
+                }
+            )
+        params = {
+            "userAssignments" : userAssignments,
+            "f" : "json"
+        }
+        url = self.root + "/assignUserCredits"
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)    
     #----------------------------------------------------------------------
     def users(self,
               start=1,
