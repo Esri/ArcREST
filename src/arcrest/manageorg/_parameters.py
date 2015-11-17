@@ -399,6 +399,7 @@ class PortalParameters(BaseParameters):
     _basemapGalleryGroupQuery = None
     _region = None
     _portalMode = None
+    _creditAssignments = None
     __allowed_keys = ["canSharePublic","subscriptionInfo","defaultExtent","supportsHostedServices",
                       "homePageFeaturedContentCount","supportsOAuth","portalName","urlKey",
                       "databaseUsage","culture","helpBase","galleryTemplatesGroupQuery",
@@ -1188,6 +1189,17 @@ class PortalParameters(BaseParameters):
         """gets/sets the property value portalMode"""
         if value is not None:
             self._portalMode = value
+    #----------------------------------------------------
+    @property
+    def creditAssignments(self):
+        """gets/sets the property value creditAssignments"""
+        return self._creditAssignments
+    #----------------------------------------------------
+    @portalMode.setter
+    def creditAssignments(self,value):
+        """gets/sets the property value creditAssignments"""
+        if value is not None:
+            self._creditAssignments = value            
 ########################################################################
 class ItemParameter(BaseParameters):
     """

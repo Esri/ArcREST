@@ -129,6 +129,9 @@ class publishingtools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def publishItems(self,items_info):
+        if self.securityhandler is None:
+            print "Security handler required"
+            return        
         itemInfo = None  
         item_results = None
         item_info = None
@@ -400,6 +403,9 @@ class publishingtools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def publishMap(self,maps_info,fsInfo=None,itInfo=None):
+        if self.securityhandler is None:
+            print "Security handler required"
+            return        
         itemInfo = None
         itemId = None
         map_results = None
@@ -1037,6 +1043,9 @@ class publishingtools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def publishCombinedWebMap(self,maps_info,webmaps):
+        if self.securityhandler is None:
+            print "Security handler required"
+            return        
         admin = None
         map_results = None
         map_info = None
@@ -1146,6 +1155,9 @@ class publishingtools(securityhandlerhelper):
         fs = None
         res = None
         resItm = None
+        if self.securityhandler is None:
+            print "Security handler required"
+            return
         if self.securityhandler.is_portal:
             url = self.securityhandler.org_url
         else:
@@ -1215,6 +1227,9 @@ class publishingtools(securityhandlerhelper):
                 feature service item information
 
         """
+        if self.securityhandler is None:
+            print "Security handler required"
+            return        
         config = None
         res = None
         resItm = None
@@ -1874,6 +1889,9 @@ class publishingtools(securityhandlerhelper):
             gc.collect()
     #----------------------------------------------------------------------
     def publishApp(self,app_info,map_info=None,fsInfo=None):
+        if self.securityhandler is None:
+            print "Security handler required"
+            return        
         appDet = None
         try:
             app_results = []
@@ -2573,7 +2591,9 @@ class publishingtools(securityhandlerhelper):
             gc.collect()
     #----------------------------------------------------------------------
     def updateFeatureService(self,efs_config):
-
+        if self.securityhandler is None:
+            print "Security handler required"
+            return
         fsRes = None
         fst = None
         fURL = None
