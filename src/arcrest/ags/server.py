@@ -163,7 +163,11 @@ class Server(BaseAGSServer):
                                              proxy_url=self._proxy_url,
                                              proxy_port=self._proxy_port))
             elif service['type'] == "FeatureServer":
-                url = "%s/%s/%s" % (self.location, service['name'], service['type'])
+                if self.currentFolder != 'root':
+                    serviceName = service['name'].split('/')[1]
+                else:
+                    serviceName = service['name']
+                url = "%s/%s/%s" % (self.location, serviceName, service['type'])
                 services.append(FeatureService(url=url,
                                                securityHandler=self._securityHandler,
                                                proxy_url=self._proxy_url,
