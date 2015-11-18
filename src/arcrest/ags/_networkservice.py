@@ -57,7 +57,7 @@ class NetworkService(BaseAGSServer):
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
 
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 if k == "routeLayers" and json_dict[k]:
                     self._routeLayers = []
@@ -221,7 +221,7 @@ class NetworkLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -415,7 +415,7 @@ class RouteNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -816,7 +816,7 @@ class ServiceAreaNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -1235,7 +1235,7 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:

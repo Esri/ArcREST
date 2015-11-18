@@ -1,6 +1,7 @@
 import json
 from .._abstract.abstract import BaseAGOLClass, BaseSecurityHandler
 from ..security import security
+
 ########################################################################
 class Services(BaseAGOLClass):
     """
@@ -71,11 +72,11 @@ class Services(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in hostedservice.Services."
+                print( k, " - attribute not implemented in hostedservice.Services.")
             del k, v
     #----------------------------------------------------------------------
     @property
@@ -151,7 +152,7 @@ class Services(BaseAGOLClass):
                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
-        for k, v in res.iteritems():
+        for k, v in res.items():
             if k == "foldersDetail":
                 for item in v:
                     if 'isDefault' in item and item['isDefault'] == False:
@@ -160,7 +161,7 @@ class Services(BaseAGOLClass):
                                                  securityHandler=self._securityHandler,
                                                  proxy_port=self._proxy_port,
                                                  proxy_url=self._proxy_url)
-                        for k1, v1 in resFolder.iteritems():
+                        for k1, v1 in resFolder.items():
                             if k1 == "services":
                                 self._checkservice(k1,v1,fURL)
             elif k == "services":
@@ -293,21 +294,21 @@ class AdminMapService(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "url":
                 self._urlService = v
 
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k,  " - attribute not implemented. Please log an support request."
+                print( k,  " - attribute not implemented. Please log an support request.")
             del k, v
     #----------------------------------------------------------------------
     def __iter__(self):
         """returns the key/value pair of the raw JSON"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     def __str__(self):
@@ -727,7 +728,7 @@ class AdminFeatureService(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "layers":
                 self._layers = []
                 for lyr in v:
@@ -753,29 +754,21 @@ class AdminFeatureService(BaseAGOLClass):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                #print k, " - attribute not implemented in AdminFeatureService."
-                print """#------attribute not implemented in AdminFeatureService class--------------------------
-                        @property
-                        def %s(self):
-                            '''gets the property value for %s'''
-                            if self._%s is None:
-                                self.__init()
-                            return self._%s
-                        """ % (k,k,k, k)                                
+                print( k, " - attribute not implemented in AdminFeatureService.")
     #----------------------------------------------------------------------
     @property
     def supportsApplyEditsWithGlobalIds(self):
         '''gets the property value for supportsApplyEditsWithGlobalIds'''
         if self._supportsApplyEditsWithGlobalIds is None:
             self.__init()
-        return self._supportsApplyEditsWithGlobalIds    
-    #----------------------------------------------------------------------      
+        return self._supportsApplyEditsWithGlobalIds
+    #----------------------------------------------------------------------
     @property
     def serviceItemId(self):
         '''gets the property value for serviceItemId'''
         if self._serviceItemId is None:
             self.__init()
-        return self._serviceItemId    
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def error(self):
@@ -809,7 +802,7 @@ class AdminFeatureService(BaseAGOLClass):
         """returns the key/value pair of the raw JSON"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
 
     #----------------------------------------------------------------------
@@ -1026,7 +1019,7 @@ class AdminFeatureService(BaseAGOLClass):
         if self._dict is None:
             self.__init()
         return self._dict
-  
+
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """
@@ -1286,7 +1279,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         """returns the key/value pair of the raw JSON"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1320,19 +1313,11 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                      if not attr.startswith('__') and \
                      not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                #print k, " - attribute not implemented AdminFeatureServiceLayer."
-                print """#------attribute not implemented in AdminFeatureServiceLayer class--------------------------
-            @property
-            def %s(self):
-                '''gets the property value for %s'''
-                if self._%s is None:
-                    self.__init()
-                return self._%s
-            """ % (k,k,k, k)                
+                print( k, " - attribute not implemented AdminFeatureServiceLayer.")
             del k, v
     #----------------------------------------------------------------------
     def refresh(self):
@@ -1352,7 +1337,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         '''gets the property value for supportsApplyEditsWithGlobalIds'''
         if self._supportsApplyEditsWithGlobalIds is None:
             self.__init()
-        return self._supportsApplyEditsWithGlobalIds    
+        return self._supportsApplyEditsWithGlobalIds
     #----------------------------------------------------------------------
     @property
     def supportsValidateSql(self):

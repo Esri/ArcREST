@@ -79,13 +79,13 @@ class FeatureService(abstract.BaseAGOLClass):
                     if hasattr(securityHandler, 'portalServerHandler'):
                         self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
                     else:
-                        self._securityHandler = securityHandler                    
+                        self._securityHandler = securityHandler
                 else:
                     self._securityHandler = securityHandler
-    
+
             else:
                 self._securityHandler = securityHandler
-    
+
 
         if initialize:
             self.__init()
@@ -104,7 +104,7 @@ class FeatureService(abstract.BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == 'layers':
                 self._getLayers()
             elif k == 'tables':

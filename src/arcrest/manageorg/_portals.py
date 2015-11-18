@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from ..security.security import  PortalServerSecurityHandler
+from ..security import  PortalServerSecurityHandler
 from ..manageags import AGSAdministration
 from ..hostedservice import Services
 from ..common.general import local_time_to_online
 from .._abstract.abstract import BaseAGOLClass
 import os
-import urlparse
+from six.moves import urllib_parse as urlparse
 from . import _parameters as parameters
 import json
 ########################################################################
@@ -230,7 +230,7 @@ class Portal(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -359,7 +359,7 @@ class Portal(BaseAGOLClass):
         """iterates through raw JSON"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1643,7 +1643,7 @@ class Servers(BaseAGOLClass):
             attributes = [attr for attr in dir(self)
               if not attr.startswith('__') and \
               not attr.startswith('_')]
-            for k,v in json_dict.iteritems():
+            for k,v in json_dict.items():
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
@@ -1659,7 +1659,7 @@ class Servers(BaseAGOLClass):
             """iterates through raw JSON"""
             if self._json_dict is None:
                 self.__init()
-            for k,v in self._json_dict.iteritems():
+            for k,v in self._json_dict.items():
                 yield [k,v]
         #----------------------------------------------------------------------
         @property
@@ -1811,7 +1811,7 @@ class Servers(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -1827,7 +1827,7 @@ class Servers(BaseAGOLClass):
         """iterates through raw JSON"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1896,7 +1896,7 @@ class Servers(BaseAGOLClass):
         """gets all the server resources"""
         self.__init()
         items = []
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             if k == "servers":
                 for s in v:
                     if 'id' in s:

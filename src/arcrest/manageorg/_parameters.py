@@ -431,7 +431,7 @@ class PortalParameters(BaseParameters):
         """creates the portal properties object from a dictionary"""
         if isinstance(value, dict):
             pp = PortalParameters()
-            for k,v in value.iteritems():
+            for k,v in value.items():
                 setattr(pp, "_%s" % k, v)
             return pp
         else:

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
-from ..security.security import AGOLTokenSecurityHandler, OAuthSecurityHandler
+from ..security import AGOLTokenSecurityHandler, OAuthSecurityHandler
 from ..common.geometry import Point
 import json
 ########################################################################
@@ -62,7 +62,7 @@ class GeocodeService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:

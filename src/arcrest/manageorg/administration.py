@@ -3,7 +3,7 @@
 """
 from __future__ import absolute_import
 from __future__ import print_function
-from ..security.security import PortalServerSecurityHandler
+from ..security import PortalServerSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 import json
 from . import _community, _content, _portals, _oauth2
@@ -69,7 +69,7 @@ class Administration(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -91,7 +91,7 @@ class Administration(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __iter__(self):
         """iterates over raw json and returns the values"""
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield k,v
     #----------------------------------------------------------------------
     @property

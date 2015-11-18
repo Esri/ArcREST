@@ -55,7 +55,7 @@ class Services(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -625,7 +625,7 @@ class AGSService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k.lower() == "extensions":
                 self._extensions = []
                 for ext in v:
@@ -684,7 +684,7 @@ class AGSService(BaseAGSServer):
         """class iterator which yields a key/value pair"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield (k,v)
     #----------------------------------------------------------------------
     def jsonProperties(self):

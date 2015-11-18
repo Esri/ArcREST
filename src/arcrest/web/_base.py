@@ -379,7 +379,7 @@ if six.PY2:
         def _encode_multipart_formdata(self, fields, files):
             boundary = mimetools.choose_boundary()
             buf = StringIO()
-            for (key, value) in fields.iteritems():
+            for (key, value) in fields.items():
                 buf.write('--%s\r\n' % boundary)
                 buf.write('Content-Disposition: form-data; name="%s"' % key)
                 buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
@@ -545,6 +545,9 @@ elif six.PY3:
             opener= None
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
                                                             param_dict=param_dict)
+            if self._referer_url is None:
+                from six.moves import urllib_parse as urlparse
+                self._referer_url = urlparse.urlparse(self._url).netloc
             default_headers = {
                 'Referer': self._referer_url,
                 'User-Agent': self._useragent

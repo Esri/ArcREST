@@ -1,10 +1,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
+import six
+from six.moves import urllib_parse as urlparse
+from ..security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 from ._parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
 from ._community import Group as CommunityGroup
-import urlparse
 import json
 import os
 import mmap
@@ -49,7 +50,7 @@ class Content(BaseAGOLClass):
     def __iter__(self):
         """iterates over raw json and returns [key, values]"""
         a = {}
-        for k,v in a.iteritems():
+        for k,v in a.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -150,7 +151,7 @@ class Users(BaseAGOLClass):
         yield None
         #if self._json_dict is None:
             #self.__init()
-        #for k,v in self._json_dict.iteritems():
+        #for k,v in self._json_dict.items():
             #yield [k,v]
     #----------------------------------------------------------------------
     def __getUsername(self):
@@ -272,7 +273,7 @@ class Item(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -633,7 +634,7 @@ class Item(BaseAGOLClass):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1042,9 +1043,9 @@ class UserItem(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "item":
-                for key,value in v.iteritems():
+                for key,value in v.items():
                     if key in attributes:
                         setattr(self, "_" + key, value)
                     else:
@@ -1352,7 +1353,7 @@ class UserItem(BaseAGOLClass):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     def deleteItem(self):
@@ -1669,7 +1670,7 @@ class UserItem(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        for key, value in additionalParams.iteritems():
+        for key, value in additionalParams.items():
             params[key] = value
         if wait == True:
             res = self._do_post(url=url,
@@ -1854,7 +1855,7 @@ class User(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in result_template.iteritems():
+        for k,v in result_template.items():
             if k in attributes:
                 setattr(self, "_"+ k, result_template[k])
             else:
@@ -2012,7 +2013,7 @@ class User(BaseAGOLClass):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     def refresh(self):
@@ -2800,7 +2801,7 @@ class Group(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -2826,7 +2827,7 @@ class Group(BaseAGOLClass):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     def refresh(self):

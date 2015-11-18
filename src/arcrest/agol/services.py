@@ -113,7 +113,7 @@ class FeatureService(abstract.BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == 'layers':
                 self._getLayers()
             elif k == 'tables':
@@ -799,7 +799,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
@@ -1394,7 +1394,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnDistinctValues" : returnDistinctValues,
                   "returnExtentOnly" : returnExtentOnly
                   }
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             params[key] = value
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
@@ -2018,7 +2018,7 @@ class TiledService(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:

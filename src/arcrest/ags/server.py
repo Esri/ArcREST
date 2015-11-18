@@ -6,7 +6,9 @@ user/developer would.
 from __future__ import absolute_import
 from __future__ import print_function
 from . import BaseAGSServer
-from urlparse import urlparse
+import six
+from six.moves.urllib_parse import urlparse
+
 import json
 from ._geoprocessing import GPService
 from .mapservice import MapService
@@ -82,7 +84,7 @@ class Server(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "folders":
                 pass
             elif k in attributes:
@@ -94,7 +96,7 @@ class Server(BaseAGSServer):
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == 'folders':
                 v.insert(0, 'root')
                 setattr(self, "_"+ k, v)
@@ -132,7 +134,7 @@ class Server(BaseAGSServer):
         if self._json_dict is None:
             self._json_dict = {}
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property

@@ -1,10 +1,12 @@
 from __future__ import absolute_import
 import six
 if six.PY2:
+    import httplib
     from ..web._base import BaseWebOperations as BaseWebOperations
 elif six.PY3:
+    from six.moves import http_client as httplib
     from ..web._base import BaseWebOperations3 as BaseWebOperations
-import httplib
+
 import zipfile
 import datetime
 import calendar
@@ -152,12 +154,13 @@ class BaseAGSServer(BaseWebOperations):
 # experienced with www.arcgis.com (first encountered 12/13/2012). The problem
 # and workaround is described here:
 # http://bobrochel.blogspot.com/2010/11/bad-servers-chunked-encoding-and.html
+
 def patch_http_response_read(func):
     def inner(*args):
         try:
             return func(*args)
-        except httplib.IncompleteRead, e:
-            return e.partial
+        except httplib.IncompleteRead as e:
+            return e
 
     return inner
 httplib.HTTPResponse.read = patch_http_response_read(httplib.HTTPResponse.read)

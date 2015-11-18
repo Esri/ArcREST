@@ -140,7 +140,7 @@ class MapService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "tables":
                 self._tables = []
                 for tbl in v:
@@ -189,7 +189,7 @@ class MapService(BaseAGSServer):
         """returns the JSON response in key/value pairs"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -419,7 +419,7 @@ class MapService(BaseAGSServer):
             "layers" : [],
             "tables" : []
         }
-        for k, v in res.iteritems():
+        for k, v in res.items():
             if k == "layers":
                 for val in v:
                     return_dict['layers'].append(
@@ -1061,7 +1061,7 @@ class MapService(BaseAGSServer):
                     time.sleep(5)
                     status = gpJob.jobStatus
             allResults = gpJob.results
-            for k,v in allResults.iteritems():
+            for k,v in allResults.items():
                 if k == "out_service_url":
                     value = v['value']
                     params = {

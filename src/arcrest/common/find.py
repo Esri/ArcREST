@@ -1,10 +1,14 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from ..web import _base
+import six
+if six.PY2:
+    from ..web._base import BaseWebOperations
+else:
+    from ..web._base import BaseWebOperations3 as BaseWebOperations
 _url = None
 _securityHandler = None
 
-class search(_base.BaseWebOperations):
+class search(BaseWebOperations):
     def __init__(self, url=None, securityHandler=None, proxy_url=None, proxy_port=None):
         """Constructor"""
 

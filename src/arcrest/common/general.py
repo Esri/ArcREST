@@ -180,7 +180,7 @@ class Feature(object):
         """
         fields = self.fields
         row = [""] * len(fields)
-        for k,v in self._attributes.iteritems():
+        for k,v in self._attributes.items():
             row[fields.index(k)] = v
             del v
             del k

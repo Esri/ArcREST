@@ -6,6 +6,11 @@ from __future__ import absolute_import
 from six.moves import urllib
 from six.moves import urllib_parse as urlparse
 from six.moves.urllib import request as urllib2
+import six
+if six.PY2:
+    import httplib
+elif six.PY3:
+    from six.moves import http_client as httplib
 import datetime
 try:
     import arcpy
@@ -469,7 +474,7 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
             self._proxy_port = value
     #----------------------------------------------------------------------
     class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
-        import httplib
+
         def __init__(self, key, cert):
             urllib2.HTTPSHandler.__init__(self)
             self.key = key
