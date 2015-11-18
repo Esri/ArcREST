@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseParameters
 from ..common.geometry import SpatialReference, Envelope
 import os
@@ -6,6 +8,7 @@ import json
 class InvitationList(object):
     """Used for Inviting users to a site"""
     _invites = []
+    _value = {}
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -1195,11 +1198,11 @@ class PortalParameters(BaseParameters):
         """gets/sets the property value creditAssignments"""
         return self._creditAssignments
     #----------------------------------------------------
-    @portalMode.setter
+    @creditAssignments.setter
     def creditAssignments(self,value):
         """gets/sets the property value creditAssignments"""
         if value is not None:
-            self._creditAssignments = value            
+            self._creditAssignments = value
 ########################################################################
 class ItemParameter(BaseParameters):
     """

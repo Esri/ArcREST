@@ -1,4 +1,5 @@
-import json
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 
 ########################################################################
@@ -43,7 +44,7 @@ class KML(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented for KML"
+                print( k, " - attribute not implemented for KML")
             del k
             del v
     #----------------------------------------------------------------------

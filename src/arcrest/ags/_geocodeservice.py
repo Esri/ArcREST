@@ -1,7 +1,9 @@
-from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler, AGOLTokenSecurityHandler, OAuthSecurityHandler
+from __future__ import absolute_import
+from __future__ import print_function
+from .._abstract.abstract import BaseAGSServer
+from ..security.security import AGOLTokenSecurityHandler, OAuthSecurityHandler
 from ..common.geometry import Point
-import json, types
+import json
 ########################################################################
 class GeocodeService(BaseAGSServer):
     """
@@ -64,7 +66,7 @@ class GeocodeService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Geocode Service"
+                print (k, " - attribute not implemented for Geocode Service")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

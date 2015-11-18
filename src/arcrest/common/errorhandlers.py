@@ -1,7 +1,8 @@
 """
 contains all error handlers for ArcREST
 """
-
+from __future__ import absolute_import
+from __future__ import print_function
 MSGS = {
     100 : "100: Invalid Inputs",
     200 : "200: Error with the GET Operation",
@@ -36,13 +37,3 @@ def trace():
 class ArcRESTError(Exception):
     """default type of error handler raised"""
     pass
-if __name__ == "__main__":
-    try:
-        print trace()
-    except ZeroDivisionError, f:
-        msg = json.dumps({"message" : MSGS[100],
-                            "trace" : trace()})
-        print msg, type()
-        raise ArcRESTError()
-    except ArcRESTError, e:
-        print e.message

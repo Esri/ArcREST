@@ -1,5 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from ..common.geometry import Point, Polygon, Envelope, SpatialReference
-from .. import AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseGeoEnrichment
 from ..manageorg import Administration
 import json
@@ -50,7 +51,6 @@ class GeoEnrichment(BaseGeoEnrichment):
     #----------------------------------------------------------------------
     def _readcsv(self, path_to_csv):
         """reads a csv column"""
-        import numpy as np
         return np.genfromtxt(path_to_csv,
                              dtype=None,
                              delimiter=',',

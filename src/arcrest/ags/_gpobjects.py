@@ -1,6 +1,8 @@
 """
    Contains all the geoprocessing objects.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 from ..common.general import local_time_to_online
 from .._abstract.abstract import BaseGPObject

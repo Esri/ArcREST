@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 import json
 ########################################################################
@@ -51,7 +53,7 @@ class Security(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageags.security."
+                print( k, " - attribute not implemented in manageags.security.")
             del k
             del v
     #----------------------------------------------------------------------

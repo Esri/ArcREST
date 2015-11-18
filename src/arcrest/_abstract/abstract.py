@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from ..web import _base
 import httplib
 import zipfile

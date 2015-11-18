@@ -1,4 +1,5 @@
-import os
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 try:
     import arcpy
@@ -6,8 +7,15 @@ try:
 except:
     arcpyFound = False
 import types
-import general
+
+
 from .._abstract import abstract
+#----------------------------------------------------------------------
+def _date_handler(obj):
+    if isinstance(obj, datetime.datetime):
+        return local_time_to_online(obj)
+    else:
+        return obj
 ########################################################################
 class SpatialReference(abstract.AbstractGeometry):
     """ creates a spatial reference instance """
@@ -93,7 +101,7 @@ class Point(abstract.AbstractGeometry):
     def __str__(self):
         """ returns the object as a string """
         return json.dumps(self.asDictionary,
-                          default=general._date_handler)
+                          default=_date_handler)
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
@@ -114,7 +122,7 @@ class Point(abstract.AbstractGeometry):
         value = self._json
         if value is None:
             value = json.dumps(self.asDictionary,
-                               default=general._date_handler)
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -261,7 +269,7 @@ class MultiPoint(abstract.AbstractGeometry):
         value = self._json
         if value is None:
             value = json.dumps(self.asDictionary,
-                               default=general._date_handler)
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -360,7 +368,7 @@ class Polyline(abstract.AbstractGeometry):
         value = self._json
         if value is None:
             value = json.dumps(self.asDictionary,
-                               default=general._date_handler)
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -469,7 +477,7 @@ class Polygon(abstract.AbstractGeometry):
         value = self._json
         if value is None:
             value = json.dumps(self.asDictionary,
-                               default=general._date_handler)
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------
@@ -604,7 +612,7 @@ class Envelope(abstract.AbstractGeometry):
         value = self._json
         if value is None:
             value = json.dumps(self.asDictionary,
-                               default=general._date_handler)
+                               default=_date_handler)
             self._json = value
         return self._json
     #----------------------------------------------------------------------

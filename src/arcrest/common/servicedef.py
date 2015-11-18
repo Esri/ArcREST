@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 
 from xml.etree import ElementTree as ET
@@ -9,9 +11,9 @@ from arcpy import mapping
 from arcpy import env
 
 ########################################################################
-def MXDtoFeatureServiceDef( mxd_path, 
+def MXDtoFeatureServiceDef( mxd_path,
                             service_name=None,
-                            tags=None, 
+                            tags=None,
                             description=None,
                             folder_name=None,
                             capabilities ='Query,Create,Update,Delete,Uploads,Editing,Sync',
@@ -93,7 +95,7 @@ def MXDtoFeatureServiceDef( mxd_path,
         return res
     else:
         # If the sddraft analysis contained errors, display them and quit.
-        print analysis['errors']
+        print (analysis['errors'])
         return None
 
 
@@ -149,14 +151,14 @@ def _modify_sddraft(sddraft,
     for prop in doc.findall("./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty"):
         if prop.find("Key").text == 'WebCapabilities':
             prop.find("Value").text = capabilities
-            
+
     # Update url for portal
     for prop in doc.findall("./StagingSettings/PropertyArray/PropertySetProperty"):
         if prop.find("Key").text == 'ServerConnectionString':
-            prop.find("Value").text = prop.find("Value").text.toString().replace('www.arcgis.com',url)    
+            prop.find("Value").text = prop.find("Value").text.toString().replace('www.arcgis.com',url)
     # Update url for portal
     for prop in doc.findall("./itemInfo/url"):
-        prop.text = prop.text.toString().replace('www.arcgis.com',url) 
+        prop.text = prop.text.toString().replace('www.arcgis.com',url)
     # Add the namespaces which get stripped, back into the .SD
     root_elem.attrib["xmlns:typens"] = 'http://www.esri.com/schemas/ArcGIS/10.2'
     root_elem.attrib["xmlns:xs"] = 'http://www.w3.org/2001/XMLSchema'

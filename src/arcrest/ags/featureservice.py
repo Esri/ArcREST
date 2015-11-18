@@ -1,10 +1,12 @@
 """
    Contains information regarding an ArcGIS Server Feature Server
 """
+from __future__ import absolute_import
+from __future__ import print_function
 from re import search
 from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
-import layer
+from . import layer
 import json
 from ..common.geometry import SpatialReference
 from ..common.general import FeatureSet
@@ -77,7 +79,7 @@ class FeatureService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Feature Service."
+                print("%s - attribute not implemented for Feature Service." % k)
     #----------------------------------------------------------------------
     @property
     def administration(self):

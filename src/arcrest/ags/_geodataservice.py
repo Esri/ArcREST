@@ -1,6 +1,7 @@
-from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler, PortalServerSecurityHandler
-import json, types
+from __future__ import absolute_import
+from __future__ import print_function
+from .._abstract.abstract import BaseAGSServer
+import json
 ########################################################################
 class GeoDataService(BaseAGSServer):
     """
@@ -12,7 +13,7 @@ class GeoDataService(BaseAGSServer):
     _securityHandler = None
     _json = None
     _json_dict = None
-
+    _replicasResource = None
     _defaultWorkingVersion = None
     _workspaceType = None
     _replicas = None
@@ -69,7 +70,7 @@ class GeoDataService(BaseAGSServer):
                 else:
                     setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for GeoData Service"
+                print (k, " - attribute not implemented for GeoData Service")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -132,8 +133,8 @@ class GeoDataService(BaseAGSServer):
     #----------------------------------------------------------------------
     def unRegisterReplica(self,replicaGUID):
         """ unRegisterReplica operation is performed on a Geodata Service
-        resource (POST only). This operation unregisters a replica on the 
-        geodata service. Unregistering a replica is only supported when 
+        resource (POST only). This operation unregisters a replica on the
+        geodata service. Unregistering a replica is only supported when
         logged in as an admin user. You can provide arguments to the
         unRegisterReplica operation.
         Inputs:
@@ -158,6 +159,7 @@ class Version(BaseAGSServer):
     _proxy_port = None
     _proxy_url = None
     _url = None
+    _json = None
 
     _name = None
     _description = None
@@ -197,7 +199,8 @@ class Version(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Version."
+                print (k, " - attribute not implemented in Version.")
+            del k,v
 
     #----------------------------------------------------------------------
     def __str__(self):
@@ -293,7 +296,7 @@ class Replica(BaseAGSServer):
     _transferRelatedObjects = None
     _layers = None
     _reconcilePolicy = None
-
+    _json = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  proxy_url=None, proxy_port=None,
@@ -324,7 +327,8 @@ class Replica(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Replica."
+                print (k, " - attribute not implemented in Replica.")
+            del k, v
 
     #----------------------------------------------------------------------
     def __str__(self):

@@ -1,13 +1,14 @@
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalServerSecurityHandler
+from __future__ import absolute_import
+from __future__ import print_function
+from ..security.security import  PortalServerSecurityHandler
 from ..manageags import AGSAdministration
 from ..hostedservice import Services
-from ..common.general import local_time_to_online,online_time_to_string
+from ..common.general import local_time_to_online
 from .._abstract.abstract import BaseAGOLClass
 import os
 import urlparse
-import _parameters as parameters
+from . import _parameters as parameters
 import json
-import types
 ########################################################################
 class Portals(BaseAGOLClass):
     """
@@ -195,7 +196,8 @@ class Portal(BaseAGOLClass):
     _region = None
     _contacts = None
     _appInfo = None
-    __creditAssignments = None
+    _creditAssignments = None
+
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -232,7 +234,7 @@ class Portal(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Portal class."
+                print( k, " - attribute not implemented in Portal class.")
     #----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
@@ -282,7 +284,7 @@ class Portal(BaseAGOLClass):
         if self._contacts is None:
             self.__init()
         return self._contacts
-    
+
     #----------------------------------------------------------------------
     @property
     def urlKey(self):
@@ -929,7 +931,7 @@ class Portal(BaseAGOLClass):
         if self._creditAssignments is None:
             self.__init()
         return self._creditAssignments
-    #----------------------------------------------------------------------   
+    #----------------------------------------------------------------------
     @property
     def urls(self):
         """gets the urls for a portal"""
@@ -1164,8 +1166,8 @@ class Portal(BaseAGOLClass):
                        securityHandler=self._securityHandler,
                        proxy_url=self._proxy_url,
                        proxy_port=self._proxy_port)
-    
-    
+
+
     #----------------------------------------------------------------------
     def assignUserCredits(self, usernames, credits):
         """
@@ -1193,7 +1195,7 @@ class Portal(BaseAGOLClass):
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)    
+                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def users(self,
               start=1,
@@ -1236,7 +1238,7 @@ class Portal(BaseAGOLClass):
             params['sortField'] = sortField
         if not sortOrder is None:
             params['sortOrder'] = sortOrder
-        from _community import Community
+        from ._community import Community
         res = self._do_post(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
@@ -1533,9 +1535,10 @@ class Portal(BaseAGOLClass):
         params = {"f": "json"}
         url = "%s/invitations" % self.root
         return self._do_get(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def usage(self,
               startTime,
@@ -1571,6 +1574,7 @@ class Portal(BaseAGOLClass):
         url = "%s/idp" % self.root
         params = {"f": "json"}
         return self._do_get(url=url,
+                            param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -1643,7 +1647,7 @@ class Servers(BaseAGOLClass):
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Servers.Server class."
+                    print( k, " - attribute not implemented in Servers.Server class.")
         #----------------------------------------------------------------------
         def __str__(self):
             """returns class as string"""
@@ -1811,7 +1815,7 @@ class Servers(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Servers class."
+                print( k, " - attribute not implemented in Servers class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns class as string"""
@@ -2039,7 +2043,7 @@ class Roles(BaseAGOLClass):
             "f" : "json",
             "privileges" : {"privileges": privileges},
             "id": roleID
-            
+
         }
         url = self._url + "/%s/setPrivileges" % roleID
         return self._do_post(url=url,

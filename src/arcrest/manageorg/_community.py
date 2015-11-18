@@ -1,8 +1,11 @@
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import urllib_parse as urlparse
+
 from .._abstract.abstract import BaseAGOLClass
 from datetime import datetime, timedelta
 from ..common.general import local_time_to_online
-import urlparse
+
 import json
 import os
 ########################################################################
@@ -318,7 +321,7 @@ class Groups(BaseAGOLClass):
 
         if self._portalId is None:
 
-            from administration import Administration
+            from .administration import Administration
             portalSelf = Administration(url=self._securityHandler.org_url,
                                   securityHandler=self._securityHandler,
                                   proxy_url=self._proxy_url,
@@ -487,7 +490,7 @@ class Group(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Group class."
+                print (k, " - attribute not implemented in Group class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
@@ -1021,7 +1024,7 @@ class Group(BaseAGOLClass):
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Group.Application class."
+                    print (k, " - attribute not implemented in Group.Application class.")
         #----------------------------------------------------------------------
         @property
         def username(self):
@@ -1259,7 +1262,7 @@ class User(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in User class."
+                print( k, " - attribute not implemented in User class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -1285,7 +1288,7 @@ class User(BaseAGOLClass):
         """allows access into the individual user's content to get at the
         items owned by the current user"""
         url = self._url.lower().replace('/community/', '/content/')
-        from _content import User as UserContent
+        from ._content import User as UserContent
         return UserContent(url=url,
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
@@ -1787,7 +1790,7 @@ class Invitations(BaseAGOLClass):
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Invitation class."
+                    print( k, " - attribute not implemented in Invitation class.")
         #----------------------------------------------------------------------
         @property
         def root(self):
@@ -1959,7 +1962,7 @@ class Invitations(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Invitations class."
+                print( k, " - attribute not implemented in Invitations class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -2056,7 +2059,7 @@ class Notifications(BaseAGOLClass):
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Notification class."
+                    print( k, " - attribute not implemented in Notification class.")
         #----------------------------------------------------------------------
         @property
         def targetType(self):
@@ -2168,7 +2171,7 @@ class Notifications(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Notifications class."
+                print( k, " - attribute not implemented in Notifications class.")
     #----------------------------------------------------------------------
     @property
     def root(self):

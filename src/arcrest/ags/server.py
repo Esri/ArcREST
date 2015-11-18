@@ -3,19 +3,22 @@ This provides access to a server and it's services for non administrative
 functions.  This allows developers to access a REST service just like a
 user/developer would.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 from . import BaseAGSServer
 from urlparse import urlparse
 import json
-from _geoprocessing import GPService
-from mapservice import MapService
-from featureservice import FeatureService
-from _imageservice import ImageService
-from _mobileservice import MobileService
+from ._geoprocessing import GPService
+from .mapservice import MapService
+from .featureservice import FeatureService
+from ._imageservice import ImageService
+from ._mobileservice import MobileService
 from ..geometryservice import GeometryService
-from _geocodeservice import GeocodeService
-from _geodataservice import GeoDataService
-from _networkservice import NetworkService
-from _globeservice import GlobeService
+from ._geocodeservice import GeocodeService
+from ._geodataservice import GeoDataService
+from ._networkservice import NetworkService
+from ._globeservice import GlobeService
+__all__ = ['Server']
 ########################################################################
 class Server(BaseAGSServer):
     """This object represents an ArcGIS Server instance"""
@@ -85,7 +88,7 @@ class Server(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in ags.Server class."
+                print("%s - attribute not implemented in ags.Server class." % k)
         json_dict = self._do_get(url=self.root,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
@@ -197,7 +200,7 @@ class Server(BaseAGSServer):
                 services.append(GeoDataService(url=url,
                                                securityHandler=self._securityHandler,
                                                proxy_port=self._proxy_port,
-                                               proxy_url=self._proxy_url))                                               
+                                               proxy_url=self._proxy_url))
             elif service['type'] == "GlobeServer":
                 services.append(GlobeService(url=url,
                                                securityHandler=self._securityHandler,
@@ -206,7 +209,7 @@ class Server(BaseAGSServer):
             elif service['type'] in ("IndexGenerator", "IndexingLauncher", "SearchServer"):
                 pass
             else:
-                print service['type'], service['name']
+                print (service['type'], service['name'])
         return services
     #----------------------------------------------------------------------
     @property

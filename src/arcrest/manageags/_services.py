@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
-from parameters import Extension
+from .parameters import Extension
 import os
 import json
 import tempfile
@@ -57,7 +59,7 @@ class Services(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented manageags.services."
+                print( k, " - attribute not implemented manageags.services.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -523,7 +525,7 @@ class Services(BaseAGSServer):
         This operation allows you to check whether a folder or a service
         exists. To test if a folder exists, supply only a folderName. To
         test if a service exists in a root folder, supply both serviceName
-        and serviceType with folderName=None. To test if a service exists 
+        and serviceType with folderName=None. To test if a service exists
         in a folder, supply all three parameters.
 
         Inputs:
@@ -547,7 +549,7 @@ class Services(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
-                             
+
 ########################################################################
 class AGSService(BaseAGSServer):
     """ Defines a AGS Admin Service """
@@ -632,7 +634,7 @@ class AGSService(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageags.AGSService."
+                print( k, " - attribute not implemented in manageags.AGSService.")
             del k
             del v
     #----------------------------------------------------------------------

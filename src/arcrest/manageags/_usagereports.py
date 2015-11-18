@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
+import six
 from .._abstract.abstract import BaseAGSServer
-from urllib import urlencode, quote_plus
 import json
 ########################################################################
 class UsageReports(BaseAGSServer):
@@ -49,7 +51,7 @@ class UsageReports(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in UsageReports."
+                print( k, " - attribute not implemented in UsageReports.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -71,8 +73,7 @@ class UsageReports(BaseAGSServer):
             self.__init()
         self._reports = []
         for r in self._metrics:
-            url = self._url + "/%s" % quote_plus(r['reportname'])
-            print url
+            url = self._url + "/%s" % six.moves.urllib.parse.quote_plus(r['reportname'])
             self._reports.append(UsageReport(url=url,
                                              securityHandler=self._securityHandler,
                                              proxy_url=self._proxy_url,
@@ -326,7 +327,7 @@ class UsageReport(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageags.UsageReport."
+                print (k, " - attribute not implemented in manageags.UsageReport.")
             del k
             del v
     #----------------------------------------------------------------------

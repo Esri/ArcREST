@@ -1,5 +1,9 @@
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import urllib_parse as urlparse
+from six.moves.urllib.parse import urlencode
 from .._abstract.abstract import BaseAGSServer
-import urlparse, urllib
+#import urlparse, urllib
 import os
 ########################################################################
 class Uploads(BaseAGSServer):
@@ -120,7 +124,7 @@ class Uploads(BaseAGSServer):
         params = {
         }
         if len(params.keys()):
-            url =  url + "?%s" % urllib.urlencode(params)
+            url =  url + "?%s" % urlencode(params)
         return self._download_file(url=url,
                                    param_dict=params,
                                    save_path=savePath,

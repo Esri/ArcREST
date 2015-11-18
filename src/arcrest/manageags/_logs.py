@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 from datetime import datetime
 import csv, json
@@ -46,7 +48,7 @@ class Log(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Logs."
+                print( k, " - attribute not implemented in Logs.")
             del k
             del v
     #----------------------------------------------------------------------

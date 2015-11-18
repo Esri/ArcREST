@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract import abstract
 from ..common.geometry import Point, Polyline, Polygon, MultiPoint, Envelope
 import json
@@ -169,7 +171,7 @@ class GeometryService(abstract.BaseAGSServer):
                 else:
                     raise AttributeError("Invalid geometry type")
                 template['geometries'].append(g.asDictionary)
-            del g
+                del g
             return template
         return template
     #----------------------------------------------------------------------

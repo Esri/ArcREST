@@ -1,8 +1,9 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
-from _parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
-from _community import Group as CommunityGroup
-import urllib
+from ._parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
+from ._community import Group as CommunityGroup
 import urlparse
 import json
 import os
@@ -161,14 +162,14 @@ class Users(BaseAGOLClass):
         elif self._securityHandler is not None and \
                hasattr(self._securityHandler, "org_url") and \
                self._securityHandler.org_url is not None:
-            from administration import Administration
+            from .administration import Administration
             user = Administration(url=self._securityHandler.org_url,
                                   securityHandler=self._securityHandler,
                                   proxy_url=self._proxy_url,
                                   proxy_port=self._proxy_port).portals.portalSelf.user
             return user['username']
         else:
-            from administration import Administration
+            from .administration import Administration
             url = self._url.lower().split('/content/')[0]
             user = Administration(url=url,
                                   securityHandler=self._securityHandler,
@@ -275,15 +276,7 @@ class Item(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                #print k, " - attribute not implemented in Item class."
-                print """#------attribute not implemented in Item class--------------------------
-@property
-def %s(self):
-    '''gets the property value for %s'''
-    if self._%s is None:
-        self.__init()
-    return self._%s
-""" % (k,k,k, k)
+                print( k, " - attribute not implemented in Item class.")
 
     def orgId(self):
         '''gets the property value for orgId'''
@@ -1055,11 +1048,11 @@ class UserItem(BaseAGOLClass):
                     if key in attributes:
                         setattr(self, "_" + key, value)
                     else:
-                        print key, " - attribute not implemented in UserItem class."
+                        print( key, " - attribute not implemented in UserItem class.")
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in UserItem class."
+                print( k, " - attribute not implemented in UserItem class.")
     #----------------------------------------------------------------------
     _itemControl = None
     def itemControl(self):
@@ -1865,7 +1858,7 @@ class User(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, result_template[k])
             else:
-                print k, " - attribute not implemented in Content.User class."
+                print( k, " - attribute not implemented in Content.User class.")
     #----------------------------------------------------------------------
     def search(self,
                start=1,
@@ -2175,7 +2168,6 @@ class User(BaseAGOLClass):
         if 'services' in res:
             if len(res['services']) > 0:
                 if 'error' in res['services'][0]:
-                    print res
                     raise Exception("Could not publish item: %s" % itemId)
                 else:
                     itemId = res['services'][0]['serviceItemId']
@@ -2190,7 +2182,7 @@ class User(BaseAGOLClass):
 
                             if status['status'] == 'failed':
                                 if 'statusMessage' in status:
-                                    print status['statusMessage']
+                                    print( status['statusMessage'])
                                 raise Exception("Could not publish item: %s" % itemId)
 
                             elif status['status'].lower() == "completed":
@@ -2198,10 +2190,10 @@ class User(BaseAGOLClass):
                             time.sleep(2)
                     return ui
             else:
-                print res
+                print (res)
                 raise Exception("Could not publish item: %s" % itemId)
         else:
-            print res
+            print (res)
             raise Exception("Could not publish item: %s" % itemId)
         return None
 
@@ -2812,7 +2804,7 @@ class Group(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Content.Groups class."
+                print( k, " - attribute not implemented in Content.Groups class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -2865,10 +2857,10 @@ class Group(BaseAGOLClass):
         """returns the community.Group class for the current group"""
         gURL = self.__assembleURL(self._contentURL, self._groupId)
 
-        return Group(url=gURL,
-                     securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port)
+        return CommunityGroup(url=gURL,
+                              securityHandler=self._securityHandler,
+                              proxy_url=self._proxy_url,
+                              proxy_port=self._proxy_port)
 
 
 

@@ -3,22 +3,22 @@
    through the Administration REST API
 
 """
+from __future__ import absolute_import
+from __future__ import print_function
+
 from .._abstract.abstract import BaseAGSServer
 from ..security import OAuthSecurityHandler, NTLMSecurityHandler, PKISecurityHandler, \
     PortalServerSecurityHandler, PortalTokenSecurityHandler, \
     ArcGISTokenSecurityHandler,AGOLTokenSecurityHandler, \
     LDAPSecurityHandler, AGSTokenSecurityHandler
-
-from datetime import datetime
 import csv
-import os
 import json
-import _machines, _clusters
-import _data, _info
-import _kml, _logs
-import _security, _services
-import _system
-import _uploads, _usagereports
+from . import _machines, _clusters
+from . import _data, _info
+from . import _kml, _logs
+from . import _security, _services
+from . import _system
+from . import _uploads, _usagereports
 
 ########################################################################
 class AGSAdministration(BaseAGSServer):
@@ -95,7 +95,7 @@ class AGSAdministration(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented manageags.AGSAdministration."
+                print (k, " - attribute not implemented manageags.AGSAdministration.")
             del k
             del v
     #----------------------------------------------------------------------

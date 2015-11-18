@@ -6,10 +6,12 @@ information and have a well-defined state. Operations act on these
 resources and update their information or state. Resources and operations
 are hierarchical and have unique universal resource locators (URLs).
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 from datetime import datetime
 from .._abstract.abstract import BaseAGOLClass
-from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler,AGOLTokenSecurityHandler
+from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler
 ########################################################################
 class _log(BaseAGOLClass):
     """handles the portal log information at 10.3.1+"""
@@ -56,7 +58,7 @@ class _log(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration.log class."
+                print( k, " - attribute not implemented in manageportal.administration.log class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -231,7 +233,7 @@ class _Security(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration.log class."
+                print( k, " - attribute not implemented in manageportal.administration.log class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -345,7 +347,7 @@ class _Security(BaseAGOLClass):
                            usernameAttribute,
                            isPasswordEncrypted=False,
                            caseSensitive=True):
-        """
+        r"""
         You can use this operation to change the identity provider
         configuration in your portal. When Portal for ArcGIS is first
         installed, it supports token-based authentication using the
@@ -921,7 +923,7 @@ class PortalAdministration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration class."
+                print( k, " - attribute not implemented in manageportal.administration class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
