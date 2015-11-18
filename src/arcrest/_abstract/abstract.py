@@ -1,5 +1,9 @@
 from __future__ import absolute_import
-from ..web import _base
+import six
+if six.PY2:
+    from ..web._base import BaseWebOperations as BaseWebOperations
+elif six.PY3:
+    from ..web._base import BaseWebOperations3 as BaseWebOperations
 import httplib
 import zipfile
 import datetime
@@ -7,7 +11,7 @@ import calendar
 import glob
 import mimetypes
 import os
-class BaseGeoEnrichment(_base.BaseWebOperations):
+class BaseGeoEnrichment(BaseWebOperations):
     """ base geoenrichment class """
     pass
 ########################################################################
@@ -53,7 +57,7 @@ class BaseParameters(object):
     """ All parameter objects used for Portal/AGOL """
     pass
 ########################################################################
-class BaseSecurityHandler(_base.BaseWebOperations):
+class BaseSecurityHandler(BaseWebOperations):
     """ All Security Objects inherit from this class """
     _token = None
     _valid = True
@@ -88,7 +92,7 @@ class DataSource(object):
     pass
 
 ########################################################################
-class BaseAGSServer(_base.BaseWebOperations):
+class BaseAGSServer(BaseWebOperations):
     """ base class from which all service inherit """
     _url = None
     _proxy_url = None
@@ -158,7 +162,7 @@ def patch_http_response_read(func):
     return inner
 httplib.HTTPResponse.read = patch_http_response_read(httplib.HTTPResponse.read)
 ########################################################################
-class BaseAGOLClass(_base.BaseWebOperations):
+class BaseAGOLClass(BaseWebOperations):
 
     _token = None
     _org_url ="http://www.arcgis.com"

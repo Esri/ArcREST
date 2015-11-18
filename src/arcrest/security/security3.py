@@ -3,6 +3,9 @@ Note: ntlm3 was obtained from here: https://github.com/trustrachel/python-ntlm3
 """
 from __future__ import print_function
 from __future__ import absolute_import
+from six.moves import urllib
+from six.moves import urllib_parse as urlparse
+from six.moves.urllib import request as urllib2
 import datetime
 try:
     import arcpy
@@ -10,18 +13,13 @@ try:
 except:
     arcpyFound = False
 try:
-    from ntlm3 import HTTPNtlmAuthHandler
+    from .ntlm3 import HTTPNtlmAuthHandler
     hasNTLM = True
 except:
     hasNTLM = False
 from .._abstract import abstract
 _defaultTokenExpiration = 5 #Minutes
-import urllib2
-from urlparse import urlparse, urlunparse
-import warnings
-warnings.filterwarnings("ignore",
-                        category=UserWarning,
-                        module='urllib2')
+
 ########################################################################
 class LDAPSecurityHandler(abstract.BaseSecurityHandler):
     """
@@ -101,8 +99,8 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._surl = self._url
 
-        parsed_url = urlparse(self._org_url)
-        self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))#added 7/15/2015
+        parsed_url = urlparse.urlparse(self._org_url)
+        self._parsed_org_url = urlparse.urlunparse((parsed_url[0],parsed_url[1],"","","",""))#added 7/15/2015
 
         if referer_url is None:
             self._referer_url = parsed_url.netloc
@@ -351,11 +349,11 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
             else:
                 self._surl = self._url
 
-            parsed_url = urlparse(self._org_url)
-            self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
+            parsed_url = urlparse.urlparse(self._org_url)
+            self._parsed_org_url = urlparse.urlunparse((parsed_url[0],parsed_url[1],"","","",""))
 
         if referer_url is None:
-            parsed_org = urlparse(self._org_url)
+            parsed_org = urlparse.urlparse(self._org_url)
             self._referer_url = parsed_org.netloc
 
             url = '{}/portals/self'.format( self._url)
@@ -528,8 +526,8 @@ class PortalServerSecurityHandler(abstract.BaseSecurityHandler):
         """ sets proper URLs for AGOL """
         self._serverUrl = serverUrl
 
-        parsed_url = urlparse(self._serverUrl)
-        self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
+        parsed_url = urlparse.urlparse(self._serverUrl)
+        self._parsed_org_url = urlparse.urlunparse((parsed_url[0],parsed_url[1],"","","",""))
         self._referer = parsed_url.netloc
 
     #----------------------------------------------------------------------
@@ -1133,8 +1131,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         else:
             self._token_url = token_url
-        parsed_url = urlparse(self._org_url)
-        self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
+        parsed_url = urlparse.urlparse(self._org_url)
+        self._parsed_org_url = urlparse.urlunparse((parsed_url[0],parsed_url[1],"","","",""))
 
         if referer_url is None:
             self._referer_url = parsed_url.netloc
@@ -1378,7 +1376,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
            not org_url is None:
 
             params = {"f":"json"}
-            parts = urlparse(org_url)
+            parts = urlparse.urlparse(org_url)
             p = parts.path[1:].strip().split('/')[0]
             url = "%s://%s/%s/rest/info" % (parts.scheme, parts.netloc, p)
             result = self._do_get(url=url, param_dict=params,
@@ -1615,8 +1613,8 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         else:
             self._token_url = token_url
 
-        parsed_url = urlparse(self._org_url)
-        self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
+        parsed_url = urlparse.urlparse(self._org_url)
+        self._parsed_org_url = urlparse.urlunparse((parsed_url[0],parsed_url[1],"","","",""))
 
         if referer_url is None:
 
