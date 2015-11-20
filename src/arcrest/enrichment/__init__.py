@@ -22,4 +22,6 @@
     and the demographics and other relevant characteristics associated with the
     area around the site will be returned.
 """
-from _geoenrichment import GeoEnrichment
+from __future__ import absolute_import
+from ._geoenrichment import GeoEnrichment
+__version__ = "3.5.0"

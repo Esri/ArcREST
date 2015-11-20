@@ -1,14 +1,16 @@
-from .._abstract.abstract import BaseAGSServer, DynamicData, BaseSecurityHandler
-import layer
-from ..common.general import Feature
-from layer import FeatureLayer, TableLayer, RasterLayer
-from ..common import filters, geometry
-from ..security import security
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 import time
-from ..common.geometry import Polygon
 import tempfile
-from _geoprocessing import GPJob
+from .._abstract.abstract import BaseAGSServer, DynamicData, BaseSecurityHandler
+from .layer import FeatureLayer, TableLayer, RasterLayer, GroupLayer
+from ._geoprocessing import GPJob
+from ..security import security
+from ..common import filters, geometry
+from ..common.geometry import Polygon, Envelope, SpatialReference
+from ..common.general import Feature
+
 ########################################################################
 class MapService(BaseAGSServer):
     """ contains information about a map service """
@@ -138,16 +140,16 @@ class MapService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "tables":
                 self._tables = []
                 for tbl in v:
                     url = self._url + "/%s" % tbl['id']
                     self._tables.append(
-                        layer.TableLayer(url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_port=self._proxy_port,
-                                         proxy_url=self._proxy_url)
+                        TableLayer(url,
+                                   securityHandler=self._securityHandler,
+                                   proxy_port=self._proxy_port,
+                                   proxy_url=self._proxy_url)
                     )
             elif k == "layers":
                 self._layers = []
@@ -156,38 +158,38 @@ class MapService(BaseAGSServer):
                     layer_type = self._getLayerType(url)
                     if layer_type == "Feature Layer":
                         self._layers.append(
-                            layer.FeatureLayer(url,
-                                               securityHandler=self._securityHandler,
-                                               proxy_port=self._proxy_port,
-                                               proxy_url=self._proxy_url)
-                        )
-                    elif layer_type == "Raster Layer":
-                        self._layers.append(
-                            layer.RasterLayer(url,
+                            FeatureLayer(url,
                                          securityHandler=self._securityHandler,
                                          proxy_port=self._proxy_port,
                                          proxy_url=self._proxy_url)
                         )
+                    elif layer_type == "Raster Layer":
+                        self._layers.append(
+                            RasterLayer(url,
+                                        securityHandler=self._securityHandler,
+                                        proxy_port=self._proxy_port,
+                                        proxy_url=self._proxy_url)
+                        )
                     elif layer_type == "Group Layer":
                         self._layers.append(
-                            layer.GroupLayer(url,
-                                             securityHandler=self._securityHandler,
-                                             proxy_port=self._proxy_port,
-                                             proxy_url=self._proxy_url)
+                            GroupLayer(url,
+                                       securityHandler=self._securityHandler,
+                                       proxy_port=self._proxy_port,
+                                       proxy_url=self._proxy_url)
                         )
                     else:
-                        print 'Type %s is not implemented' % layer_type
+                        print ('Type %s is not implemented' % layer_type)
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
 
             else:
-                print k, " is not implemented for mapservice."
+                print (k, " is not implemented for mapservice.")
     #----------------------------------------------------------------------
     def __iter__(self):
         """returns the JSON response in key/value pairs"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -417,22 +419,22 @@ class MapService(BaseAGSServer):
             "layers" : [],
             "tables" : []
         }
-        for k, v in res.iteritems():
+        for k, v in res.items():
             if k == "layers":
                 for val in v:
                     return_dict['layers'].append(
-                        layer.FeatureLayer(url=self._url + "/%s" % val['id'],
-                                           securityHandler=self._securityHandler,
-                                           proxy_url=self._proxy_url,
-                                           proxy_port=self._proxy_port)
+                        FeatureLayer(url=self._url + "/%s" % val['id'],
+                                     securityHandler=self._securityHandler,
+                                     proxy_url=self._proxy_url,
+                                     proxy_port=self._proxy_port)
                     )
             elif k == "tables":
                 for val in v:
                     return_dict['tables'].append(
-                        layer.TableLayer(url=self._url + "/%s" % val['id'],
-                                           securityHandler=self._securityHandler,
-                                           proxy_url=self._proxy_url,
-                                           proxy_port=self._proxy_port)
+                        TableLayer(url=self._url + "/%s" % val['id'],
+                                   securityHandler=self._securityHandler,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
                     )
             del k,v
         return return_dict
@@ -469,7 +471,6 @@ class MapService(BaseAGSServer):
         qResults = []
         for r in res['results']:
             qResults.append(Feature(r))
-        print 'stop'
         return qResults
     #----------------------------------------------------------------------
     def _getLayerType(self, url):
@@ -794,7 +795,7 @@ class MapService(BaseAGSServer):
             "f" : "json"
         }
 
-        if isinstance(bbox, geometry.Envelope):
+        if isinstance(bbox, Envelope):
             vals = bbox.asDictionary
             params['bbox'] = "%s,%s,%s,%s" % (vals['xmin'], vals['ymin'],
                                               vals['xmax'], vals['ymax'])
@@ -804,7 +805,7 @@ class MapService(BaseAGSServer):
             if size is not None:
                 params['size'] = size
             if imageSR is not None and \
-               isinstance(imageSR, geometry.SpatialReference):
+               isinstance(imageSR, SpatialReference):
                 params['imageSR'] = {'wkid': imageSR.wkid}
             if image_format is not None:
                 params['format'] = image_format
@@ -1060,7 +1061,7 @@ class MapService(BaseAGSServer):
                     time.sleep(5)
                     status = gpJob.jobStatus
             allResults = gpJob.results
-            for k,v in allResults.iteritems():
+            for k,v in allResults.items():
                 if k == "out_service_url":
                     value = v['value']
                     params = {

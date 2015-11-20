@@ -1,6 +1,7 @@
-from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler
-import json, types
+from __future__ import absolute_import
+from __future__ import print_function
+from .._abstract.abstract import BaseAGSServer
+import json
 ########################################################################
 class GlobeServiceLayer(BaseAGSServer):
     """
@@ -61,11 +62,12 @@ class GlobeServiceLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Globe Service Layer."
+                print (k, " - attribute not implemented for Globe Service Layer.")
+            del k,v
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -259,11 +261,11 @@ class GlobeService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Globe Service."
+                print (k, " - attribute not implemented for Globe Service.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""

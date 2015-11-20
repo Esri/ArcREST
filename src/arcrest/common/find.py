@@ -1,8 +1,14 @@
-from ..web import _base
+from __future__ import absolute_import
+from __future__ import print_function
+import six
+if six.PY2:
+    from ..web._base import BaseWebOperations
+else:
+    from ..web._base import BaseWebOperations3 as BaseWebOperations
 _url = None
 _securityHandler = None
 
-class search(_base.BaseWebOperations):
+class search(BaseWebOperations):
     def __init__(self, url=None, securityHandler=None, proxy_url=None, proxy_port=None):
         """Constructor"""
 
@@ -16,7 +22,7 @@ class search(_base.BaseWebOperations):
             self.proxy_port = securityHandler.proxy_port
         else:
             self._proxy_port = proxy_port
-            
+
         if url is None or url == '':
             raise AttributeError("URL or Security Hanlder needs to be specified")
 
@@ -33,8 +39,8 @@ class search(_base.BaseWebOperations):
         self._securityHandler = securityHandler
         if not securityHandler is None:
             self._referer_url = securityHandler.referer_url
-        
-       
+
+
     #----------------------------------------------------------------------
     def findItem(self, title, itemType,username=None,searchorg=False):
         #
@@ -74,7 +80,7 @@ class search(_base.BaseWebOperations):
               'Map Template',
               'Mobile Basemap Package',
               'Mobile Map Package',
-              'Pro Map',             
+              'Pro Map',
               'Project Package',
               'Project Template',
               'Published Map',
@@ -96,7 +102,7 @@ class search(_base.BaseWebOperations):
         if searchorg == True:
             params = {'f': 'json',
                'q': title}
-            #'q': "(title:\""+ title}        
+            #'q': "(title:\""+ title}
         else:
             params = {'f': 'json',
                'q': title + " owner:" + username }
@@ -112,23 +118,22 @@ class search(_base.BaseWebOperations):
                         types.remove(ty)
                 typstr = typstr + ")"
                 params['q'] = params['q'] + typstr
-               
+
             else:
                 if itemType in types:
-                    types.remove(itemType)                
+                    types.remove(itemType)
                 params['q'] = params['q'] + " (type:\"" + itemType + "\")"
-            
+
             #itemType = ""
             #for ty in types:
                 #itemType = itemType + " -type:\"" + ty + "\""
-            #params['q'] = params['q'] + itemType   
-            
+            #params['q'] = params['q'] + itemType
+
         else:
             pass
         jsonResponse = self._do_get(url=self._url,
                                    securityHandler=self._securityHandler,
                                    param_dict=params,
                                    proxy_url=self._proxy_url,
-                                   proxy_port=self._proxy_port)   
+                                   proxy_port=self._proxy_port)
         return jsonResponse
-        

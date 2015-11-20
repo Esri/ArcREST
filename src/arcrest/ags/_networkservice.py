@@ -1,6 +1,7 @@
-from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler
-import json, types
+from __future__ import absolute_import
+from __future__ import print_function
+from .._abstract.abstract import BaseAGSServer
+import json
 
 ########################################################################
 class NetworkService(BaseAGSServer):
@@ -56,7 +57,7 @@ class NetworkService(BaseAGSServer):
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
 
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 if k == "routeLayers" and json_dict[k]:
                     self._routeLayers = []
@@ -77,7 +78,7 @@ class NetworkService(BaseAGSServer):
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
                                                     initialize=False))
-                                                    
+
                 elif k == "closestFacilityLayers" and json_dict[k]:
                     self._closestFacilityLayers = []
                     for cf in v:
@@ -86,11 +87,11 @@ class NetworkService(BaseAGSServer):
                                                     securityHandler=self._securityHandler,
                                                     proxy_url=self._proxy_url,
                                                     proxy_port=self._proxy_port,
-                                                    initialize=False))                
+                                                    initialize=False))
                 else:
                     setattr(self, "_"+ k, v)
             else:
-                print "attribute %s is not implemented." % k
+                print ("attribute %s is not implemented." % k)
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -220,11 +221,12 @@ class NetworkLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in NetworkLayer."
+                print (k, " - attribute not implemented in NetworkLayer.")
+            del k,v
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
@@ -413,11 +415,12 @@ class RouteNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in RouteNetworkLayer."
+                print( k, " - attribute not implemented in RouteNetworkLayer.")
+            del k,v
 
     #----------------------------------------------------------------------
     @property
@@ -813,11 +816,12 @@ class ServiceAreaNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in ServiceAreaNetworkLayer."
+                print( k, " - attribute not implemented in ServiceAreaNetworkLayer.")
+            del k,v
 
     #----------------------------------------------------------------------
     @property
@@ -1195,18 +1199,18 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
     """
 
     #specific to Closest Facility
-    directionsLanguage = None
-    directionsLengthUnits = None
-    outputLineType = None
-    timeOfDayIsUTC = None
-    travelDirection = None
-    defaultCutoffValue = None
-    facilityCount = None
-    directionsTimeAttribute = None
-    timeOfDayUsage = None
-    directionsSupportedLanguages = None
-    directionsStyleNames = None
-    timeOfDay = None
+    _directionsLanguage = None
+    _directionsLengthUnits = None
+    _outputLineType = None
+    _timeOfDayIsUTC = None
+    _travelDirection = None
+    _defaultCutoffValue = None
+    _facilityCount = None
+    _directionsTimeAttribute = None
+    _timeOfDayUsage = None
+    _directionsSupportedLanguages = None
+    _directionsStyleNames = None
+    _timeOfDay = None
 
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
@@ -1231,11 +1235,12 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in ClosestFacilityNetworkLayer."
+                print (k, " - attribute not implemented in ClosestFacilityNetworkLayer.")
+            del k,v
 
     #----------------------------------------------------------------------
     @property

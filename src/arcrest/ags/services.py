@@ -79,7 +79,7 @@ class FeatureService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print("%s - attribute not implemented for Feature Service." % k)
+                print k, " - attribute not implemented for Feature Service."
     #----------------------------------------------------------------------
     @property
     def administration(self):
@@ -112,12 +112,12 @@ class FeatureService(BaseAGSServer):
         url = self._url + "/info/thumbnail"
         params = {}
         return self._download_file(url=url,
-                            save_path=outPath,
-                            securityHandler=self._securityHandler,
-                            file_name=None,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+                                   save_path=outPath,
+                                   securityHandler=self._securityHandler,
+                                   file_name=None,
+                                   param_dict=params,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def downloadMetadataFile(self, outPath):
         """downloads the metadata file to a given path"""
@@ -382,10 +382,10 @@ class FeatureService(BaseAGSServer):
             params['time'] = timeFilter.filter
 
         res = self._do_post(url=qurl,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
         if returnIdsOnly == False and returnCountOnly == False:
             if isinstance(res, str):
                 jd = json.loads(res)

@@ -1,8 +1,11 @@
-from ..security.security import OAuthSecurityHandler, AGOLTokenSecurityHandler
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import urllib_parse as urlparse
+
 from .._abstract.abstract import BaseAGOLClass
 from datetime import datetime, timedelta
 from ..common.general import local_time_to_online
-import urlparse
+
 import json
 import os
 ########################################################################
@@ -34,7 +37,7 @@ class Community(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __iter__(self):
         """returns the key/values of an object"""
-        for k,v in {}.iteritems():
+        for k,v in {}.items():
             yield k,v
     #----------------------------------------------------------------------
     def checkUserName(self, username):
@@ -318,7 +321,7 @@ class Groups(BaseAGOLClass):
 
         if self._portalId is None:
 
-            from administration import Administration
+            from .administration import Administration
             portalSelf = Administration(url=self._securityHandler.org_url,
                                   securityHandler=self._securityHandler,
                                   proxy_url=self._proxy_url,
@@ -483,11 +486,11 @@ class Group(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Group class."
+                print (k, " - attribute not implemented in Group class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
@@ -499,7 +502,7 @@ class Group(BaseAGOLClass):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1017,11 +1020,11 @@ class Group(BaseAGOLClass):
             attributes = [attr for attr in dir(self)
                           if not attr.startswith('__') and \
                           not attr.startswith('_')]
-            for k,v in json_dict.iteritems():
+            for k,v in json_dict.items():
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Group.Application class."
+                    print (k, " - attribute not implemented in Group.Application class.")
         #----------------------------------------------------------------------
         @property
         def username(self):
@@ -1059,7 +1062,7 @@ class Group(BaseAGOLClass):
             """returns JSON as [key,value] objects"""
             if self._json_dict is None:
                 self.__init()
-            for k,v in self._json_dict.iteritems():
+            for k,v in self._json_dict.items():
                 yield [k,v]
         #----------------------------------------------------------------------
         def accept(self):
@@ -1255,11 +1258,11 @@ class User(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in User class."
+                print( k, " - attribute not implemented in User class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -1277,7 +1280,7 @@ class User(BaseAGOLClass):
         if self._json_dict is None:
             self._json_dict = {}
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -1285,7 +1288,7 @@ class User(BaseAGOLClass):
         """allows access into the individual user's content to get at the
         items owned by the current user"""
         url = self._url.lower().replace('/community/', '/content/')
-        from _content import User as UserContent
+        from ._content import User as UserContent
         return UserContent(url=url,
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
@@ -1783,11 +1786,11 @@ class Invitations(BaseAGOLClass):
             attributes = [attr for attr in dir(self)
                           if not attr.startswith('__') and \
                           not attr.startswith('_')]
-            for k,v in json_dict.iteritems():
+            for k,v in json_dict.items():
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Invitation class."
+                    print( k, " - attribute not implemented in Invitation class.")
         #----------------------------------------------------------------------
         @property
         def root(self):
@@ -1804,7 +1807,7 @@ class Invitations(BaseAGOLClass):
             """returns JSON as [key,value] objects"""
             if self._json_dict is None:
                 self.__init()
-            for k,v in self._json_dict.iteritems():
+            for k,v in self._json_dict.items():
                 yield [k,v]
         #----------------------------------------------------------------------
         @property
@@ -1955,11 +1958,11 @@ class Invitations(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Invitations class."
+                print( k, " - attribute not implemented in Invitations class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -1976,7 +1979,7 @@ class Invitations(BaseAGOLClass):
         """returns JSON as [key,value] objects"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -2052,11 +2055,11 @@ class Notifications(BaseAGOLClass):
             attributes = [attr for attr in dir(self)
                           if not attr.startswith('__') and \
                           not attr.startswith('_')]
-            for k,v in json_dict.iteritems():
+            for k,v in json_dict.items():
                 if k in attributes:
                     setattr(self, "_"+ k, json_dict[k])
                 else:
-                    print k, " - attribute not implemented in Notification class."
+                    print( k, " - attribute not implemented in Notification class.")
         #----------------------------------------------------------------------
         @property
         def targetType(self):
@@ -2120,7 +2123,7 @@ class Notifications(BaseAGOLClass):
             """returns JSON as [key,value] objects"""
             if self._json_dict is None:
                 self.__init()
-            for k,v in self._json_dict.iteritems():
+            for k,v in self._json_dict.items():
                 yield [k,v]
         #----------------------------------------------------------------------
         def delete(self):
@@ -2164,11 +2167,11 @@ class Notifications(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Notifications class."
+                print( k, " - attribute not implemented in Notifications class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -2185,7 +2188,7 @@ class Notifications(BaseAGOLClass):
         """returns JSON as [key,value] objects"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property

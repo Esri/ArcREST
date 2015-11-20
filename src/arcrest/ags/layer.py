@@ -1,8 +1,10 @@
-from .._abstract.abstract import BaseAGSServer
-import json
+from __future__ import absolute_import
+from __future__ import print_function
 import os
-from urlparse import urlparse
+import json
 import uuid
+from six.moves import urllib_parse as urlparse
+from .._abstract.abstract import BaseAGSServer
 from ..security import security
 from .._abstract.abstract import DynamicData, DataSource
 from ..common.spatial import scratchFolder, json_to_featureclass
@@ -105,11 +107,11 @@ class FeatureLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for layer.FeatureLayer."
+                print("%s - attribute not implemented for layer.FeatureLayer." % k)
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
@@ -712,7 +714,7 @@ class FeatureLayer(BaseAGSServer):
             params['maxAllowableOffset'] = maxAllowableOffset
         if not geometryPrecision is None:
             params['geometryPrecision'] = geometryPrecision
-        for k,v in kwargs.iteritems():
+        for k,v in kwargs.items():
             params[k] = v
         if returnDistinctValues:
             params["returnGeometry"] = False
@@ -902,11 +904,11 @@ class GroupLayer(FeatureLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented in GroupLayer."
+                print("%s - attribute not implemented in GroupLayer." % k)
 ########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""

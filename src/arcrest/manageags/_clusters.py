@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 import json
-from parameters import ClusterProtocol
+from .parameters import ClusterProtocol
 ########################################################################
 class Clusters(BaseAGSServer):
     """
@@ -50,11 +52,11 @@ class Clusters(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Clusters."
+                print( k, " - attribute not implemented in Clusters.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -164,11 +166,11 @@ class Cluster(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Clusters."
+                print( k, " - attribute not implemented in Clusters.")
             del k
             del v
     #----------------------------------------------------------------------

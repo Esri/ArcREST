@@ -1,6 +1,7 @@
-from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler
-import json, types
+from __future__ import absolute_import
+from __future__ import print_function
+from .._abstract.abstract import BaseAGSServer
+import json
 ########################################################################
 class MobileServiceLayer(BaseAGSServer):
     """
@@ -69,11 +70,11 @@ class MobileServiceLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Mobile Service Layer."
+                print (k, " - attribute not implemented for Mobile Service Layer.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -321,11 +322,11 @@ class MobileService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Mobile Service."
+                print (k, " - attribute not implemented for Mobile Service.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -381,7 +382,7 @@ class MobileService(BaseAGSServer):
     def mapName(self):
         """gets the map name"""
         if self._mapName is None:
-            self._mapName
+            self.__init()
         return self._mapName
     #----------------------------------------------------------------------
     @property

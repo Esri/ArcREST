@@ -1,8 +1,6 @@
-import os
+from __future__ import absolute_import
+from __future__ import print_function
 import json
-import time
-import calendar
-import datetime
 from ..common.geometry import Polygon, Polyline, Point, MultiPoint
 from .._abstract.abstract import AbstractGeometry, BaseFilter
 try:

@@ -2,6 +2,8 @@
 This module contains the JSON domain objects.
 Domains specify the set of valid values for a field.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 ########################################################################
 class CodedValueDomain(object):

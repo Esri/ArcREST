@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 import json
 ########################################################################
@@ -44,11 +46,11 @@ class System(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in System."
+                print( k, " - attribute not implemented in System.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -231,13 +233,13 @@ class ConfigurationStore(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "class":
                 self._class = v
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Configuration store."
+                print( k, " - attribute not implemented in Configuration store.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -354,11 +356,11 @@ class Jobs(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Jobs."
+                print( k, " - attribute not implemented in Jobs.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -515,11 +517,11 @@ class ServerProperties(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in ServerProperties."
+                print( k, " - attribute not implemented in ServerProperties.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -607,11 +609,11 @@ class ServerDirectory(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in ServerDirectory."
+                print( k, " - attribute not implemented in ServerDirectory.")
             del k
             del v
     #----------------------------------------------------------------------

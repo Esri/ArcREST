@@ -1,10 +1,11 @@
 """
 handles the upload functions for all viable services
 """
+from __future__ import absolute_import
 import os
 import mmap
 import json
-import urlparse
+from six.moves import urllib_parse as urlparse
 from ..security import security
 from .._abstract import abstract
 ########################################################################

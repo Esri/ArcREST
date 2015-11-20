@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import datetime
 import time
 import json
@@ -10,11 +12,13 @@ import copy
 import os
 import tempfile
 import uuid
-from spatial import json_to_featureclass
-from geometry import Point, MultiPoint, Polygon, Polyline, SpatialReference
+from .spatial import json_to_featureclass
+from .geometry import Point, MultiPoint, Polygon, Polyline, SpatialReference
 from .._abstract.abstract import AbstractGeometry
-#from ..agol import featureservice as agolFeatureService
-#from ..agol import layer as agolLayer
+__all__ = ['_unicode_convert', "Feature", "FeatureSet",
+           "_date_handler", "local_time_to_online",
+           "online_time_to_string", "timestamp_to_datetime",
+           "MosaicRuleObject"]
 def _unicode_convert(obj):
     """ converts unicode to anscii """
     if isinstance(obj, dict):
@@ -29,10 +33,6 @@ def _unicode_convert(obj):
 def _date_handler(obj):
     if isinstance(obj, datetime.datetime):
         return local_time_to_online(obj)
-    #elif isinstance(obj, (agolFeatureService.FeatureService,
-                          #agolLayer.FeatureLayer,
-                          #agolLayer.TableLayer)):
-        #return dict(obj)
     else:
         return obj
 #----------------------------------------------------------------------
@@ -180,7 +180,7 @@ class Feature(object):
         """
         fields = self.fields
         row = [""] * len(fields)
-        for k,v in self._attributes.iteritems():
+        for k,v in self._attributes.items():
             row[fields.index(k)] = v
             del v
             del k

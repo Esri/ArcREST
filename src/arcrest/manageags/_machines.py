@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 import json
 ########################################################################
@@ -54,7 +56,7 @@ class Machines(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k == "machines":
                 self._machines = []
                 for m in v:
@@ -67,7 +69,7 @@ class Machines(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented for Machines"
+                print( k, " - attribute not implemented for Machines")
             del k
             del v
     #----------------------------------------------------------------------
@@ -232,11 +234,11 @@ class Machine(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented for Machine"
+                print( k, " - attribute not implemented for Machine")
             del k
             del v
     #----------------------------------------------------------------------

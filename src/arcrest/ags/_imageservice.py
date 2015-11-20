@@ -1,10 +1,11 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseSecurityHandler, BaseAGSServer
-from ..security.security import AGSTokenSecurityHandler, PortalServerSecurityHandler
+from ..security import AGSTokenSecurityHandler, PortalServerSecurityHandler
 from ..common.general import MosaicRuleObject, local_time_to_online
 import datetime, urllib
 import json
 from ..common import filters
-from ..security import security
 ########################################################################
 class ImageService(BaseAGSServer):
     """
@@ -105,11 +106,11 @@ class ImageService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Image Service."
+                print (k, " - attribute not implemented for Image Service.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as a string"""
@@ -121,7 +122,7 @@ class ImageService(BaseAGSServer):
         """returns the JSON response in key/value pairs"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     @property
@@ -578,7 +579,6 @@ class ImageService(BaseAGSServer):
                                 proxy_url=self._proxy_url)
         elif f == "image":
             url = url + "?%s"  % urllib.urlencode(params)
-            print url
             return self._download_file(url=url,
                                        save_path=saveFolder,
                                        file_name=saveFile)

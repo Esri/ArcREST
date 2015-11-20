@@ -3,6 +3,8 @@ Contains constants to determine if an item type has a file or not to help
 tasks related to moving, updating or managing one's content on Portal or
 ArcGIS Online.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 URL_BASED_ITEM_TYPES = ('Feature Service', 'Map Service',
                         'Image Service', 'Web Mapping Application','WMS','WMTS', 'Geodata Service',
                         'Globe Service','Geometry Service', 'Geocoding Service',
