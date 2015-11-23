@@ -72,6 +72,8 @@ class FeatureService(abstract.BaseAGOLClass):
     _serverURL = None
     _json = None
     _json_dict = None
+    _supportsApplyEditsWithGlobalIds = None
+    _serviceItemId = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -217,6 +219,20 @@ class FeatureService(abstract.BaseAGOLClass):
         if self._description is None:
             self.__init()
         return self._description
+    #----------------------------------------------------------------------
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        """returns the supportsApplyEditsWithGlobalIds property"""
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds
+    #----------------------------------------------------------------------
+    @property
+    def serviceItemId(self):
+        """ returns the serviceItemId"""
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def copyrightText(self):
@@ -615,87 +631,174 @@ class FeatureService(abstract.BaseAGOLClass):
     def createReplica(self,
                       replicaName,
                       layers,
-                      keep_replica=False,
                       layerQueries=None,
                       geometryFilter=None,
+                      replicaSR=None,
+                      transportType="esriTransportTypeUrl",
                       returnAttachments=False,
-                      returnAttachmentDatabyURL=True,
-                      returnAsFeatureClass=False,
-                      out_path=None
-                      ):
-        """ generates a replica
-            Inputs:
-               replicaName - string of replica name
-               layers - layer id # as comma seperated string
-               keep_replica - if the replica does not have returnAsFeatureClass set to true,
-                              the feature service creates a permanent copy of the replica.
-                              If this is just a pull, then erase the replica in order to prevent
-                              build up of replicas.
-               layerQueries - In addition to the layers and geometry parameters, the layerQueries
-                              parameter can be used to further define what is replicated. This
-                              parameter allows you to set properties on a per layer or per table
-                              basis. Only the properties for the layers and tables that you want
-                              changed from the default are required.
-                                Example:
-                                  layerQueries = {"0":{"queryOption": "useFilter", "useGeometry": true,
-                                                 "where": "requires_inspection = Yes"}}
-               geometryFilter - Geospatial filter applied to the replica to parse down data output.
-               returnAttachments - If true, attachments are added to the replica and returned in the
-                                   response. Otherwise, attachments are not included.
-               returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
-                                            attachment returned from createReplica. Otherwise,
-                                            attachments are embedded in the response.
-               returnAsFeatureClass - If a local copy is desired, set this parameter to True, else
-                                      the service will return information on how to download the
-                                      json file.
-               out_path - Path where the FGDB will be saved.  Only used with returnAsFeatureClass is
-                          True.
+                      returnAttachmentsDatabyURL=False,
+                      async=False,
+                      attachmentsSyncDirection="none",
+                      syncModel="none",
+                      dataFormat="json",
+                      replicaOptions=None,
+                      wait=False,
+                      out_path=None):
         """
-        if self.syncEnabled:
-            url = self._url + "/createReplica"
-            params = {
-                "f" : "json",
-                "replicaName": replicaName,
-                "layers": layers,
-                "returnAttachmentDatabyURL" : returnAttachmentDatabyURL,
-                "returnAttachments" : returnAttachments,
-                "async" : False
-            }
-            if not geometryFilter is None and \
-               isinstance(geometryFilter, GeometryFilter):
-                gf = geometryFilter.filter
-                params['geometryType'] = gf['geometryType']
-                params['geometry'] = gf['geometry']
-                params['inSR'] = gf['inSR']
-            if returnAsFeatureClass and \
-               out_path is not None:
-                if os.path.isdir(out_path) == False:
-                    os.makedirs(out_path)
-                params['dataFormat'] = "filegdb"
-                params['syncModel'] = 'none'
-                res = self._do_post(url=url, param_dict=params,
+        The createReplica operation is performed on a feature service
+        resource. This operation creates the replica between the feature
+        service and a client based on a client-supplied replica definition.
+        It requires the Sync capability. See Sync overview for more
+        information on sync. The response for createReplica includes
+        replicaID, server generation number, and data similar to the
+        response from the feature service query operation.
+        The createReplica operation returns a response of type
+        esriReplicaResponseTypeData, as the response has data for the
+        layers in the replica. If the operation is called to register
+        existing data by using replicaOptions, the response type will be
+        esriReplicaResponseTypeInfo, and the response will not contain data
+        for the layers in the replica.
+
+        Inputs:
+           replicaName - name of the replica
+           layers - layers to export
+           layerQueries - In addition to the layers and geometry parameters, the layerQueries
+            parameter can be used to further define what is replicated. This
+            parameter allows you to set properties on a per layer or per table
+            basis. Only the properties for the layers and tables that you want
+            changed from the default are required.
+            Example:
+             layerQueries = {"0":{"queryOption": "useFilter", "useGeometry": true,
+             "where": "requires_inspection = Yes"}}
+           geometryFilter - Geospatial filter applied to the replica to
+            parse down data output.
+           returnAttachments - If true, attachments are added to the replica and returned in the
+            response. Otherwise, attachments are not included.
+           returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
+            attachment returned from createReplica. Otherwise,
+            attachments are embedded in the response.
+           replicaSR - the spatial reference of the replica geometry.
+           transportType -  The transportType represents the response format. If the
+            transportType is esriTransportTypeUrl, the JSON response is contained in a file,
+            and the URL link to the file is returned. Otherwise, the JSON object is returned
+            directly. The default is esriTransportTypeUrl.
+            If async is true, the results will always be returned as if transportType is
+            esriTransportTypeUrl. If dataFormat is sqlite, the transportFormat will always be
+            esriTransportTypeUrl regardless of how the parameter is set.
+            Values: esriTransportTypeUrl | esriTransportTypeEmbedded
+           returnAttachments - If true, attachments are added to the replica and returned in
+            the response. Otherwise, attachments are not included. The default is false. This
+            parameter is only applicable if the feature service has attachments.
+           returnAttachmentsDatabyURL -  If true, a reference to a URL will be provided for
+            each attachment returned from createReplica. Otherwise, attachments are embedded
+            in the response. The default is true. This parameter is only applicable if the
+            feature service has attachments and if returnAttachments is true.
+           attachmentsSyncDirection - Client can specify the attachmentsSyncDirection when
+            creating a replica. AttachmentsSyncDirection is currently a createReplica property
+            and cannot be overridden during sync.
+            Values: none, upload, bidirectional
+           async - If true, the request is processed as an asynchronous job, and a URL is
+            returned that a client can visit to check the status of the job. See the topic on
+            asynchronous usage for more information. The default is false.
+           syncModel - Client can specify the attachmentsSyncDirection when creating a replica.
+            AttachmentsSyncDirection is currently a createReplica property and cannot be
+            overridden during sync.
+           dataFormat - The format of the replica geodatabase returned in the response. The
+            default is json.
+           replicaOptions - This parameter instructs the createReplica operation to create a
+            new replica based on an existing replica definition (refReplicaId). It can be used
+            to specify parameters for registration of existing data for sync. The operation
+            will create a replica but will not return data. The responseType returned in the
+            createReplica response will be esriReplicaResponseTypeInfo.
+           wait - if async, wait to pause the process until the async operation is completed.
+           out_path - folder path to save the file
+        """
+        if self.syncEnabled == False:
+            return None
+        url = self._url + "/createReplica"
+        dataformat = ["filegdb", "json", "sqlite", "shapefile"]
+        params = {"f" : "json",
+                  "replicaName": replicaName,
+                  "returnAttachments": returnAttachments,
+                  "returnAttachmentsDatabyURL": returnAttachmentsDatabyURL,
+                  "attachmentsSyncDirection" : attachmentsSyncDirection,
+                  "async" : async,
+                  "syncModel" : syncModel,
+                  "layers" : layers
+                  }
+        if dataFormat.lower() in dataformat:
+            params['dataFormat'] = dataFormat.lower()
+        else:
+            raise Exception("Invalid dataFormat")
+        if layerQueries is not None:
+            params['layerQueries'] = layerQueries
+        if geometryFilter is not None and \
+           isinstance(geometryFilter, GeometryFilter):
+            params.update(geometryFilter.filter)
+        if replicaSR is not None:
+            params['replicaSR'] = replicaSR
+        if replicaOptions is not None:
+            params['replicaOptions'] = replicaOptions
+        if transportType is not None:
+            params['transportType'] = transportType
+        if out_path is not None and \
+           os.path.isdir(out_path):
+            if async:
+                if wait:
+                    exportJob = self._do_post(url=url,
+                                              param_dict=params,
+                                              securityHandler=self._securityHandler,
+                                              proxy_url=self._proxy_url,
+                                              proxy_port=self._proxy_port)
+                    status = self.replicaStatus(url=exportJob['statusUrl'])
+                    while status['status'].lower() != "completed":
+                        status = self.replicaStatus(url=exportJob['statusUrl'])
+                        if status['status'].lower() == "failed":
+                            return status
+                    if out_path is None:
+                        return status
+                    else:
+                        dlURL = status["resultUrl"]
+                        return self._download_file(url=dlURL,
+                                                   save_path=out_path,
+                                                   securityHandler=self._securityHandler,
+                                                   proxy_url=self._proxy_url,
+                                                   proxy_port=self._proxy_port)
+                else:
+                    return self._do_post(url=url,
+                                         param_dict=params,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port)
+            else:
+                res = self._do_post(url=url,
+                                    param_dict=params,
                                     securityHandler=self._securityHandler,
                                     proxy_url=self._proxy_url,
                                     proxy_port=self._proxy_port)
-                if res.has_key("responseUrl"):
-                    zipURL = res["responseUrl"]
-                    dl_file = self._download_file(url=zipURL,
-                                        save_path=out_path,
-                                        securityHandler=self._securityHandler,
-                                        file_name=os.path.basename(zipURL)
-                                        )
-                    self._unzip_file(zip_file=dl_file, out_folder=out_path)
-                    os.remove(dl_file)
-                    return self._list_files(path=out_path + os.sep + "*.gdb")
-                else:
-                    return None
-            else:
-                res = self._do_post(url=url, param_dict=params,
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url, proxy_port=self._proxy_port)
-                return res
-
-        return "Not Supported"
+                dlURL = res["responseUrl"]
+                return self._download_file(url=dlURL,
+                                           save_path=out_path,
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
+        else:
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        return None
+    #----------------------------------------------------------------------
+    def replicaStatus(self, url):
+        """gets the replica status when exported async set to True"""
+        params = {"f" : "json"}
+        url = url + "/status"
+        return self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
 ########################################################################
 class FeatureLayer(abstract.BaseAGOLClass):
     """

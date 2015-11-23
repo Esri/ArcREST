@@ -109,6 +109,7 @@ class Portal(BaseAGOLClass):
     administrators. Publishers and information workers can view users and
     resources of the organization.
     """
+    _authorizedCrossOriginDomains = None
     _url = None
     _securityHandler = None
     _proxy_url = None
@@ -270,6 +271,13 @@ class Portal(BaseAGOLClass):
         if self._subscriptionInfo is None:
             self.__init()
         return self._subscriptionInfo
+    #----------------------------------------------------------------------
+    @property
+    def authorizedCrossOriginDomains(self):
+        """ gets the authorizedCrossOriginDomains property """
+        if self._authorizedCrossOriginDomains is None:
+            self.__init()
+        return self._authorizedCrossOriginDomains
     #----------------------------------------------------------------------
     @property
     def appInfo(self):
