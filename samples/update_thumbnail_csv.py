@@ -82,7 +82,7 @@ def main():
                     print "itemID could not be found if table"
                     return
                 itemid = row['itemid']
-                item = content.item(itemid)
+                item = content.getItem(itemid)
                 itemParams = arcrest.manageorg.ItemParameter()
             
             
@@ -109,9 +109,9 @@ def main():
                                                 folderId=item.ownerFolder)                                   
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
 
     finally:
         print datetime.datetime.now().strftime(dateTimeFormat)

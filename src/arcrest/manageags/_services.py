@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
-from parameters import Extension
+from .parameters import Extension
 import os
 import json
 import tempfile
@@ -53,11 +55,11 @@ class Services(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented manageags.services."
+                print( k, " - attribute not implemented manageags.services.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -231,7 +233,24 @@ class Services(BaseAGSServer):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def cleanPermsissions(self, principal):
+    def listFolderPermissions(self,folderName):
+        """
+           Lists principals which have permissions for the folder.
+           Input:
+              folderName - name of the folder to list permissions for
+           Output:
+              JSON Message as Dictionary
+        """
+        uURL = self._url + "/%s/permissions" % folderName
+        params = {
+            "f" : "json",
+        }
+        return self._do_post(url=uURL, param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def cleanPermissions(self, principal):
         """
            Cleans all permissions that have been assigned to a role
            (principal). This is typically used when a role is deleted.
@@ -282,7 +301,7 @@ class Services(BaseAGSServer):
             "f" : "json"
         }
         if folderName in self.folders:
-            uURL = self._url + "/%s/delete" % folderName
+            uURL = self._url + "/%s/deleteFolder" % folderName
             return self._do_post(url=uURL, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -414,13 +433,116 @@ class Services(BaseAGSServer):
                         [{
                           "folderName" : "",
                           "serviceName" : "SampleWorldCities",
-                          "type" : "MapService
+                          "type" : "MapServer"
                         }]
         """
         url = self._url + "/stopServices"
+        if isinstance(services, dict):
+            services = [services]
+        elif isinstance(services, (list, tuple)):
+            services = list(services)
+        else:
+            Exception("Invalid input for parameter services")
         params = {
             "f" : "json",
-            "service" : json.dumps(services)
+            "services" : {
+                "services":services
+            }
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def startServices(self, services ):
+        """
+        starts serveral services on a single server
+        Inputs:
+           services - is a list of dictionary objects. Each dictionary
+                      object is defined as:
+                        folderName - The name of the folder containing the
+                        service, for example, "Planning". If the service
+                        resides in the root folder, leave the folder
+                        property blank ("folderName": "").
+                        serviceName - The name of the service, for example,
+                        "FireHydrants".
+                        type - The service type, for example, "MapServer".
+                     Example:
+                        [{
+                          "folderName" : "",
+                          "serviceName" : "SampleWorldCities",
+                          "type" : "MapServer"
+                        }]
+        """
+        url = self._url + "/startServices"
+        if isinstance(services, dict):
+            services = [services]
+        elif isinstance(services, (list, tuple)):
+            services = list(services)
+        else:
+            Exception("Invalid input for parameter services")
+        params = {
+            "f" : "json",
+            "services" : {
+                "services":services
+            }
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def editFolder(self, description, webEncrypted=False):
+        """
+        This operation allows you to change the description of an existing
+        folder or change the web encrypted property.
+        The web encrypted property indicates if all the services contained
+        in the folder are only accessible over a secure channel (SSL). When
+        setting this property to true, you also need to enable the virtual
+        directory security in the security configuration.
+
+        Inputs:
+           description - a description of the folder
+           webEncrypted - boolean to indicate if the services are
+            accessible over SSL only.
+        """
+        url = self._url + "/editFolder"
+        params = {
+            "f" : "json",
+            "webEncrypted" : webEncrypted,
+            "description" : "%s" % description
+        }
+        return self._do_post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def exists(self, folderName, serviceName=None, serviceType=None):
+        """
+        This operation allows you to check whether a folder or a service
+        exists. To test if a folder exists, supply only a folderName. To
+        test if a service exists in a root folder, supply both serviceName
+        and serviceType with folderName=None. To test if a service exists
+        in a folder, supply all three parameters.
+
+        Inputs:
+           folderName - a folder name
+           serviceName - a service name
+           serviceType - a service type. Allowed values:
+                "GPSERVER", "GLOBESERVER", "MAPSERVER",
+                "GEOMETRYSERVER", "IMAGESERVER", "SEARCHSERVER",
+                "GEODATASERVER", "GEOCODESERVER"
+        """
+
+        url = self._url + "/exists"
+        params = {
+            "f" : "json",
+            "folderName" : folderName,
+            "serviceName" : serviceName,
+            "type" : serviceType
         }
         return self._do_post(url=url,
                              param_dict=params,
@@ -503,7 +625,7 @@ class AGSService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k.lower() == "extensions":
                 self._extensions = []
                 for ext in v:
@@ -512,7 +634,7 @@ class AGSService(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageags.AGSService."
+                print( k, " - attribute not implemented in manageags.AGSService.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -562,7 +684,7 @@ class AGSService(BaseAGSServer):
         """class iterator which yields a key/value pair"""
         if self._json_dict is None:
             self.__init()
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             yield (k,v)
     #----------------------------------------------------------------------
     def jsonProperties(self):

@@ -29,7 +29,7 @@ def main():
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
     securityinfo['username'] = ""
     securityinfo['password'] = ""
-    securityinfo['org_url'] = ""
+    securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
     securityinfo['referer_url'] = None
@@ -40,8 +40,8 @@ def main():
     securityinfo['secret_id'] = None   
     
    
-    itemId = "1c2d57215d1241e3a17041a353ebf222"    
-    new_service_name = "l21d12dd"
+    itemId = "f13d20825b12491295084129a21e7a42"    
+    new_service_name = "NewService0"
     try:      
         
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo)
@@ -49,9 +49,9 @@ def main():
             print shh.message
         else:        
           
-            portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-            portal = portalAdmin.portals(portalId='self')
-            res = portal.checkServiceName(name=new_service_name,
+            admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+            portal = admin.portals.portalSelf
+            res = portal.isServiceNameAvailable(name=new_service_name,
                                        serviceType='Feature Service')
             if 'available' in res:
                 if res['available'] == False:
@@ -60,72 +60,73 @@ def main():
             else:
                 print "Pick a new name" 
                 return
-            content = portalAdmin.content
-            
                 
-            item = content.item(itemId)
+            item = admin.content.getItem(itemId)
             fs = arcrest.agol.FeatureService(url=item.url, securityHandler=shh.securityhandler, 
                                        initialize=True, 
                                        proxy_url=None, 
                                        proxy_port=None)   
-            
-            uc = content.usercontent(username=shh.securityhandler.username)
-            
-            createSerParams = arcrest.manageorg.parameters.CreateServiceParameters(
-                                                                                  name=new_service_name, 
-                                                                                  spatialReference=arcrest.geometry.SpatialReference(wkid=fs.spatialReference['wkid']), 
-                                                                                  serviceDescription=fs.serviceDescription, 
-                                                                                  hasStaticData=fs.hasStaticData, 
-                                                                                  maxRecordCount=fs.maxRecordCount, 
-                                                                                  supportedQueryFormats=fs.supportedQueryFormats, 
-                                                                                  capabilities=fs.capabilities, 
-                                                                                  description=fs.description, 
-                                                                                  copyrightText=fs.copyrightText, 
-                                                                                  initialExtent=arcrest.geometry.Envelope(
-                                                                                                                         xmin=fs.initialExtent['xmin'], 
-                                                                                                                         ymin=fs.initialExtent['ymin'], 
-                                                                                                                         xmax=fs.initialExtent['xmax'], 
-                                                                                                                         ymax=fs.initialExtent['ymax'], 
-                                                                                                                         wkid=fs.initialExtent['spatialReference']['wkid']), 
-                                                                                  allowGeometryUpdates=fs.allowGeometryUpdates, 
-                                                                                  units=fs.units, 
-                                                                                  xssPreventionEnabled=fs.xssPreventionInfo['xssPreventionEnabled'], 
-                                                                                  xssPreventionRule=fs.xssPreventionInfo['xssPreventionRule'], 
-                                                                                  xssInputRule=fs.xssPreventionInfo['xssInputRule'],
-                                                                                  currentVersion=fs.currentVersion,
-                                                                                      enableEditorTracking = fs.editorTrackingInfo['enableEditorTracking'],
-                                                                                      enableOwnershipAccessControl = fs.editorTrackingInfo['enableOwnershipAccessControl'],
-                                                                                      allowOthersToUpdate = fs.editorTrackingInfo['allowOthersToUpdate'],
-                                                                                      allowOthersToDelete = fs.editorTrackingInfo['allowOthersToDelete'],
-                                                                                      supportsAsync = fs.syncCapabilities['supportsAsync'],
-                                                                                      supportsRegisteringExistingData = fs.syncCapabilities['supportsRegisteringExistingData'],
-                                                                                      supportsSyncDirectionControl = fs.syncCapabilities['supportsSyncDirectionControl'],
-                                                                                      supportsPerLayerSync = fs.syncCapabilities['supportsPerLayerSync'],
-                                                                                      supportsPerReplicaSync = fs.syncCapabilities['supportsPerReplicaSync'],
-                                                                                      supportsRollbackOnFailure = fs.syncCapabilities['supportsRollbackOnFailure'],  
-                                                                                      hasVersionedData = fs.hasVersionedData,
-                                                                                      supportsDisconnectedEditing = fs.supportsDisconnectedEditing,
-                                                                                      size =fs.size,
-                                                                                      syncEnabled =fs.syncEnabled                                                                                              
+          
+            wkid = None
+            wkt = None
+            if 'wkid' in fs.initialExtent['spatialReference']:
+                wkid = fs.initialExtent['spatialReference']['wkid']
+            else:
+                wkt = fs.initialExtent['spatialReference']['wkt']
+            createSerParams = arcrest.manageorg.CreateServiceParameters(
+                        name=new_service_name, 
+                        spatialReference=arcrest.geometry.SpatialReference(wkid=wkid, wkt=wkt), 
+                        serviceDescription=fs.serviceDescription, 
+                        hasStaticData=fs.hasStaticData, 
+                        maxRecordCount=fs.maxRecordCount, 
+                        supportedQueryFormats=fs.supportedQueryFormats, 
+                        capabilities=fs.capabilities, 
+                        description=fs.description, 
+                        copyrightText=fs.copyrightText, 
+                        initialExtent=arcrest.geometry.Envelope(
+                                                               xmin=fs.initialExtent['xmin'], 
+                                                               ymin=fs.initialExtent['ymin'], 
+                                                               xmax=fs.initialExtent['xmax'], 
+                                                               ymax=fs.initialExtent['ymax'], 
+                                                               wkid=wkid,
+                                                               wkt=wkt), 
+                        allowGeometryUpdates=fs.allowGeometryUpdates, 
+                        units=fs.units, 
+                        xssPreventionEnabled=fs.xssPreventionInfo['xssPreventionEnabled'], 
+                        xssPreventionRule=fs.xssPreventionInfo['xssPreventionRule'], 
+                        xssInputRule=fs.xssPreventionInfo['xssInputRule'],
+                        currentVersion=fs.currentVersion,
+                            enableEditorTracking = fs.editorTrackingInfo['enableEditorTracking'],
+                            enableOwnershipAccessControl = fs.editorTrackingInfo['enableOwnershipAccessControl'],
+                            allowOthersToUpdate = fs.editorTrackingInfo['allowOthersToUpdate'],
+                            allowOthersToDelete = fs.editorTrackingInfo['allowOthersToDelete'],
+                            supportsAsync = fs.syncCapabilities['supportsAsync'],
+                            supportsRegisteringExistingData = fs.syncCapabilities['supportsRegisteringExistingData'],
+                            supportsSyncDirectionControl = fs.syncCapabilities['supportsSyncDirectionControl'],
+                            supportsPerLayerSync = fs.syncCapabilities['supportsPerLayerSync'],
+                            supportsPerReplicaSync = fs.syncCapabilities['supportsPerReplicaSync'],
+                            supportsRollbackOnFailure = fs.syncCapabilities['supportsRollbackOnFailure'],  
+                            hasVersionedData = fs.hasVersionedData,
+                            supportsDisconnectedEditing = fs.supportsDisconnectedEditing,
+                            size =fs.size,
+                            syncEnabled =fs.syncEnabled                                                                                              
             )
-            newServiceResult = uc.createService(createServiceParameter=createSerParams)
+            user = admin.content.users.user()
+            
+            newServiceResult = user.createService(createServiceParameter=createSerParams)
             print newServiceResult
-           
-            uc = content.usercontent()           
-            params = item.itemParameters
+            item = admin.content.getItem(itemId=newServiceResult['itemId']).userItem
+                 
+            params = arcrest.manageorg.ItemParameter()
             params.title = new_service_name
-            updateItemResults = uc.updateItem(itemId=newServiceResult['itemId'],
-                   updateItemParameters=params,
-                   folderId=None,
-                   clearEmptyFields=True,
-                   filePath=None,
-                   url=None,
-                   text=None)
+            updateItemResults = item.updateItem(itemParameters=params,
+                                                clearEmptyFields=True,
+                                                data=None,
+                                                metadata=None,
+                                                text=None)
             
             print updateItemResults
-            
-            #new_item = content.item(newServiceResult['itemId'])
-             
+                    
             adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult['encodedServiceURL'], securityHandler=shh.securityhandler)
             adminExistFS = fs.administration
             jsdic = {}
@@ -148,9 +149,9 @@ def main():
             
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
         
 if __name__ == "__main__":
     main()

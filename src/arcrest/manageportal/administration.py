@@ -6,10 +6,12 @@ information and have a well-defined state. Operations act on these
 resources and update their information or state. Resources and operations
 are hierarchical and have unique universal resource locators (URLs).
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 from datetime import datetime
 from .._abstract.abstract import BaseAGOLClass
-from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler,AGOLTokenSecurityHandler
+from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler
 ########################################################################
 class _log(BaseAGOLClass):
     """handles the portal log information at 10.3.1+"""
@@ -52,11 +54,11 @@ class _log(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration.log class."
+                print( k, " - attribute not implemented in manageportal.administration.log class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -227,11 +229,11 @@ class _Security(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration.log class."
+                print( k, " - attribute not implemented in manageportal.administration.log class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -253,7 +255,8 @@ class _Security(BaseAGOLClass):
                    email,
                    role="org_user",
                    provider="arcgis",
-                   description=""):
+                   description="",
+                   idpUsername=None):
         """
         This operation is used to create a new user account in the portal.
         Inputs:
@@ -270,9 +273,11 @@ class _Security(BaseAGOLClass):
                   Values: org_user | org_publisher | org_admin
            provider - The provider for the account. The default value is
                       arcgis.
-                      Values: arcgis | webadaptor
+                      Values: arcgis | webadaptor | enterprise
+           idpUsername - name of the user on the domain controller.
+                         Ex: domain\account
         """
-        url = self._url + "/users/create"
+        url = self._url + "/users/createUser"
         params = {
             "f" : "json",
             "username" : username,
@@ -283,11 +288,14 @@ class _Security(BaseAGOLClass):
             "provider" : provider,
             "description" : description
         }
+        if idpUsername is None:
+            params['idpUsername'] = idpUsername
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+
     #----------------------------------------------------------------------
     def updateSecurityConfiguration(self,
                                     enableAutomaticAccountCreation=False,
@@ -339,7 +347,7 @@ class _Security(BaseAGOLClass):
                            usernameAttribute,
                            isPasswordEncrypted=False,
                            caseSensitive=True):
-        """
+        r"""
         You can use this operation to change the identity provider
         configuration in your portal. When Portal for ArcGIS is first
         installed, it supports token-based authentication using the
@@ -911,17 +919,25 @@ class PortalAdministration(BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageportal.administration class."
+                print( k, " - attribute not implemented in manageportal.administration class.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the raw key/values for the object"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.items():
+            yield [k,v]
+
     #----------------------------------------------------------------------
     @property
     def resources(self):

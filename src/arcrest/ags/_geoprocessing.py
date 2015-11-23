@@ -1,13 +1,9 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import json
-from _gpobjects import *
+from ._gpobjects import *
 from .._abstract.abstract import BaseAGSServer, BaseGPObject
-from ..common.spatial import featureclass_to_json, recordset_to_json
 from ..common.general import local_time_to_online
-from ..security import security
-
-import urllib
-import time
-import datetime
 ########################################################################
 class GPService(BaseAGSServer):
     """
@@ -89,7 +85,7 @@ class GPService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 if k == "tasks":
                     self._tasks = []
@@ -104,13 +100,20 @@ class GPService(BaseAGSServer):
                 else:
                     setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented for gp service."
+                print (k, " - attribute not implemented for gp service.")
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the object as a string"""
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.items():
+            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
@@ -192,11 +195,12 @@ class GPTask(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in GPTask."
+                print( k, " - attribute not implemented in GPTask.")
+            del k,v
 
     #----------------------------------------------------------------------
     @property
@@ -420,11 +424,12 @@ class GPJob(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented for GPJob."
+                print (k, " - attribute not implemented for GPJob.")
+            del k,v
     #----------------------------------------------------------------------
     def cancelJob(self):
         """ cancels the job """
@@ -462,8 +467,7 @@ class GPJob(BaseAGSServer):
     def results(self):
         """ returns the results """
         self.__init()
-        _tempRes = []
-        for k,v in self._results.iteritems():
+        for k,v in self._results.items():
             param = self._get_json(v['paramUrl'])
             if param['dataType'] == "GPFeatureRecordSetLayer":
                 self._results[k] = GPFeatureRecordSetLayer.fromJSON(json.dumps(param))

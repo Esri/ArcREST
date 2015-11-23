@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract import abstract
 from ..common.geometry import Point, Polyline, Polygon, MultiPoint, Envelope
 import json
@@ -37,7 +39,7 @@ class GeometryService(abstract.BaseAGSServer):
                            proxy_port=self._proxy_port)
         self._json_dict = res
         self._json_string = json.dumps(self._json_dict)
-        for k,v in self._json_dict.iteritems():
+        for k,v in self._json_dict.items():
             setattr(self, k, v)
     #----------------------------------------------------------------------
     def __str__(self):
@@ -45,6 +47,13 @@ class GeometryService(abstract.BaseAGSServer):
         if self._json_string is None:
             self.__init()
         return self._json_string
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.items():
+            yield [k,v]
     #----------------------------------------------------------------------
     def areasAndLengths(self,
                         polygons,
@@ -162,7 +171,7 @@ class GeometryService(abstract.BaseAGSServer):
                 else:
                     raise AttributeError("Invalid geometry type")
                 template['geometries'].append(g.asDictionary)
-            del g
+                del g
             return template
         return template
     #----------------------------------------------------------------------

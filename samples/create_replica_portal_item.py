@@ -1,10 +1,14 @@
 """
    This sample shows how to create a 
-   replica from portal of a feature service
+   replica from portal of a feature service.
+   The replica is saved locally and on the
+   portal in a .zip file.
 
 """
 import arcrest
-from arcrest.security import AGOLTokenSecurityHandler
+from arcresthelper import securityhandlerhelper
+from arcresthelper import common
+
 def trace():
     """
         trace finds the line, the filename
@@ -23,39 +27,62 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-    username = "<username>"
-    password = "<password>"
-    url = "<portal or AGOL url>"
-    itemId = "<Id of feature service item>"    
-    savePath = "<Path to save replica>"
-    try:      
-        agolSH = AGOLTokenSecurityHandler(username=username,
-                                      password=password)
+    proxy_port = None
+    proxy_url = None    
 
-        portalAdmin = arcrest.manageorg.Administration(securityHandler=agolSH)
-        content = portalAdmin.content
-        
-        item = content.item(itemId)
-        uc =  content.usercontent(username=item.owner)
-        res = uc.exportItem(title="TestExport",
-                            itemId=itemId,
-                            exportFormat="File Geodatabase")
-        exportItemId = res['exportItemId']
-        jobId = res['jobId']
-        serviceItemId = res['serviceItemId']
-        status = uc.status(itemId=exportItemId, jobId=jobId, jobType="export")
-        while status['status'].lower() != 'completed':
-            status = uc.status(itemId=exportItemId, jobId=jobId, jobType="export")
-            if status['status'].lower() == 'failed':
-                print status                
-                break
-        del status
-        exportItem = content.item(exportItemId)
-        itemDataPath = exportItem.itemData(f=None, savePath=savePath)
-        uc.deleteItem(item_id=exportItemId)
-        print itemDataPath
+    securityinfo = {}
+    securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+    securityinfo['username'] = ""#<UserName>
+    securityinfo['password'] = ""#<Password>
+    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['proxy_url'] = proxy_url
+    securityinfo['proxy_port'] = proxy_port
+    securityinfo['referer_url'] = None
+    securityinfo['token_url'] = None
+    securityinfo['certificatefile'] = None
+    securityinfo['keyfile'] = None
+    securityinfo['client_id'] = None
+    securityinfo['secret_id'] = None  
+    
+    itemId = ""#<Id of feature service item>
+    savePath = r"c:\temp"#<Path to save replica>
+    try:      
+        shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
+        if shh.valid == False:
+            print shh.message
+        else:
+            admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+             
+            item = admin.content.getItem(itemId)
+            user = admin.content.users.user(username=item.owner)
+           
+            exportParameters = {"layers":[
+                                   {
+                                       "id": 0, 
+                                       "where": "OBJECTID = 1"
+                                       }]
+                               }
+            res  = user.exportItem(title="TestExport",
+                                itemId=itemId,
+                                exportFormat="File Geodatabase",
+                                exportParameters=exportParameters,
+                                wait=True)
+            exportItemId = res.id
+            exportItem = admin.content.getItem(exportItemId)
+            itemDataPath = exportItem.itemData(f=None, savePath=savePath)
+            print exportItem.userItem.deleteItem()         
+            
+            print itemDataPath
+    except (common.ArcRestHelperError),e:
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
+        if 'arcpyError' in e[0]:
+            print "with arcpy message: %s" % e[0]['arcpyError']
+
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror

@@ -1,16 +1,24 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import datetime
 import time
 import json
-import arcpy
+try:
+    import arcpy
+    arcpyFound = True
+except:
+    arcpyFound = False
 import copy
 import os
 import tempfile
 import uuid
-from spatial import json_to_featureclass
-from geometry import Point, MultiPoint, Polygon, Polyline, SpatialReference
+from .spatial import json_to_featureclass
+from .geometry import Point, MultiPoint, Polygon, Polyline, SpatialReference
 from .._abstract.abstract import AbstractGeometry
-#from ..agol import featureservice as agolFeatureService
-#from ..agol import layer as agolLayer
+__all__ = ['_unicode_convert', "Feature", "FeatureSet",
+           "_date_handler", "local_time_to_online",
+           "online_time_to_string", "timestamp_to_datetime",
+           "MosaicRuleObject"]
 def _unicode_convert(obj):
     """ converts unicode to anscii """
     if isinstance(obj, dict):
@@ -25,10 +33,6 @@ def _unicode_convert(obj):
 def _date_handler(obj):
     if isinstance(obj, datetime.datetime):
         return local_time_to_online(obj)
-    #elif isinstance(obj, (agolFeatureService.FeatureService,
-                          #agolLayer.FeatureLayer,
-                          #agolLayer.TableLayer)):
-        #return dict(obj)
     else:
         return obj
 #----------------------------------------------------------------------
@@ -128,7 +132,7 @@ class Feature(object):
                 else:
                     return False
                 self._json = json.dumps(self._dict, default=_date_handler)
-            elif isinstance(value, arcpy.Geometry):
+            elif arcpyFound and isinstance(value, arcpy.Geometry):
                 if isinstance(value, arcpy.PointGeometry):
                     self.set_value( field_name, Point(value,value.spatialReference.factoryCode))
                 elif isinstance(value, arcpy.Multipoint):
@@ -176,7 +180,7 @@ class Feature(object):
         """
         fields = self.fields
         row = [""] * len(fields)
-        for k,v in self._attributes.iteritems():
+        for k,v in self._attributes.items():
             row[fields.index(k)] = v
             del v
             del k
@@ -188,16 +192,18 @@ class Feature(object):
     @property
     def geometry(self):
         """returns the feature geometry"""
-        if not self._wkid is None:
-            sr = arcpy.SpatialReference(self._wkid)
-        else:
-            sr = None
-        if self._geom is None:
-            if self._dict.has_key('feature'):
-                self._geom = arcpy.AsShape(self._dict['feature']['geometry'], esri_json=True)
-            elif self._dict.has_key('geometry'):
-                self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
-        return self._geom
+        if arcpyFound:
+            if not self._wkid is None:
+                sr = arcpy.SpatialReference(self._wkid)
+            else:
+                sr = None
+            if self._geom is None:
+                if self._dict.has_key('feature'):
+                    self._geom = arcpy.AsShape(self._dict['feature']['geometry'], esri_json=True)
+                elif self._dict.has_key('geometry'):
+                    self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
+            return self._geom
+        return None
     #----------------------------------------------------------------------
     @property
     def fields(self):
@@ -226,32 +232,34 @@ class Feature(object):
            Output:
               list of feature objects
         """
-        desc = arcpy.Describe(dataset)
-        fields = [field.name for field in arcpy.ListFields(dataset) if field.type not in ['Geometry']]
-        date_fields = [field.name for field in arcpy.ListFields(dataset) if field.type =='Date']
-        non_geom_fields = copy.deepcopy(fields)
-        features = []
-        if hasattr(desc, "shapeFieldName"):
-            fields.append("SHAPE@JSON")
-        del desc
-        with arcpy.da.SearchCursor(dataset, fields) as rows:
-            for row in rows:
-                row = list(row)
-                for df in date_fields:
-                    if row[fields.index(df)] != None:
-                        row[fields.index(df)] = int((_date_handler(row[fields.index(df)])))
-                template = {
-                    "attributes" : dict(zip(non_geom_fields, row))
-                }
-                if "SHAPE@JSON" in fields:
-                    template['geometry'] = \
-                        json.loads(row[fields.index("SHAPE@JSON")])
+        if arcpyFound:
+            desc = arcpy.Describe(dataset)
+            fields = [field.name for field in arcpy.ListFields(dataset) if field.type not in ['Geometry']]
+            date_fields = [field.name for field in arcpy.ListFields(dataset) if field.type =='Date']
+            non_geom_fields = copy.deepcopy(fields)
+            features = []
+            if hasattr(desc, "shapeFieldName"):
+                fields.append("SHAPE@JSON")
+            del desc
+            with arcpy.da.SearchCursor(dataset, fields) as rows:
+                for row in rows:
+                    row = list(row)
+                    for df in date_fields:
+                        if row[fields.index(df)] != None:
+                            row[fields.index(df)] = int((_date_handler(row[fields.index(df)])))
+                    template = {
+                        "attributes" : dict(zip(non_geom_fields, row))
+                    }
+                    if "SHAPE@JSON" in fields:
+                        template['geometry'] = \
+                            json.loads(row[fields.index("SHAPE@JSON")])
 
-                features.append(
-                    Feature(json_string=_unicode_convert(template))
-                )
-                del row
-        return features
+                    features.append(
+                        Feature(json_string=_unicode_convert(template))
+                    )
+                    del row
+            return features
+        return None
     #----------------------------------------------------------------------
     def __str__(self):
         """"""

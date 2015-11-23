@@ -1,9 +1,11 @@
 """
 handles the upload functions for all viable services
 """
+from __future__ import absolute_import
+import os
 import mmap
 import json
-import urlparse
+from six.moves import urllib_parse as urlparse
 from ..security import security
 from .._abstract import abstract
 ########################################################################
@@ -125,6 +127,7 @@ class Uploads(abstract.BaseAGOLClass):
                 del writer
                 files.append(('file', tempFile, os.path.basename(tempFile)))
                 params['partNum'] = i + 1
+                parsed = urlparse.urlparse(url)
                 res = self._post_multipart(host=parsed.hostname,
                                            selector=parsed.path,
                                            files = files,

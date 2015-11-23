@@ -1,10 +1,12 @@
 """
    Contains information regarding an ArcGIS Server Feature Server
 """
+from __future__ import absolute_import
+from __future__ import print_function
 from re import search
 from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
-import layer
+from . import layer
 import json
 from ..common.geometry import SpatialReference
 from ..common.general import FeatureSet
@@ -48,17 +50,16 @@ class FeatureService(BaseAGSServer):
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         self._url = url
-        if securityHandler is not None and \
-           isinstance(securityHandler, security.PortalTokenSecurityHandler) or \
-           isinstance(securityHandler, security.ArcGISTokenSecurityHandler) or \
-           isinstance(securityHandler, security.OAuthSecurityHandler):
+        if securityHandler is not None:
             self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
+
         elif securityHandler is None:
             pass
         else:
-            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
+            raise AttributeError("Invalid Security Handler")
+        if not securityHandler is None and \
+           hasattr(securityHandler, 'referer_url'):
+            self._referer_url = securityHandler.referer_url
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
@@ -74,11 +75,11 @@ class FeatureService(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Feature Service."
+                print("%s - attribute not implemented for Feature Service." % k)
     #----------------------------------------------------------------------
     @property
     def administration(self):
@@ -136,6 +137,13 @@ class FeatureService(BaseAGSServer):
         if self._json is None:
             self.__init()
         return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """returns the JSON response in key/value pairs"""
+        if self._json_dict is None:
+            self.__init()
+        for k,v in self._json_dict.items():
+            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
@@ -373,7 +381,7 @@ class FeatureService(BaseAGSServer):
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
 
-        res = self._do_get(url=qurl,
+        res = self._do_post(url=qurl,
                            param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,

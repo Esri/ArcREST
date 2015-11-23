@@ -34,6 +34,16 @@ class resetTools(securityhandlerhelper):
   
     #----------------------------------------------------------------------
     def removeUserData(self,users=None):
+        """
+            This function deletes content for the list of users,
+            if no users are specified, all users in the org are queried
+            and their content is deleted.
+    
+            Inputs:
+            users - Comma delimited list of user names
+            
+        """          
+        
         admin = None
         portal = None
         user = None
@@ -44,31 +54,44 @@ class resetTools(securityhandlerhelper):
         folderContent = None
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            portal = admin.portals(portalId='self')
             if users is None:
-                users = portal.users(start=1, num=100)
-            if users:
-                for user in users['users']:
-                    print user['username']
-                    adminusercontent = admin.content.usercontent(username=user['username'])
-
-                    userContent = admin.content.getUserContent(username=user['username'])
-                    for userItem in userContent['items']:
-
-                        print adminusercontent.deleteItems(items=userItem['id'])
-                    if 'folders' in userContent:
-                        for userFolder in userContent['folders']:
-                            folderContent = admin.content.getUserContent(username=user['username'],folderId=userFolder['id'])
-                            if 'items' in folderContent:
-                                for userItem in folderContent['items']:
-                                    print adminusercontent.deleteItems(items=userItem['id'])
-
-                            print adminusercontent.deleteFolder(folderId=userFolder['id'])
+                print "You have selected to remove all users data, you must modify the code to do this"
+                usersObj = []
+                commUsers = admin.portals.portalSelf.users(start=1, num=100)
+                commUsers = commUsers['users']
+                for user in commUsers:
+                    usersObj.append(user.userContent)            
+                return
+            else:
+                usersObj = []
+                userStr = users.split(',')
+                for user in userStr:
+                    usersObj.append(admin.content.users.user(str(user).strip()))
+            if usersObj:
+                for user in usersObj:
+                    print "Loading content for user: %s" % user.username
+                     
+                    itemsToDel = []
+                    for userItem in user.items:
+                        itemsToDel.append(userItem.id)
+                    if len(itemsToDel) > 0:
+                        print user.deleteItems(items=",".join(itemsToDel))    
+                    if user.folders:
+                        for userFolder in user.folders:
+                            if (user.currentFolder['title'] != userFolder['title']):
+                                user.currentFolder = userFolder['title']
+                                itemsToDel = []
+                                for userItem in user.items:
+                                    itemsToDel.append(userItem.id)
+                                if len(itemsToDel) > 0:
+                                    print user.deleteItems(items=",".join(itemsToDel))                               
+    
+                                print user.deleteFolder()
        
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
+                        "function": "removeUserData",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,
@@ -98,6 +121,15 @@ class resetTools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def removeUserGroups(self,users=None):
+        """
+            This function deletes all groups for the list of users,
+            if no users are specified, all users in the org are queried
+            and their groups is deleted.
+    
+            Inputs:
+            users - Comma delimted list of user names
+            
+            """        
         admin = None
         userCommunity = None
         portal = None
@@ -106,27 +138,29 @@ class resetTools(securityhandlerhelper):
         userCommData = None
         group = None
         try:
+           
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
-            userCommunity = admin.community
-
-
-            portal = admin.portals(portalId='self')
             if users is None:
-                users = portal.users(start=1, num=100)
-
-            groupAdmin = userCommunity.groups
-            if users:
-                for user in users['users']:
-                    print "Loading groups for user: %s" % user['username']
-                    userCommData = userCommunity.getUserCommunity(username=user['username'])
-
-                    if 'groups' in userCommData:
-                        if len(userCommData['groups']) == 0:
-                            print "No Groups Found"
-                        else:
-                            for group in userCommData['groups']:
-                                if group['owner'] == user['username']:
-                                    print groupAdmin.deleteGroup(groupID=group['id'])
+                print "You have selected to remove all users groups, you must modify the code to do this"
+                usersObj = []
+                commUsers = admin.portals.portalSelf.users(start=1, num=100)
+                usersObj = commUsers['users']
+            
+                return
+            else:
+                usersObj = []
+                userStr = users.split(',')
+                for user in userStr:
+                    usersObj.append(admin.community.users.user(str(user).strip()))
+            if usersObj:
+                for userCommData in usersObj:
+                    print "Loading groups for user: %s" % userCommData.username
+                     
+                    if userCommData.groups:
+                        for group in userCommData.groups:
+                            groupObj = admin.community.groups.group(groupId=group['id'])
+                            if groupObj.owner == userCommData.username:
+                                print groupObj.delete()
                     else:
                         print "No Groups Found"
 
@@ -134,7 +168,7 @@ class resetTools(securityhandlerhelper):
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                        "function": "DeleteFeaturesFromFeatureLayer",
+                        "function": "removeUserGroups",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,

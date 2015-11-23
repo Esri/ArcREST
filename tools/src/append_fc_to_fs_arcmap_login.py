@@ -39,7 +39,7 @@ def outputPrinter(message,typeOfMessage='message'):
     else:
         arcpy.AddMessage(message=message)
 
-    print(message)
+    print message
 def main(*argv):
 
     fsId = None
@@ -52,6 +52,20 @@ def main(*argv):
     existingDef= None
     try:
 
+        proxy_port = None
+        proxy_url = None    
+    
+        securityinfo = {}
+        securityinfo['security_type'] = 'ArcGIS'#LDAP, NTLM, OAuth, Portal, PKI
+      
+        securityinfo['proxy_url'] = proxy_url
+        securityinfo['proxy_port'] = proxy_port
+        securityinfo['referer_url'] = None
+        securityinfo['token_url'] = None
+        securityinfo['certificatefile'] = None
+        securityinfo['keyfile'] = None
+        securityinfo['client_id'] = None
+        securityinfo['secret_id'] = None   
 
         fsId = argv[0]
         layerName = argv[1]
@@ -59,11 +73,9 @@ def main(*argv):
         toggleEditCapabilities = argv[3]
 
         if arcpy.Exists(dataset=dataToAppend) == False:
-            outputPrinter(message="Data layer not found: %" % dataToAppend)
+            outputPrinter(message="Data layer not found: " + dataToAppend)
         else:
-            fst = featureservicetools.featureservicetools(proxy_url=None,
-                                                       proxy_port=None,
-                                                        use_arcgis_creds=True)
+            fst = featureservicetools.featureservicetools(securityinfo)
             if fst.valid:
                 outputPrinter(message="Security handler created")
 

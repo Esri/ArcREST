@@ -1,5 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
-import json
 ########################################################################
 class Data(BaseAGSServer):
     """
@@ -166,7 +167,7 @@ class Data(BaseAGSServer):
         params = {
         "f" : "json"}
         url = self._url + "/validateAllDataItems"
-        return self._do_get(url=url, param_dict=params,
+        return self._do_post(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -185,13 +186,13 @@ class Data(BaseAGSServer):
            Input:
               item - The JSON representing the data item.
            Output:
-              dicationary
+              dictionary
         """
         params = {
             "f" : "json",
             "item" : item
         }
-        url = self._url + "/ validateDataItem"
+        url = self._url + "/validateDataItem"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
@@ -281,7 +282,7 @@ class Data(BaseAGSServer):
         url = self._url + "/unregisterItem"
         params = {
             "f" : "json",
-            "path" : path
+            "itempath" : path
         }
         return self._do_post(url, param_dict=params,
                              securityHandler=self._securityHandler,

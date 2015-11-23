@@ -13,8 +13,6 @@ import sys, os, datetime
 import json
 import csv
 
-from arcpy import env
-
 import publishingtools
 import orgtools
 import common
@@ -27,8 +25,7 @@ try:
     reportToolsInstalled = True
 except:
     reportToolsInstalled = False
-
-
+   
 #----------------------------------------------------------------------
 def trace():
     """
@@ -73,7 +70,6 @@ class portalautomation(securityhandlerhelper):
         
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True    
         
        
         scriptStartTime = datetime.datetime.now()
@@ -126,32 +122,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
             print "###############Stage Content Completed#################"
@@ -178,7 +174,105 @@ class portalautomation(securityhandlerhelper):
             del orgTools
             
             gc.collect()
+ 
     #----------------------------------------------------------------------
+    def createRoles(self,configFiles,dateTimeFormat=None):
+       
+        
+        if dateTimeFormat is None:
+            dateTimeFormat = '%Y-%m-%d %H:%M'
+        
+        scriptStartTime = datetime.datetime.now()
+        try:
+    
+            print "********************Create Roles********************"
+    
+            print "Script started at %s" % scriptStartTime.strftime(dateTimeFormat)
+         
+            if self.securityhandler.valid == False:
+                print "Login required"
+            else:
+                orgTools = orgtools.orgtools(securityinfo=self)
+    
+                if orgTools is None:
+                    print "Error creating orgtools"
+                else:
+    
+                    for configFile in configFiles:
+    
+                        config = common.init_config_json(config_file=configFile)
+                        if config is not None:
+                           
+                            startTime = datetime.datetime.now()
+                            print "Processing config %s, starting at: %s" % (configFile,startTime.strftime(dateTimeFormat))
+    
+                            roleInfos = config['Roles']
+                            for roleInfo in roleInfos:
+                                createRoleResults = orgTools.createRole(roleInfo['Name'],roleInfo['Description'],roleInfo['Privileges'])
+                              
+                        else:
+                            print "Config %s not found" % configFile
+    
+    
+        except(TypeError,ValueError,AttributeError),e:
+            print e
+        except (common.ArcRestHelperError),e:
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
+            if 'arcpyError' in e[0]:
+                print "with arcpy message: %s" % e[0]['arcpyError']
+    
+        except Exception as e:
+            if (reportToolsInstalled):
+                if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
+                    if 'arcpyError' in e[0]:
+                        print "with arcpy message: %s" % e[0]['arcpyError']
+                else:
+                    line, filename, synerror = trace()
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
+            else:
+                line, filename, synerror = trace()
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
+        finally:
+            print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
+            print "###############Create Groups Completed#################"
+            print ""
+           
+            #if orgTools is not None:
+                #orgTools.dispose()
+            groupInfo = None
+            groupFile = None
+            iconPath = None
+            startTime = None
+            thumbnail = None
+            result = None
+            config = None
+            sciptPath = None
+            orgTools = None
+            del groupInfo
+            del groupFile
+            del iconPath
+            del startTime
+            del thumbnail
+            del result
+            del config
+            del sciptPath
+            del orgTools  
+    
+            gc.collect()
+
+    #----------------------------------------------------------------------
+    
     def createGroups(self,configFiles,dateTimeFormat=None):
         groupInfo = None    
         groupFile = None    
@@ -192,7 +286,6 @@ class portalautomation(securityhandlerhelper):
         
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True    
         
         scriptStartTime = datetime.datetime.now()
         try:
@@ -240,10 +333,10 @@ class portalautomation(securityhandlerhelper):
                                             result = orgTools.createGroup(title=row['title'],description=row['description'],tags=row['tags'],snippet=row['snippet'],phone=row['phone'],access=row['access'],sortField=row['sortField'],sortOrder=row['sortOrder'], \
                                                              isViewOnly=row['isViewOnly'],isInvitationOnly=row['isInvitationOnly'])
     
-                                        if 'error' in result:
-                                            print "Error Creating Group %s" % result['error']
+                                        if result is None:
+                                            pass
                                         else:
-                                            print "Group created: " + row['title']
+                                            print "Group created: " + result.title
     
     
     
@@ -256,32 +349,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
             print "###############Create Groups Completed#################"
@@ -314,6 +407,7 @@ class portalautomation(securityhandlerhelper):
         publishTools = None
         webmaps = None
         config = None
+        resultsItems = None
         resultFS = None
         resultMaps = None
         resultApps = None
@@ -321,8 +415,7 @@ class portalautomation(securityhandlerhelper):
     
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
-        env.overwriteOutput = True
-    
+      
         scriptStartTime = datetime.datetime.now()
         try:
             
@@ -375,12 +468,25 @@ class portalautomation(securityhandlerhelper):
                                 print "Error creating publishing tools: %s" % publishTools.message
                             else:
                                 print "Publishing tools created: %s" % publishTools.message
-    
+                                resultFS = []
+                                if 'Items' in publishingConfig:
+                                    startSectTime = datetime.datetime.now()
+                                    print " "
+                                    print "Creating Items: %s" % str(startSectTime.strftime(dateTimeFormat))
+                                    resultsItems = publishTools.publishItems(items_info=publishingConfig['Items'])
+                                    print "Items created, time to complete: %s" % str(datetime.datetime.now() - startSectTime)                         
+                                
+                                if 'FeatureCollections' in publishingConfig:
+                                    startSectTime = datetime.datetime.now()
+                                    print " "
+                                    print "Creating Feature Collection: %s" % str(startSectTime.strftime(dateTimeFormat))
+                                    resultFS = publishTools.publishFeatureCollections(configs=publishingConfig['FeatureCollections'])
+                                    print "Feature Collection published, time to complete: %s" % str(datetime.datetime.now() - startSectTime)                         
                                 if 'FeatureServices' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating Feature Services: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultFS = publishTools.publishFsFromMXD(fs_config=publishingConfig['FeatureServices'])
+                                    resultFS = resultFS + publishTools.publishFsFromMXD(fs_config=publishingConfig['FeatureServices'])
                                     print "Feature Services published, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
                                 if 'ExistingServices' in publishingConfig:
     
@@ -393,18 +499,18 @@ class portalautomation(securityhandlerhelper):
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating maps: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultMaps = publishTools.publishMap(maps_info=publishingConfig['MapDetails'],fsInfo=resultFS)
+                                    resultMaps = publishTools.publishMap(maps_info=publishingConfig['MapDetails'],fsInfo=resultFS,itInfo=resultsItems)
                                     for maps in resultMaps:
                                         if 'MapInfo' in maps:
                                             if 'Results' in maps['MapInfo']:
-                                                if 'id' in maps['MapInfo']['Results']:
-                                                    webmaps.append(maps['MapInfo']['Results']['id'])
+                                                if 'itemId' in maps['MapInfo']['Results']:
+                                                    webmaps.append(maps['MapInfo']['Results']['itemId'])
                                     print "Creating maps completed, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
                                 if 'AppDetails' in publishingConfig:
                                     startSectTime = datetime.datetime.now()
                                     print " "
                                     print "Creating apps: %s" % str(startSectTime.strftime(dateTimeFormat))
-                                    resultApps = publishTools.publishApp(app_info=publishingConfig['AppDetails'],map_info=resultMaps)
+                                    resultApps = publishTools.publishApp(app_info=publishingConfig['AppDetails'],map_info=resultMaps,fsInfo=resultFS)
                                     print "Creating apps completed, time to complete: %s" % str(datetime.datetime.now() - startSectTime)
     
     
@@ -419,7 +525,7 @@ class portalautomation(securityhandlerhelper):
                 if os.path.exists(combinedApp):
                     print " "
                     startSectTime = datetime.datetime.now()
-                    print "Creating combind result: %s" % str(startSectTime.strftime(dateTimeFormat))
+                    print "Creating combined result: %s" % str(startSectTime.strftime(dateTimeFormat))
     
                     config = common.init_config_json(config_file=combinedApp)
                     combinedResults = publishTools.publishCombinedWebMap(maps_info=config['PublishingDetails']['MapDetails'],webmaps=webmaps)
@@ -440,32 +546,32 @@ class portalautomation(securityhandlerhelper):
         except(TypeError,ValueError,AttributeError),e:
             print e
         except (common.ArcRestHelperError),e:
-            print("error in function: %s" % e[0]['function'])
-            print("error on line: %s" % e[0]['line'])
-            print("error in file name: %s" % e[0]['filename'])
-            print("with error message: %s" % e[0]['synerror'])
+            print "error in function: %s" % e[0]['function']
+            print "error on line: %s" % e[0]['line']
+            print "error in file name: %s" % e[0]['filename']
+            print "with error message: %s" % e[0]['synerror']
             if 'arcpyError' in e[0]:
-                print("with arcpy message: %s" % e[0]['arcpyError'])
+                print "with arcpy message: %s" % e[0]['arcpyError']
     
         except Exception as e:
             if (reportToolsInstalled):
                 if isinstance(e,(ReportTools.ReportToolsError,DataPrep.DataPrepError)):
-                    print("error in function: %s" % e[0]['function'])
-                    print("error on line: %s" % e[0]['line'])
-                    print("error in file name: %s" % e[0]['filename'])
-                    print("with error message: %s" % e[0]['synerror'])
+                    print "error in function: %s" % e[0]['function']
+                    print "error on line: %s" % e[0]['line']
+                    print "error in file name: %s" % e[0]['filename']
+                    print "with error message: %s" % e[0]['synerror']
                     if 'arcpyError' in e[0]:
-                        print("with arcpy message: %s" % e[0]['arcpyError'])
+                        print "with arcpy message: %s" % e[0]['arcpyError']
                 else:
                     line, filename, synerror = trace()
-                    print("error on line: %s" % line)
-                    print("error in file name: %s" % filename)
-                    print("with error message: %s" % synerror)            
+                    print "error on line: %s" % line
+                    print "error in file name: %s" % filename
+                    print "with error message: %s" % synerror
             else:
                 line, filename, synerror = trace()
-                print("error on line: %s" % line)
-                print("error in file name: %s" % filename)
-                print("with error message: %s" % synerror)
+                print "error on line: %s" % line
+                print "error in file name: %s" % filename
+                print "with error message: %s" % synerror
     
         finally:
             print "Script complete, time to complete: %s" % str(datetime.datetime.now() - scriptStartTime)
@@ -478,6 +584,7 @@ class portalautomation(securityhandlerhelper):
             webmaps = None
             config = None
             resultFS = None
+            resultsItems = None
             resultMaps = None
             resultApps = None
             combinedResults = None
@@ -489,5 +596,5 @@ class portalautomation(securityhandlerhelper):
             del resultMaps
             del resultApps
             del combinedResults
-    
+            del resultsItems
             gc.collect()

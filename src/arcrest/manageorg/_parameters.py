@@ -1,7 +1,46 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseParameters
 from ..common.geometry import SpatialReference, Envelope
 import os
 import json
+########################################################################
+class InvitationList(object):
+    """Used for Inviting users to a site"""
+    _invites = []
+    _value = {}
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        self._invites = []
+    #----------------------------------------------------------------------
+    def addUser(self, username, password,
+                firstname, lastname,
+                email, role):
+        """adds a user to the invitation list"""
+        self._invites.append({
+            "username":username,
+            "password":password,
+            "firstname":firstname,
+            "lastname":lastname,
+            "fullname":"%s %s" % (firstname, lastname),
+            "email":email,
+            "role":role
+        })
+    #----------------------------------------------------------------------
+    def removeByIndex(self, index):
+        """removes a user from the invitation list by position"""
+        if index < len(self._invites) -1 and \
+           index >=0:
+            self._invites.remove(index)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self._value)
+    #----------------------------------------------------------------------
+    def value(self):
+        """returns object as dictionary"""
+        return {"invitations": self._invites}
 ########################################################################
 class AnalyzeParameters(BaseParameters):
     """
@@ -199,16 +238,18 @@ class CreateServiceParameters(BaseParameters):
                  syncEnabled =True
                  ):
         """Constructor"""
+
+
         self._name = name
         if isinstance(spatialReference, SpatialReference):
             self._spatialReference = spatialReference.value
         else:
             raise AttributeError('spatialReference must be of type geometry.SpatialReference')
-        self._serviceDescription = serviceDescription
-        self._hasStaticData = hasStaticData
+        self._serviceDescription= serviceDescription
+        self._hasStaticData= hasStaticData
         self._maxRecordCount=maxRecordCount
         self._supportedQueryFormats= supportedQueryFormats
-        self._capabilities= capabilities
+        self._capabilities = capabilities
         self._description= description
         self._copyrightText= copyrightText
         if initialExtent is not None:
@@ -216,11 +257,30 @@ class CreateServiceParameters(BaseParameters):
                 self._initialExtent= initialExtent.value
             else:
                 raise AttributeError('initialExtent must be of type geometry.Envelope')
-        self._allowGeometryUpdates = allowGeometryUpdates
-        self._units = units
-        self._xssPreventionEnabled =  xssPreventionEnabled
-        self._xssPreventionRule = xssPreventionRule
-        self._xssInputRule = xssInputRule
+        self._allowGeometryUpdates=allowGeometryUpdates
+        self._units=units
+        self._xssPreventionEnabled=xssPreventionEnabled
+        self._xssPreventionRule=xssPreventionRule
+        self._xssInputRule=xssInputRule
+        self._currentVersion=currentVersion
+        self._enableEditorTracking = enableEditorTracking
+        self._enableOwnershipAccessControl = enableOwnershipAccessControl
+        self._allowOthersToUpdate = allowOthersToUpdate
+        self._allowOthersToDelete = allowOthersToDelete
+        self._supportsAsync = supportsAsync
+        self._supportsRegisteringExistingData = supportsRegisteringExistingData
+        self._supportsSyncDirectionControl = supportsSyncDirectionControl
+        self._supportsPerLayerSync = supportsPerLayerSync
+        self._supportsPerReplicaSync = supportsPerReplicaSync
+        self._supportsRollbackOnFailure = supportsRollbackOnFailure
+        self._hasVersionedData = hasVersionedData
+        self._supportsDisconnectedEditing = supportsDisconnectedEditing
+        self._size =size
+        self._syncEnabled =syncEnabled
+
+
+
+
     #----------------------------------------------------------------------
     @property
     def value(self):
@@ -342,6 +402,7 @@ class PortalParameters(BaseParameters):
     _basemapGalleryGroupQuery = None
     _region = None
     _portalMode = None
+    _creditAssignments = None
     __allowed_keys = ["canSharePublic","subscriptionInfo","defaultExtent","supportsHostedServices",
                       "homePageFeaturedContentCount","supportsOAuth","portalName","urlKey",
                       "databaseUsage","culture","helpBase","galleryTemplatesGroupQuery",
@@ -370,7 +431,7 @@ class PortalParameters(BaseParameters):
         """creates the portal properties object from a dictionary"""
         if isinstance(value, dict):
             pp = PortalParameters()
-            for k,v in value.iteritems():
+            for k,v in value.items():
                 setattr(pp, "_%s" % k, v)
             return pp
         else:
@@ -1131,6 +1192,17 @@ class PortalParameters(BaseParameters):
         """gets/sets the property value portalMode"""
         if value is not None:
             self._portalMode = value
+    #----------------------------------------------------
+    @property
+    def creditAssignments(self):
+        """gets/sets the property value creditAssignments"""
+        return self._creditAssignments
+    #----------------------------------------------------
+    @creditAssignments.setter
+    def creditAssignments(self,value):
+        """gets/sets the property value creditAssignments"""
+        if value is not None:
+            self._creditAssignments = value
 ########################################################################
 class ItemParameter(BaseParameters):
     """
@@ -2053,6 +2125,259 @@ class PublishFeatureCollectionParameter(BaseParameters):
     def __str__(self):
         """returns object as a string"""
         return json.dumps(self.value)
+########################################################################
+class GenerateParameter(BaseParameters):
+    """
+    The publishParameters JSON object used to create feature collections
+    Mike: This may be the same as PublishFeatureCollectionParameters
+    """
+    _name = None
+    _maxRecordCount = None
+    _copyrightText = None
+    _targetSR = None
+    _enforceOutputJsonSizeLimit = None
+    _enforceInputFileSizeLimit = None
+    _generalize = None
+    _maxAllowableOffset = None
+    _reducePrecision = None
+    _numberOfDigitsAfterDecimal = None
+    _locationType = None
+    __allowed_keys = ['name', "numberOfDigitsAfterDecimal",
+                      "maxRecordCount", "locationType",
+                      "enforceInputFileSizeLimit", "generalize",
+                      "maxAllowableOffset", "reducePrecision",
+                      "enforceOutputJsonSizeLimit", "targetSR"]
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 name,
+                 maxRecordCount=-1,
+                 targetSR={'wkid':102100},
+                 enforceOutputJsonSizeLimit = True,
+                 enforceInputFileSizeLimit = True,
+                 generalize = None,
+                 maxAllowableOffset = None,
+                 reducePrecision = True,
+                 numberOfDigitsAfterDecimal = 1,
+                 locationType = 'none'
+                 ):
+        """Constructor"""
+        self._name = name
+        self._maxRecordCount = maxRecordCount
+        self._targetSR = targetSR
+
+        self._enforceOutputJsonSizeLimit = enforceOutputJsonSizeLimit
+        self._enforceInputFileSizeLimit = enforceInputFileSizeLimit
+        self._generalize = generalize
+        self._maxAllowableOffset = maxAllowableOffset
+        self._reducePrecision = reducePrecision
+        self._numberOfDigitsAfterDecimal = numberOfDigitsAfterDecimal
+        self._locationType = locationType
+
+    #----------------------------------------------------------------------
+    def generalizeDefaults(self):
+        self._maxAllowableOffset = 10.58335450004355
+        self._reducePrecision = True
+        self._numberOfDigitsAfterDecimal = 0
+    #----------------------------------------------------------------------
+    @property
+    def enforceOutputJsonSizeLimit(self):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        return self._enforceOutputJsonSizeLimit
+    #----------------------------------------------------------------------
+    @enforceOutputJsonSizeLimit.setter
+    def enforceOutputJsonSizeLimit(self, value):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        if self._enforceOutputJsonSizeLimit != value:
+            self._enforceOutputJsonSizeLimit = value
+    #----------------------------------------------------------------------
+    @property
+    def locationType(self):
+        """gets/sets the locationType"""
+        return self._locationType
+    #----------------------------------------------------------------------
+    @locationType.setter
+    def locationType(self, value):
+        """gets/sets the enforceOutputJsonSizeLimit"""
+        if self._locationType != value:
+            self._locationType = value
+
+    #----------------------------------------------------------------------
+    @property
+    def enforceInputFileSizeLimit(self):
+        """gets/sets the enforceInputFileSizeLimit"""
+        return self._enforceInputFileSizeLimit
+    #----------------------------------------------------------------------
+    @enforceInputFileSizeLimit.setter
+    def enforceInputFileSizeLimit(self, value):
+        """gets/sets the enforceInputFileSizeLimit"""
+        if self._enforceInputFileSizeLimit != value:
+            self._enforceInputFileSizeLimit = value
+    #----------------------------------------------------------------------
+    @property
+    def generalize(self):
+        """gets/sets the generalize"""
+        return self._generalize
+    #----------------------------------------------------------------------
+    @generalize.setter
+    def generalize(self, value):
+        """gets/sets the generalize"""
+        if self._generalize != value:
+            self._generalize = value
+
+    #----------------------------------------------------------------------
+    @property
+    def maxAllowableOffset(self):
+        """gets/sets the maxAllowableOffset"""
+        return self._maxAllowableOffset
+    #----------------------------------------------------------------------
+    @maxAllowableOffset.setter
+    def maxAllowableOffset(self, value):
+        """gets/sets the maxAllowableOffset"""
+        if self._maxAllowableOffset != value:
+            self._maxAllowableOffset = value
+
+
+    #----------------------------------------------------------------------
+    @property
+    def reducePrecision(self):
+        """gets/sets the reducePrecision"""
+        return self._reducePrecision
+    #----------------------------------------------------------------------
+    @reducePrecision.setter
+    def reducePrecision(self, value):
+        """gets/sets the reducePrecision"""
+        if self._reducePrecision != value:
+            self._reducePrecision = value
+
+    #----------------------------------------------------------------------
+    @property
+    def numberOfDigitsAfterDecimal(self):
+        """gets/sets the numberOfDigitsAfterDecimal"""
+        return self._numberOfDigitsAfterDecimal
+    #----------------------------------------------------------------------
+    @numberOfDigitsAfterDecimal.setter
+    def numberOfDigitsAfterDecimal(self, value):
+        """gets/sets the numberOfDigitsAfterDecimal"""
+        if self._numberOfDigitsAfterDecimal != value:
+            self._numberOfDigitsAfterDecimal = value
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """gets/sets the name"""
+        return self._name
+    #----------------------------------------------------------------------
+    @name.setter
+    def name(self, value):
+        """gets/sets the name"""
+        if self._name != value:
+            self._name = value
+
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """gets/sets the max record count"""
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @maxRecordCount.setter
+    def maxRecordCount(self, value):
+        """gets/sets the max record count"""
+        if self._maxRecordCount != value:
+            self._maxRecordCount = value
+    #----------------------------------------------------------------------
+    @property
+    def targetSR(self):
+        """gets/sets the targetSR"""
+        return self._targetSR
+    #----------------------------------------------------------------------
+    @targetSR.setter
+    def targetSR(self, value):
+        """gets/sets the targetSR"""
+        if self._targetSR != value:
+            self._targetSR = value
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns the object as a dictionary"""
+        val = {}
+        for k in self.__allowed_keys:
+            value = getattr(self, "_" + k)
+            if value is not None:
+                val[k] = value
+        return val
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        return json.dumps(self.value)
+########################################################################
+class PublishGeoJSONParameter(BaseParameters):
+    """Allows users to provide the required information to
+    publish a geojson file.
+    """
+    _hasStaticData = True
+    _name = None
+    _maxRecordCount = 2000
+    _layerInfo = {"capabilities":"Query"}
+    #----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        pass
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        return json.dumps(self.value)
+    #----------------------------------------------------------------------
+    @property
+    def value(self):
+        """returns the object as a dictionary"""
+        return {
+            "hasStaticData":self._hasStaticData,
+            "name":self._name,
+            "maxRecordCount":self._maxRecordCount,
+            "layerInfo":self._layerInfo
+        }
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """gets/sets the name"""
+        return self._name
+    #----------------------------------------------------------------------
+    @name.setter
+    def name(self, value):
+        """gets/sets the name"""
+        self._name = value
+    #----------------------------------------------------------------------
+    @property
+    def hasStaticData(self):
+        """gets/set the hasStaticData value"""
+        return self._hasStaticData
+    #----------------------------------------------------------------------
+    @hasStaticData.setter
+    def hasStaticData(self, value):
+        """gets/sets the hasStaticData value"""
+        if self._hasStaticData != value:
+            self._hasStaticData = value
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """gets/sets the maxRecordCount to return to user on request"""
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @maxRecordCount.setter
+    def maxRecordCount(self, value):
+        """gets/sets the maxRecordCount to return to user on request"""
+        if value != self._maxRecordCount:
+            self._maxRecordCount = value
+    #----------------------------------------------------------------------
+    @property
+    def layerInfo(self):
+        """gets/sets the layerInfo"""
+        return self._layerInfo
+    #----------------------------------------------------------------------
+    @layerInfo.setter
+    def layerInfo(self, value):
+        """gets/sets the layerInfo"""
+        if self._layerInfo != value:
+            self._layerInfo = value
 ########################################################################
 class PublishFGDBParameter(BaseParameters):
     """

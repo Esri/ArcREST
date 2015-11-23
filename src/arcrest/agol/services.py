@@ -1,16 +1,29 @@
 """
 
-.. module:: layer
+.. module:: services.py
    :platform: Windows, Linux
-   :synopsis: Class that contians feature service layer information.
+   :synopsis: Represents functions/classes used to control Feature Services,
+              Feature Service Layer, Map Service, etc...
 
 .. moduleauthor:: Esri
 
-
 """
-from .._abstract import abstract
-from ..security import security
+from __future__ import absolute_import
+from __future__ import print_function
+
+import os
+import six
+import uuid
+import json
 import types
+import mimetypes
+from re import search
+from six.moves import urllib_parse as urlparse
+from ._uploads import Uploads
+from ..security import security
+from .._abstract import abstract
+from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
+from ..common.general import FeatureSet
 from ..common import filters
 from ..common.geometry import SpatialReference
 from ..common.general import _date_handler, _unicode_convert, Feature
@@ -19,17 +32,773 @@ from ..common.spatial import get_OID_field, get_records_with_attachments
 from ..common.spatial import create_feature_layer, merge_feature_class
 from ..common.spatial import featureclass_to_json, create_feature_class
 from ..common.spatial import get_attachment_data
-from ..common.general import FeatureSet
-from ..hostedservice import AdminFeatureServiceLayer
-import featureservice
-import os
-import json
-import math
-import urlparse
-import mimetypes
-import uuid
-from re import search
-from urlparse import urlparse
+from ..common import geometry
+from ..hostedservice import AdminFeatureService, AdminFeatureServiceLayer
+from .._abstract.abstract import BaseSecurityHandler, BaseAGOLClass
+
+########################################################################
+class FeatureService(abstract.BaseAGOLClass):
+    """ contains information about a feature service """
+    _url = None
+    _currentVersion = None
+    _serviceDescription = None
+    _hasVersionedData = None
+    _supportsDisconnectedEditing = None
+    _hasStaticData = None
+    _maxRecordCount = None
+    _supportedQueryFormats = None
+    _capabilities = None
+    _description = None
+    _copyrightText = None
+    _spatialReference = None
+    _initialExtent = None
+    _fullExtent = None
+    _allowGeometryUpdates = None
+    _units = None
+    _syncEnabled = None
+    _syncCapabilities = None
+    _editorTrackingInfo = None
+    _documentInfo = None
+    _layers = None
+    _tables = None
+    _enableZDefaults = None
+    _zDefault = None
+    _size = None
+    _xssPreventionInfo = None
+    _editingInfo = None
+    _proxy_url = None
+    _proxy_port = None
+    _securityHandler = None
+    _serverURL = None
+    _json = None
+    _json_dict = None
+    _supportsApplyEditsWithGlobalIds = None
+    _serviceItemId = None
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 securityHandler=None,
+                 initialize=False, proxy_url=None, proxy_port=None):
+        """Constructor"""
+        self._url = url
+
+        self._proxy_port = proxy_port
+        self._proxy_url = proxy_url
+        if isinstance(securityHandler, BaseSecurityHandler):
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler
+                else:
+                    self._securityHandler = securityHandler
+
+            else:
+                self._securityHandler = securityHandler
+
+
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ loads the data into the class """
+        params = {"f": "json"}
+
+        json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        self._json_dict = json_dict
+        self._json = json.dumps(self._json_dict,
+                                default=_date_handler)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.items():
+            if k == 'layers':
+                self._getLayers()
+            elif k == 'tables':
+                self._getTables()
+            elif k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print("%s - attribute not implemented in Feature Service." % k)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """ iterator generator for public values/properties
+            It only returns the properties that are public.
+        """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_') and \
+                      not isinstance(getattr(self, attr), (types.MethodType,
+                                                           types.BuiltinFunctionType,
+                                                           types.BuiltinMethodType))
+                      ]
+        for att in attributes:
+            yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ returns the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, abstract.BaseSecurityHandler):
+            if isinstance(value, security.AGOLTokenSecurityHandler):
+                self._securityHandler = value
+                self._username = value.username
+                self._password = value._password
+                self._token_url = value.token_url
+            elif isinstance(value, security.OAuthSecurityHandler):
+                self._securityHandler = value
+            else:
+                pass
+    #----------------------------------------------------------------------
+    @property
+    def editingInfo(self):
+        """  returns the editing information """
+        if self._editingInfo is None:
+            self.__init()
+        return self._editingInfo
+
+    #----------------------------------------------------------------------
+    @property
+    def xssPreventionInfo(self):
+        """returns the xssPreventionInfo information """
+        if self._xssPreventionInfo is None:
+            self.__init()
+        return self._xssPreventionInfo
+    #----------------------------------------------------------------------
+    @property
+    def size(self):
+        """returns the size parameter"""
+        if self._size is None:
+            self.__init()
+        return self._size
+    #----------------------------------------------------------------------
+    def refresh_service(self):
+        """ repopulates the properties of the service """
+        self._tables = None
+        self._layers = None
+        self.__init()
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """returns the max record count"""
+        if self._maxRecordCount is None:
+            self.__init()
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def supportedQueryFormats(self):
+        """ returns the supported query formats """
+        if self._supportedQueryFormats is None:
+            self.__init()
+        return self._supportedQueryFormats
+    #----------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """ returns a list of capabilities """
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """ returns the service description """
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        """returns the supportsApplyEditsWithGlobalIds property"""
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds
+    #----------------------------------------------------------------------
+    @property
+    def serviceItemId(self):
+        """ returns the serviceItemId"""
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId
+    #----------------------------------------------------------------------
+    @property
+    def copyrightText(self):
+        """ returns the copyright text """
+        if self._copyrightText is None:
+            self.__init()
+        return self._copyrightText
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """ returns the spatial reference """
+        if self._spatialReference is None:
+            self.__init()
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def initialExtent(self):
+        """ returns the initial extent of the feature service """
+        if self._initialExtent is None:
+            self.__init()
+        return self._initialExtent
+    #----------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        """ returns the full extent of the feature service """
+        if self._fullExtent is None:
+            self.__init()
+        return self._fullExtent
+    #----------------------------------------------------------------------
+    @property
+    def allowGeometryUpdates(self):
+        """ informs the user if the data allows geometry updates """
+        if self._allowGeometryUpdates is None:
+            self.__init()
+        return self._allowGeometryUpdates
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        """ returns the measurement unit """
+        if self._units is None:
+            self.__init()
+        return self._units
+    #----------------------------------------------------------------------
+    @property
+    def syncEnabled(self):
+        """ informs the user if sync of data can be performed """
+        if self._syncEnabled is None:
+            self.__init()
+        return self._syncEnabled
+    #----------------------------------------------------------------------
+    @property
+    def uploads(self):
+        """returns the class to perform the upload function.  it will
+        only return the uploads class if syncEnabled is True.
+        """
+        if self.syncEnabled == True:
+            return Uploads(url=self._url + "/uploads",
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
+        return None
+    #----------------------------------------------------------------------
+    @property
+    def syncCapabilities(self):
+        """ type of sync that can be performed """
+        if self._syncCapabilities is None:
+            self.__init()
+        return self._syncCapabilities
+    #----------------------------------------------------------------------
+    @property
+    def editorTrackingInfo(self):
+        """ returns the editor tracking information """
+        if self._editorTrackingInfo is None:
+            self.__init()
+        return self._editorTrackingInfo
+    #----------------------------------------------------------------------
+    @property
+    def documentInfo(self):
+        """ returns the document information """
+        if self._documentInfo is None:
+            self.__init()
+        return self._documentInfo
+    #----------------------------------------------------------------------
+    def _getLayers(self):
+        """ gets layers for the featuer service """
+        if self._layers is None:
+            self._layers = []
+            params = {"f": "json"}
+            json_dict = self._do_get(self._url, params,
+                                     securityHandler=self._securityHandler,
+                                     proxy_url=self._proxy_url,
+                                     proxy_port=self._proxy_port)
+            if isinstance(json_dict, dict) and \
+               json_dict.has_key("layers"):
+                for l in json_dict['layers']:
+                    self._layers.append(FeatureLayer(url=self._url + "/%s" % l['id'],
+                                                     securityHandler=self._securityHandler,
+                                                     proxy_port=self._proxy_port,
+                                                     proxy_url=self._proxy_url))
+                    del l
+        return self._layers
+    #----------------------------------------------------------------------
+    def _getTables(self):
+        """ gets layers for the featuer service """
+        if self._tables is None:
+            self._tables = []
+            params = {"f": "json"}
+            json_dict = self._do_get(self._url, params,
+                                     securityHandler=self._securityHandler,
+                                     proxy_url=self._proxy_url,
+                                     proxy_port=self._proxy_port)
+            if isinstance(json_dict, dict) and \
+               json_dict.has_key("tables"):
+                for l in json_dict['tables']:
+                    self._layers.append(FeatureLayer(url=self._url + "/%s" % l['id'],
+                                                     securityHandler=self._securityHandler,
+                                                     proxy_port=self._proxy_port,
+                                                     proxy_url=self._proxy_url))
+                    del l
+        return self._tables
+    @property
+    def url(self):
+        """ returns the url for the feature service"""
+        return self._url
+    #----------------------------------------------------------------------
+    @property
+    def layers(self):
+        """ returns a list of layer objects """
+        if self._layers is None:
+            self._getLayers()
+        return self._layers
+    #----------------------------------------------------------------------
+    @property
+    def tables(self):
+        """ returns the tables  """
+        if self._tables is None:
+            self._getTables()
+        return self._tables
+    #----------------------------------------------------------------------
+    @property
+    def enableZDefaults(self):
+        """ returns the enable Z defaults value """
+        if self._enableZDefaults is None:
+            self.__init()
+        return self._enableZDefaults
+    #----------------------------------------------------------------------
+    @property
+    def zDefault(self):
+        """ returns the Z default value """
+        if self._zDefault is None:
+            self.__init()
+        return self._zDefault
+    #----------------------------------------------------------------------
+    @property
+    def hasStaticData(self):
+        """ returns boolean for has statistic data """
+        if self._hasStaticData is None:
+            self.__init()
+        return self._hasStaticData
+
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """ returns the map service current version """
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def administration(self):
+        """returns the hostservice object to manage the back-end functions"""
+        url = self._url
+        res = search("/rest/", url).span()
+        addText = "admin/"
+        part1 = url[:res[1]]
+        part2 = url[res[1]:]
+        adminURL = "%s%s%s" % (part1, addText, part2)
+
+        res = AdminFeatureService(url=url,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port,
+                            initialize=False)
+        return res
+    #----------------------------------------------------------------------
+    @property
+    def serviceDescription(self):
+        """ returns the serviceDescription of the map service """
+        if self._serviceDescription is None:
+            self.__init()
+        return self._serviceDescription
+    #----------------------------------------------------------------------
+    @property
+    def hasVersionedData(self):
+        """ returns boolean for versioned data """
+        if self._hasVersionedData is None:
+            self.__init()
+        return self._hasVersionedData
+    #----------------------------------------------------------------------
+    @property
+    def supportsDisconnectedEditing(self):
+        """ returns boolean is disconnecting editted supported """
+        if self._supportsDisconnectedEditing is None:
+            self.__init()
+        return self._supportsDisconnectedEditing
+    #----------------------------------------------------------------------
+    def query(self,
+              layerDefsFilter=None,
+              geometryFilter=None,
+              timeFilter=None,
+              returnGeometry=True,
+              returnIdsOnly=False,
+              returnCountOnly=False,
+              returnZ=False,
+              returnM=False,
+              outSR=None
+              ):
+        """
+           The Query operation is performed on a feature service resource
+        """
+        qurl = self._url + "/query"
+        params = {"f": "json",
+                  "returnGeometry": returnGeometry,
+                  "returnIdsOnly": returnIdsOnly,
+                  "returnCountOnly": returnCountOnly,
+                  "returnZ": returnZ,
+                  "returnM" : returnM}
+        if not layerDefsFilter is None and \
+           isinstance(layerDefsFilter, LayerDefinitionFilter):
+            params['layerDefs'] = layerDefsFilter.filter
+        if not geometryFilter is None and \
+           isinstance(geometryFilter, GeometryFilter):
+            gf = geometryFilter.filter
+            params['geometryType'] = gf['geometryType']
+            params['spatialRel'] = gf['spatialRel']
+            params['geometry'] = gf['geometry']
+            params['inSR'] = gf['inSR']
+        if not outSR is None and \
+           isinstance(outSR, geometry.SpatialReference):
+            params['outSR'] = outSR.asDictionary
+        if not timeFilter is None and \
+           isinstance(timeFilter, TimeFilter):
+            params['time'] = timeFilter.filter
+        res =  self._do_get(url=qurl,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+        if returnIdsOnly == False and returnCountOnly == False:
+            if isinstance(res, str):
+                jd = json.loads(res)
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in jd['layers']]
+            elif isinstance(res, dict):
+                return [FeatureSet.fromJSON(json.dumps(lyr)) for lyr in res['layers']]
+            else:
+                return res
+        return res
+    #----------------------------------------------------------------------
+    def query_related_records(self,
+                              objectIds,
+                              relationshipId,
+                              outFields="*",
+                              definitionExpression=None,
+                              returnGeometry=True,
+                              maxAllowableOffset=None,
+                              geometryPrecision=None,
+                              outWKID=None,
+                              gdbVersion=None,
+                              returnZ=False,
+                              returnM=False):
+        """
+           The Query operation is performed on a feature service layer
+           resource. The result of this operation are feature sets grouped
+           by source layer/table object IDs. Each feature set contains
+           Feature objects including the values for the fields requested by
+           the user. For related layers, if you request geometry
+           information, the geometry of each feature is also returned in
+           the feature set. For related tables, the feature set does not
+           include geometries.
+           Inputs:
+              objectIds - the object IDs of the table/layer to be queried
+              relationshipId - The ID of the relationship to be queried.
+              outFields - the list of fields from the related table/layer
+                          to be included in the returned feature set. This
+                          list is a comma delimited list of field names. If
+                          you specify the shape field in the list of return
+                          fields, it is ignored. To request geometry, set
+                          returnGeometry to true.
+                          You can also specify the wildcard "*" as the
+                          value of this parameter. In this case, the result
+                          s will include all the field values.
+              definitionExpression - The definition expression to be
+                                     applied to the related table/layer.
+                                     From the list of objectIds, only those
+                                     records that conform to this
+                                     expression are queried for related
+                                     records.
+              returnGeometry - If true, the feature set includes the
+                               geometry associated with each feature. The
+                               default is true.
+              maxAllowableOffset - This option can be used to specify the
+                                   maxAllowableOffset to be used for
+                                   generalizing geometries returned by the
+                                   query operation. The maxAllowableOffset
+                                   is in the units of the outSR. If outSR
+                                   is not specified, then
+                                   maxAllowableOffset is assumed to be in
+                                   the unit of the spatial reference of the
+                                   map.
+              geometryPrecision - This option can be used to specify the
+                                  number of decimal places in the response
+                                  geometries.
+              outWKID - The spatial reference of the returned geometry.
+              gdbVersion - The geodatabase version to query. This parameter
+                           applies only if the isDataVersioned property of
+                           the layer queried is true.
+              returnZ - If true, Z values are included in the results if
+                        the features have Z values. Otherwise, Z values are
+                        not returned. The default is false.
+              returnM - If true, M values are included in the results if
+                        the features have M values. Otherwise, M values are
+                        not returned. The default is false.
+        """
+        params = {
+            "f" : "json",
+            "objectIds" : objectIds,
+            "relationshipId" : relationshipId,
+            "outFields" : outFields,
+            "returnGeometry" : returnGeometry,
+            "returnM" : returnM,
+            "returnZ" : returnZ
+        }
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
+        if definitionExpression is not None:
+            params['definitionExpression'] = definitionExpression
+        if outWKID is not None:
+            params['outSR'] =geometry.SpatialReference(outWKID).asDictionary
+        if maxAllowableOffset is not None:
+            params['maxAllowableOffset'] = maxAllowableOffset
+        if geometryPrecision is not None:
+            params['geometryPrecision'] = geometryPrecision
+        quURL = self._url + "/queryRelatedRecords"
+        res = self._do_get(url=quURL, param_dict=params,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        return res
+    #----------------------------------------------------------------------
+    @property
+    def replicas(self):
+        """ returns all the replicas for a feature service """
+        params = {
+            "f" : "json",
+
+        }
+        url = self._url + "/replicas"
+        return self._do_get(url, params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def unRegisterReplica(self, replica_id):
+        """
+           removes a replica from a feature service
+           Inputs:
+             replica_id - The replicaID returned by the feature service
+                          when the replica was created.
+        """
+        params = {
+            "f" : "json",
+            "replicaID" : replica_id
+        }
+        url = self._url + "/unRegisterReplica"
+        return self._do_post(url, params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def replicaInfo(self, replica_id):
+        """
+           The replica info resources lists replica metadata for a specific
+           replica.
+           Inputs:
+              replica_id - The replicaID returned by the feature service
+                           when the replica was created.
+        """
+        params = {
+            "f" : "json"
+        }
+        url = self._url + "/replicas/" + replica_id
+        return self._do_get(url, param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def createReplica(self,
+                      replicaName,
+                      layers,
+                      layerQueries=None,
+                      geometryFilter=None,
+                      replicaSR=None,
+                      transportType="esriTransportTypeUrl",
+                      returnAttachments=False,
+                      returnAttachmentsDatabyURL=False,
+                      async=False,
+                      attachmentsSyncDirection="none",
+                      syncModel="none",
+                      dataFormat="json",
+                      replicaOptions=None,
+                      wait=False,
+                      out_path=None):
+        """
+        The createReplica operation is performed on a feature service
+        resource. This operation creates the replica between the feature
+        service and a client based on a client-supplied replica definition.
+        It requires the Sync capability. See Sync overview for more
+        information on sync. The response for createReplica includes
+        replicaID, server generation number, and data similar to the
+        response from the feature service query operation.
+        The createReplica operation returns a response of type
+        esriReplicaResponseTypeData, as the response has data for the
+        layers in the replica. If the operation is called to register
+        existing data by using replicaOptions, the response type will be
+        esriReplicaResponseTypeInfo, and the response will not contain data
+        for the layers in the replica.
+
+        Inputs:
+           replicaName - name of the replica
+           layers - layers to export
+           layerQueries - In addition to the layers and geometry parameters, the layerQueries
+            parameter can be used to further define what is replicated. This
+            parameter allows you to set properties on a per layer or per table
+            basis. Only the properties for the layers and tables that you want
+            changed from the default are required.
+            Example:
+             layerQueries = {"0":{"queryOption": "useFilter", "useGeometry": true,
+             "where": "requires_inspection = Yes"}}
+           geometryFilter - Geospatial filter applied to the replica to
+            parse down data output.
+           returnAttachments - If true, attachments are added to the replica and returned in the
+            response. Otherwise, attachments are not included.
+           returnAttachmentDatabyURL -  If true, a reference to a URL will be provided for each
+            attachment returned from createReplica. Otherwise,
+            attachments are embedded in the response.
+           replicaSR - the spatial reference of the replica geometry.
+           transportType -  The transportType represents the response format. If the
+            transportType is esriTransportTypeUrl, the JSON response is contained in a file,
+            and the URL link to the file is returned. Otherwise, the JSON object is returned
+            directly. The default is esriTransportTypeUrl.
+            If async is true, the results will always be returned as if transportType is
+            esriTransportTypeUrl. If dataFormat is sqlite, the transportFormat will always be
+            esriTransportTypeUrl regardless of how the parameter is set.
+            Values: esriTransportTypeUrl | esriTransportTypeEmbedded
+           returnAttachments - If true, attachments are added to the replica and returned in
+            the response. Otherwise, attachments are not included. The default is false. This
+            parameter is only applicable if the feature service has attachments.
+           returnAttachmentsDatabyURL -  If true, a reference to a URL will be provided for
+            each attachment returned from createReplica. Otherwise, attachments are embedded
+            in the response. The default is true. This parameter is only applicable if the
+            feature service has attachments and if returnAttachments is true.
+           attachmentsSyncDirection - Client can specify the attachmentsSyncDirection when
+            creating a replica. AttachmentsSyncDirection is currently a createReplica property
+            and cannot be overridden during sync.
+            Values: none, upload, bidirectional
+           async - If true, the request is processed as an asynchronous job, and a URL is
+            returned that a client can visit to check the status of the job. See the topic on
+            asynchronous usage for more information. The default is false.
+           syncModel - Client can specify the attachmentsSyncDirection when creating a replica.
+            AttachmentsSyncDirection is currently a createReplica property and cannot be
+            overridden during sync.
+           dataFormat - The format of the replica geodatabase returned in the response. The
+            default is json.
+           replicaOptions - This parameter instructs the createReplica operation to create a
+            new replica based on an existing replica definition (refReplicaId). It can be used
+            to specify parameters for registration of existing data for sync. The operation
+            will create a replica but will not return data. The responseType returned in the
+            createReplica response will be esriReplicaResponseTypeInfo.
+           wait - if async, wait to pause the process until the async operation is completed.
+           out_path - folder path to save the file
+        """
+        if self.syncEnabled == False:
+            return None
+        url = self._url + "/createReplica"
+        dataformat = ["filegdb", "json", "sqlite", "shapefile"]
+        params = {"f" : "json",
+                  "replicaName": replicaName,
+                  "returnAttachments": returnAttachments,
+                  "returnAttachmentsDatabyURL": returnAttachmentsDatabyURL,
+                  "attachmentsSyncDirection" : attachmentsSyncDirection,
+                  "async" : async,
+                  "syncModel" : syncModel,
+                  "layers" : layers
+                  }
+        if dataFormat.lower() in dataformat:
+            params['dataFormat'] = dataFormat.lower()
+        else:
+            raise Exception("Invalid dataFormat")
+        if layerQueries is not None:
+            params['layerQueries'] = layerQueries
+        if geometryFilter is not None and \
+           isinstance(geometryFilter, GeometryFilter):
+            params.update(geometryFilter.filter)
+        if replicaSR is not None:
+            params['replicaSR'] = replicaSR
+        if replicaOptions is not None:
+            params['replicaOptions'] = replicaOptions
+        if transportType is not None:
+            params['transportType'] = transportType
+        if out_path is not None and \
+           os.path.isdir(out_path):
+            if async:
+                if wait:
+                    exportJob = self._do_post(url=url,
+                                              param_dict=params,
+                                              securityHandler=self._securityHandler,
+                                              proxy_url=self._proxy_url,
+                                              proxy_port=self._proxy_port)
+                    status = self.replicaStatus(url=exportJob['statusUrl'])
+                    while status['status'].lower() != "completed":
+                        status = self.replicaStatus(url=exportJob['statusUrl'])
+                        if status['status'].lower() == "failed":
+                            return status
+                    if out_path is None:
+                        return status
+                    else:
+                        dlURL = status["resultUrl"]
+                        return self._download_file(url=dlURL,
+                                                   save_path=out_path,
+                                                   securityHandler=self._securityHandler,
+                                                   proxy_url=self._proxy_url,
+                                                   proxy_port=self._proxy_port)
+                else:
+                    return self._do_post(url=url,
+                                         param_dict=params,
+                                         securityHandler=self._securityHandler,
+                                         proxy_url=self._proxy_url,
+                                         proxy_port=self._proxy_port)
+            else:
+                res = self._do_post(url=url,
+                                    param_dict=params,
+                                    securityHandler=self._securityHandler,
+                                    proxy_url=self._proxy_url,
+                                    proxy_port=self._proxy_port)
+                dlURL = res["responseUrl"]
+                return self._download_file(url=dlURL,
+                                           save_path=out_path,
+                                           securityHandler=self._securityHandler,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
+        else:
+            return self._do_post(url=url,
+                                 param_dict=params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port)
+        return None
+    #----------------------------------------------------------------------
+    def replicaStatus(self, url):
+        """gets the replica status when exported async set to True"""
+        params = {"f" : "json"}
+        url = url + "/status"
+        return self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_port=self._proxy_port,
+                            proxy_url=self._proxy_url)
 ########################################################################
 class FeatureLayer(abstract.BaseAGOLClass):
     """
@@ -94,6 +863,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _serverURL = None
     _supportsValidateSql = None
     _supportsCoordinatesQuantization = None
+    _supportsApplyEditsWithGlobalIds = None
+    _serviceItemId = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -105,12 +876,18 @@ class FeatureLayer(abstract.BaseAGOLClass):
 
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
-        if securityHandler is not None and \
-           isinstance(securityHandler, abstract.BaseSecurityHandler):
-            self._securityHandler = securityHandler
+        if isinstance(securityHandler, BaseSecurityHandler):
+            if hasattr(securityHandler, 'is_portal'):
+                if securityHandler.is_portal:
+                    if hasattr(securityHandler, 'portalServerHandler'):
+                        self._securityHandler = securityHandler.portalServerHandler(serverUrl=url)
+                    else:
+                        self._securityHandler = securityHandler
+                else:
+                    self._securityHandler = securityHandler
 
-            if not securityHandler.referer_url is None:
-                self._referer_url = securityHandler.referer_url
+            else:
+                self._securityHandler = securityHandler
 
         if initialize:
             self.__init()
@@ -127,16 +904,17 @@ class FeatureLayer(abstract.BaseAGOLClass):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Feature Layer."
-        self._parentLayer = featureservice.FeatureService(
-            url=os.path.dirname(self._url),
-            securityHandler=self._securityHandler,
-            proxy_port=self._proxy_port,
-            proxy_url=self._proxy_url)
+                print("%s - attribute not implemented in Feature Layer." % k)
+        if not self._parentLayer is None:
+            self._parentLayer = FeatureService(
+                url=os.path.dirname(self._url),
+                securityHandler=self._securityHandler,
+                proxy_port=self._proxy_port,
+                proxy_url=self._proxy_url, initialize=False)
     #----------------------------------------------------------------------
     def refresh(self):
         """refreshes all the properties of the service"""
@@ -164,6 +942,20 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def url(self):
         """ returns the url for the feature layer"""
         return self._url
+    #----------------------------------------------------------------------
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        """ returns the url for the feature layer"""
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds
+    #----------------------------------------------------------------------
+    @property
+    def serviceItemId(self):
+        """returns the service item id"""
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def administration(self):
@@ -558,7 +1350,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if self.hasAttachments == True:
             attachURL = self._url + "/%s/addAttachment" % oid
             params = {'f':'json'}
-            parsed = urlparse(attachURL)
+            parsed = urlparse.urlparse(attachURL)
 
             files = []
             files.append(('attachment', file_path, os.path.basename(file_path)))
@@ -670,7 +1462,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnIDsOnly=False,
               returnCountOnly=False,
               returnFeatureClass=False,
-              out_fc=None):
+              returnDistinctValues=False,
+              returnExtentOnly=False,
+              groupByFieldsForStatistics=None,
+              statisticFilter=None,
+              out_fc=None,
+              objectIds="",
+              **kwargs):
         """ queries a feature service based on a sql statement
             Inputs:
                where - the selection sql statement
@@ -691,8 +1489,17 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                  based on the sql statement
                returnFeatureClass - Default False. If true, query will be
                                     returned as feature class
+               groupByFieldsForStatistics - One or more field names on
+                                    which the values need to be grouped for
+                                    calculating the statistics.
+               statisticFilter - object that performs statistic queries
                out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
+               kwargs - optional parameters that can be passed to the Query
+                 function.  This will allow users to pass additional
+                 parameters not explicitly implemented on the function. A
+                 complete list of functions available is documented on the
+                 Query REST API.
             Output:
                A list of Feature Objects (default) or a path to the output featureclass if
                returnFeatureClass is set to True.
@@ -703,7 +1510,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnGeometry" : returnGeometry,
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
+                  "returnDistinctValues" : returnDistinctValues,
+                  "returnExtentOnly" : returnExtentOnly
                   }
+        for key, value in kwargs.items():
+            params[key] = value
         if not timeFilter is None and \
            isinstance(timeFilter, filters.TimeFilter):
             params['time'] = timeFilter.filter
@@ -714,15 +1525,22 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['geometryType'] = gf['geometryType']
             params['spatialRelationship'] = gf['spatialRel']
             params['inSR'] = gf['inSR']
+        if objectIds is not None and objectIds != "":
+            params['objectIds'] = objectIds
+        if not groupByFieldsForStatistics is None:
+            params['groupByFieldsForStatistics'] = groupByFieldsForStatistics
+        if not statisticFilter is None and \
+           isinstance(statisticFilter, filters.StatisticFilter):
+            params['outStatistics'] = statisticFilter.filter
         fURL = self._url + "/query"
-        results = self._do_get(fURL, params,
+        results = self._do_post(fURL, params,
                                securityHandler=self._securityHandler,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
         if 'error' in results:
             raise ValueError (results)
         if not returnCountOnly and not returnIDsOnly:
-            if returnFeatureClass:
+            if returnFeatureClass == True:
                 json_text = json.dumps(results)
                 temp = scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
                 with open(temp, 'wb') as writer:
@@ -1089,7 +1907,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['features'] = json.dumps([features.asDictionary],
                                             default=_date_handler)
         elif isinstance(features, FeatureSet):
-            params['features'] = json.dumps([feature.asDictionary for feature in feature.features],
+            params['features'] = json.dumps([feature.asDictionary for feature in features.features],
                                             default=_date_handler)
         else:
             return None
@@ -1116,6 +1934,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
 
         """
         messages = {'addResults':[]}
+
         if attachmentTable is None:
             count = 0
             bins = 1
@@ -1123,7 +1942,6 @@ class FeatureLayer(abstract.BaseAGOLClass):
             max_chunk = 250
             js = json.loads(self._unicode_convert(
                  featureclass_to_json(fc)))
-
             js = js['features']
             if len(js) == 0:
                 return {'addResults':None}
@@ -1256,3 +2074,316 @@ class FeatureLayer(abstract.BaseAGOLClass):
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""
     pass
+########################################################################
+class TiledService(BaseAGOLClass):
+    """
+       AGOL Tiled Map Service
+    """
+    _mapName = None
+    _documentInfo = None
+    _copyrightText = None
+    _id = None
+    _layers = None
+    _tables = None
+    _supportedImageFormatTypes = None
+    _storageFormat = None
+    _capabilities = None
+    _access = None
+    _currentVersion = None
+    _units = None
+    _type = None
+    _serviceDescription = None
+    _status = None
+    _tileInfo = None
+    _description = None
+    _fullExtent = None
+    _singleFusedMapCache = None
+    _name = None
+    _created = None
+    _maxScale = None
+    _modified = None
+    _spatialReference = None
+    _minScale = None
+    _server = None
+    _tileServers = None
+    _securityHandler = None
+    _exportTilesAllowed = None
+    _maxExportTilesCount = None
+    _initialExtent = None
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 securityHandler,
+                 initialize=False,
+                 proxy_url=None,
+                 proxy_port=None):
+        """Constructor"""
+        self._url = url
+        if isinstance(securityHandler, BaseSecurityHandler):
+            self._securityHandler = securityHandler
+        if not securityHandler is None:
+            self._referer_url = securityHandler.referer_url
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ loads the data into the class """
+        params = {"f": "json"}
+        json_dict = self._do_get(self._url, params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        attributes = [attr for attr in dir(self)
+                    if not attr.startswith('__') and \
+                    not attr.startswith('_')]
+        for k,v in json_dict.items():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print("%s - attribute not implemented in tiled service." % k)
+    #----------------------------------------------------------------------
+    @property
+    def maxExportTilesCount(self):
+        """ returns the max export tiles count"""
+        if self._maxExportTilesCount is None:
+            self.__init()
+        return self._maxExportTilesCount
+    #----------------------------------------------------------------------
+    @property
+    def exportTilesAllowed(self):
+        """ export tiles allowed """
+        if self._exportTilesAllowed is None:
+            self.__init()
+        return self._exportTilesAllowed
+    #----------------------------------------------------------------------
+    @property
+    def securityHandler(self):
+        """ gets the security handler """
+        return self._securityHandler
+    #----------------------------------------------------------------------
+    @securityHandler.setter
+    def securityHandler(self, value):
+        """ sets the security handler """
+        if isinstance(value, BaseSecurityHandler):
+            if isinstance(value, security.AGOLTokenSecurityHandler):
+                self._securityHandler = value
+            elif isinstance(value, security.OAuthSecurityHandler):
+                self._securityHandler = value
+            else:
+                pass
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """ returns object as string """
+        return json.dumps(dict(self),
+                          default=_date_handler)
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """ iterator generator for public values/properties
+            It only returns the properties that are public.
+        """
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_') and \
+                      not isinstance(getattr(self, attr), (types.MethodType,
+                                                           types.BuiltinFunctionType,
+                                                           types.BuiltinMethodType))
+                      ]
+        for att in attributes:
+            yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    @property
+    def initialExtent(self):
+        """ initial extent of tile service """
+        if self._initialExtent is None:
+            self.__init()
+        return self._initialExtent
+    #----------------------------------------------------------------------
+    @property
+    def mapName(self):
+        """ returns the map name """
+        if self._mapName is None:
+            self.__init()
+        return self._mapName
+    #----------------------------------------------------------------------
+    @property
+    def documentInfo(self):
+        """ returns the document information """
+        if self._documentInfo is None:
+            self.__init()
+        return self._documentInfo
+    #----------------------------------------------------------------------
+    @property
+    def copyrightText(self):
+        """ returns the copyright information """
+        if self._copyrightText is None:
+            self.__init()
+        return self._copyrightText
+    #----------------------------------------------------------------------
+    @property
+    def id(self):
+        """ returns the ID """
+        if self._id is None:
+            self.__init()
+        return self._id
+    #----------------------------------------------------------------------
+    @property
+    def layers(self):
+        """ returns the layers """
+        if self._layers is None:
+            self.__init()
+        return self._layers
+    #----------------------------------------------------------------------
+    @property
+    def tables(self):
+        """ returns the tables in the map service """
+        if self._tables is None:
+            self.__init()
+        return self._tables
+    #----------------------------------------------------------------------
+    @property
+    def supportedImageFormatTypes(self):
+        """ returns the supported image format types """
+        if self._supportedImageFormatTypes is None:
+            self.__init()
+        return self._supportedImageFormatTypes
+    #----------------------------------------------------------------------
+    @property
+    def storageFormat(self):
+        """ returns the storage format """
+        if self._storageFormat is None:
+            self.__init()
+        return self._storageFormat
+    #----------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """ returns the capabilities """
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    #----------------------------------------------------------------------
+    @property
+    def access(self):
+        """ returns the access value """
+        if self._access is None:
+            self.__init()
+        return self._access
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """ returns the current version """
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        """ returns the units """
+        if self._units is None:
+            self.__init()
+        return self._units
+    #----------------------------------------------------------------------
+    @property
+    def type(self):
+        """ returns the type """
+        if self._type is None:
+            self.__init()
+        return self._type
+    #----------------------------------------------------------------------
+    @property
+    def serviceDescription(self):
+        """ returns the service description """
+        if self._serviceDescription is None:
+            self.__init()
+        return self._serviceDescription
+    #----------------------------------------------------------------------
+    @property
+    def status(self):
+        """ returns the status """
+        if self._status is None:
+            self.__init()
+        return self._status
+    #----------------------------------------------------------------------
+    @property
+    def tileInfo(self):
+        """ returns the tile information """
+        if self._tileInfo is None:
+            self.__init()
+        return self._tileInfo
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """ returns the description """
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        """ returns the full extent """
+        if self._fullExtent is None:
+            self.__init()
+        return self._fullExtent
+    #----------------------------------------------------------------------
+    @property
+    def singleFusedMapCache(self):
+        """ information about the single fused map cache """
+        if self._singleFusedMapCache is None:
+            self.__init()
+        return self._singleFusedMapCache
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """ returns the service name """
+        if self._name is None:
+            self.__init()
+        return self._name
+    #----------------------------------------------------------------------
+    @property
+    def created(self):
+        """ returns the created value """
+        if self._created is None:
+            self.__init()
+        return self._created
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """ returns the maximum scale """
+        if self._maxScale is None:
+            self.__init()
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @property
+    def modified(self):
+        """ returns the modified value """
+        if self._modified is None:
+            self.__init()
+        return self._modified
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """ returns the spatial reference value """
+        if self._spatialReference is None:
+            self.__init()
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """ returns the minimum scale """
+        if self._minScale is None:
+            self.__init()
+        return self._minScale
+    #----------------------------------------------------------------------
+    @property
+    def server(self):
+        """ returns the server information """
+        if self._server is None:
+            self.__init()
+        return self._server
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """ returns the tile services value """
+        if self._tileServers is None:
+            self.__init()
+        return self._tileServers

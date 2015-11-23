@@ -20,7 +20,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -38,8 +38,11 @@ def outputPrinter(message,typeOfMessage='message'):
     else:
         arcpy.AddMessage(message=message)
 
-    print(message)
+    print message
 def main(*argv):
+
+    proxy_port = None
+    proxy_url = None    
 
     layerNames = None
     layerName = None
@@ -52,15 +55,23 @@ def main(*argv):
     existingDef = None
     try:
 
-     
+        securityinfo = {}
+        securityinfo['security_type'] = 'ArcGIS'#LDAP, NTLM, OAuth, Portal, PKI
+
+        securityinfo['proxy_url'] = proxy_url
+        securityinfo['proxy_port'] = proxy_port
+        securityinfo['referer_url'] = None
+        securityinfo['token_url'] = None
+        securityinfo['certificatefile'] = None
+        securityinfo['keyfile'] = None
+        securityinfo['client_id'] = None
+        securityinfo['secret_id'] = None        
         fsId = argv[0]
         layerNames = argv[1]
         sql = argv[2]
         toggleEditCapabilities = argv[3]
 
-        fst = featureservicetools.featureservicetools(proxy_url=None,
-                                                      proxy_port=None,
-                                                      use_arcgis_creds=True)
+        fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid:
 
             fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
@@ -70,6 +81,7 @@ def main(*argv):
                 if str(toggleEditCapabilities).upper() == 'TRUE':
                     existingDef = fst.EnableEditingOnService(url=fs.url)
                 for layerName in layerNames.split(','):
+                    layerName = layerName.strip()
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
                         outputPrinter(message="Attempting to delete features matching this query: %s " % sql)

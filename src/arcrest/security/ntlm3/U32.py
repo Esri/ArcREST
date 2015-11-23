@@ -15,7 +15,8 @@
 # License along with this library.  If not, see <http://www.gnu.org/licenses/> or <http://www.gnu.org/licenses/lgpl.txt>.
 
 from __future__ import division
-import six
+
+import repSix as six
 
 C = 0x1000000000
 

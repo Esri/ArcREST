@@ -56,7 +56,7 @@ def main(*argv):
             arcpy.SetParameterAsText(4, False)
         elif len(g) == 1:
             groups = community.groups
-            groups.deleteGroup(groupID=g[0])
+            groups.deleteGroup(groupId=g[0])
             arcpy.AddWarning("%s was erased." % groupName)
             arcpy.SetParameterAsText(4, True)
         else:

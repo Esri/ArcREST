@@ -1,5 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from ..common.geometry import Point, Polygon, Envelope, SpatialReference
-from .. import AGOLTokenSecurityHandler
 from .._abstract.abstract import BaseGeoEnrichment
 from ..manageorg import Administration
 import json
@@ -38,9 +39,9 @@ class GeoEnrichment(BaseGeoEnrichment):
         admin = Administration(securityHandler=securityHandler,
                                proxy_url=proxy_url,
                                proxy_port=proxy_port)
-        self._base_url = admin.portals().portalSelf().helperServices['geoenrichment']['url']
+        self._base_url = admin.portals.portalSelf.helperServices['geoenrichment']['url']
         del admin
-        self._securityHandler = securityHanlder
+        self._securityHandler = securityHandler
         self._countryCodeFile = os.path.join(os.path.dirname(__file__),
                                              "__countrycodes.csv")
         self._dataCollectionFile = os.path.join(os.path.dirname(__file__),
@@ -50,7 +51,6 @@ class GeoEnrichment(BaseGeoEnrichment):
     #----------------------------------------------------------------------
     def _readcsv(self, path_to_csv):
         """reads a csv column"""
-        import numpy as np
         return np.genfromtxt(path_to_csv,
                              dtype=None,
                              delimiter=',',

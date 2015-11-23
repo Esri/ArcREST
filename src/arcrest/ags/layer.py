@@ -1,13 +1,15 @@
-from .._abstract.abstract import BaseAGSServer
-import json
+from __future__ import absolute_import
+from __future__ import print_function
 import os
-from urlparse import urlparse
+import json
 import uuid
+from six.moves import urllib_parse as urlparse
+from .._abstract.abstract import BaseAGSServer
 from ..security import security
 from .._abstract.abstract import DynamicData, DataSource
-from ..common.spatial import scratchGDB, scratchFolder, featureclass_to_json, json_to_featureclass
+from ..common.spatial import scratchFolder, json_to_featureclass
 from ..common import filters
-from ..common.general import _date_handler, _unicode_convert, Feature, FeatureSet
+from ..common.general import _date_handler, Feature, FeatureSet
 ########################################################################
 class FeatureLayer(BaseAGSServer):
     """
@@ -79,7 +81,8 @@ class FeatureLayer(BaseAGSServer):
                        security.PortalServerSecurityHandler)):
             self._securityHandler = securityHandler
         if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
+            if hasattr(securityHandler, 'referer_url'):
+                self._referer_url = securityHandler.referer_url
         elif securityHandler is None:
             pass
         else:
@@ -104,11 +107,11 @@ class FeatureLayer(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for layer.FeatureLayer."
+                print("%s - attribute not implemented for layer.FeatureLayer." % k)
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
@@ -474,6 +477,10 @@ class FeatureLayer(BaseAGSServer):
         if self.hasAttachments == True:
             url = self._url + "/%s/addAttachment" % featureId
             params = {'f':'json'}
+            if not uploadId is None:
+                params['uploadId'] = uploadId
+            if not gdbVersion is None:
+                params['gdbVersion'] = gdbVersion
             parsed = urlparse(url)
             files = []
             files.append(('attachment', attachment, os.path.basename(attachment)))
@@ -522,7 +529,10 @@ class FeatureLayer(BaseAGSServer):
         dURL = self._url + "/deleteFeatures"
         params = {
             "f": "json",
+            'rollbackOnFailure' : rollbackOnFailure
         }
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
         if geometryFilter is not None and \
            isinstance(geometryFilter, filters.GeometryFilter):
             gfilter = geometryFilter.filter
@@ -574,8 +584,11 @@ class FeatureLayer(BaseAGSServer):
               dictionary of messages
         """
         editURL = self._url + "/applyEdits"
-        params = {"f": "json"
+        params = {"f": "json",
+                  'rollbackOnFailure' : rollbackOnFailure
                   }
+        if not gdbVersion is None:
+            params['gdbVersion'] = gdbVersion
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
@@ -647,8 +660,10 @@ class FeatureLayer(BaseAGSServer):
               maxAllowableOffset=None,
               geometryPrecision=None,
               outSR=None,
-
-              out_fc=None):
+              groupByFieldsForStatistics=None,
+              statisticFilter=None,
+              out_fc=None,
+              **kwargs):
         """ queries a feature service based on a sql statement
             Inputs:
                where - the selection sql statement
@@ -671,6 +686,15 @@ class FeatureLayer(BaseAGSServer):
                                     returned as feature class
                out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
+               groupByFieldsForStatistics - One or more field names on
+                                    which the values need to be grouped for
+                                    calculating the statistics.
+               statisticFilter - object that performs statistic queries
+               kwargs - optional parameters that can be passed to the Query
+                 function.  This will allow users to pass additional
+                 parameters not explicitly implemented on the function. A
+                 complete list of functions available is documented on the
+                 Query REST API.
             Output:
                A list of Feature Objects (default) or a path to the output featureclass if
                returnFeatureClass is set to True.
@@ -684,6 +708,14 @@ class FeatureLayer(BaseAGSServer):
                   "returnDistinctValues" : returnDistinctValues,
                   "returnExtentOnly" : returnExtentOnly
                   }
+        if outSR is not None:
+            params['outSR'] = outSR
+        if not maxAllowableOffset is None:
+            params['maxAllowableOffset'] = maxAllowableOffset
+        if not geometryPrecision is None:
+            params['geometryPrecision'] = geometryPrecision
+        for k,v in kwargs.items():
+            params[k] = v
         if returnDistinctValues:
             params["returnGeometry"] = False
         if not timeFilter is None and \
@@ -700,8 +732,13 @@ class FeatureLayer(BaseAGSServer):
                 params['buffer'] = gf['buffer']
             if "units" in gf:
                 params['units'] = gf['units']
+        if not groupByFieldsForStatistics is None:
+            params['groupByFieldsForStatistics'] = groupByFieldsForStatistics
+        if not statisticFilter is None and \
+           isinstance(statisticFilter, filters.StatisticFilter):
+            params['outStatistics'] = statisticFilter.filter
         fURL = self._url + "/query"
-        results = self._do_get(fURL, params,
+        results = self._do_post(fURL, params,
                                securityHandler=self._securityHandler,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
@@ -815,7 +852,7 @@ class FeatureLayer(BaseAGSServer):
            completeness.
            Values: where | expression | statement
         """
-        url = url + "/validateSQL"
+        url = self._url + "/validateSQL"
         if not sqlType.lower() in ['where', 'expression', 'statement']:
             raise Exception("Invalid Input for sqlType: %s" % sqlType)
         params = {
@@ -867,11 +904,11 @@ class GroupLayer(FeatureLayer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented in GroupLayer."
+                print("%s - attribute not implemented in GroupLayer." % k)
 ########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""

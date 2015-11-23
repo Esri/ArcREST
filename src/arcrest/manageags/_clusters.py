@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
 import json
-from parameters import ClusterProtocol
+from .parameters import ClusterProtocol
 ########################################################################
 class Clusters(BaseAGSServer):
     """
@@ -50,15 +52,15 @@ class Clusters(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Clusters."
+                print( k, " - attribute not implemented in Clusters.")
             del k
             del v
     #----------------------------------------------------------------------
-    def createCluster(self, clusterName, machineNames="", tcpClusterPort=None):
+    def createCluster(self, clusterName, machineNames="", tcpClusterPort=""):
         """
         Creating a new cluster involves defining a clustering protocol that
         will be shared by all server machines participating in the cluster.
@@ -164,11 +166,11 @@ class Cluster(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in Clusters."
+                print( k, " - attribute not implemented in Clusters.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -369,7 +371,7 @@ class Cluster(BaseAGSServer):
         url = self._url + "/editProtocol"
         params = {
             "f" : "json",
-            "clusterProtocol" : str(clusterProtocolObj)
+            "tcpClusterPort" : str(clusterProtocolObj.value['tcpClusterPort'])
         }
         return self._do_post(url=url,
                              param_dict=params,

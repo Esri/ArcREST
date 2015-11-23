@@ -1,5 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
+import six
 from .._abstract.abstract import BaseAGSServer
-from urllib import urlencode, quote_plus
 import json
 ########################################################################
 class UsageReports(BaseAGSServer):
@@ -45,11 +47,11 @@ class UsageReports(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in UsageReports."
+                print( k, " - attribute not implemented in UsageReports.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -71,8 +73,7 @@ class UsageReports(BaseAGSServer):
             self.__init()
         self._reports = []
         for r in self._metrics:
-            url = self._url + "/%s" % quote_plus(r['reportname'])
-            print url
+            url = self._url + "/%s" % six.moves.urllib.parse.quote_plus(r['reportname'])
             self._reports.append(UsageReport(url=url,
                                              securityHandler=self._securityHandler,
                                              proxy_url=self._proxy_url,
@@ -318,7 +319,7 @@ class UsageReport(BaseAGSServer):
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.iteritems():
+        for k,v in json_dict.items():
             if k.lower() == "from":
                 self._from = v
             elif k.lower() == "to":
@@ -326,7 +327,7 @@ class UsageReport(BaseAGSServer):
             elif k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print k, " - attribute not implemented in manageags.UsageReport."
+                print (k, " - attribute not implemented in manageags.UsageReport.")
             del k
             del v
     #----------------------------------------------------------------------
@@ -492,7 +493,7 @@ class UsageReport(BaseAGSServer):
             "f" : "json",
             "filter" : queryFilter
         }
-        url = self._url + "/query"
+        url = self._url + "/data"
         return self._do_post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,

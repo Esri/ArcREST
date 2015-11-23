@@ -30,8 +30,8 @@ def main():
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-    securityinfo['username'] = "<username>"
-    securityinfo['password'] = "<password>"
+    securityinfo['username'] = ""#Username
+    securityinfo['password'] = ""#Password
     securityinfo['org_url'] = "http://www.arcgis.com"
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
@@ -46,24 +46,25 @@ def main():
         
         rst = resettools.resetTools(securityinfo=securityinfo)
         if rst.valid:
-            users = {'users':[{'username':securityinfo['username']}]}
+            
+            users = rst.securityhandler.username# comma delimited list of users  ex: 'User1, User2'
             
             rst.removeUserData(users=users)
             rst.removeUserGroups(users=users) 
         else:
             print rst.message
     except (common.ArcRestHelperError),e:
-        print("error in function: %s" % e[0]['function'])
-        print("error on line: %s" % e[0]['line'])
-        print("error in file name: %s" % e[0]['filename'])
-        print("with error message: %s" % e[0]['synerror'])
+        print "error in function: %s" % e[0]['function']
+        print "error on line: %s" % e[0]['line']
+        print "error in file name: %s" % e[0]['filename']
+        print "with error message: %s" % e[0]['synerror']
         if 'arcpyError' in e[0]:
-            print("with arcpy message: %s" % e[0]['arcpyError'])
+            print "with arcpy message: %s" % e[0]['arcpyError']
     except:
         line, filename, synerror = trace()
-        print("error on line: %s" % line)
-        print("error in file name: %s" % filename)
-        print("with error message: %s" % synerror)
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
 
 if __name__ == "__main__":
     main()
