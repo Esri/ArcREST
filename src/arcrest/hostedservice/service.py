@@ -1,6 +1,7 @@
 import json
 from .._abstract.abstract import BaseAGOLClass, BaseSecurityHandler
 from ..security import security
+import collections
 
 ########################################################################
 class Services(BaseAGOLClass):
@@ -1067,10 +1068,47 @@ class AdminFeatureService(BaseAGOLClass):
            Output:
               JSON Message as dictionary
         """
+        definition = None
+        if json_dict is not None:
+            if isinstance(json_dict,collections.OrderedDict) == True:
+                definition = json_dict
+            else:
+
+                definition = collections.OrderedDict()
+                if 'hasStaticData' in json_dict:
+                    definition['hasStaticData'] = json_dict['hasStaticData']
+                if 'allowGeometryUpdates' in json_dict:
+                    definition['allowGeometryUpdates'] = json_dict['allowGeometryUpdates']
+                if 'capabilities' in json_dict:
+                    definition['capabilities'] = json_dict['capabilities']
+                if 'editorTrackingInfo' in json_dict:
+                    definition['editorTrackingInfo'] = collections.OrderedDict()
+                    if 'enableEditorTracking' in json_dict['editorTrackingInfo']:
+                        definition['editorTrackingInfo']['enableEditorTracking'] = json_dict['editorTrackingInfo']['enableEditorTracking']
+
+                    if 'enableOwnershipAccessControl' in json_dict['editorTrackingInfo']:
+                        definition['editorTrackingInfo']['enableOwnershipAccessControl'] = json_dict['editorTrackingInfo']['enableOwnershipAccessControl']
+
+                    if 'allowOthersToUpdate' in json_dict['editorTrackingInfo']:
+                        definition['editorTrackingInfo']['allowOthersToUpdate'] = json_dict['editorTrackingInfo']['allowOthersToUpdate']
+
+                    if 'allowOthersToDelete' in json_dict['editorTrackingInfo']:
+                        definition['editorTrackingInfo']['allowOthersToDelete'] = json_dict['editorTrackingInfo']['allowOthersToDelete']
+
+                    if 'allowOthersToQuery' in json_dict['editorTrackingInfo']:
+                        definition['editorTrackingInfo']['allowOthersToQuery'] = json_dict['editorTrackingInfo']['allowOthersToQuery']
+                    if isinstance(json_dict['editorTrackingInfo'],dict):
+                        for k,v in json_dict['editorTrackingInfo'].iteritems():
+                            if k not in definition['editorTrackingInfo']:
+                                definition['editorTrackingInfo'][k] = v
+                if isinstance(json_dict,dict):
+                    for k,v in json_dict.iteritems():
+                        if k not in definition:
+                            definition[k] = v
 
         params = {
             "f" : "json",
-            "updateDefinition" : json.dumps(obj=json_dict,separators=(',', ':')),
+            "updateDefinition" : json.dumps(obj=definition,separators=(',', ':')),
             "async" : False
         }
         uURL = self._url + "/updateDefinition"
