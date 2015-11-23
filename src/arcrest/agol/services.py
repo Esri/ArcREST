@@ -760,6 +760,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _serverURL = None
     _supportsValidateSql = None
     _supportsCoordinatesQuantization = None
+    _supportsApplyEditsWithGlobalIds = None
+    _serviceItemId = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -837,6 +839,20 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def url(self):
         """ returns the url for the feature layer"""
         return self._url
+    #----------------------------------------------------------------------
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        """ returns the url for the feature layer"""
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds
+    #----------------------------------------------------------------------
+    @property
+    def serviceItemId(self):
+        """returns the service item id"""
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def administration(self):

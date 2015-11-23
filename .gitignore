@@ -190,7 +190,7 @@ $RECYCLE.BIN/
 #############
 ## Python
 #############
-
+__pycache__
 *.py[co]
 *.pyc
 # Packages
