@@ -1353,7 +1353,7 @@ class publishingtools(securityhandlerhelper):
             if config.has_key("maxRecordCount"):
                 maxRecordCount =  config["maxRecordCount"]
             else:
-                maxRecordCount =1000
+                maxRecordCount = '1000' # If not cast as a string, the MXDtoFeatureServiceDef method called below returns an error stating 'cannot serialize 1000 (type int)'
 
             if config.has_key('DateTimeFormat'):
                 loc_df = config['DateTimeFormat']

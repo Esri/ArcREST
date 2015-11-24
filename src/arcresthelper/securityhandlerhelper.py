@@ -141,9 +141,10 @@ class securityhandlerhelper(object):
                 self._message = "ArcGIS security handler created"
             elif str(securityinfo['security_type']).upper() == 'Portal'.upper() or \
                  str(securityinfo['security_type']).upper() == 'AGOL'.upper():
-                if self._org_url is None or self._org_url =='':
+                if self._org_url is None or self._org_url == '':
                     self._org_url = 'http://www.arcgis.com'
-                if self._username == "" or self._password == "":
+                if self._username is None or self._username == '' or \
+                    self._password is None or self._password == '':
                     self._message = "No username or password, no security handler generated"
                     self._valid = True
                 else:
@@ -164,53 +165,57 @@ class securityhandlerhelper(object):
                         self._message = "Portal security handler created"
 
             elif str(securityinfo['security_type']).upper() == 'NTLM'.upper():
-                if self._username == "" or self._password == "":
+                if self._username is None or self._username == '' or \
+                    self._password is None or self._password == '':
                     self._message = "Username and password required for NTLM"
                     self._valid = False
-                self._securityHandler = security.NTLMSecurityHandler(username=self._username,
-                                                    password=self._password,
-                                                    org_url=self._org_url,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    referer_url=self._referer_url
-                                                     )
-                self._message = "NTLM security handler created"
+                else:
+                    self._securityHandler = security.NTLMSecurityHandler(username=self._username,
+                                                                        password=self._password,
+                                                                        org_url=self._org_url,
+                                                                        proxy_url=self._proxy_url,
+                                                                        proxy_port=self._proxy_port,
+                                                                        referer_url=self._referer_url)
+                    self._message = "NTLM security handler created"
             elif str(securityinfo['security_type']).upper() == 'LDAP'.upper():
-                if self._username == "" or self._password == "":
+                if self._username is None or self._username == '' or \
+                    self._password is None or self._password == '':
                     self._message = "Username and password required for LDAP"
                     self._valid = False
-                self._securityHandler = security.LDAPSecurityHandler(username=self._username,
-                                                    password=self._password,
-                                                    org_url=self._org_url,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    referer_url=self._referer_url
-                                                    )
-                self._message = "LDAP security handler created"
+                else:
+                    self._securityHandler = security.LDAPSecurityHandler(username=self._username,
+                                                                        password=self._password,
+                                                                        org_url=self._org_url,
+                                                                        proxy_url=self._proxy_url,
+                                                                        proxy_port=self._proxy_port,
+                                                                        referer_url=self._referer_url)
+                    self._message = "LDAP security handler created"
             elif str(securityinfo['security_type']).upper() == 'PKI'.upper():
-                if self._keyfile == "" or self._certificatefile == "":
-                    self._message = "key file and certification file required for PKI"
+                if self._keyfile is None or self._keyfile == '' or \
+                    self._certificatefile is None or self._certificatefile == '':
+                    self._message = "Key file and certification file required for PKI"
                     self._valid = False
-                self._securityHandler = security.PKISecurityHandler(keyfile = self._keyfile,
-                                                    certificatefile = self._certificatefile,
-                                                    org_url=self._org_url,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    referer_url=self._referer_url
-                                                    )
-                self._message = "PKI security handler created"
+                else:
+                    self._securityHandler = security.PKISecurityHandler(keyfile = self._keyfile,
+                                                                        certificatefile = self._certificatefile,
+                                                                        org_url=self._org_url,
+                                                                        proxy_url=self._proxy_url,
+                                                                        proxy_port=self._proxy_port,
+                                                                        referer_url=self._referer_url)
+                    self._message = "PKI security handler created"
             elif str(securityinfo['security_type']).upper() == 'OAUTH'.upper():
-                if self._secret_id == "" or self._client_id == "":
+                if self._secret_id is None or self._secret_id == '' or \
+                    self._client_id is None or self._client_id == '':
                     self._message = "client_id and secret_id required for OAUTH"
                     self._valid = False
-                self._securityHandler = security.OAuthSecurityHandler(client_id=self._client_id,
-                                                    secret_id = self._secret_id,
-                                                    org_url=self._org_url,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port
-                                                    )
+                else:                    
+                    self._securityHandler = security.OAuthSecurityHandler(client_id=self._client_id,
+                                                                         secret_id = self._secret_id,
+                                                                         org_url=self._org_url,
+                                                                         proxy_url=self._proxy_url,
+                                                                         proxy_port=self._proxy_port)
 
-                self._message = "OAuth security handler created"
+                    self._message = "OAuth security handler created"
             else:
                 print "No valid security type set"
                 self._message = "No valid security type set"
