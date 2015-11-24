@@ -705,6 +705,7 @@ class FeatureService(abstract.BaseAGOLClass):
             overridden during sync.
            dataFormat - The format of the replica geodatabase returned in the response. The
             default is json.
+            Values: filegdb, json, sqlite, shapefile
            replicaOptions - This parameter instructs the createReplica operation to create a
             new replica based on an existing replica definition (refReplicaId). It can be used
             to specify parameters for registration of existing data for sync. The operation
