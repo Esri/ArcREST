@@ -1831,24 +1831,24 @@ class User(BaseAGOLClass):
             #Added so the root has content to match when in a folder,
             #not sure if this is best practice or not.  Did not add
             #username and created
-            if res['currentFolder'] is None:
-                result_template['currentFolder'] = {
-                    'title': 'root',
-                    'id': None,
-                    'created' : None,
-                    'username' : None
-                }
-                result_template['folders'].insert(0, result_template['currentFolder'])
-            else:
-                result_template['currentFolder'] = res['currentFolder']
+            #if res['currentFolder'] is None:
+                #result_template['currentFolder'] = {
+                    #'title': 'root',
+                    #'id': None,
+                    #'created' : None,
+                    #'username' : None
+                #}
+                #result_template['folders'].insert(0, result_template['currentFolder'])
+            #else:
+            result_template['currentFolder'] = res['currentFolder']
             for item in res['items']:
                 if item not in result_template['items']:
                     result_template['items'].append(item)
-            if 'folders' in res and \
-               folder.lower() == 'root':
-                for folder in res['folders']:
-                    if folder not in result_template['folders']:
-                        result_template['folders'].append(folder)
+            #if 'folders' in res and \
+               #folder.lower() == 'root':
+                #for folder in res['folders']:
+                    #if folder not in result_template['folders']:
+                        #result_template['folders'].append(folder)
 
         self._json_dict = result_template
         self._json = json.dumps(result_template)
@@ -1860,6 +1860,64 @@ class User(BaseAGOLClass):
                 setattr(self, "_"+ k, result_template[k])
             else:
                 print( k, " - attribute not implemented in Content.User class.")
+        
+        self._loadFolders()
+                
+                
+    def _loadFolders(self,
+               start=1,
+               num=100):
+        """
+        Returns the items for the current location of the user's content
+        Inputs:
+           start -  The number of the first entry in the result set
+                    response. The index number is 1-based.
+                    The default value of start is 1 (that is, the first
+                    search result).
+                    The start parameter, along with the num parameter, can
+                    be used to paginate the search results.
+           num - The maximum number of results to be included in the result
+                 set response.
+                 The default value is 10, and the maximum allowed value is
+                 100.
+                 The start parameter, along with the num parameter, can be
+                 used to paginate the search results.
+
+           Output:
+             returns a list of dictionary
+        """
+        url = self.root
+
+        params = {
+            "f" : "json",
+            "num" : num,
+            "start" : start
+        }
+        
+        res =  self._do_get(url=url,
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
+        self._folders = []
+        if 'folders' in res:
+            for folder in res['folders']:
+                self._folders.append(folder)
+        root = { 
+                'title': 'root',
+                'id': None,
+                'created' : None,
+                'username' : None
+                }
+        self._folders.insert(0, root)        
+        if self._currentFolder is None:
+            #self._location = self.root
+            self._currentFolder = {
+                    'title': 'root',
+                    'id': None,
+                    'created' : None,
+                    'username' : None
+                }
     #----------------------------------------------------------------------
     def search(self,
                start=1,
@@ -1895,6 +1953,7 @@ class User(BaseAGOLClass):
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
+
     #----------------------------------------------------------------------
     @property
     def username(self):
@@ -1906,8 +1965,11 @@ class User(BaseAGOLClass):
     @property
     def folders(self):
         '''gets the property value for folders'''
-        if self._folders is None:
+        if self._folders is None :
             self.__init()
+        if self._folders is not None and isinstance(self._folders, list):
+            if len(self._folders) == 0:
+                self._loadFolders()
         return self._folders
     #----------------------------------------------------------------------
     @property
