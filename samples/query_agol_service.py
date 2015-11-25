@@ -1,3 +1,8 @@
+"""
+   Query agol service
+   Python 2.x
+   ArcREST 3.0.1
+"""
 from arcresthelper import securityhandlerhelper
 from arcrest.agol import FeatureService
 from arcrest.common.filters import LayerDefinitionFilter
@@ -5,7 +10,7 @@ from arcrest.common.filters import LayerDefinitionFilter
 if __name__ == "__main__":
     url = ''
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -19,8 +24,8 @@ if __name__ == "__main__":
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
-   
+    securityinfo['secret_id'] = None
+
     shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
     if shh.valid == False:
         print shh.message

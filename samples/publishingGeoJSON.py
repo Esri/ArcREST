@@ -1,3 +1,10 @@
+"""
+   GeoJSON example using addItem
+
+   Python 2/3
+   ArcREST version 3.5.0
+"""
+from __future__ import print_function
 import arcrest
 
 sh = arcrest.AGOLTokenSecurityHandler("user", "password")
@@ -13,4 +20,4 @@ itemId = addedItem['id']
 pp = arcrest.manageorg.PublishGeoJSONParameter()
 pp.name = "Geojsonrocks"
 pp.hasStaticData = True
-print user.publishItem(fileType="geojson", publishParameters=pp, itemId=itemId)
+print( user.publishItem(fileType="geojson", publishParameters=pp, itemId=itemId))

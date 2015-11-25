@@ -1,5 +1,7 @@
 """
    This sample shows how to delete rows from a layer
+   ArcREST version 3.0.1
+   Python 2
 """
 import arcrest
 from arcresthelper import featureservicetools
@@ -24,7 +26,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -38,26 +40,26 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
 
     itemId = "<Item ID>"#<Item ID>
     sql = "1=1"
     layerNames = "layer1, layer2" #layer1, layer2
-    try:      
+    try:
 
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid == False:
             print fst.message
-        else:         
+        else:
 
             fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
             if not fs is None:
-               
+
                 for layerName in layerNames.split(','):
                     fs_url = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=True)
                     if not fs_url is None:
-                        print fst.DeleteFeaturesFromFeatureLayer(url=fs_url, sql=sql, 
+                        print fst.DeleteFeaturesFromFeatureLayer(url=fs_url, sql=sql,
                                                           chunksize=2000)
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
@@ -66,7 +68,7 @@ def main():
         print "with error message: %s" % e[0]['synerror']
         if 'arcpyError' in e[0]:
             print "with arcpy message: %s" % e[0]['arcpyError']
-    
+
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

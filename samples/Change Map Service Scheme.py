@@ -3,7 +3,11 @@
    update that item's URL from http scheme to https.
 
    This method will work for both Portal and ArcGIS Online
+
+   Python 2/3
+   ArcREST 3.5.x
 """
+from __future__ import print_function
 import arcrest
 
 if __name__ == "__main__":

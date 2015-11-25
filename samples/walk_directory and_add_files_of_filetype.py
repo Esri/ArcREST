@@ -1,6 +1,9 @@
 """
    This sample shows how to recursively walk into a parent directory, find all files matching a specific file extension
    and add them to your ArcGIS Online organization.
+
+   Python 2.x
+   ArcREST 3.0.1
 """
 import arcpy.AddMessage
 import os

@@ -4,7 +4,11 @@
 
    It assumes you have ALREADY added the item to the site.
 
+   Python 2/3
+   ArcREST 3.5.0
+
 """
+from __future__ import print_function
 import arcrest
 
 if __name__ == "__main__":
@@ -38,9 +42,9 @@ if __name__ == "__main__":
     publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=tags)
     #   Publish the service to the site
     #
-    print user.publishItem(
+    print (user.publishItem(
         fileType="serviceDefinition",
         itemId=itemId,
-        publishParameters=publishParameters)
+        publishParameters=publishParameters))
 
     #a UserItem is a valid return object

@@ -6,11 +6,13 @@
     - itemid - ID of AGOL item
     - thumbnail(optional) - name of image in the image folder
     - largethumbnail(optional) - name of image in the image folder
-   
+
    A folder with the images is also required
-   
-   
-    
+
+   Python 2.x
+   ArcREST 3.0.1
+
+
 """
 import arcrest
 from arcrest.security import AGOLTokenSecurityHandler
@@ -45,11 +47,11 @@ def main():
     username = "<username>"
     password = "<password>"
     url = "<portal or AGOL url>"
-    
+
     configFiles =  'path to csv file, can be relative to script'
     imageFolder = 'path to image folder, can be relative to script'
 
-    
+
     sciptPath = os.getcwd()
     try:
         print "###############Script Started#################"
@@ -58,23 +60,23 @@ def main():
             imageFolder = os.path.join(sciptPath,imageFolder)
         elif os.path.isabs(imageFolder) == False:
             imageFolder = os.path.join(sciptPath,imageFolder)
-        if os.path.exists(imageFolder) == False:            
+        if os.path.exists(imageFolder) == False:
             print "Image folder %s could not be located" % imageFolderName
             return
         if os.path.isfile(configFiles) == False:
             print "csv file %s could not be located" % configFiles
             return
-            
-              
+
+
         agolSH = AGOLTokenSecurityHandler(username=username,
                                           password=password,org_url=url)
-        
+
         print "Login with token: %s" % agolSH.token
-        
+
         portalAdmin = arcrest.manageorg.Administration(securityHandler=agolSH)
         content = portalAdmin.content
         adminusercontent = content.usercontent()
-        
+
         with open(configFiles, 'rb') as csvfile:
 
             for row in csv.DictReader(csvfile,dialect='excel'):
@@ -84,16 +86,16 @@ def main():
                 itemid = row['itemid']
                 item = content.getItem(itemid)
                 itemParams = arcrest.manageorg.ItemParameter()
-            
-            
-                 
+
+
+
                 if 'thumbnail' in row:
                     print "%s to be applied to thumbnail of %s" % (row['thumbnail'],itemid )
                     image = os.path.join(imageFolder,row['thumbnail'])
                     if os.path.isfile(image):
-                        
+
                         itemParams.thumbnail = image
-                        
+
                     else:
                         print "image %s could not be located" % row['thumbnail']
                 if 'largethumbnail' in row:
@@ -101,12 +103,12 @@ def main():
                     largeimage = os.path.join(imageFolder,row['largethumbnail'])
                     if os.path.isfile(largeimage):
                         itemParams.largeThumbnail = largeimage
-                        
+
                     else:
-                        print "image %s could not be located" % row['largethumbnail']                
+                        print "image %s could not be located" % row['largethumbnail']
                 print adminusercontent.updateItem(itemId = itemid,
                                                 updateItemParameters=itemParams,
-                                                folderId=item.ownerFolder)                                   
+                                                folderId=item.ownerFolder)
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line
@@ -116,6 +118,6 @@ def main():
     finally:
         print datetime.datetime.now().strftime(dateTimeFormat)
         print "###############Script Completed#################"
-        
+
 if __name__ == "__main__":
-    main()   
+    main()

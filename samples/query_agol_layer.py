@@ -1,3 +1,4 @@
+from __future__ import print_function
 from arcrest.security import AGOLTokenSecurityHandler
 from arcrest.agol import FeatureLayer
 
@@ -7,10 +8,10 @@ if __name__ == "__main__":
     url = "<URL to Feature Layer>"
     proxy_port = None
     proxy_url = None
-    
+
     agolSH = AGOLTokenSecurityHandler(username=username,
                                       password=password)
-    
+
     fl = FeatureLayer(
         url=url,
         securityHandler=agolSH,
@@ -18,5 +19,4 @@ if __name__ == "__main__":
         proxy_url=proxy_url,
         initialize=True)
 
-    print fl.query(where="1=1",out_fields='*',returnGeometry=False) 
-   
+    print (fl.query(where="1=1",out_fields='*',returnGeometry=False) )
