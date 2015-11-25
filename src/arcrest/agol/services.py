@@ -791,6 +791,37 @@ class FeatureService(abstract.BaseAGOLClass):
                                  proxy_port=self._proxy_port)
         return None
     #----------------------------------------------------------------------
+    def synchronizeReplica(self,
+                           replicaID,
+                           transportType="esriTransportTypeUrl",
+                           replicaServerGen=None,
+                           returnIdsForAdds=False,
+                           edits=None,
+                           returnAttachmentDatabyURL=False,
+                           async=False,
+                           syncDirection="snapshot",
+                           syncLayers="perReplica",
+                           editsUploadID=None,
+                           editsUploadFormat=None,
+                           dataFormat="json",
+                           rollbackOnFailure=True):
+        """
+        TODO: implement synchronize replica
+        http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r3000000vv000000
+        """
+        params = {
+            "f" : "json",
+            "replicaID" : replicaID,
+            "transportType" : transportType,
+            "dataFormat" : dataFormat,
+            "rollbackOnFailure" : rollbackOnFailure,
+            "async" : async,
+            "returnIdsForAdds": returnIdsForAdds,
+            "syncDirection" : syncDirection,
+            "returnAttachmentDatabyURL" : returnAttachmentDatabyURL
+        }
+        return
+    #----------------------------------------------------------------------
     def replicaStatus(self, url):
         """gets the replica status when exported async set to True"""
         params = {"f" : "json"}
