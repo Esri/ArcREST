@@ -1,8 +1,10 @@
 """
    This sample shows how to add an item to
    AGOL/Portal using ArcREST
-
+   ArcREST version 3.5.x
+   Python 2/3
 """
+from __future__ import print_function
 import arcrest
 
 if __name__ == "__main__":
@@ -17,12 +19,12 @@ if __name__ == "__main__":
     #   Create the administration connection
     #
     admin = arcrest.manageorg.Administration(url, securityHandler)
-    #   Connect to the portal
-    #
-    portal = admin.portals(portalId)
     #   Access the content properties to add the item
     #
     content = admin.content
+    #   Access the user to add the item to
+    #
+    user = content.users.user() # gets the logged in user.
     #   Provide the item parameters
     #
 
@@ -31,11 +33,7 @@ if __name__ == "__main__":
     itemParams.title = "KML FILE"
     itemParams.type = "KML"
     itemParams.tags = "KML,Google,test"
-    #   Enter in the username you wish to load the item to
+    #   Add the item
     #
-    usercontent = content.usercontent(username=username)
-    print usercontent.addItem(filePath=kml_path,
-                              itemParameters=itemParams)
-
-    # sample result message
-    #   {"success" : true,"id" : "<item id>","folder" : null}
+    print (user.addItem(filePath=kml_path,
+                       itemParameters=itemParams))

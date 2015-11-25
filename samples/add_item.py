@@ -1,5 +1,7 @@
 """
    This sample shows how to add an item
+   version 3.0.1
+   Python 2
 """
 import arcrest
 from arcresthelper import securityhandlerhelper
@@ -22,7 +24,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -36,19 +38,19 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
     upload_file = r"c:\test\test.png"
-    try:      
+    try:
 
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo)
         if shh.valid == False:
             print shh.message
-        else:        
+        else:
             admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-            content = admin.content        
+            content = admin.content
             userInfo = content.users.user()
-    
+
             itemParams = arcrest.manageorg.ItemParameter()
             itemParams.title = 'Sample'
             #itemParams.thumbnail = None
@@ -74,13 +76,13 @@ def main():
                          "ArcGIS Desktop Add-In", "ArcGIS Explorer Add-In",
                          "ArcGIS Explorer application configuration", "ArcGIS Explorer document"
             """
-            itemParams.type = "Image" 
+            itemParams.type = "Image"
             itemParams.overwrite = True
             itemParams.description = "Test File"
             itemParams.tags = "tags"
             itemParams.snippet = "Test File"
-            itemParams.typeKeywords = "Data,Image,png"           
-            itemParams.filename = upload_file        
+            itemParams.typeKeywords = "Data,Image,png"
+            itemParams.filename = upload_file
             item = userInfo.addItem(
                 itemParameters=itemParams,
                 overwrite=True,
@@ -93,9 +95,9 @@ def main():
 
     except:
         line, filename, synerror = trace()
-        print "error on line: %s" % line 
-        print "error in file name: %s" % filename 
-        print "with error message: %s" % synerror 
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,10 @@
 """
    This sample shows how to add a Web Map
    AGOL using ArcREST
-
+   version 3.5.x
+   Python 2/3
 """
+from __future__ import print_function
 import arcrest
 import json
 if __name__ == "__main__":
@@ -87,12 +89,12 @@ if __name__ == "__main__":
     #   Create the administration connection
     #
     admin = arcrest.manageorg.Administration(url, securityHandler)
-    #   Connect to the portal
-    #
-    portal = admin.portals(portalId)
     #   Access the content properties to add the item
     #
     content = admin.content
+    #   Get the user
+    #
+    user = content.users.user()
     #   Provide the item parameters
     #
     itemParams = arcrest.manageorg.ItemParameter()
@@ -101,14 +103,9 @@ if __name__ == "__main__":
     itemParams.type = "Web Map"
     itemParams.tags = "Map, Earthquake"
     itemParams.extent = "-180,-80.1787,180, 80.1787"
-    #   Enter in the username you wish to load the item to
-    #
-    usercontent = content.usercontent(username=username)
+
     #   Add the Web Map
     #
-    print usercontent.addItem(itemParameters=itemParams,
+    print user.addItem(itemParameters=itemParams,
                               overwrite=True,
                               text=json.dumps(map_json))
-
-    # sample result message
-    #   {"success" : true,"id" : "<item id>","folder" : null}

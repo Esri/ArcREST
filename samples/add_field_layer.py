@@ -2,8 +2,11 @@
 """
    This sample shows how to add a field to a set of layers
    from their rest services url
+   version 3.5.x
+   Python 2/3
 
 """
+from __future__ import print_function
 from arcrest.security import AGOLTokenSecurityHandler
 from arcrest.agol import FeatureLayer
 
@@ -13,10 +16,10 @@ if __name__ == "__main__":
     urls = ["url to layer","url to layer"]
     proxy_port = None
     proxy_url = None
-    
+
     agolSH = AGOLTokenSecurityHandler(username=username,
                                       password=password)
-    
+
     for url in urls:
         fl = FeatureLayer(
             url=url,
@@ -26,7 +29,7 @@ if __name__ == "__main__":
             initialize=True)
         adminFl = fl.administration
         fieldToAdd = {
-    
+
             "fields" : [
                 {
                     "name" : "CommonField2",
@@ -39,5 +42,4 @@ if __name__ == "__main__":
                     "defaultValue" : None
                 }  ]
         }
-        print adminFl.addToDefinition(fieldToAdd)
-  
+        print (adminFl.addToDefinition(fieldToAdd))

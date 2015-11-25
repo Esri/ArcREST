@@ -1,7 +1,8 @@
 """
-   This sample shows how to append a featureclass 
+   This sample shows how to append a featureclass
    to a feature service using ArcRest and ArcRestHelper
-
+   version 3.0.1
+   Python 2
 """
 import arcrest, json
 from arcresthelper import featureservicetools
@@ -24,9 +25,9 @@ def trace():
     return line, filename, synerror
 
 if __name__ == "__main__":
-   
+
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -40,31 +41,31 @@ if __name__ == "__main__":
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
-    
+
     itemId = ""#<Item ID>
     layerName=''#Name of layer in the service
     fc=r''#Path to Feature Class
-    atTable=None   
-    try:   
+    atTable=None
+    try:
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid == False:
             print fst.message
-        else:         
+        else:
 
             fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
             if not fs is None:
 
                 fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                 if not fl is None:
-                    results = fl.addFeatures(fc=fc,attachmentTable=atTable)        
+                    results = fl.addFeatures(fc=fc,attachmentTable=atTable)
                     print json.dumps(results)
                 else:
-                    print "Layer %s was not found, please check your credentials and layer name" % layerName     
+                    print "Layer %s was not found, please check your credentials and layer name" % layerName
             else:
-                print "Feature Service with id %s was not found" % fsId                                               
-          
+                print "Feature Service with id %s was not found" % fsId
+
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line
