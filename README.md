@@ -33,14 +33,15 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 * ArcPy (optional)
 * ArcGIS Desktop 10.2.x, 10.3.x (optional)
   - If ArcPy is not installed, there will be limited functionality.
-## Installation
 
+## Installation
 To install the package, run the setup.py.  This should copy it to your python's site-package folder.
 
 Installing the Requirements
-   pip install -r requirements.txt
+    - pip install -r requirements.txt
+
 Running Installation Code:
-   python.exe setup.py install
+    - python.exe setup.py install
 
 ## Issues
 
