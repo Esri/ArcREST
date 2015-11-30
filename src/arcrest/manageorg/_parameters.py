@@ -334,6 +334,8 @@ class PortalParameters(BaseParameters):
     """
     The following parameters represent the properties of a portal
     """
+    _contacts = None
+    _authorizedCrossOriginDomains = None
     _canSharePublic = None
     _subscriptionInfo = None
     _defaultExtent = None
@@ -403,7 +405,9 @@ class PortalParameters(BaseParameters):
     _region = None
     _portalMode = None
     _creditAssignments = None
-    __allowed_keys = ["canSharePublic","subscriptionInfo","defaultExtent","supportsHostedServices",
+    __allowed_keys = ["creditAssignments", "contacts", "canSharePublic",
+                      "subscriptionInfo","defaultExtent",
+                      "supportsHostedServices", "authorizedCrossOriginDomains",
                       "homePageFeaturedContentCount","supportsOAuth","portalName","urlKey",
                       "databaseUsage","culture","helpBase","galleryTemplatesGroupQuery",
                       "commentsEnabled","metadataEditable","databaseQuota","id","canSearchPublic",
@@ -466,6 +470,28 @@ class PortalParameters(BaseParameters):
         """gets/sets the property value subscriptionInfo"""
         if value is not None:
             self._subscriptionInfo = value
+    #----------------------------------------------------
+    @property
+    def contacts(self):
+        """gets/sets the property value contacts"""
+        return self._contacts
+    #----------------------------------------------------
+    @contacts.setter
+    def contacts(self,value):
+        """gets/sets the property value contacts"""
+        if value is not None:
+            self._contacts = value
+    #----------------------------------------------------
+    @property
+    def authorizedCrossOriginDomains(self):
+        """gets/sets the property value authorizedCrossOriginDomains"""
+        return self._contacts
+    #----------------------------------------------------
+    @authorizedCrossOriginDomains.setter
+    def authorizedCrossOriginDomains(self,value):
+        """gets/sets the property value authorizedCrossOriginDomains"""
+        if value is not None:
+            self._contacts = value
     #----------------------------------------------------
     @property
     def defaultExtent(self):
