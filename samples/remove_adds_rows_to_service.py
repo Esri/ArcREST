@@ -1,5 +1,8 @@
 """
    This sample shows how to delete rows from a layer
+
+   Python 2.x
+   ArcREST 3.0.1
 """
 import arcrest
 from arcresthelper import featureservicetools
@@ -25,7 +28,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -39,34 +42,34 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
 
     itemId = ""#<Item ID>
-   
+
     layerName = "" #layer1
     id_field ='PARCELID' # ID Field
-    
+
     pathToFeatureClass = r""#Path to FC
-    try:      
+    try:
         startTime = datetime.datetime.now()
         print "Starting process at %s" % (configFile,startTime.strftime(dateTimeFormat))
-            
+
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid == False:
             print fst.message
-        else:         
+        else:
 
             fs = fst.GetFeatureService(itemId=itemId,returnURLOnly=False)
             if not fs is None:
-               
+
                 fs_url = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=True)
                 if not fs_url is None:
                     results =  fst.RemoveAndAddFeatures(url=fs_url,
                                                         pathToFeatureClass=pathToFeatureClass,
                                                         id_field=id_field,
                                                       chunksize=50)
-                    
+
         print "process completed in %s" % (configFile, str(datetime.datetime.now() - startTime))
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
@@ -75,7 +78,7 @@ def main():
         print "with error message: %s" % e[0]['synerror']
         if 'arcpyError' in e[0]:
             print "with arcpy message: %s" % e[0]['arcpyError']
-    
+
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

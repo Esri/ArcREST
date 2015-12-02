@@ -1,5 +1,8 @@
 """
    This sample shows how to update tan item
+
+   Python 2.x
+   ArcREST 3.0.1
 """
 import arcrest
 from arcresthelper import securityhandlerhelper
@@ -22,7 +25,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -36,23 +39,23 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
 
-    itemId = "<ID if item>"    
+    itemId = "<ID if item>"
     upload_file = r"<Path to File>"
-    try:      
+    try:
 
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo)
         if shh.valid == False:
             print shh.message
-        else:        
+        else:
             portalAdmin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
             item = portalAdmin.content.getItem(itemId=itemId).userItem
-            
+
             itemParams = arcrest.manageorg.ItemParameter()
-            
-            itemParams.filename = upload_file        
+
+            itemParams.filename = upload_file
             res = item.updateItem(itemParameters=itemParams,
                                     clearEmptyFields=True,
                                     data=None,
@@ -64,9 +67,9 @@ def main():
 
     except:
         line, filename, synerror = trace()
-        print "error on line: %s" % line 
-        print "error in file name: %s" % filename 
-        print "with error message: %s" % synerror 
+        print "error on line: %s" % line
+        print "error in file name: %s" % filename
+        print "with error message: %s" % synerror
 
 if __name__ == "__main__":
     main()

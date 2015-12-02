@@ -1,3 +1,9 @@
+"""
+   Toggle editting script
+
+   Python 2.x
+   ArcREST 3.0.1
+"""
 from arcresthelper import securityhandlerhelper
 from arcresthelper import featureservicetools
 import os
@@ -5,7 +11,7 @@ import os
 if __name__ == "__main__":
 
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI, ArcGIS

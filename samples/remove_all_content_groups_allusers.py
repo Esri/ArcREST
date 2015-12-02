@@ -2,6 +2,8 @@
    This sample shows how to loop through all users
    and delete all their content and groups
 
+   Python 2.x
+   ArcREST 3.0.1
 """
 
 import arcrest
@@ -26,7 +28,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -40,17 +42,17 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
+    securityinfo['secret_id'] = None
 
     try:
-        
+
         rst = resettools.resetTools(securityinfo=securityinfo)
         if rst.valid:
-            
+
             users = rst.securityhandler.username# comma delimited list of users  ex: 'User1, User2'
-            
+
             rst.removeUserData(users=users)
-            rst.removeUserGroups(users=users) 
+            rst.removeUserGroups(users=users)
         else:
             print rst.message
     except (common.ArcRestHelperError),e:

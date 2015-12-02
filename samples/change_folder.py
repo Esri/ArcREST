@@ -3,7 +3,10 @@
    This sample shows how to loop through the folders
    and print their titles
 
+   Python 2/3
+   ArcREST version 3.5.x
 """
+from __future__ import print_function
 from arcrest.security import AGOLTokenSecurityHandler
 import arcrest
 
@@ -15,15 +18,15 @@ if __name__ == "__main__":
 
     agolSH = AGOLTokenSecurityHandler(username=username,
                                       password=password)
-    
-    
+
+
     admin = arcrest.manageorg.Administration(securityHandler=agolSH)
     content = admin.content
     user = content.users.user()
-    
+
     for folder in user.folders:
         title = folder['title']
         print("Analyzing {}".format(title))
         user.currentFolder = title
         print("Current folder is {}".format(user.currentFolder))
-        print("Current folder has {} items".format(len(user.items))) 
+        print("Current folder has {} items".format(len(user.items)))

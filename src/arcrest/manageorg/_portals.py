@@ -109,6 +109,7 @@ class Portal(BaseAGOLClass):
     administrators. Publishers and information workers can view users and
     resources of the organization.
     """
+    _bingKey = None
     _authorizedCrossOriginDomains = None
     _url = None
     _securityHandler = None
@@ -264,6 +265,13 @@ class Portal(BaseAGOLClass):
     #def tileServers(self):
         #""""""
         #return
+    #----------------------------------------------------------------------
+    @property
+    def bingKey(self):
+        '''gets the property value for bingKey'''
+        if self._bingKey is None:
+            self.__init()
+        return self._bingKey
     #----------------------------------------------------------------------
     @property
     def subscriptionInfo(self):

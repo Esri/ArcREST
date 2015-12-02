@@ -5,7 +5,7 @@
     @company: Esri
     @version: 1.0.0
     @description:  Querys a layer using ArcMap Creds.
-    @requirements: Python 2.7.x, ArcGIS 10.3, ArcREST 2.x
+    @requirements: Python 2.7.x, ArcGIS 10.3, ArcREST 3.5.0
     @copyright: Esri, 2015
 """
 import os

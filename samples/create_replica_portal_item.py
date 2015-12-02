@@ -1,8 +1,11 @@
 """
-   This sample shows how to create a 
+   This sample shows how to create a
    replica from portal of a feature service.
    The replica is saved locally and on the
    portal in a .zip file.
+
+   ArcREST version 3.0.1
+   Python 2
 
 """
 import arcrest
@@ -28,7 +31,7 @@ def trace():
 
 if __name__ == "__main__":
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -42,23 +45,23 @@ if __name__ == "__main__":
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None  
-    
+    securityinfo['secret_id'] = None
+
     itemId = ""#<Id of feature service item>
     savePath = r"c:\temp"#<Path to save replica>
-    try:      
+    try:
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
         if shh.valid == False:
             print shh.message
         else:
             admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
-             
+
             item = admin.content.getItem(itemId)
             user = admin.content.users.user(username=item.owner)
-           
+
             exportParameters = {"layers":[
                                    {
-                                       "id": 0, 
+                                       "id": 0,
                                        "where": "OBJECTID = 1"
                                        }]
                                }
@@ -70,8 +73,8 @@ if __name__ == "__main__":
             exportItemId = res.id
             exportItem = admin.content.getItem(exportItemId)
             itemDataPath = exportItem.itemData(f=None, savePath=savePath)
-            print exportItem.userItem.deleteItem()         
-            
+            print exportItem.userItem.deleteItem()
+
             print itemDataPath
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']

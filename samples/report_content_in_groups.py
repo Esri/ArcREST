@@ -1,6 +1,9 @@
 """
    This sample shows how to create a list in json
    of all items in a group
+
+   Python 2.x
+   ArcREST 3.0.1
 """
 import arcrest
 import os
@@ -36,7 +39,7 @@ def _unicode_convert(obj):
 
 if __name__ == "__main__":
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -50,8 +53,8 @@ if __name__ == "__main__":
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
-      
+    securityinfo['secret_id'] = None
+
     groups = ["Demographic Content"] #Name of groups
     outputlocation = r"C:\TEMP"
     outputfilename = "group.json"
@@ -64,18 +67,18 @@ if __name__ == "__main__":
         if orgt.valid:
             fileName = os.path.join(outputlocation,outputfilename)
             csvFile = os.path.join(outputlocation,outputitemID)
-            iconPath = os.path.join(outputlocation,"icons")  
+            iconPath = os.path.join(outputlocation,"icons")
             if not os.path.exists(iconPath):
-                os.makedirs(iconPath)                                                    
-            file = open(fileName, "w")  
+                os.makedirs(iconPath)
+            file = open(fileName, "w")
             with open(csvFile, 'wb') as csvfile:
                 idwriter = csv.writer(csvfile, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)                
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
                 for groupName in groups:
                     results = orgt.getGroupContent(groupName=groupName,
                                                    onlyInOrg=True,
-                                                   onlyInUser=True)  
-                   
+                                                   onlyInUser=True)
+
                     if not results is None:
                         for result in results:
                             idwriter.writerow([result['title'],result['id']])
@@ -84,11 +87,11 @@ if __name__ == "__main__":
                                                               filePath=iconPath)
                             result['thumbnail']=thumbLocal
                             groupRes.append(result)
-                       
+
                 if len(groupRes) > 0:
                     print "%s items found" % str(len(groupRes))
                     groupRes = _unicode_convert(groupRes)
-                    file.write(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': ')))                                              
+                    file.write(json.dumps(groupRes, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ': ')))
             file.close()
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
@@ -96,7 +99,7 @@ if __name__ == "__main__":
         print "error in file name: %s" % e[0]['filename']
         print "with error message: %s" % e[0]['synerror']
         if 'arcpyError' in e[0]:
-            print "with arcpy message: %s" % e[0]['arcpyError']            
+            print "with arcpy message: %s" % e[0]['arcpyError']
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line

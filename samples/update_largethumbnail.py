@@ -1,6 +1,8 @@
 """
    This sample shows how to update the
    large thumbnail of an item
+   Python 2.x
+   ArcREST 3.0.1
 """
 import arcrest
 from arcresthelper import securityhandlerhelper
@@ -24,7 +26,7 @@ def trace():
 
 def main():
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     securityinfo = {}
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
@@ -38,11 +40,11 @@ def main():
     securityinfo['certificatefile'] = None
     securityinfo['keyfile'] = None
     securityinfo['client_id'] = None
-    securityinfo['secret_id'] = None   
-    
+    securityinfo['secret_id'] = None
+
     itemId = "" #Item ID
     pathToImage = r"" #Path to image
-      
+
     try:
         shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
         if shh.valid == False:
@@ -53,9 +55,9 @@ def main():
 
             item = content.getItem(itemId)
             itemParams = arcrest.manageorg.ItemParameter()
-           
+
             itemParams.largeThumbnail = pathToImage
-        
+
             print item.userItem.updateItem(itemParameters=itemParams)
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
@@ -72,4 +74,4 @@ def main():
         print "with error message: %s" % synerror
 
 if __name__ == "__main__":
-    main()        
+    main()

@@ -14,5 +14,6 @@ setup(
               'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
               'arcrest/enrichment', 'arcrest/security/ntlm3'],
     package_data = {'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},
+    install_requires=['six'],
     package_dir={'':''}
     )
