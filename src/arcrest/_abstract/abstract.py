@@ -13,6 +13,10 @@ import calendar
 import glob
 import mimetypes
 import os
+class BaseOpenData(BaseWebOperations):
+    """ base opendata site"""
+    pass
+########################################################################
 class BaseGeoEnrichment(BaseWebOperations):
     """ base geoenrichment class """
     pass

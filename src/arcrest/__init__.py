@@ -10,6 +10,7 @@ from . import manageorg
 from . import manageags
 from . import manageportal
 from . import hostedservice
+from . import opendata
 #import webmap
 from .geometryservice import *
 from .enrichment import GeoEnrichment
