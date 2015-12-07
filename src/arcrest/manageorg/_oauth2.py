@@ -25,6 +25,7 @@ class oauth2(BaseAGOLClass):
             self._referer_url = securityHandler.referer_url
         self._proxy_url = proxy_url
     #----------------------------------------------------------------------
+    @property
     def root(self):
         """ returns the root url for OAuth2 resources """
         return self._url
