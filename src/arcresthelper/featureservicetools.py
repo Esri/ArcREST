@@ -12,15 +12,15 @@ from arcrest.common.general import FeatureSet
 import datetime, time
 import json
 import os
-import common 
+import common
 import gc
 try:
     import arcpy
     arcpyFound = True
 except:
     arcpyFound = False
-import traceback, inspect, sys 
-import collections        
+import traceback, inspect, sys
+import collections
 #----------------------------------------------------------------------
 def trace():
     """
@@ -28,7 +28,7 @@ def trace():
         and error message and returns it
         to the user
     """
-   
+
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -44,14 +44,14 @@ class featureservicetools(securityhandlerhelper):
     def RemoveAndAddFeatures(self, url, pathToFeatureClass,id_field,chunksize=1000):
         fl = None
 
-        try:  
+        try:
             if arcpyFound == False:
                 raise common.ArcRestHelperError({
                     "function": "RemoveAndAddFeatures",
                     "line": inspect.currentframe().f_back.f_lineno,
                     "filename":  'featureservicetools',
                     "synerror": "ArcPy required for this function"
-                })                                  
+                })
             arcpy.env.overwriteOutput = True
             tempaddlayer= 'ewtdwedfew'
             if not arcpy.Exists(pathToFeatureClass):
@@ -61,8 +61,8 @@ class featureservicetools(securityhandlerhelper):
                     "filename":  'featureservicetools',
                     "synerror": "%s does not exist" % pathToFeatureClass
                      }
-                    )  
-            
+                    )
+
             fields = arcpy.ListFields(pathToFeatureClass,wild_card=id_field)
             if len(fields) == 0:
                 raise common.ArcRestHelperError({
@@ -70,82 +70,82 @@ class featureservicetools(securityhandlerhelper):
                     "line": inspect.currentframe().f_back.f_lineno,
                     "filename":  'featureservicetools',
                     "synerror": "%s field does not exist" % id_field
-                })                  
+                })
             strFld = True
             if fields[0].type != 'String':
-                strFld = False            
+                strFld = False
 
             fl = FeatureLayer(
                     url=url,
-                    securityHandler=self._securityHandler)        
-            
+                    securityHandler=self._securityHandler)
+
             id_field_local = arcpy.AddFieldDelimiters(pathToFeatureClass, id_field)
             idlist = []
             print arcpy.GetCount_management(in_rows=pathToFeatureClass).getOutput(0) + " features in the layer"
             with arcpy.da.SearchCursor(pathToFeatureClass, (id_field)) as cursor:
                 allidlist = []
-                
+
                 for row in cursor:
-                    
+
                     if (strFld):
                         idlist.append("'" + row[0] +"'")
                     else:
                         idlist.append(row[0])
                     if len(idlist) >= chunksize:
                         allidlist.append(idlist)
-                        idlist = []     
-                
+                        idlist = []
+
                 if len(idlist) > 0:
                     allidlist.append(idlist)
                 for idlist in allidlist:
                     idstring = ' in (' + ','.join(idlist) + ')'
                     sql = id_field + idstring
                     sqlLocalFC = id_field_local + idstring
-                    results = fl.deleteFeatures(where=sql, 
+                    results = fl.deleteFeatures(where=sql,
                                                 rollbackOnFailure=True)
-                
+
                     if 'error' in results:
                         raise common.ArcRestHelperError({
                             "function": "RemoveAndAddFeatures",
                             "line": inspect.currentframe().f_back.f_lineno,
                             "filename":  'featureservicetools',
                             "synerror":results['error']
-                        })                               
+                        })
                     elif 'deleteResults' in results:
                         print "%s features deleted" % len(results['deleteResults'])
                         for itm in results['deleteResults']:
                             if itm['success'] != True:
-                                print itm                            
+                                print itm
                     else:
-                        print results                                                        
-                
+                        print results
+
                     arcpy.MakeFeatureLayer_management(pathToFeatureClass,tempaddlayer,sqlLocalFC)
                     results = fl.addFeatures(fc=tempaddlayer)
-                
+
                     if 'error' in results:
                         raise common.ArcRestHelperError({
                             "function": "RemoveAndAddFeatures",
                             "line": inspect.currentframe().f_back.f_lineno,
                             "filename":  'featureservicetools',
                             "synerror":results['error']
-                        })                               
+                        })
                     elif 'addResults' in results:
                         print "%s features added" % len(results['addResults'])
                         for itm in results['addResults']:
                             if itm['success'] != True:
                                 print itm
                     else:
-                        print results                               
-                    idlist = []                 
+                        print results
+                    idlist = []
             if 'error' in results:
                 raise common.ArcRestHelperError({
                     "function": "RemoveAndAddFeatures",
                     "line": inspect.currentframe().f_back.f_lineno,
                     "filename":  'featureservicetools',
                     "synerror":results['error']
-                })                               
+                })
             else:
-                print results            
+                print results
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -155,7 +155,7 @@ class featureservicetools(securityhandlerhelper):
                 "synerror": synerror,
                 "arcpyError": arcpy.GetMessages(2),
             }
-                           )  
+                           )
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -166,28 +166,28 @@ class featureservicetools(securityhandlerhelper):
                                         }
                                         )
         finally:
-            
-            gc.collect()    
-        
+
+            gc.collect()
+
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
-       
+
         if definition is None:
             definition = collections.OrderedDict()
             definition['hasStaticData'] = False
-         
-           
+
+
             definition['allowGeometryUpdates'] = True
-           
+
             definition['editorTrackingInfo'] = {}
             definition['editorTrackingInfo']['enableEditorTracking'] = False
             definition['editorTrackingInfo']['enableOwnershipAccessControl'] = False
             definition['editorTrackingInfo']['allowOthersToUpdate'] = True
             definition['editorTrackingInfo']['allowOthersToDelete'] = True
             definition['capabilities'] = "Query,Editing,Create,Update,Delete"
-    
-          
+
+
         existingDef = {}
 
         existingDef['capabilities']  = adminFS.capabilities
@@ -204,11 +204,11 @@ class featureservicetools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def disableSync(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
-        
+
         cap = str(adminFS.capabilities)
         existingDef = {}
-    
-        enableResults = 'skipped'      
+
+        enableResults = 'skipped'
         if 'Sync' in cap:
             capItems = cap.split(',')
             if 'Sync' in capItems:
@@ -216,7 +216,7 @@ class featureservicetools(securityhandlerhelper):
 
             existingDef['capabilities'] = ','.join(capItems)
             enableResults = adminFS.updateDefinition(json_dict=existingDef)
-    
+
             if 'error' in enableResults:
                 return enableResults['error']
         adminFS = None
@@ -244,7 +244,7 @@ class featureservicetools(securityhandlerhelper):
                        url=item.url,
                        securityHandler=self._securityHandler)
             return None
-        
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -270,7 +270,7 @@ class featureservicetools(securityhandlerhelper):
                     securityHandler=self._securityHandler)
 
             return self.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=returnURLOnly)
-        
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -312,7 +312,7 @@ class featureservicetools(securityhandlerhelper):
                     else:
                         return table
             return None
-      
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -342,49 +342,52 @@ class featureservicetools(securityhandlerhelper):
                 "line": inspect.currentframe().f_back.f_lineno,
                 "filename":  'featureservicetools',
                 "synerror": "ArcPy required for this function"
-            })               
+            })
         fl = None
         try:
             fl = FeatureLayer(
                    url=url,
                    securityHandler=self._securityHandler)
-                        
+
             if chunksize > 0:
                 messages = {'addResults':[]}
                 total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
                 if total == '0':
                     print "0 features in %s" % pathToFeatureClass
-                    return "0 features in %s" % pathToFeatureClass                
+                    return "0 features in %s" % pathToFeatureClass
                 arcpy.env.overwriteOutput = True
-                inDesc = arcpy.Describe(pathToFeatureClass)
-                oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
-                sql = '%s = (select min(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
-                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
-                minOID = cur.next()[0]
-                del cur, sql
-                sql = '%s = (select max(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
-                cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
-                maxOID = cur.next()[0]
-                del cur, sql
-                breaks = range(minOID,maxOID)[0:-1:chunksize] 
-                breaks.append(maxOID+1)
-                exprList = [oidName + ' >= ' + str(breaks[b]) + ' and ' + \
-                            oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
-                for expr in exprList:
-                    UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
-                    result = fl.addFeatures(fc=UploadLayer)
-                    if messages is None:
-                        messages = result
-                    else:
-                        if 'addResults' in result:
-                            if 'addResults' in messages:
-                                messages['addResults'] = messages['addResults'] + result['addResults']
-                                print "%s/%s features added" % (len(messages['addResults']),total)
-                            else:
-                                messages['addResults'] = result['addResults']
-                                print "%s/%s features added" % (len(messages['addResults']),total)
+                if int(total) < int(chunksize):
+                    return fl.addFeatures(fc=pathToFeatureClass)
+                else:
+                    inDesc = arcpy.Describe(pathToFeatureClass)
+                    oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
+                    sql = '%s = (select min(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                    cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                    minOID = cur.next()[0]
+                    del cur, sql
+                    sql = '%s = (select max(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
+                    cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
+                    maxOID = cur.next()[0]
+                    del cur, sql
+                    breaks = range(minOID,maxOID)[0:-1:chunksize]
+                    breaks.append(maxOID+1)
+                    exprList = [oidName + ' >= ' + str(breaks[b]) + ' and ' + \
+                                oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
+                    for expr in exprList:
+                        UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
+                        result = fl.addFeatures(fc=UploadLayer)
+                        if messages is None:
+                            messages = result
                         else:
-                            messages['errors'] = result
+                            if 'addResults' in result:
+                                if 'addResults' in messages:
+                                    messages['addResults'] = messages['addResults'] + result['addResults']
+                                    print "%s/%s features added" % (len(messages['addResults']),total)
+                                else:
+                                    messages['addResults'] = result['addResults']
+                                    print "%s/%s features added" % (len(messages['addResults']),total)
+                            else:
+                                messages['errors'] = result
                 return messages
             else:
                 return fl.addFeatures(fc=pathToFeatureClass)
@@ -397,7 +400,7 @@ class featureservicetools(securityhandlerhelper):
                 "synerror": synerror,
                 "arcpyError": arcpy.GetMessages(2),
             }
-                           )  
+                           )
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -431,10 +434,10 @@ class featureservicetools(securityhandlerhelper):
                     total = len(oids)
                     if total == 0:
                         return  {'success':'true','message': "No features matched the query"}
-                        
+
                     minId = min(oids)
                     maxId = max(oids)
-                   
+
                     i = 0
                     print "%s features to be deleted" % total
                     while(i <= len(oids)):
@@ -446,7 +449,7 @@ class featureservicetools(securityhandlerhelper):
                         if 'deleteResults' in results:
                             totalDeleted += len(results['deleteResults'])
                             print "%s%% Completed: %s/%s " % (int(totalDeleted / float(total) *100), totalDeleted, total)
-                            i += chunksize                            
+                            i += chunksize
                         else:
                             print results
                             return {'success':'true','message': "%s deleted" % totalDeleted}
@@ -462,16 +465,16 @@ class featureservicetools(securityhandlerhelper):
                             else:
                                 return results
                     return  {'success':'true','message': "%s deleted" % totalDeleted}
-                    
+
                 else:
                     print qRes
             else:
                 results = fl.deleteFeatures(where=sql)
-                if 'deleteResults' in results:         
+                if 'deleteResults' in results:
                     return  {'success':'true','message': totalDeleted + len(results['deleteResults'])}
                 else:
                     return results
-       
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -487,7 +490,7 @@ class featureservicetools(securityhandlerhelper):
             del fl
 
             gc.collect()
-            
+
     #----------------------------------------------------------------------
     def QueryAllFeatures(self,url,sql,chunksize=0,saveLocation="",outName=""):
         fl = None
@@ -506,14 +509,14 @@ class featureservicetools(securityhandlerhelper):
                     total = len(oids)
                     if total == 0:
                         return  {'success':'true','message': "No features matched the query"}
-                        
+
                     minId = min(oids)
                     maxId = max(oids)
-                   
+
                     i = 0
                     print "%s features to be downloaded" % total
                     combinedResults = None
-                                                            
+
                     while(i <= len(oids)):
                         oidsQuery = ','.join(str(e) for e in oids[i:i+chunksize])
                         if oidsQuery == '':
@@ -526,30 +529,30 @@ class featureservicetools(securityhandlerhelper):
                                 if combinedResults is None:
                                     combinedResults = results
                                 else:
-                                
+
                                     for feature in results.features:
-                                    
+
                                         combinedResults.features.append(feature)
-                             
+
                                 totalQueried += len(results.features)
-                                
+
                                 print "%s%% Completed: %s/%s " % (int(totalQueried / float(total) *100), totalQueried, total)
-                                i += chunksize                            
+                                i += chunksize
                             else:
                                 print results
-                  
+
                     print combinedResults.save(saveLocation=saveLocation, outName=outName)
                 else:
                     print qRes
             else:
-                return  fl.query(where=sql, 
+                return  fl.query(where=sql,
                                  returnFeatureClass=True,
                                  returnGeometry=True,
-                                 out_fields='*',                               
+                                 out_fields='*',
                                  out_fc=os.path.join(saveLocation,outName)
                                  )
-            
-       
+
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -564,4 +567,4 @@ class featureservicetools(securityhandlerhelper):
 
             del fl
 
-            gc.collect()            
+            gc.collect()
