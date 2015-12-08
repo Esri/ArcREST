@@ -79,7 +79,7 @@ class FeatureService(BaseAGSServer):
             if k in attributes:
                 setattr(self, "_"+ k, v)
             else:
-                print k, " - attribute not implemented for Feature Service."
+                print(k, " - attribute not implemented for Feature Service.")
     #----------------------------------------------------------------------
     @property
     def administration(self):
