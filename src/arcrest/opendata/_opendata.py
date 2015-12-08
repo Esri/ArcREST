@@ -13,6 +13,7 @@ class OpenData(BaseOpenData):
     _json = None
     _metadata = None
     _results = None
+    _last_search = None
     #----------------------------------------------------------------------
     def __init__(self, url="http://opendata.arcgis.com/datasets",
                  securityHandler=None,
@@ -47,11 +48,36 @@ class OpenData(BaseOpenData):
             else:
                 print("%s - attribute not implemented for OpenData class." % k)
     #----------------------------------------------------------------------
-    def search(self, q=None, bbox=None,
-               page=1, per_page=255,
+    def search(self,
+               q=None,
+               bbox=None,
+               keyword=None,
                sort_by='relevance',
-               sort_order='desc'):
-        """searches the opendata site and returns the data results"""
+               page=1,
+               per_page=100,
+               quality=None,
+               group_id=None):
+        """
+        searches the opendata site and returns the data results
+
+        Inputs:
+           q - query term
+           bbox - takes input as pair of lat/long
+           keyword - filter for tags
+           sort_by - criteria for sorting:
+                     Supported Criteria:
+                       name
+                       relevance
+                       updated_at
+                       created_at
+                       quality
+           page - page number of the search results
+           per_page - how many results are returned (max 100)
+           quality - metadata quality. Number you pass is the lowest
+            'quality' score you want.
+           group_id - filter for returning datasets that are only in
+            the group with the specified id.
+        """
         params = {}
         results = []
         get_all = False
@@ -59,34 +85,46 @@ class OpenData(BaseOpenData):
             params['q'] = q
         if bbox is not None:
             params['bbox'] = bbox
+        if keyword is not None:
+            params['keyword'] = keyword
+
+        params['sort_by'] = sort_by
         if isinstance(page, int):
             params['page'] = page
-        elif page.lower() == "all":
-            get_all = True
         params['per_page'] = per_page
-        params['sort_by'] = sort_by
-        params['sort_order'] = sort_order
-        if get_all:
-            pass
-        else:
-            results = []
-
-
-
-        pass
+        if quality is not None:
+            params['quality'] = quality
+        if group_id is not None:
+            params['group_id'] = group_id
+        self._last_search =  self._do_get(url=self._url + ".json",
+                                           param_dict=params,
+                                           securityHandler=None,
+                                           proxy_url=self._proxy_url,
+                                           proxy_port=self._proxy_port)
+        return self._last_search  # TODO: merge searches? or how to better handle search for all?
     #----------------------------------------------------------------------
     def metadata(self):
         """gets the metadata """
         return self._metadata
     #----------------------------------------------------------------------
+    @property
     def data(self):
         """returns the data objects from the last search"""
-        return self._results
+        if self._last_search is None:
+            self.search()
+        for d in self._last_search['data']:
+            yield OpenDataItem(url=self._url + "/%s.json" % d['id'],
+                               proxy_url=self._proxy_url,
+                               proxy_port=self._proxy_port,
+                               initialize=True)
 
 #http://opendata.arcgis.com/datasets/4d83e90db45e48a688376c431ceec81f_0/related.json
 #http://opendata.arcgis.com/datasets/4d83e90db45e48a688376c431ceec81f_0.json
 ########################################################################
-class OpenDataItem(object):
+class OpenDataItem(BaseOpenData):
+    # TODO: add functions to export item?
+    # TODO: some results return 404, how do you handle this without raising a show
+    #       stopping error?
     """represents a single data object"""
     _url = None
     _securityHandler = None
@@ -113,6 +151,13 @@ class OpenDataItem(object):
         if initialize:
             self.__init()
     #----------------------------------------------------------------------
+    def __delattr__(self,name):
+        raise AttributeError,"Attribute '%s' of '%s' object cannot be deleted"%(name,self.__class__.__name__)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as a string"""
+        return self._json
+    #----------------------------------------------------------------------
     def __init(self):
         """gets the properties for the site"""
         url = self._url
@@ -123,15 +168,12 @@ class OpenDataItem(object):
                                  proxy_url=self._proxy_url)
         self._json_dict = json_dict
         self._json = json.dumps(self._json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, v)
-            else:
-                print("%s - attribute not implemented for OpenData class." % k)
-
+        setattr(self, "data", json_dict['data'])
+        if 'data' in json_dict:
+            for k,v in json_dict['data'].items():
+                setattr(self, k, v)
+                del k,v
+        print ('stop')
 
 
 

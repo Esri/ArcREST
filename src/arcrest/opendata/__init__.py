@@ -1,2 +1,2 @@
 from __future__ import absolute_import
-#from ._opendata import OpenData
+from ._opendata import OpenData

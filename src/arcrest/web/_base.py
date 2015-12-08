@@ -281,6 +281,7 @@ if six.PY2:
                     return ""
                 jres = json.loads(result)
             except urllib2.HTTPError:
+                e = sys.exc_info()[1]
                 return {'error':{'code':e.code}}
             except Exception:
                 e = sys.exc_info()[1]
