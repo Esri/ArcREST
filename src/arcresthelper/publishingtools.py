@@ -1,4 +1,6 @@
 
+from __future__ import print_function
+
 from securityhandlerhelper import securityhandlerhelper
 import re as re
 
@@ -15,7 +17,7 @@ import arcresthelper.common as common
 import gc
 import sys
 
-from urlparse import urlparse
+from six.moves import urllib_parse as urlparse
 
 try:
     import pyparsing
@@ -130,7 +132,7 @@ class publishingtools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def publishItems(self,items_info):
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         itemInfo = None
         item_results = None
@@ -149,10 +151,10 @@ class publishingtools(securityhandlerhelper):
                 itemInfo['ItemInfo']  = self._publishItems(config=item_info)
 
                 if not itemInfo['ItemInfo'] is None and 'name' in itemInfo['ItemInfo']:
-                    print "%s created" % itemInfo['ItemInfo']['name']
+                    print ("%s created" % itemInfo['ItemInfo']['name'])
                     item_results.append(itemInfo)
                 else:
-                    print str(itemInfo['ItemInfo'])
+                    print (str(itemInfo['ItemInfo']))
 
             return item_results
 
@@ -321,7 +323,7 @@ class publishingtools(securityhandlerhelper):
                     #updateParams.title = name
                     #updateResults = item.updateItem(itemParameters=updateParams)
                 except Exception,e:
-                    print e
+                    print (e)
             if item is None:
                 return "Item could not be added"
 
@@ -404,7 +406,7 @@ class publishingtools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def publishMap(self,maps_info,fsInfo=None,itInfo=None):
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         itemInfo = None
         itemId = None
@@ -471,20 +473,20 @@ class publishingtools(securityhandlerhelper):
                 itemInfo['MapInfo']  = self._publishMap(config=map_info,
                                                    replaceInfo=replaceInfo)
                 map_results.append(itemInfo)
-                print "%s webmap created" % itemInfo['MapInfo']['Name']
+                print ("%s webmap created" % itemInfo['MapInfo']['Name'])
             return map_results
 
         except common.ArcRestHelperError,e:
             raise e
         except Exception as e:
 
-             line, filename, synerror = trace()
-             raise common.ArcRestHelperError({
+            line, filename, synerror = trace()
+            raise common.ArcRestHelperError({
                  "function": "publishMap",
                  "line": line,
                  "filename":  filename,
                  "synerror": synerror,
-             })
+            })
         finally:
             itemInfo = None
             itemId = None
@@ -931,7 +933,7 @@ class publishingtools(securityhandlerhelper):
                     updateParams.title = name
                     updateResults = item.updateItem(itemParameters=updateParams)
                 except Exception,e:
-                    print e
+                    print (e)
             if item is None:
                 return "Item could not be added"
 
@@ -1044,7 +1046,7 @@ class publishingtools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def publishCombinedWebMap(self,maps_info,webmaps):
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         admin = None
         map_results = None
@@ -1099,11 +1101,11 @@ class publishingtools(securityhandlerhelper):
                 map_results.append(itemInfo)
                 if not itemInfo is None:
                     if not 'error' in itemInfo['MapInfo']['Results']:
-                        print "%s webmap created" % itemInfo['MapInfo']['Name']
+                        print ("%s webmap created" % itemInfo['MapInfo']['Name'])
                     else:
-                        print str(itemInfo['MapInfo']['Results'])
+                        print (str(itemInfo['MapInfo']['Results']))
                 else:
-                    print "Map not created"
+                    print ("Map not created")
 
                 return map_results
         except Exception as e:
@@ -1156,7 +1158,7 @@ class publishingtools(securityhandlerhelper):
         res = None
         resItm = None
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         if self.securityhandler.is_portal:
             url = self.securityhandler.org_url
@@ -1175,10 +1177,10 @@ class publishingtools(securityhandlerhelper):
                     resItm['FSInfo'] = self._publishFSFromMXD(config=fs, url=url)
 
                     if not resItm['FSInfo'] is None and 'url' in resItm['FSInfo']:
-                        print "%s created" % resItm['FSInfo']['url']
+                        print ("%s created" % resItm['FSInfo']['url'])
                         res.append(resItm)
                     else:
-                        print str(resItm['FSInfo'])
+                        print (str(resItm['FSInfo']))
 
             else:
                 if fs_config.has_key('ReplaceTag'):
@@ -1190,10 +1192,10 @@ class publishingtools(securityhandlerhelper):
                 resItm['FSInfo'] = self._publishFSFromMXD(config=fs_config, url=url)
 
                 if 'url' in resItm['FSInfo']:
-                    print "%s created" % resItm['FSInfo']['url']
+                    print ("%s created" % resItm['FSInfo']['url'])
                     res.append(resItm)
                 else:
-                    print str(resItm['FSInfo'])
+                    print (str(resItm['FSInfo']))
 
             return res
         except common.ArcRestHelperError,e:
@@ -1228,7 +1230,7 @@ class publishingtools(securityhandlerhelper):
 
         """
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         config = None
         res = None
@@ -1248,10 +1250,10 @@ class publishingtools(securityhandlerhelper):
 
 
                     if not resItm['FCInfo'] is None and 'id' in resItm['FCInfo']:
-                        print "%s feature collection created" % resItm['FCInfo']['id']
+                        print ("%s feature collection created" % resItm['FCInfo']['id'])
                         res.append(resItm)
                     else:
-                        print str(resItm['FCInfo'])
+                        print (str(resItm['FCInfo']))
 
 
             return res
@@ -1333,16 +1335,16 @@ class publishingtools(securityhandlerhelper):
             org = config['ShareOrg']
             groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
             if config.has_key('EnableEditTracking'):
-                print "enableEditTracking parameter has been deprecated, please add a definition section to the config"
+                print ("enableEditTracking parameter has been deprecated, please add a definition section to the config")
                 enableEditTracking = config['EnableEditTracking']
             else:
-                #print "Please add an EnableEditTracking parameter to your feature service section"
+                #print ("Please add an EnableEditTracking parameter to your feature service section")
                 enableEditTracking = False
             folderName = config['Folder']
             thumbnail = config['Thumbnail']
 
             if 'Capabilities' in config:
-                print "Capabilities parameter has been deprecated, please add a definition section to the config"
+                print ("Capabilities parameter has been deprecated, please add a definition section to the config")
 
                 capabilities = config['Capabilities']
             if 'Definition' in config:
@@ -1446,7 +1448,7 @@ class publishingtools(securityhandlerhelper):
                     publishParameters.hasStaticData = definition['hasStaticData']
 
             if sd_Info is None:
-                print "Publishing SD or Zip not valid"
+                print ("Publishing SD or Zip not valid")
                 raise common.ArcRestHelperError({
                     "function": "_publishFsFromMXD",
                     "line": lineno(),
@@ -1498,7 +1500,7 @@ class publishingtools(securityhandlerhelper):
                             serviceProxyParams=None,
                             metadata=None)
                 except Exception,e:
-                    print e
+                    print (e)
                 if defItem is None:
                     return "Item could not be added "
 
@@ -1511,7 +1513,7 @@ class publishingtools(securityhandlerhelper):
                     overwrite = True,
                     wait=True)
             except Exception, e:
-                print "Overwrite failed"
+                print ("Overwrite failed")
 
                 sea = arcrest.find.search(securityHandler=self._securityHandler)
                 items = sea.findItem(title =service_name, itemType='Feature Service',searchorg=False)
@@ -1547,7 +1549,7 @@ class publishingtools(securityhandlerhelper):
                         existingDef = {}
 
                         if 'Sync' in cap:
-                            print "Disabling Sync"
+                            print ("Disabling Sync")
                             capItems = cap.split(',')
                             if 'Sync' in capItems:
                                 capItems.remove('Sync')
@@ -1558,29 +1560,29 @@ class publishingtools(securityhandlerhelper):
                             if 'error' in enableResults:
                                 delres = userInfo.deleteItems(items=existingItem.id)
                                 if 'error' in delres:
-                                    print delres
+                                    print (delres)
                                     return delres
-                                print "Delete successful"
+                                print ("Delete successful")
                             else:
-                                print "Sync Disabled"
+                                print ("Sync Disabled")
                         else:
-                            print "Attempting to delete"
+                            print ("Attempting to delete")
                             delres = userInfo.deleteItems(items=existingItem.id)
                             if 'error' in delres:
-                                print delres
+                                print (delres)
                                 return delres
-                            print "Delete successful"
+                            print ("Delete successful")
                         adminFS = None
                         del adminFS
                     else:
-                        print "Attempting to delete"
+                        print ("Attempting to delete")
                         delres = userInfo.deleteItems(items=existingItem.id)
                         if 'error' in delres:
-                            print delres
+                            print (delres)
                             return delres
-                        print "Delete successful"
+                        print ("Delete successful")
                 else:
-                    print "Item exist and cannot be found, probably owned by another user."
+                    print ("Item exist and cannot be found, probably owned by another user.")
                     raise common.ArcRestHelperError({
                         "function": "_publishFsFromConfig",
                         "line": lineno(),
@@ -1598,13 +1600,13 @@ class publishingtools(securityhandlerhelper):
                         wait=True)
                 except Exception, e:
 
-                    print "Overwrite failed, deleting"
+                    print ("Overwrite failed, deleting")
                     delres = userInfo.deleteItems(items=existingItem.id)
                     if 'error' in delres:
-                        print delres
+                        print (delres)
                         return delres
 
-                    print "Delete successful"
+                    print ("Delete successful")
                     try:
                         serviceItem = userInfo.publishItem(
                             fileType=dataFileType,
@@ -1886,11 +1888,11 @@ class publishingtools(securityhandlerhelper):
 
             if not itemInfo['AppInfo']  is None:
                 if not 'error' in itemInfo['AppInfo']['Results'] :
-                    print "%s app created" % itemInfo['AppInfo']['Name']
+                    print ("%s app created" % itemInfo['AppInfo']['Name'])
                 else:
-                    print str(itemInfo['AppInfo']['Results'])
+                    print (str(itemInfo['AppInfo']['Results']))
             else:
-                print "App was not created"
+                print ("App was not created")
             return itemInfo
 
         except common.ArcRestHelperError, e:
@@ -1922,7 +1924,7 @@ class publishingtools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def publishApp(self,app_info,map_info=None,fsInfo=None):
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         appDet = None
         try:
@@ -2003,7 +2005,7 @@ class publishingtools(securityhandlerhelper):
             portalself = admin.portals.portalSelf
 
             if portalself.urlKey is None or portalself.customBaseUrl is None:
-                parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                parsedURL = urlparse.urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
                 orgURL = parsedURL.netloc + parsedURL.path
             else:
                 orgURL =  portalself.urlKey + '.' +  portalself.customBaseUrl
@@ -2060,7 +2062,7 @@ class publishingtools(securityhandlerhelper):
                             itemData = common.find_replace(itemData,replaceItem['SearchString'],replaceItem['ReplaceString'])
 
             else:
-                print "%s does not exist." % itemJson
+                print ("%s does not exist." % itemJson)
                 itemData = None
 
             name = config['Title']
@@ -2147,14 +2149,14 @@ class publishingtools(securityhandlerhelper):
                     url = url.replace("{AppID}",item.id)
                     url = url.replace("{OrgURL}",orgURL)
                     #if portalself.urlKey is None or portalself.customBaseUrl is None:
-                        #parsedURL = urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+                        #parsedURL = urlparse.urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
 
                     #else:
                         #url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
                     updateParams.url = url
                     updateResults = item.updateItem(itemParameters=updateParams)
                 except Exception,e:
-                    print e
+                    print (e)
             resultApp['Results']['itemId'] = item.id
             resultApp['folderId'] = folderId
             resultApp['Name'] = name
@@ -2495,7 +2497,7 @@ class publishingtools(securityhandlerhelper):
                         metadata=None,
                         text=json.dumps(itemData))
                 except Exception,e:
-                    print e
+                    print (e)
 
             group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
             shareResults = userInfo.shareItems(items=item.id,
@@ -2624,7 +2626,7 @@ class publishingtools(securityhandlerhelper):
     #----------------------------------------------------------------------
     def updateFeatureService(self,efs_config):
         if self.securityhandler is None:
-            print "Security handler required"
+            print ("Security handler required")
             return
         fsRes = None
         fst = None
@@ -2645,18 +2647,18 @@ class publishingtools(securityhandlerhelper):
                         if str(ext_service['DeleteInfo']['Delete']).upper() == "TRUE":
                             resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=ext_service['DeleteInfo']['DeleteSQL'])
                             if not 'error' in resItm['DeleteDetails'] :
-                                print "Delete Successful: %s" % fURL
+                                print ("Delete Successful: %s" % fURL)
                             else:
-                                print  str(resItm['DeleteDetails'])
+                                print (str(resItm['DeleteDetails']))
 
                     resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = ext_service['FeatureClass'])
 
                     fsRes.append(resItm)
 
                     if not 'error' in resItm['AddDetails']:
-                        print "Add Successful: %s " % fURL
+                        print ("Add Successful: %s " % fURL)
                     else:
-                        print str(resItm['AddDetails'])
+                        print (str(resItm['AddDetails']))
 
             else:
                 resItm={"DeleteDetails": None,"AddDetails":None}
@@ -2666,18 +2668,18 @@ class publishingtools(securityhandlerhelper):
                     if str(efs_config['DeleteInfo']['Delete']).upper() == "TRUE":
                         resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=efs_config['DeleteInfo']['DeleteSQL'])
                         if not 'error' in resItm['DeleteDetails'] :
-                            print "            Delete Successful: %s" % fURL
+                            print ("            Delete Successful: %s" % fURL)
                         else:
-                            print "            " + str(resItm['DeleteDetails'])
+                            print ("            " + str(resItm['DeleteDetails']))
 
                 resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = efs_config['FeatureClass'])
 
                 fsRes.append(resItm)
 
                 if not 'error' in resItm['AddDetails']:
-                    print "            Add Successful: %s " % fURL
+                    print ("            Add Successful: %s " % fURL)
                 else:
-                    print "            " + str(resItm['AddDetails'])
+                    print ("            " + str(resItm['AddDetails']))
 
             return fsRes
 
@@ -2921,14 +2923,14 @@ class publishingtools(securityhandlerhelper):
 
             if 'error' in resultSD:
                 if not itemId is None:
-                    print "Attempting to delete"
+                    print ("Attempting to delete")
                     delres=userInfo.deleteItems(items=itemId)
                     if 'error' in delres:
-                        print delres
+                        print (delres)
                         return delres
-                    print "Delete successful"
+                    print ("Delete successful")
                 else:
-                    print "Item exist and cannot be found, probably owned by another user."
+                    print ("Item exist and cannot be found, probably owned by another user.")
                     raise common.ArcRestHelperError({
                         "function": "_publishFeatureCollection",
                         "line": lineno(),

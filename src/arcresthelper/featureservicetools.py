@@ -1,4 +1,6 @@
 
+from __future__ import print_function
+
 from securityhandlerhelper import securityhandlerhelper
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
@@ -81,7 +83,7 @@ class featureservicetools(securityhandlerhelper):
 
             id_field_local = arcpy.AddFieldDelimiters(pathToFeatureClass, id_field)
             idlist = []
-            print arcpy.GetCount_management(in_rows=pathToFeatureClass).getOutput(0) + " features in the layer"
+            print( arcpy.GetCount_management(in_rows=pathToFeatureClass).getOutput(0) + " features in the layer")
             with arcpy.da.SearchCursor(pathToFeatureClass, (id_field)) as cursor:
                 allidlist = []
 
@@ -112,12 +114,12 @@ class featureservicetools(securityhandlerhelper):
                             "synerror":results['error']
                         })
                     elif 'deleteResults' in results:
-                        print "%s features deleted" % len(results['deleteResults'])
+                        print ("%s features deleted" % len(results['deleteResults']))
                         for itm in results['deleteResults']:
                             if itm['success'] != True:
-                                print itm
+                                print (itm)
                     else:
-                        print results
+                        print (results)
 
                     arcpy.MakeFeatureLayer_management(pathToFeatureClass,tempaddlayer,sqlLocalFC)
                     results = fl.addFeatures(fc=tempaddlayer)
@@ -130,12 +132,12 @@ class featureservicetools(securityhandlerhelper):
                             "synerror":results['error']
                         })
                     elif 'addResults' in results:
-                        print "%s features added" % len(results['addResults'])
+                        print ("%s features added" % len(results['addResults']))
                         for itm in results['addResults']:
                             if itm['success'] != True:
-                                print itm
+                                print (itm)
                     else:
-                        print results
+                        print (results)
                     idlist = []
             if 'error' in results:
                 raise common.ArcRestHelperError({
@@ -145,7 +147,7 @@ class featureservicetools(securityhandlerhelper):
                     "synerror":results['error']
                 })
             else:
-                print results
+                print (results)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -199,7 +201,7 @@ class featureservicetools(securityhandlerhelper):
         adminFS = None
         del adminFS
 
-        print enableResults
+        print (enableResults)
         return existingDef
     #----------------------------------------------------------------------
     def disableSync(self, url, definition = None):
@@ -353,7 +355,7 @@ class featureservicetools(securityhandlerhelper):
                 messages = {'addResults':[]}
                 total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
                 if total == '0':
-                    print "0 features in %s" % pathToFeatureClass
+                    print ("0 features in %s" % pathToFeatureClass)
                     return "0 features in %s" % pathToFeatureClass
                 arcpy.env.overwriteOutput = True
                 if int(total) < int(chunksize):
@@ -382,10 +384,10 @@ class featureservicetools(securityhandlerhelper):
                             if 'addResults' in result:
                                 if 'addResults' in messages:
                                     messages['addResults'] = messages['addResults'] + result['addResults']
-                                    print "%s/%s features added" % (len(messages['addResults']),total)
+                                    print ("%s/%s features added" % (len(messages['addResults']),total))
                                 else:
                                     messages['addResults'] = result['addResults']
-                                    print "%s/%s features added" % (len(messages['addResults']),total)
+                                    print ("%s/%s features added" % (len(messages['addResults']),total))
                             else:
                                 messages['errors'] = result
                 return messages
@@ -427,7 +429,7 @@ class featureservicetools(securityhandlerhelper):
             if chunksize > 0:
                 qRes = fl.query(where=sql, returnIDsOnly=True)
                 if 'error' in qRes:
-                    print qRes
+                    print (qRes)
                     return qRes
                 elif 'objectIds' in qRes:
                     oids = qRes['objectIds']
@@ -439,7 +441,7 @@ class featureservicetools(securityhandlerhelper):
                     maxId = max(oids)
 
                     i = 0
-                    print "%s features to be deleted" % total
+                    print ("%s features to be deleted" % total)
                     while(i <= len(oids)):
                         oidsDelete = ','.join(str(e) for e in oids[i:i+chunksize])
                         if oidsDelete == '':
@@ -448,16 +450,16 @@ class featureservicetools(securityhandlerhelper):
                             results = fl.deleteFeatures(objectIds=oidsDelete)
                         if 'deleteResults' in results:
                             totalDeleted += len(results['deleteResults'])
-                            print "%s%% Completed: %s/%s " % (int(totalDeleted / float(total) *100), totalDeleted, total)
+                            print ("%s%% Completed: %s/%s " % (int(totalDeleted / float(total) *100), totalDeleted, total))
                             i += chunksize
                         else:
-                            print results
+                            print (results)
                             return {'success':'true','message': "%s deleted" % totalDeleted}
                     qRes = fl.query(where=sql, returnIDsOnly=True)
                     if 'objectIds' in qRes:
                         oids = qRes['objectIds']
                         if len(oids)> 0 :
-                            print "%s features to be deleted" % len(oids)
+                            print ("%s features to be deleted" % len(oids))
                             results = fl.deleteFeatures(where=sql)
                             if 'deleteResults' in results:
                                 totalDeleted += len(results['deleteResults'])
@@ -467,7 +469,7 @@ class featureservicetools(securityhandlerhelper):
                     return  {'success':'true','message': "%s deleted" % totalDeleted}
 
                 else:
-                    print qRes
+                    print (qRes)
             else:
                 results = fl.deleteFeatures(where=sql)
                 if 'deleteResults' in results:
@@ -502,7 +504,7 @@ class featureservicetools(securityhandlerhelper):
             if chunksize > 0:
                 qRes = fl.query(where=sql, returnIDsOnly=True)
                 if 'error' in qRes:
-                    print qRes
+                    print (qRes)
                     return qRes
                 elif 'objectIds' in qRes:
                     oids = qRes['objectIds']
@@ -514,7 +516,7 @@ class featureservicetools(securityhandlerhelper):
                     maxId = max(oids)
 
                     i = 0
-                    print "%s features to be downloaded" % total
+                    print ("%s features to be downloaded" % total)
                     combinedResults = None
 
                     while(i <= len(oids)):
@@ -536,14 +538,14 @@ class featureservicetools(securityhandlerhelper):
 
                                 totalQueried += len(results.features)
 
-                                print "%s%% Completed: %s/%s " % (int(totalQueried / float(total) *100), totalQueried, total)
+                                print ("%s%% Completed: %s/%s " % (int(totalQueried / float(total) *100), totalQueried, total))
                                 i += chunksize
                             else:
-                                print results
+                                print (results)
 
-                    print combinedResults.save(saveLocation=saveLocation, outName=outName)
+                    print (combinedResults.save(saveLocation=saveLocation, outName=outName))
                 else:
-                    print qRes
+                    print (qRes)
             else:
                 return  fl.query(where=sql,
                                  returnFeatureClass=True,
