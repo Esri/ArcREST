@@ -12,7 +12,7 @@ setup(
               'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
               'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
               'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
-              'arcrest/enrichment', 'arcrest/opendata'
+              'arcrest/enrichment', 'arcrest/opendata',
               'arcrest/security/ntlm3'],
     package_data = {'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},
     install_requires=['six'],
