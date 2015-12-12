@@ -1832,7 +1832,7 @@ class publishingtools(securityhandlerhelper):
                             if fsDet.has_key('ReplaceTag'):
                                 if 'ReplaceString' in replaceItem:
                                     if fsDet is not None and replaceItem['ReplaceString'] == fsDet['ReplaceTag'] and \
-                                       replaceItem['ReplaceType'] == 'Service':
+                                       (replaceItem['ReplaceType'] == 'Service' or replaceItem['ReplaceType'] == 'Layer'):
                                         replaceItem['ReplaceString'] = fsDet['FSInfo']['url']
                                         replaceItem['ItemID'] = fsDet['FSInfo']['itemId']
                                         replaceItem['ItemFolder'] = fsDet['FSInfo']['folderId']
