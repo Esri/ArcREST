@@ -253,9 +253,10 @@ class securityhandlerhelper(object):
                                                                 if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
                                                                     self._featureServiceFieldCase = 'lower'
                             except HTTPError, err:
-                                print (err)
-                            except Exception, e:
-                                print (e)
+                                if err.code == 403:
+                                    print ("Admistrative access denied, unable to check if hosting servers")
+                                else:
+                                    print (err)
                             except Exception, e:
                                 print (e)
     
@@ -266,11 +267,7 @@ class securityhandlerhelper(object):
                         print (err)
                 except Exception, e:
                     print (e)
-                except Exception, e:
-                    print (e)
-    
-    
-    
+          
                 if 'error' in self._securityHandler.message:
                     self._message = self._securityHandler.message
                     self._valid = False

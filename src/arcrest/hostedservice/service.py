@@ -1277,6 +1277,8 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _definitionQuery = None
     _zDefault = None
     _supportsApplyEditsWithGlobalIds = None
+    _supportsValidateSQL = None
+    _serviceItemId = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1319,6 +1321,16 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.items():
             yield [k,v]
+    #----------------------------------------------------------------------  
+    @property
+    def supportsValidateSQL (self):
+        """ returns the current security handler """
+        return self._supportsValidateSQL     
+    #----------------------------------------------------------------------
+    @property
+    def serviceItemId(self):
+        """ returns the current security handler """
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
