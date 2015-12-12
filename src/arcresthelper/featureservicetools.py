@@ -337,7 +337,7 @@ class featureservicetools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0):
+    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0,lowerCaseFieldNames=False):
         if arcpyFound == False:
             raise common.ArcRestHelperError({
                 "function": "AddFeaturesToFeatureLayer",
@@ -359,7 +359,7 @@ class featureservicetools(securityhandlerhelper):
                     return "0 features in %s" % pathToFeatureClass
                 arcpy.env.overwriteOutput = True
                 if int(total) < int(chunksize):
-                    return fl.addFeatures(fc=pathToFeatureClass)
+                    return fl.addFeatures(fc=pathToFeatureClass,lowerCaseFieldNames=lowerCaseFieldNames)
                 else:
                     inDesc = arcpy.Describe(pathToFeatureClass)
                     oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
@@ -377,7 +377,7 @@ class featureservicetools(securityhandlerhelper):
                                 oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
                     for expr in exprList:
                         UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
-                        result = fl.addFeatures(fc=UploadLayer)
+                        result = fl.addFeatures(fc=UploadLayer,lowerCaseFieldNames=lowerCaseFieldNames)
                         if messages is None:
                             messages = result
                         else:
@@ -392,11 +392,11 @@ class featureservicetools(securityhandlerhelper):
                                 messages['errors'] = result
                 return messages
             else:
-                return fl.addFeatures(fc=pathToFeatureClass)
+                return fl.addFeatures(fc=pathToFeatureClass,lowerCaseFieldNames=lowerCaseFieldNames)
         except arcpy.ExecuteError:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                "function": "create_report_layers_using_config",
+                "function": "AddFeaturesToFeatureLayer",
                 "line": line,
                 "filename":  filename,
                 "synerror": synerror,

@@ -76,13 +76,19 @@ def main():
         layerMap = arcpy.GetParameterAsText(2)
         matchEntireName = arcpy.GetParameterAsText(3)
         projection = arcpy.GetParameterAsText(4)
+        lowerCaseFieldNames = argv[5]
+    
+        if str(lowerCaseFieldNames).upper() == 'TRUE':
+            lowerCaseFieldNames = True
+        else:
+            lowerCaseFieldNames = False        
         if projection is not None and projection != '#' and projection != '':
             #outputPrinter(message="Projecting %s" % str(projection))
             pass
         else:
             projection = None
             #outputPrinter(message="No Projection defined")
-        arcpy.SetParameterAsText(5, "true")
+        arcpy.SetParameterAsText(6, "true")
 
         scratchGDB = arcpy.env.scratchWorkspace
         scratchLayName = "tempAppGrpFS"
@@ -143,7 +149,7 @@ def main():
                                         if desc.shapeType == 'Polygon':
                                             outputPrinter(message="Densifying %s" % lyr.name)
                                             arcpy.Densify_edit(scratchLayer, "ANGLE", "33 Unknown", "0.33 Unknown", "4")
-                                        syncLayer(fst, fs, scratchLayer, value, lyr.name)
+                                        syncLayer(fst, fs, scratchLayer, value, lyr.name,lowerCaseFieldNames)
 
                                     else:
                                         outputPrinter (message="%s does not contain any features, skipping" % lyr.name)
@@ -155,10 +161,10 @@ def main():
                     outputPrinter (message="Group layer is not a group layer", typeOfMessage='error')
             else:
                 outputPrinter(message="Feature Service with id %s was not found" % fsId, typeOfMessage='error')
-                arcpy.SetParameterAsText(5, "false")
+                arcpy.SetParameterAsText(6, "false")
         else:
             outputPrinter(fst.message,typeOfMessage='error')
-            arcpy.SetParameterAsText(5, "false")
+            arcpy.SetParameterAsText(6, "false")
 
 
 
@@ -168,16 +174,16 @@ def main():
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
-        arcpy.SetParameterAsText(5, "false")
+        arcpy.SetParameterAsText(6, "false")
     except (common.ArcRestHelperError),e:
         outputPrinter(message=e,typeOfMessage='error')
-        arcpy.SetParameterAsText(5, "false")
+        arcpy.SetParameterAsText(6, "false")
     except:
         line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
-        arcpy.SetParameterAsText(5, "false")
+        arcpy.SetParameterAsText(6, "false")
     finally:
         if scratchLayer is not None:
             if arcpy.Exists(scratchLayer):
@@ -209,12 +215,12 @@ def main():
         del layerToServiceLayer
 
         gc.collect()
-def syncLayer(fst, fs, layer, layerName, displayName):
+def syncLayer(fst, fs, layer, layerName, displayName, lowerCaseFieldNames):
 
     outputPrinter (message="Attemping to sync %s to %s" % (displayName,layerName))
     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
     if not fl is None:
-        results = fl.addFeatures(fc=layer)
+        results = fl.addFeatures(fc=layer,lowerCaseFieldNames=lowerCaseFieldNames)
 
         if 'error' in results:
             outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
