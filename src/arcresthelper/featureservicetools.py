@@ -435,7 +435,7 @@ class featureservicetools(securityhandlerhelper):
                     oids = qRes['objectIds']
                     total = len(oids)
                     if total == 0:
-                        return  {'success':'true','message': "No features matched the query"}
+                        return  {'success':True,'message': "No features matched the query"}
 
                     minId = min(oids)
                     maxId = max(oids)
@@ -454,7 +454,7 @@ class featureservicetools(securityhandlerhelper):
                             i += chunksize
                         else:
                             print (results)
-                            return {'success':'true','message': "%s deleted" % totalDeleted}
+                            return {'success':True,'message': "%s deleted" % totalDeleted}
                     qRes = fl.query(where=sql, returnIDsOnly=True)
                     if 'objectIds' in qRes:
                         oids = qRes['objectIds']
@@ -463,17 +463,17 @@ class featureservicetools(securityhandlerhelper):
                             results = fl.deleteFeatures(where=sql)
                             if 'deleteResults' in results:
                                 totalDeleted += len(results['deleteResults'])
-                                return  {'success':'true','message': "%s deleted" % totalDeleted}
+                                return  {'success':True,'message': "%s deleted" % totalDeleted}
                             else:
                                 return results
-                    return  {'success':'true','message': "%s deleted" % totalDeleted}
+                    return  {'success':True,'message': "%s deleted" % totalDeleted}
 
                 else:
                     print (qRes)
             else:
                 results = fl.deleteFeatures(where=sql)
                 if 'deleteResults' in results:
-                    return  {'success':'true','message': totalDeleted + len(results['deleteResults'])}
+                    return  {'success':True,'message': totalDeleted + len(results['deleteResults'])}
                 else:
                     return results
 
@@ -510,7 +510,7 @@ class featureservicetools(securityhandlerhelper):
                     oids = qRes['objectIds']
                     total = len(oids)
                     if total == 0:
-                        return  {'success':'true','message': "No features matched the query"}
+                        return  {'success':True,'message': "No features matched the query"}
 
                     minId = min(oids)
                     maxId = max(oids)
