@@ -157,8 +157,8 @@ class resetTools(securityhandlerhelper):
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    try:                    
-                        user = admin.content.users.user(str(user).strip())
+                    try:   
+                        user = admin.community.users.user(str(user).strip())
                         usersObj.append(user)
                     except:
                         print ("%s does not exist" % str(user).strip())                    
