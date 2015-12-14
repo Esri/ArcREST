@@ -1952,7 +1952,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def addFeatures(self, fc, attachmentTable=None,
                     nameField="ATT_NAME", blobField="DATA",
                     contentTypeField="CONTENT_TYPE",
-                    rel_object_field="REL_OBJECTID"):
+                    rel_object_field="REL_OBJECTID",
+                    lowerCaseFieldNames=False):
         """ adds a feature to the feature service
            Inputs:
               fc - string - path to feature class data to add.
@@ -1975,6 +1976,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
             js = json.loads(self._unicode_convert(
                  featureclass_to_json(fc)))
             js = js['features']
+            if lowerCaseFieldNames == True:
+                for feat in js:
+                    feat['attributes'] = dict((k.lower(), v) for k,v in feat['attributes'].iteritems())
             if len(js) == 0:
                 return {'addResults':None}
             if len(js) <= max_chunk:

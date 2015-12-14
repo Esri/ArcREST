@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from securityhandlerhelper import securityhandlerhelper
 
@@ -55,7 +56,7 @@ class resetTools(securityhandlerhelper):
         try:
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
-                print "You have selected to remove all users data, you must modify the code to do this"
+                print ("You have selected to remove all users data, you must modify the code to do this")
                 usersObj = []
                 commUsers = admin.portals.portalSelf.users(start=1, num=100)
                 commUsers = commUsers['users']
@@ -66,16 +67,21 @@ class resetTools(securityhandlerhelper):
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    usersObj.append(admin.content.users.user(str(user).strip()))
+                    try:                    
+                        user = admin.content.users.user(str(user).strip())
+                        usersObj.append(user)
+                    except:
+                        print ("%s does not exist" % str(user).strip())
+                    
             if usersObj:
                 for user in usersObj:
-                    print "Loading content for user: %s" % user.username
+                    print ("Loading content for user: %s" % user.username)
                      
                     itemsToDel = []
                     for userItem in user.items:
                         itemsToDel.append(userItem.id)
                     if len(itemsToDel) > 0:
-                        print user.deleteItems(items=",".join(itemsToDel))    
+                        print (user.deleteItems(items=",".join(itemsToDel)))
                     if user.folders:
                         for userFolder in user.folders:
                             if (user.currentFolder['title'] != userFolder['title']):
@@ -84,9 +90,9 @@ class resetTools(securityhandlerhelper):
                                 for userItem in user.items:
                                     itemsToDel.append(userItem.id)
                                 if len(itemsToDel) > 0:
-                                    print user.deleteItems(items=",".join(itemsToDel))                               
+                                    print (user.deleteItems(items=",".join(itemsToDel)))
     
-                                print user.deleteFolder()
+                                print (user.deleteFolder())
        
         except:
             line, filename, synerror = trace()
@@ -141,7 +147,7 @@ class resetTools(securityhandlerhelper):
            
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             if users is None:
-                print "You have selected to remove all users groups, you must modify the code to do this"
+                print ("You have selected to remove all users groups, you must modify the code to do this")
                 usersObj = []
                 commUsers = admin.portals.portalSelf.users(start=1, num=100)
                 usersObj = commUsers['users']
@@ -151,18 +157,22 @@ class resetTools(securityhandlerhelper):
                 usersObj = []
                 userStr = users.split(',')
                 for user in userStr:
-                    usersObj.append(admin.community.users.user(str(user).strip()))
+                    try:   
+                        user = admin.community.users.user(str(user).strip())
+                        usersObj.append(user)
+                    except:
+                        print ("%s does not exist" % str(user).strip())                    
             if usersObj:
                 for userCommData in usersObj:
-                    print "Loading groups for user: %s" % userCommData.username
+                    print ("Loading groups for user: %s" % userCommData.username)
                      
                     if userCommData.groups:
                         for group in userCommData.groups:
                             groupObj = admin.community.groups.group(groupId=group['id'])
                             if groupObj.owner == userCommData.username:
-                                print groupObj.delete()
+                                print (groupObj.delete())
                     else:
-                        print "No Groups Found"
+                        print ("No Groups Found")
 
        
         except:

@@ -284,6 +284,13 @@ class Item(BaseAGOLClass):
         if self._orgId is None:
             self.__init()
         return self._orgId
+    _privateUrl = None
+    @property
+    def privateUrl(self):
+        '''gets the property value for privateUrl'''
+        if self._privateUrl is None:
+            self.__init()
+        return self._privateUrl    
     #----------------------------------------------------------------------
     def itemControl(self):
         '''gets the property value for itemControl'''
@@ -1012,6 +1019,7 @@ class UserItem(BaseAGOLClass):
     _accessInformation = None
     _sourceUrl = None
     __curl = None
+    _privateUrl = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1056,6 +1064,9 @@ class UserItem(BaseAGOLClass):
                 print( k, " - attribute not implemented in UserItem class.")
     #----------------------------------------------------------------------
     _itemControl = None
+   
+    #----------------------------------------------------------------------    
+    @property
     def itemControl(self):
         '''gets the property value for itemControl'''
         if self._itemControl is None:
@@ -1068,6 +1079,13 @@ class UserItem(BaseAGOLClass):
         if self._extent is None:
             self.__init()
         return self._extent
+    #----------------------------------------------------------------------
+    @property
+    def privateUrl(self):
+        '''gets the property value for privateUrl'''
+        if self._privateUrl is None:
+            self.__init()
+        return self._privateUrl    
     #----------------------------------------------------------------------
     @property
     def culture(self):

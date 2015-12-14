@@ -3,7 +3,7 @@
    and delete all their content and groups
 
    Python 2.x
-   ArcREST 3.0.1
+   ArcREST 3.5
 """
 
 import arcrest

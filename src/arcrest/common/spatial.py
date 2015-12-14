@@ -24,7 +24,11 @@ def featureclass_to_json(fc):
     """converts a feature class to JSON"""
     if arcpyFound == False:
         raise Exception("ArcPy is required to use this function")
-    return arcpy.FeatureSet(fc).JSON
+    desc = arcpy.Describe(fc)
+    if desc.dataType == "Table" or desc.dataType == "TableView":    
+        return recordset_to_json(table=fc)
+    else:
+        return arcpy.FeatureSet(fc).JSON
 #----------------------------------------------------------------------
 def recordset_to_json(table):
     """ converts the table to JSON """

@@ -1,8 +1,12 @@
+from __future__ import print_function
+
 from arcrest import security
 import arcrest
 from arcrest.manageags import AGSAdministration
 from arcrest.manageorg import Administration
-import urllib2
+import six
+import six.moves.urllib as urllib
+from six.moves.urllib.error import HTTPError
 import os
 import common
 import copy
@@ -217,7 +221,7 @@ class securityhandlerhelper(object):
 
                     self._message = "OAuth security handler created"
             else:
-                print "No valid security type set"
+                print ("No valid security type set")
                 self._message = "No valid security type set"
             if self._securityHandler is not None:
             
@@ -248,25 +252,22 @@ class securityhandlerhelper(object):
                                                             if 'DBCLIENT' in conStrDic:
                                                                 if str(conStrDic['DBCLIENT']).upper() == 'postgresql'.upper():
                                                                     self._featureServiceFieldCase = 'lower'
-                            except urllib2.HTTPError, err:
-                                print err
+                            except HTTPError, err:
+                                if err.code == 403:
+                                    print ("Admistrative access denied, unable to check if hosting servers")
+                                else:
+                                    print (err)
                             except Exception, e:
-                                print e
-                            except Exception, e:
-                                print e
+                                print (e)
     
-                except urllib2.HTTPError, err:
+                except HTTPError, err:
                     if err.code == 403:
-                        print "Admistrative access denied, unable to check if hosting servers"
+                        print ("Admistrative access denied, unable to check if hosting servers")
                     else:
-                        print err
+                        print (err)
                 except Exception, e:
-                    print e
-                except Exception, e:
-                    print e
-    
-    
-    
+                    print (e)
+          
                 if 'error' in self._securityHandler.message:
                     self._message = self._securityHandler.message
                     self._valid = False

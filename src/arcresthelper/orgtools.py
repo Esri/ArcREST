@@ -1,4 +1,6 @@
 
+from __future__ import print_function
+
 from securityhandlerhelper import securityhandlerhelper
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
@@ -55,27 +57,27 @@ class orgtools(securityhandlerhelper):
                     item = admin.content.getItem(itemId = item)
                     res = item.shareItem(",".join(group_ids),everyone=False,org=False)
                     if 'error' in res:
-                        print res
+                        print (res)
                     else:
-                        print "%s shared with %s" % (item.title,shareToGroupName)
+                        print ("%s shared with %s" % (item.title,shareToGroupName))
                     results.append(res)
             if not groups is None:
                 for group in groups:
                     group = admin.content.group(groupId=group)
                     if group is None:
-                        print "Group not found"
+                        print ("Group not found")
                     else:
                         for itemJSON in group.items:
                             if 'id' in itemJSON:                          
                                 item = admin.content.getItem(itemId = itemJSON['id'])
                                 res = item.shareItem(",".join(group_ids),everyone=False,org=False)
                                 if 'error' in res:
-                                    print res
+                                    print (res)
                                 elif 'notSharedWith' in res:
-                                    print "%s shared with %s, not Shared With %s" % \
-                                          (item.title,shareToGroupName,",".join(res['notSharedWith']))
+                                    print ("%s shared with %s, not Shared With %s" % \
+                                          (item.title,shareToGroupName,",".join(res['notSharedWith'])))
                                 else:
-                                    print "%s shared with %s" % (item.title,shareToGroupName)
+                                    print ("%s shared with %s" % (item.title,shareToGroupName))
                                 results.append(res)
         
         except:
@@ -132,7 +134,7 @@ class orgtools(securityhandlerhelper):
                 for groupId in groupIds:
                     groupContent = admin.content.groupContent(groupId=groupId)
                     if 'error' in groupContent:
-                        print groupContent
+                        print (groupContent)
                     else:
                         for result in groupContent['items']:
                             item = admin.content.getItem(itemId = result['id'])
@@ -258,7 +260,7 @@ class orgtools(securityhandlerhelper):
             try:
                 groupExist = userCommunity.getGroupIDs(groupNames=title)
                 if len(groupExist) > 0:
-                    print "Group %s already exist" % title
+                    print ("Group %s already exist" % title)
                     return None
                 return userCommunity.createGroup(title=title,
                             tags=tags,
@@ -272,7 +274,7 @@ class orgtools(securityhandlerhelper):
                             isInvitationOnly=isInvitationOnly,
                             thumbnail=thumbnail)
             except Exception,e:
-                print e
+                print (e)
                 return None
            
         
@@ -317,18 +319,18 @@ class orgtools(securityhandlerhelper):
                             
                             setPrivResults = portal.roles.setPrivileges(createResults['id'],privileges)
                             if 'success' in setPrivResults:
-                                print "%s role created" % name
+                                print ("%s role created" % name)
                             else:
-                                print setPrivResults
+                                print (setPrivResults)
                         else:
-                            print createResults
+                            print (createResults)
                     else:
-                        print createResults
+                        print (createResults)
                 else:
-                    print "%s role already exist" % name
+                    print ("%s role already exist" % name)
                
             except Exception,e:
-                print e
+                print (e)
                 return None
            
         

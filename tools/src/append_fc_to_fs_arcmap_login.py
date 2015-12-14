@@ -70,8 +70,12 @@ def main(*argv):
         fsId = argv[0]
         layerName = argv[1]
         dataToAppend = argv[2]
-        toggleEditCapabilities = argv[3]
+        lowerCaseFieldNames = argv[3]
 
+        if str(lowerCaseFieldNames).upper() == 'TRUE':
+            lowerCaseFieldNames = True
+        else:
+            lowerCaseFieldNames = False
         if arcpy.Exists(dataset=dataToAppend) == False:
             outputPrinter(message="Data layer not found: " + dataToAppend)
         else:
@@ -82,11 +86,10 @@ def main(*argv):
                 fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
 
                 if not fs is None:
-                    if str(toggleEditCapabilities).upper() == 'TRUE':
-                        existingDef = fst.EnableEditingOnService(url=fs.url)
+                   
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
-                        results = fl.addFeatures(fc=dataToAppend)
+                        results = fl.addFeatures(fc=dataToAppend,lowerCaseFieldNames=lowerCaseFieldNames)
 
                         if 'error' in results:
                             outputPrinter(message="Error in response from server:  %s" % results['error'],typeOfMessage='error')
@@ -97,8 +100,7 @@ def main(*argv):
                                 outputPrinter (message="%s features added" % len(results['addResults']) )
                             else:
                                 outputPrinter (message="0 features added" )
-                            if toggleEditCapabilities == 'True':
-                                existingDef = fst.EnableEditingOnService(url=fs.url,definition = existingDef)
+                            
                             arcpy.SetParameterAsText(4, "true")
 
                     else:

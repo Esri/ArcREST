@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import sys
 import json
@@ -7,9 +9,8 @@ import string
 import datetime
 import time
 
-from urlparse import urlparse
+from six.moves import urllib_parse as urlparse
 import gc
-
 import operator
 #----------------------------------------------------------------------
 def trace():
@@ -75,7 +76,7 @@ def getLayerIndex(url):
     urlSplit = None
     inx = None   
     try:
-        urlInfo = urlparse(url)
+        urlInfo = urlparse.urlparse(url)
         urlSplit = str(urlInfo.path).split('/')
         inx = urlSplit[len(urlSplit)-1]
     
@@ -97,7 +98,7 @@ def getLayerName(url):
     urlInfo = None
     urlSplit = None   
     try:
-        urlInfo = urlparse(url)
+        urlInfo = urlparse.urlparse(url)
         urlSplit = str(urlInfo.path).split('/')
         name = urlSplit[len(urlSplit)-3]
         return name   
@@ -118,7 +119,7 @@ def random_string_generator(size=6, chars=string.ascii_uppercase):
         return ''.join(random.choice(chars) for _ in range(size))
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "random_string_generator",
                     "line": line,
                     "filename":  filename,
@@ -163,7 +164,7 @@ def local_time_to_online(dt=None):
         return (time.mktime(dt.timetuple()) * 1000) + (utc_offset * 1000)
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "local_time_to_online",
                     "line": line,
                     "filename":  filename,
@@ -320,7 +321,7 @@ def find_replace(obj,find,replace):
                 return unicode_convert(obj)
     except:
         line, filename, synerror = trace()
-        raise CommonError({
+        raise ArcRestHelperError({
                     "function": "find_replace",
                     "line": line,
                     "filename":  filename,
