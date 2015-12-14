@@ -742,53 +742,54 @@ class FeatureService(abstract.BaseAGOLClass):
             params['replicaOptions'] = replicaOptions
         if transportType is not None:
             params['transportType'] = transportType
-        if out_path is not None and \
-           os.path.isdir(out_path):
-            if async:
-                if wait:
-                    exportJob = self._do_post(url=url,
-                                              param_dict=params,
-                                              securityHandler=self._securityHandler,
-                                              proxy_url=self._proxy_url,
-                                              proxy_port=self._proxy_port)
+        
+        if async:
+            if wait:
+                exportJob = self._do_post(url=url,
+                                          param_dict=params,
+                                          securityHandler=self._securityHandler,
+                                          proxy_url=self._proxy_url,
+                                          proxy_port=self._proxy_port)
+                status = self.replicaStatus(url=exportJob['statusUrl'])
+                while status['status'].lower() != "completed":
                     status = self.replicaStatus(url=exportJob['statusUrl'])
-                    while status['status'].lower() != "completed":
-                        status = self.replicaStatus(url=exportJob['statusUrl'])
-                        if status['status'].lower() == "failed":
-                            return status
-                    if out_path is None:
+                    if status['status'].lower() == "failed":
                         return status
-                    else:
-                        dlURL = status["resultUrl"]
-                        return self._download_file(url=dlURL,
-                                                   save_path=out_path,
-                                                   securityHandler=self._securityHandler,
-                                                   proxy_url=self._proxy_url,
-                                                   proxy_port=self._proxy_port)
-                else:
-                    return self._do_post(url=url,
-                                         param_dict=params,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port)
+               
+                res = status
+                   
             else:
                 res = self._do_post(url=url,
-                                    param_dict=params,
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port)
+                                     param_dict=params,
+                                     securityHandler=self._securityHandler,
+                                     proxy_url=self._proxy_url,
+                                     proxy_port=self._proxy_port)
+        else:
+            res = self._do_post(url=url,
+                                param_dict=params,
+                                securityHandler=self._securityHandler,
+                                proxy_url=self._proxy_url,
+                                proxy_port=self._proxy_port)
+          
+        
+        if out_path is not None and \
+           os.path.isdir(out_path):
+            dlURL = None
+            if 'resultUrl' in res:
+                
+                dlURL = res["resultUrl"]
+            elif 'responseUrl' in res:
                 dlURL = res["responseUrl"]
+            if dlURL is not None:
                 return self._download_file(url=dlURL,
                                            save_path=out_path,
                                            securityHandler=self._securityHandler,
                                            proxy_url=self._proxy_url,
                                            proxy_port=self._proxy_port)
-        else:
-            return self._do_post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            else:
+                return res
+        elif res is not None:
+            return res
         return None
     #----------------------------------------------------------------------
     def synchronizeReplica(self,
