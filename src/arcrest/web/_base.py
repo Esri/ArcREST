@@ -13,7 +13,6 @@ import json
 import gzip
 import sys
 if six.PY2:
-
     import urllib
     import urllib2
     import mimetools
@@ -40,17 +39,17 @@ if six.PY2:
         _proxy_port = None
         #----------------------------------------------------------------------
         def _download_file(self,
-                                url, save_path,
-                                securityHandler=None,
-                                file_name=None, param_dict=None,
-                                proxy_url=None, proxy_port=None):
+                           url, save_path,
+                           securityHandler=None,
+                           file_name=None, param_dict=None,
+                           proxy_url=None, proxy_port=None):
             """ downloads a file """
             try:
                 handlers = []
                 cj = None
                 handler = None
                 param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                               param_dict={})
+                                                               param_dict=param_dict)
                 handlers.append(urllib2.HTTPHandler(debuglevel=0))
                 handlers.append(AGOLRedirectHandler())
                 if proxy_url is not None:
@@ -80,7 +79,7 @@ if six.PY2:
                     a = file_data.info().getheader('Content-Disposition')
                     if a is not None:
                         a = a.strip()
-                        file_name = re.findall(r'filename=\"(.+?)\"', a)[0]
+                        file_name = re.findall(ur'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)', a)[0][0]#r'filename=\"(.+?)\"', a)[0]
                     else:
                         file_name = os.path.basename(file_data.geturl().split('?')[0])
                 if hasattr(file_data, "status") and \
@@ -115,7 +114,16 @@ if six.PY2:
                     with open(save_path + os.sep + file_name, 'wb') as out_file:
                         buf = file_data.read()
                         out_file.write(buf)
-                return save_path + os.sep + file_name
+                else:
+                    CHUNK = 16 * 1024
+                    with open(os.path.join(save_path, file_name), 'wb') as f:
+                        while True:
+                            chunk = file_data.read(CHUNK)
+                            if not chunk: break
+                            f.write(chunk)
+                            f.flush()
+                        del f
+                return os.path.join(save_path, file_name)
             except urllib2.HTTPError as e:
                 print ("HTTP Error: %s, %s " % (e.code , url))
                 return None
@@ -131,7 +139,8 @@ if six.PY2:
             cj = None
             handler = None
             if securityHandler is None:
-                pass
+                from cookielib import CookieJar
+                cj = CookieJar()
             elif securityHandler.method.lower() == "token":
                 param_dict['token'] = securityHandler.token
                 if hasattr(securityHandler, 'cookiejar'):
@@ -526,6 +535,99 @@ elif six.PY3:
         _useragent = "ArcREST"
         _proxy_url = None
         _proxy_port = None
+        #----------------------------------------------------------------------
+        def _download_file(self,
+                           url, save_path,
+                           securityHandler=None,
+                           file_name=None, param_dict=None,
+                           proxy_url=None, proxy_port=None):
+            """ downloads a file """
+            try:
+                handlers = []
+                cj = None
+                handler = None
+                param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
+                                                                param_dict={})
+                handlers.append(urllib.request.HTTPHandler(debuglevel=0))
+                handlers.append(AGOLRedirectHandler())
+                if proxy_url is not None:
+                    if proxy_port is None:
+                        proxy_port = 80
+                    proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                               "https":"https://%s:%s" % (proxy_url, proxy_port)}
+                    proxy_support = urllib.request.ProxyHandler(proxies)
+                    handlers.append(proxy_support)
+                if handler is not None:
+                    handlers.append(handler)
+                if cj is not None:
+                    handlers.append(urllib.request.HTTPCookieProcessor(cj))
+                opener = urllib.request.build_opener(*handlers)
+                urllib.request.install_opener(opener)
+                if param_dict is not None and \
+                   len(list(param_dict.keys())) > 0:
+                    encoded_args = urllib.parse.urlencode(param_dict)
+                    url = url + '?' + encoded_args
+
+                file_data = urllib.request.urlopen(url)
+
+                file_data.getcode()
+                file_data.geturl()
+                if file_name is None:
+                    url = file_data.geturl()
+                    a = file_data.info().getheader('Content-Disposition')
+                    if a is not None:
+                        a = a.strip()
+                        file_name = re.findall(r'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)', a)[0][0]#r'filename=\"(.+?)\"', a)[0]
+                    else:
+                        file_name = os.path.basename(file_data.geturl().split('?')[0])
+                if hasattr(file_data, "status") and \
+                   (int(file_data.status) >= 300 and int(file_data.status) < 400):
+                    if securityHandler is None or \
+                       securityHandler.method.lower() == "token":
+                        self._download_file(url=file_data.geturl(),
+                                            save_path=save_path,
+                                            file_name=file_name,
+                                            securityHandler=None,
+                                            proxy_url=self._proxy_url,
+                                            proxy_port=self._proxy_port)
+                    else:
+                        self._download_file(url=file_data.geturl(),
+                                            save_path=save_path,
+                                            file_name=file_name,
+                                            securityHandler=securityHandler,
+                                            proxy_url=self._proxy_url,
+                                            proxy_port=self._proxy_port)
+                    return save_path + os.sep + file_name
+                if (file_data.info().getheader('Content-Length')):
+                    total_size = int(file_data.info().getheader('Content-Length').strip())
+                    downloaded = 0
+                    CHUNK = 4096
+                    with open(save_path + os.sep + file_name, 'wb') as out_file:
+                        while True:
+                            chunk = file_data.read(CHUNK)
+                            downloaded += len(chunk)
+                            if not chunk: break
+                            out_file.write(chunk)
+                elif file_data.headers.maintype=='image':
+                    with open(save_path + os.sep + file_name, 'wb') as out_file:
+                        buf = file_data.read()
+                        out_file.write(buf)
+                else:
+                    CHUNK = 16 * 1024
+                    with open(os.path.join(save_path, file_name), 'wb') as f:
+                        while True:
+                            chunk = file_data.read(CHUNK)
+                            if not chunk: break
+                            f.write(chunk)
+                            f.flush()
+                        del f
+                return os.path.join(save_path, file_name)
+            except urllib.error.HTTPError as e:
+                print(("HTTP Error: %s, %s " % (e.code , url)))
+                return None
+            except urllib.error.URLError as e:
+                print(("URL Error:%s, %s" % (e.reason , url)))
+                return None
         #----------------------------------------------------------------------
         def _do_get(self, url, param_dict, securityHandler=None,
                     header=None, proxy_url=None, proxy_port=None,
