@@ -42,7 +42,7 @@ def outputPrinter(message,typeOfMessage='message'):
 def main(*argv):
 
     proxy_port = None
-    proxy_url = None    
+    proxy_url = None
 
     layerNames = None
     layerName = None
@@ -65,11 +65,10 @@ def main(*argv):
         securityinfo['certificatefile'] = None
         securityinfo['keyfile'] = None
         securityinfo['client_id'] = None
-        securityinfo['secret_id'] = None        
+        securityinfo['secret_id'] = None
         fsId = argv[0]
         layerNames = argv[1]
         sql = argv[2]
-        toggleEditCapabilities = argv[3]
 
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid:
@@ -78,8 +77,6 @@ def main(*argv):
 
             outputPrinter("Logged in successful")
             if not fs is None:
-                if str(toggleEditCapabilities).upper() == 'TRUE':
-                    existingDef = fst.EnableEditingOnService(url=fs.url)
                 for layerName in layerNames.split(','):
                     layerName = layerName.strip()
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
@@ -89,25 +86,23 @@ def main(*argv):
 
                         if 'error' in results:
                             outputPrinter(message="Error in response from server: " % results['error'],typeOfMessage='error')
-                            arcpy.SetParameterAsText(4, "false")
+                            arcpy.SetParameterAsText(3, "false")
                             break
 
                         else:
                             outputPrinter (message="%s features deleted" % len(results['deleteResults']) )
-                            if toggleEditCapabilities:
-                                existingDef = fst.EnableEditingOnService(url=fs.url)
-                            arcpy.SetParameterAsText(4, "true")
+                            arcpy.SetParameterAsText(3, "true")
                     else:
                         outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
-                        arcpy.SetParameterAsText(4, "false")
+                        arcpy.SetParameterAsText(3, "false")
                         break
             else:
                 outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
-                arcpy.SetParameterAsText(4, "false")
+                arcpy.SetParameterAsText(3, "false")
 
         else:
             outputPrinter(message="Security handler not created, exiting")
-            arcpy.SetParameterAsText(4, "false")
+            arcpy.SetParameterAsText(3, "false")
 
     except arcpy.ExecuteError:
         line, filename, synerror = trace()
@@ -115,16 +110,16 @@ def main(*argv):
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
-        arcpy.SetParameterAsText(4, "false")
+        arcpy.SetParameterAsText(3, "false")
     except (common.ArcRestHelperError),e:
         outputPrinter(message=e,typeOfMessage='error')
-        arcpy.SetParameterAsText(4, "false")
+        arcpy.SetParameterAsText(3, "false")
     except:
         line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
-        arcpy.SetParameterAsText(4, "false")
+        arcpy.SetParameterAsText(3, "false")
     finally:
         existingDef = None
         fsId = None
@@ -137,7 +132,7 @@ def main(*argv):
         fl = None
 
         del existingDef
-       
+
         del fsId
         del layerNames
         del layerName
