@@ -11,7 +11,7 @@ from arcrest.hostedservice import AdminFeatureService
 import datetime, time
 import json
 import os
-import common 
+import common
 import gc
 
 #----------------------------------------------------------------------
@@ -21,7 +21,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect, sys 
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -33,7 +33,7 @@ def trace():
     return line, filename, synerror
 
 class orgtools(securityhandlerhelper):
- 
+
     #----------------------------------------------------------------------
     def shareItemsToGroup(self,shareToGroupName,items=None,groups=None):
 
@@ -68,7 +68,7 @@ class orgtools(securityhandlerhelper):
                         print ("Group not found")
                     else:
                         for itemJSON in group.items:
-                            if 'id' in itemJSON:                          
+                            if 'id' in itemJSON:
                                 item = admin.content.getItem(itemId = itemJSON['id'])
                                 res = item.shareItem(",".join(group_ids),everyone=False,org=False)
                                 if 'error' in res:
@@ -79,7 +79,7 @@ class orgtools(securityhandlerhelper):
                                 else:
                                     print ("%s shared with %s" % (item.title,shareToGroupName))
                                 results.append(res)
-        
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -184,14 +184,14 @@ class orgtools(securityhandlerhelper):
             if onlyInOrg == True:
                 q = q + " orgid: %s" % admin.portals.portalSelf.id
             if onlyInUser == True:
-                q = q + " owner: %s" % self._securityHandler.username                 
+                q = q + " owner: %s" % self._securityHandler.username
             results = groups.search(q = q)
             if 'total' in results and 'results' in results:
                 if results['total'] > 0:
                     for res in results['results']:
                         group = admin.content.group(groupId=res['id'])
-                        return group.items            
-                    
+                        return group.items
+
             return None
         except:
             line, filename, synerror = trace()
@@ -212,7 +212,7 @@ class orgtools(securityhandlerhelper):
             del admin
             del groups
             del q
-            del results 
+            del results
             del res
 
             gc.collect()
@@ -273,11 +273,11 @@ class orgtools(securityhandlerhelper):
                             isViewOnly=isViewOnly,
                             isInvitationOnly=isInvitationOnly,
                             thumbnail=thumbnail)
-            except Exception,e:
+            except Exception as e:
                 print (e)
                 return None
-           
-        
+
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -316,7 +316,7 @@ class orgtools(securityhandlerhelper):
                     createResults = portal.createRole(name=name,description=description)
                     if 'success' in createResults:
                         if createResults['success'] == True:
-                            
+
                             setPrivResults = portal.roles.setPrivileges(createResults['id'],privileges)
                             if 'success' in setPrivResults:
                                 print ("%s role created" % name)
@@ -328,12 +328,12 @@ class orgtools(securityhandlerhelper):
                         print (createResults)
                 else:
                     print ("%s role already exist" % name)
-               
-            except Exception,e:
+
+            except Exception as e:
                 print (e)
                 return None
-           
-        
+
+
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -349,11 +349,11 @@ class orgtools(securityhandlerhelper):
             setPrivResults = None
             roleID = None
             createResults = None
-            
+
             del admin
             del portal
             del setPrivResults
             del roleID
             del createResults
-            
+
             gc.collect()

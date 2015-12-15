@@ -212,7 +212,7 @@ class securityhandlerhelper(object):
                     self._client_id is None or self._client_id == '':
                     self._message = "client_id and secret_id required for OAUTH"
                     self._valid = False
-                else:                    
+                else:
                     self._securityHandler = security.OAuthSecurityHandler(client_id=self._client_id,
                                                                          secret_id = self._secret_id,
                                                                          org_url=self._org_url,
@@ -224,17 +224,17 @@ class securityhandlerhelper(object):
                 print ("No valid security type set")
                 self._message = "No valid security type set"
             if self._securityHandler is not None:
-            
+
                 admin = Administration(url=self._org_url,
                                        securityHandler=self._securityHandler)
-    
+
                 try:
                     portal = admin.portals.portalSelf
                     for hostingServer in portal.featureServers:
                         if isinstance(hostingServer, AGSAdministration):
                             try:
                                 serData = hostingServer.data
-    
+
                                 dataItems = serData.rootDataItems
                                 if 'rootItems' in dataItems:
                                     for rootItem in dataItems['rootItems']:
@@ -257,21 +257,21 @@ class securityhandlerhelper(object):
                                     print ("Admistrative access denied, unable to check if hosting servers")
                                 else:
                                     print (err)
-                            except Exception, e:
+                            except Exception as e:
                                 print (e)
-    
+
                 except HTTPError, err:
                     if err.code == 403:
                         print ("Admistrative access denied, unable to check if hosting servers")
                     else:
                         print (err)
-                except Exception, e:
+                except Exception as e:
                     print (e)
-          
+
                 if 'error' in self._securityHandler.message:
                     self._message = self._securityHandler.message
                     self._valid = False
-    
+
                 else:
                     if self._securityHandler.message is not None:
                         self._message = self._securityHandler.message
