@@ -495,7 +495,7 @@ class featureservicetools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
     def QueryAllFeatures(self,url,sql,out_fields="*",chunksize=0,saveLocation="",outName=""):
-        fl = None        
+        fl = None
         try:
             fl = FeatureLayer(
                    url=url,
