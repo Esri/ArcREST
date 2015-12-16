@@ -714,7 +714,7 @@ class FeatureService(abstract.BaseAGOLClass):
            wait - if async, wait to pause the process until the async operation is completed.
            out_path - folder path to save the file
         """
-        if self.syncEnabled == False:
+        if self.syncEnabled == False and "Extract" not in self.capabilities:
             return None
         url = self._url + "/createReplica"
         dataformat = ["filegdb", "json", "sqlite", "shapefile"]
@@ -742,7 +742,7 @@ class FeatureService(abstract.BaseAGOLClass):
             params['replicaOptions'] = replicaOptions
         if transportType is not None:
             params['transportType'] = transportType
-        
+
         if async:
             if wait:
                 exportJob = self._do_post(url=url,
@@ -755,9 +755,9 @@ class FeatureService(abstract.BaseAGOLClass):
                     status = self.replicaStatus(url=exportJob['statusUrl'])
                     if status['status'].lower() == "failed":
                         return status
-               
+
                 res = status
-                   
+
             else:
                 res = self._do_post(url=url,
                                      param_dict=params,
@@ -770,13 +770,13 @@ class FeatureService(abstract.BaseAGOLClass):
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
                                 proxy_port=self._proxy_port)
-          
-        
+
+
         if out_path is not None and \
            os.path.isdir(out_path):
             dlURL = None
             if 'resultUrl' in res:
-                
+
                 dlURL = res["resultUrl"]
             elif 'responseUrl' in res:
                 dlURL = res["responseUrl"]
