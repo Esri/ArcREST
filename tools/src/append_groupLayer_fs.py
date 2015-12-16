@@ -120,7 +120,7 @@ def main():
                         for key, value in layerToServiceLayer.iteritems():
                             if matchEntireName =='true' and key == lyr.name:
                                 matches = True
-                            elif matchEntireName =='false' and key in lyr.name:
+                            elif matchEntireName =='false' and str(lyr.name).startswith(key):
                                 matches = True
                             else:
                                 matches = False
