@@ -494,7 +494,7 @@ class featureservicetools(securityhandlerhelper):
             gc.collect()
 
     #----------------------------------------------------------------------
-    def QueryAllFeatures(self,url,sql,chunksize=0,saveLocation="",outName=""):
+    def QueryAllFeatures(self,url,sql,out_fields="*",chunksize=0,saveLocation="",outName=""):
         fl = None
         try:
             fl = FeatureLayer(
@@ -526,7 +526,7 @@ class featureservicetools(securityhandlerhelper):
                         else:
                             results = fl.query(objectIds=oidsQuery,
                                                returnGeometry=True,
-                                               out_fields='*')
+                                               out_fields=out_fields)
                             if isinstance(results,FeatureSet):
                                 if combinedResults is None:
                                     combinedResults = results
@@ -542,15 +542,19 @@ class featureservicetools(securityhandlerhelper):
                                 i += chunksize
                             else:
                                 print (results)
-
-                    print (combinedResults.save(saveLocation=saveLocation, outName=outName))
+                                
+                    if saveLocation == "" or outName == "":
+                        return combinedResults
+                    else:
+                        return combinedResults.save(saveLocation=saveLocation, outName=outName)
+                        
                 else:
                     print (qRes)
             else:
                 return  fl.query(where=sql,
                                  returnFeatureClass=True,
                                  returnGeometry=True,
-                                 out_fields='*',
+                                 out_fields=out_fields,
                                  out_fc=os.path.join(saveLocation,outName)
                                  )
 
