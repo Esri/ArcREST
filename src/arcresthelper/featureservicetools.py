@@ -542,8 +542,12 @@ class featureservicetools(securityhandlerhelper):
                                 i += chunksize
                             else:
                                 print (results)
-
-                    print (combinedResults.save(saveLocation=saveLocation, outName=outName))
+                                
+                    if saveLocation == "" or outName == "":
+                        return combinedResults
+                    else:
+                        return combinedResults.save(saveLocation=saveLocation, outName=outName)
+                        
                 else:
                     print (qRes)
             else:
