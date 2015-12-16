@@ -76,12 +76,12 @@ def main():
         layerMap = arcpy.GetParameterAsText(2)
         matchEntireName = arcpy.GetParameterAsText(3)
         projection = arcpy.GetParameterAsText(4)
-        lowerCaseFieldNames = argv[5]
-    
+        lowerCaseFieldNames = arcpy.GetParameterAsText(5)
+
         if str(lowerCaseFieldNames).upper() == 'TRUE':
             lowerCaseFieldNames = True
         else:
-            lowerCaseFieldNames = False        
+            lowerCaseFieldNames = False
         if projection is not None and projection != '#' and projection != '':
             #outputPrinter(message="Projecting %s" % str(projection))
             pass
