@@ -36,14 +36,14 @@ class ArcRestHelperError(Exception):
 def merge_dicts(dicts, op=operator.add):
     a = None
     for b in dicts:
-        
+
         if a is None:
             a = b.copy()
         else:
             a = dict(a.items() + b.items() + [(k, op(a[k], b[k])) for k in set(b) & set(a)])
     return a
 
-##----------------------------------------------------------------------  
+##----------------------------------------------------------------------
 #def merge_dicts(dicts):
     #'''
     #Given any number of dicts, shallow copy and merge into a new dict,
@@ -55,65 +55,65 @@ def merge_dicts(dicts, op=operator.add):
         ##result.update(dictionary)
         #if z is None:
             #z = dictionary.copy()
-        #else:    
+        #else:
             #z.update(dictionary)
-           
+
     #return z
 #def merge_two_dicts(x, y):
     #'''Given two dicts, merge them into a new dict as a shallow copy.'''
     #z = x.copy()
     #z.update(y)
     #return z
-#----------------------------------------------------------------------  
+#----------------------------------------------------------------------
 def noneToValue(value,newValue):
     if value is None:
         return newValue
     else:
         return value
-#----------------------------------------------------------------------  
+#----------------------------------------------------------------------
 def getLayerIndex(url):
     urlInfo = None
     urlSplit = None
-    inx = None   
+    inx = None
     try:
         urlInfo = urlparse.urlparse(url)
         urlSplit = str(urlInfo.path).split('/')
         inx = urlSplit[len(urlSplit)-1]
-    
+
         if is_number(inx):
             return int(inx)
-       
+
     except:
         return 0
-    finally:                
+    finally:
         urlInfo = None
         urlSplit = None
-       
+
         del urlInfo
         del urlSplit
-       
-        gc.collect() 
-#----------------------------------------------------------------------  
+
+        gc.collect()
+#----------------------------------------------------------------------
 def getLayerName(url):
     urlInfo = None
-    urlSplit = None   
+    urlSplit = None
     try:
         urlInfo = urlparse.urlparse(url)
         urlSplit = str(urlInfo.path).split('/')
         name = urlSplit[len(urlSplit)-3]
-        return name   
+        return name
     except:
         return url
-                                    
-    finally:                
+
+    finally:
         urlInfo = None
         urlSplit = None
-       
+
         del urlInfo
         del urlSplit
-       
-        gc.collect() 
-#----------------------------------------------------------------------  
+
+        gc.collect()
+#----------------------------------------------------------------------
 def random_string_generator(size=6, chars=string.ascii_uppercase):
     try:
         return ''.join(random.choice(chars) for _ in range(size))
@@ -126,9 +126,9 @@ def random_string_generator(size=6, chars=string.ascii_uppercase):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         pass
-#----------------------------------------------------------------------  
+#----------------------------------------------------------------------
 def random_int_generator(maxrange):
     try:
         return random.randint(0,maxrange)
@@ -141,9 +141,9 @@ def random_int_generator(maxrange):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         pass
-#----------------------------------------------------------------------  
+#----------------------------------------------------------------------
 def local_time_to_online(dt=None):
     """
        converts datetime object to a UTC timestamp for AGOL
@@ -153,14 +153,14 @@ def local_time_to_online(dt=None):
           Long value
     """
     is_dst = None
-    utc_offset = None   
+    utc_offset = None
     try:
         if dt is None:
             dt = datetime.datetime.now()
-    
+
         is_dst = time.daylight > 0 and time.localtime().tm_isdst > 0
         utc_offset =  (time.altzone if is_dst else time.timezone)
-    
+
         return (time.mktime(dt.timetuple()) * 1000) + (utc_offset * 1000)
     except:
         line, filename, synerror = trace()
@@ -171,14 +171,14 @@ def local_time_to_online(dt=None):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         is_dst = None
-        utc_offset = None 
-       
+        utc_offset = None
+
         del is_dst
-        del utc_offset       
-        
-#----------------------------------------------------------------------  
+        del utc_offset
+
+#----------------------------------------------------------------------
 def online_time_to_string(value,timeFormat):
     """
        Converts a timestamp to date/time string
@@ -199,7 +199,7 @@ def online_time_to_string(value,timeFormat):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         pass
 #----------------------------------------------------------------------
 def is_number(s):
@@ -223,7 +223,7 @@ def init_config_json(config_file):
     try:
         if os.path.exists(config_file):
         #Load the config file
-        
+
             with open(config_file) as json_file:
                 json_data = json.load(json_file)
                 return unicode_convert(json_data)
@@ -238,19 +238,19 @@ def init_config_json(config_file):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         json_data = None
-        
+
         del json_data
-        
+
         gc.collect()
-    
+
 #----------------------------------------------------------------------
 def write_config_json(config_file, data):
-    outfile = None    
+    outfile = None
     try:
         with open(config_file, 'w') as outfile:
-            json.dump(data, outfile)  
+            json.dump(data, outfile)
     except:
         line, filename, synerror = trace()
         raise ArcRestHelperError({
@@ -260,18 +260,18 @@ def write_config_json(config_file, data):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         outfile = None
-        
+
         del outfile
-        
+
         gc.collect()
-      
+
 #----------------------------------------------------------------------
 def unicode_convert(obj):
-    try:    
+    try:
         """ converts unicode to anscii """
-        
+
         if isinstance(obj, dict):
             return {unicode_convert(key): unicode_convert(value) for key, value in obj.iteritems()}
         elif isinstance(obj, list):
@@ -290,7 +290,7 @@ def find_replace_string(obj,find,replace):
             return obj
         else:
             return newStr
-        
+
     except:
         line, filename, synerror = trace()
         raise ArcRestHelperError({
@@ -300,10 +300,10 @@ def find_replace_string(obj,find,replace):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
+    finally:
         pass
 def find_replace(obj,find,replace):
-    
+
     """ searchs an object and does a find and replace """
     try:
         if isinstance(obj, dict):
@@ -317,7 +317,7 @@ def find_replace(obj,find,replace):
                 return unicode_convert(find_replace_string(obj, find, replace))
                 #obj = unicode_convert(json.loads(obj))
                 #return find_replace(obj,find,replace)
-            except:    
+            except:
                 return unicode_convert(obj)
     except:
         line, filename, synerror = trace()
@@ -328,8 +328,14 @@ def find_replace(obj,find,replace):
                     "synerror": synerror,
                                     }
                                     )
-    finally:                
-        pass   
+    finally:
+        pass
+#----------------------------------------------------------------------
+def chunklist(l, n):
+    """Yield successive n-sized chunks from l ."""
+    n = max(1, n)
+    for i in range(0, len(l), n):
+        yield l[i:i+n]
 #----------------------------------------------------------------------
 def init_log(log_file):
 
@@ -349,7 +355,7 @@ def close_log(log_file):
     if log_file is not None:
         log_file.close()
         del log_file
-        
+
 #----------------------------------------------------------------------
 class Tee(object):
     """ Combines standard output with a file for logging"""
