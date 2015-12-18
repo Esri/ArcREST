@@ -113,7 +113,7 @@ class OpenData(BaseOpenData):
         if self._last_search is None:
             self.search()
         for d in self._last_search['data']:
-            yield OpenDataItem(url=self._url + "/%s.json" % d['id'],
+            yield OpenDataItem(url=self._url + "/%s" % d['id'],
                                proxy_url=self._proxy_url,
                                proxy_port=self._proxy_port,
                                initialize=True)
@@ -134,17 +134,14 @@ class OpenDataItem(BaseOpenData):
     _json_dict = None
     _related_items = None
     #----------------------------------------------------------------------
-    def __init__(self,\
+    def __init__(self,
                  url,
                  securityHandler=None,
                  proxy_url=None,
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
-        if not url.lower().endswith('.json'):
-            self._url = url + ".json"
-        else:
-            self._url = url
+        self._url = url
         self._securityHandler = securityHandler
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
@@ -173,9 +170,23 @@ class OpenDataItem(BaseOpenData):
             for k,v in json_dict['data'].items():
                 setattr(self, k, v)
                 del k,v
-        print ('stop')
+    def asShapefile(self, outfolder, outSR=None):
+        """
+        exports the dataset as a shapefile
 
-
-
-
-
+        Inputs:
+           outfolder - save location of the file.
+           outSR - export spatial reference (optional)
+        Output:
+           full path to downloaded file
+        """
+        params = {}
+        url = self._url + ".zip"
+        if outSR is not None:
+            params['outSR'] = outSR
+        return self._download_file(url=url,
+                                   securityHandler=self._securityHandler,
+                                   save_path=outfolder,
+                                   param_dict=params,
+                                   proxy_url=self._proxy_url,
+                                   proxy_port=self._proxy_port)
