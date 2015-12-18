@@ -322,7 +322,7 @@ class publishingtools(securityhandlerhelper):
                     #updateParams = arcrest.manageorg.ItemParameter()
                     #updateParams.title = name
                     #updateResults = item.updateItem(itemParameters=updateParams)
-                except Exception,e:
+                except Exception as e:
                     print (e)
             if item is None:
                 return "Item could not be added"
@@ -932,7 +932,7 @@ class publishingtools(securityhandlerhelper):
                     updateParams = arcrest.manageorg.ItemParameter()
                     updateParams.title = name
                     updateResults = item.updateItem(itemParameters=updateParams)
-                except Exception,e:
+                except Exception as e:
                     print (e)
             if item is None:
                 return "Item could not be added"
@@ -1499,7 +1499,7 @@ class publishingtools(securityhandlerhelper):
                             destinationItemId=None,
                             serviceProxyParams=None,
                             metadata=None)
-                except Exception,e:
+                except Exception as e:
                     print (e)
                 if defItem is None:
                     return "Item could not be added "
@@ -1512,7 +1512,7 @@ class publishingtools(securityhandlerhelper):
                     publishParameters=publishParameters,
                     overwrite = True,
                     wait=True)
-            except Exception, e:
+            except Exception as e:
                 print ("Overwrite failed")
 
                 sea = arcrest.find.search(securityHandler=self._securityHandler)
@@ -1598,7 +1598,7 @@ class publishingtools(securityhandlerhelper):
                         overwrite = True,
                         publishParameters=publishParameters,
                         wait=True)
-                except Exception, e:
+                except Exception as e:
 
                     print ("Overwrite failed, deleting")
                     delres = userInfo.deleteItems(items=existingItem.id)
@@ -1614,7 +1614,7 @@ class publishingtools(securityhandlerhelper):
                             overwrite = True,
                             publishParameters=publishParameters,
                             wait=True)
-                    except Exception, e:
+                    except Exception as e:
                         return e
 
             results = {
@@ -1675,7 +1675,7 @@ class publishingtools(securityhandlerhelper):
 
 
             if definition is not None:
-                
+
                 enableResults = adminFS.updateDefinition(json_dict=definition)
                 if enableResults is not None and 'error' in enableResults:
                     results['messages'] = enableResults
@@ -1683,14 +1683,14 @@ class publishingtools(securityhandlerhelper):
                     if 'editorTrackingInfo' in definition:
                         if 'enableEditorTracking' in definition['editorTrackingInfo']:
                             if definition['editorTrackingInfo']['enableEditorTracking'] == True:
-                    
+
                                 json_dict = {'editFieldsInfo':{}}
-                    
+
                                 json_dict['editFieldsInfo']['creationDateField'] = ""
                                 json_dict['editFieldsInfo']['creatorField'] = ""
                                 json_dict['editFieldsInfo']['editDateField'] = ""
                                 json_dict['editFieldsInfo']['editorField'] = ""
-                    
+
                                 layers = adminFS.layers
                                 tables = adminFS.tables
                                 for layer in layers:
@@ -1698,7 +1698,7 @@ class publishingtools(securityhandlerhelper):
                                         if layer.editFieldsInfo is None:
                                             layUpdateResult = layer.addToDefinition(json_dict=json_dict)
                                             if 'error' in layUpdateResult:
-                    
+
                                                 layUpdateResult['error']['layerid'] = layer.id
                                                 results['messages'] = layUpdateResult['error']
                                 if not tables is None:
@@ -1707,9 +1707,9 @@ class publishingtools(securityhandlerhelper):
                                             if layer.editFieldsInfo is None:
                                                 layUpdateResult = layer.addToDefinition(json_dict=json_dict)
                                                 if 'error' in layUpdateResult:
-                    
+
                                                     layUpdateResult['error']['layerid'] = layer.id
-                                                    results['messages'] = layUpdateResult['error']                    
+                                                    results['messages'] = layUpdateResult['error']
 
             return results
 
@@ -2155,7 +2155,7 @@ class publishingtools(securityhandlerhelper):
                         #url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
                     updateParams.url = url
                     updateResults = item.updateItem(itemParameters=updateParams)
-                except Exception,e:
+                except Exception as e:
                     print (e)
             resultApp['Results']['itemId'] = item.id
             resultApp['folderId'] = folderId
@@ -2496,7 +2496,7 @@ class publishingtools(securityhandlerhelper):
                         serviceProxyParams=None,
                         metadata=None,
                         text=json.dumps(itemData))
-                except Exception,e:
+                except Exception as e:
                     print (e)
 
             group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
