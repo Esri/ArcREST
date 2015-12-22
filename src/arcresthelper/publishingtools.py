@@ -181,7 +181,7 @@ class publishingtools(securityhandlerhelper):
             del admin
 
             gc.collect()
-    #----------------------------------------------------------------------
+     #----------------------------------------------------------------------
     def _publishItems(self,config):
         name = None
         tags = None
@@ -211,7 +211,7 @@ class publishingtools(securityhandlerhelper):
         group_ids = None
         shareResults = None
         updateParams = None
-
+        url = None
         resultItem = {}
         try:
             name = ''
@@ -222,6 +222,9 @@ class publishingtools(securityhandlerhelper):
 
             if config.has_key('Data'):
                 itemData = config['Data']
+
+            if config.has_key('Url'):
+                url = config['Url']
 
             name = config['Title']
 
@@ -300,32 +303,39 @@ class publishingtools(securityhandlerhelper):
                     return resultItem
 
                 results = item.updateItem(itemParameters=itemParams,
-                                            data=itemData)
+                                          data=itemData,serviceUrl=url)
                 if 'error' in results:
                     return results
+                if item.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=item.id,folder=folderId)
+
             else:
                 try:
                     item = userInfo.addItem(itemParameters=itemParams,
-                            overwrite=True,
-                            url=None,
-                            relationshipType=None,
-                            originItemId=None,
-                            destinationItemId=None,
-                            serviceProxyParams=None,
-                            metadata=None,
-                            filePath=itemData)
-                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                    shareResults = userInfo.shareItems(items=item.id,
-                                                       groups=','.join(group_ids),
-                                                       everyone=everyone,
-                                                       org=org)
+                                            overwrite=True,
+                                            url=url,
+                                            relationshipType=None,
+                                            originItemId=None,
+                                            destinationItemId=None,
+                                            serviceProxyParams=None,
+                                            metadata=None,
+                                            filePath=itemData)
+
                     #updateParams = arcrest.manageorg.ItemParameter()
                     #updateParams.title = name
                     #updateResults = item.updateItem(itemParameters=updateParams)
-                except Exception as e:
+                except Exception,e:
                     print (e)
             if item is None:
                 return "Item could not be added"
+
+            group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+            shareResults = userInfo.shareItems(items=item.id,
+                                               groups=','.join(group_ids),
+                                               everyone=everyone,
+                                               org=org)
 
             resultItem['itemId'] = item.id
             resultItem['url'] = item.item._curl + "/data"
@@ -913,6 +923,10 @@ class publishingtools(securityhandlerhelper):
                                             text=json.dumps(webmap_data))
                 if 'error' in results:
                     return results
+                if item.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=item.id,folder=folderId)
             else:
                 try:
                     item = userInfo.addItem(itemParameters=itemParams,
@@ -924,19 +938,20 @@ class publishingtools(securityhandlerhelper):
                             serviceProxyParams=None,
                             metadata=None,
                             text=json.dumps(webmap_data))
-                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                    shareResults = userInfo.shareItems(items=item.id,
-                                                       groups=','.join(group_ids),
-                                                       everyone=everyone,
-                                                       org=org)
-                    updateParams = arcrest.manageorg.ItemParameter()
-                    updateParams.title = name
-                    updateResults = item.updateItem(itemParameters=updateParams)
+
                 except Exception as e:
                     print (e)
             if item is None:
                 return "Item could not be added"
 
+            group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+            shareResults = userInfo.shareItems(items=item.id,
+                                               groups=','.join(group_ids),
+                                               everyone=everyone,
+                                               org=org)
+            updateParams = arcrest.manageorg.ItemParameter()
+            updateParams.title = name
+            updateResults = item.updateItem(itemParameters=updateParams)
 
             resultMap['Results']['itemId'] = item.id
             resultMap['folderId'] = folderId
@@ -1465,27 +1480,32 @@ class publishingtools(securityhandlerhelper):
 
             sea = arcrest.find.search(securityHandler=self._securityHandler)
             items = sea.findItem(title=service_name, itemType=searchType,searchorg=False)
-
+            defItem = None
+            defItemID = None
             if items['total'] >= 1:
                 for res in items['results']:
                     if 'type' in res and res['type'] == searchType:
                         if 'name' in res and res['name'] == service_name:
-                            itemId = res['id']
+                            defItemID = res['id']
                             break
                         if 'title' in res and res['title'] == service_name:
-                            itemId = res['id']
+                            defItemID = res['id']
                             break
                 #itemId = items['results'][0]['id']
 
-            defItem = None
 
-            if not itemId is None:
-                defItem = content.getItem(itemId).userItem
+
+            if not defItemID is None:
+                defItem = content.getItem(defItemID).userItem
 
                 resultSD = defItem.updateItem(itemParameters=itemParams,
                                             data=sd_Info['servicedef'])
                 if 'error' in resultSD:
                     return resultSD
+                if defItem.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=defItem.id,folder=folderId)
 
             else:
                 try:
@@ -1584,7 +1604,7 @@ class publishingtools(securityhandlerhelper):
                 else:
                     print ("Item exist and cannot be found, probably owned by another user.")
                     raise common.ArcRestHelperError({
-                        "function": "_publishFsFromConfig",
+                        "function": "_publishFsFromMXD",
                         "line": lineno(),
                         "filename":  'publishingtools.py',
                         "synerror": "Item exist and cannot be found, probably owned by another user."
@@ -1717,7 +1737,7 @@ class publishingtools(securityhandlerhelper):
 
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                "function": "_publishFsFromConfig",
+                "function": "_publishFsFromMXD",
                 "line": line,
                 "filename":  filename,
                 "synerror": synerror,
@@ -2126,6 +2146,10 @@ class publishingtools(securityhandlerhelper):
 
                 if 'error' in results:
                     return results
+                if item.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=item.id,folder=folderId)
             else:
                 try:
                     item = userInfo.addItem(
@@ -2138,25 +2162,30 @@ class publishingtools(securityhandlerhelper):
                             metadata=None,
                             text=json.dumps(itemData))
 
-                    group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
-                    shareResults = userInfo.shareItems(items=item.id,
-                                                       groups=','.join(group_ids),
-                                                       everyone=everyone,
-                                                       org=org)
-                    updateParams = arcrest.manageorg.ItemParameter()
-                    updateParams.title = name
 
-                    url = url.replace("{AppID}",item.id)
-                    url = url.replace("{OrgURL}",orgURL)
-                    #if portalself.urlKey is None or portalself.customBaseUrl is None:
-                        #parsedURL = urlparse.urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
-
-                    #else:
-                        #url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
-                    updateParams.url = url
-                    updateResults = item.updateItem(itemParameters=updateParams)
                 except Exception as e:
                     print (e)
+            if item is None:
+                return "App could not be added"
+
+            group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
+            shareResults = userInfo.shareItems(items=item.id,
+                                               groups=','.join(group_ids),
+                                               everyone=everyone,
+                                               org=org)
+            updateParams = arcrest.manageorg.ItemParameter()
+            updateParams.title = name
+
+            url = url.replace("{AppID}",item.id)
+            url = url.replace("{OrgURL}",orgURL)
+            #if portalself.urlKey is None or portalself.customBaseUrl is None:
+                            #parsedURL = urlparse.urlparse(url=self._securityHandler.org_url, scheme='', allow_fragments=True)
+
+            #else:
+                            #url = url.replace("{OrgURL}", portalself.urlKey + '.' +  portalself.customBaseUrl)
+            updateParams.url = url
+            updateResults = item.updateItem(itemParameters=updateParams)
+
             resultApp['Results']['itemId'] = item.id
             resultApp['folderId'] = folderId
             resultApp['Name'] = name
@@ -2485,6 +2514,10 @@ class publishingtools(securityhandlerhelper):
                                                        text=json.dumps(itemData))
                 if 'error' in results:
                     return results
+                if item.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=item.id,folder=folderId)
             else:
                 try:
 
@@ -2499,6 +2532,8 @@ class publishingtools(securityhandlerhelper):
                 except Exception as e:
                     print (e)
 
+            if item is None:
+                return "Dashboard could not be added"
             group_ids = userCommunity.getGroupIDs(groupNames=groupNames)
             shareResults = userInfo.shareItems(items=item.id,
                                                groups=','.join(group_ids),
@@ -2906,7 +2941,10 @@ class publishingtools(securityhandlerhelper):
                 item = content.getItem(itemId).userItem
                 resultSD = item.updateItem(itemParameters=itemParams,
                                            text=fcJson)
-
+                if item.ownerFolder != folderId:
+                    if folderId is None:
+                        folderId = "/"
+                    moveRes = userInfo.moveItems(items=item.id,folder=folderId)
             else:
 
                 resultSD = userInfo.addItem(itemParameters=itemParams,
