@@ -1,9 +1,10 @@
 """
    Update a users passwords
 
-   Python 2.x
-   ArcREST 3.0.1
+   version 3.5.x
+   Python 2/3
 """
+from __future__ import print_function
 from arcresthelper import securityhandlerhelper
 import arcrest
 
@@ -30,8 +31,8 @@ if __name__ == "__main__":
 
     shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
     if shh.valid == False:
-        print shh.message
+        print (shh.message)
     else:
         admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler, initialize=True)
         user = admin.community.users.user(str(username).strip())
-        print user.update(password="1234testtest")
+        print (user.update(password="1234testtest"))
