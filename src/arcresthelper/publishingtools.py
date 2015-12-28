@@ -158,7 +158,7 @@ class publishingtools(securityhandlerhelper):
 
             return item_results
 
-        except common.ArcRestHelperError,e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -326,7 +326,7 @@ class publishingtools(securityhandlerhelper):
                     #updateParams = arcrest.manageorg.ItemParameter()
                     #updateParams.title = name
                     #updateResults = item.updateItem(itemParameters=updateParams)
-                except Exception,e:
+                except Exception as e:
                     print (e)
             if item is None:
                 return "Item could not be added"
@@ -486,7 +486,7 @@ class publishingtools(securityhandlerhelper):
                 print ("%s webmap created" % itemInfo['MapInfo']['Name'])
             return map_results
 
-        except common.ArcRestHelperError,e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -1213,7 +1213,7 @@ class publishingtools(securityhandlerhelper):
                     print (str(resItm['FSInfo']))
 
             return res
-        except common.ArcRestHelperError,e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -1273,7 +1273,7 @@ class publishingtools(securityhandlerhelper):
 
             return res
 
-        except common.ArcRestHelperError,e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -1915,7 +1915,7 @@ class publishingtools(securityhandlerhelper):
                 print ("App was not created")
             return itemInfo
 
-        except common.ArcRestHelperError, e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -1956,7 +1956,7 @@ class publishingtools(securityhandlerhelper):
                 app_results.append(self._publishAppLogic(appDet=app_info,map_info=map_info,fsInfo=fsInfo))
             return app_results
 
-        except (common.ArcRestHelperError), e:
+        except (common.ArcRestHelperError) as e:
             raise e
         except Exception as e:
 
@@ -2430,7 +2430,7 @@ class publishingtools(securityhandlerhelper):
                                                                                     #old=field['PublishName'],
                                                                                     #new=field['ConvertName'])
                                                                     dataSource['filter']['whereClause'] = " ".join(whereElements)
-                                                                except select_parser.ParseException, pe:
+                                                                except select_parser.ParseException as pe:
                                                                     for field in dataSourceIDToFields[dataSource['parentDataSourceId']]['FieldInfo']['fields']:
                                                                         if whercla.contains(field['PublishName']):
                                                                             whercla = whercla.replace(
@@ -2718,7 +2718,7 @@ class publishingtools(securityhandlerhelper):
 
             return fsRes
 
-        except common.ArcRestHelperError,e:
+        except common.ArcRestHelperError as e:
             raise e
         except Exception as e:
 
@@ -2992,7 +2992,7 @@ class publishingtools(securityhandlerhelper):
 
 
 
-        except common.ArcRestHelperError, e:
+        except common.ArcRestHelperError as e:
             raise e
 
         except Exception as e:
