@@ -203,11 +203,23 @@ if six.PY2:
             if len(handlers) > 0:
                 opener = urllib2.build_opener(*handlers)
             opener.addheaders = headers
-            if len(str(urllib.urlencode(param_dict))) + len(url)> 1999:
-                resp = opener.open(url, data=urllib.urlencode(param_dict))
-            else:
-                format_url = url + "?%s" % urllib.urlencode(param_dict)
-                resp = opener.open(format_url)
+            try:
+                if len(str(urllib.urlencode(param_dict))) + len(url)> 1999:
+                    resp = opener.open(url, data=urllib.urlencode(param_dict))
+                else:
+                    format_url = url + "?%s" % urllib.urlencode(param_dict)
+                    resp = opener.open(format_url)
+            except urllib2.HTTPError as e:
+                e = sys.exc_info()[1]
+                print(("Http Error:%s, code:%s, %s" % (e.reason,e.code, url)))
+                return ("Http Error:%s, code:%s, %s" % (e.reason,e.code, url))
+            except urllib2.URLError as e:
+                print(("URL Error:%s, %s" % (e.reason , url)))
+                return ("URL Error:%s, %s" % (e.reason , url))
+            except Exception:
+                e = sys.exc_info()[1]
+                print (e)
+                return None
             if resp.info().get('Content-Encoding') == 'gzip':
                 buf = StringIO(resp.read())
                 f = gzip.GzipFile(fileobj=buf)
@@ -286,17 +298,26 @@ if six.PY2:
             result = ""
             try:
                 result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
-                if result =="":
-                    return ""
-                jres = json.loads(result)
-            except urllib2.HTTPError:
+
+            except urllib2.HTTPError as e:
                 e = sys.exc_info()[1]
-                return {'error':{'code':e.code}}
+                print(("Http Error:%s, code:%s, %s" % (e.reason,e.code, url)))
+                return  ("Http Error:%s, code:%s, %s" % (e.reason,e.code, url))
+            except urllib2.URLError as e:
+                print(("URL Error:%s, %s" % (e.reason , url)))
+                return ("URL Error:%s, %s" % (e.reason , url))
             except Exception:
                 e = sys.exc_info()[1]
                 print (e)
-                return result
-            #jres = json.loads(result)
+                return None
+            if result =="":
+                return ""
+            try:
+                jres = json.loads(result)
+            except Exception:
+                e = sys.exc_info()[1]
+                print (e)
+                return None
             if 'error' in jres:
                 if 'message' in jres['error']:
                     if jres['error']['message'] == 'Request not made over ssl':
@@ -747,6 +768,8 @@ elif six.PY3:
             try:
                 result = urllib.request.urlopen(request,data=None).read()
             except urllib.error.HTTPError as e:
+                return {'error':{'code':e.code}}
+            except urllib.error.URLError as e:
                 return {'error':{'code':e.code}}
             if result =="":
                 return ""

@@ -382,7 +382,7 @@ class featureservicetools(securityhandlerhelper):
                         if messages is None:
                             messages = result
                         else:
-                            if 'addResults' in result:
+                            if result is not None and 'addResults' in result:
                                 if 'addResults' in messages:
                                     messages['addResults'] = messages['addResults'] + result['addResults']
                                     print ("%s/%s features added" % (len(messages['addResults']),total))
@@ -470,10 +470,11 @@ class featureservicetools(securityhandlerhelper):
                     print (qRes)
             else:
                 results = fl.deleteFeatures(where=sql)
-                if 'deleteResults' in results:
-                    return  {'success':True,'message': totalDeleted + len(results['deleteResults'])}
-                else:
-                    return results
+                if results is not None:
+                    if 'deleteResults' in results:
+                        return  {'success':True,'message': totalDeleted + len(results['deleteResults'])}
+                    else:
+                        return results
 
         except:
             line, filename, synerror = trace()
@@ -497,7 +498,7 @@ class featureservicetools(securityhandlerhelper):
         try:
             fl = FeatureLayer(url=url, securityHandler=self._securityHandler)
             qRes = fl.query(where=sql, returnIDsOnly=True)
-            
+
             if 'error' in qRes:
                 print (qRes)
                 return qRes
@@ -507,7 +508,7 @@ class featureservicetools(securityhandlerhelper):
                 if total == 0:
                     return  {'success':True, 'message':"No features matched the query"}
 
-                print ("%s features to be downloaded" % total)                
+                print ("%s features to be downloaded" % total)
                 chunksize = min(chunksize, fl.maxRecordCount)
                 combinedResults = None
                 totalQueried = 0
@@ -538,7 +539,7 @@ class featureservicetools(securityhandlerhelper):
                     return combinedResults.save(saveLocation=saveLocation, outName=outName)
 
             else:
-                print (qRes) 
+                print (qRes)
 
         except:
             line, filename, synerror = trace()
