@@ -1993,7 +1993,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 params = {
                     "f" : 'json',
                     "features"  : json.dumps(chunk,
-                                             default=self._date_handler)
+                                             default=_date_handler)
                 }
 
                 result = self._do_post(url=uURL, param_dict=params,

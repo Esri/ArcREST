@@ -7,6 +7,8 @@ dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
 from arcrest.agol import FeatureLayer
 from arcrest.agol import FeatureService
+from arcrest.ags import FeatureService
+
 from arcrest.hostedservice import AdminFeatureService
 from arcrest.common.spatial import scratchFolder, scratchGDB, json_to_featureclass
 from arcrest.common.general import FeatureSet
@@ -243,9 +245,14 @@ class featureservicetools(securityhandlerhelper):
                 if returnURLOnly:
                     return item.url
                 else:
-                    return FeatureService(
+                    fs = arcrest.agol.FeatureService(
                        url=item.url,
                        securityHandler=self._securityHandler)
+                    if fs.layers is None or len(fs.layers) == 0 :
+                        fs = arcrest.ags.FeatureService(
+                           url=item.url)
+                    return fs
+
             return None
 
         except:
@@ -268,7 +275,7 @@ class featureservicetools(securityhandlerhelper):
     def GetLayerFromFeatureServiceByURL(self,url,layerName="",returnURLOnly=False):
         fs = None
         try:
-            fs = FeatureService(
+            fs = arcrest.agol.FeatureService(
                     url=url,
                     securityHandler=self._securityHandler)
 
@@ -297,23 +304,29 @@ class featureservicetools(securityhandlerhelper):
         sublayer = None
         try:
             layers = fs.layers
-            for layer in layers:
-                if layer.name == layerName:
-                    if returnURLOnly:
-                        return fs.url + '/' + str(layer.id)
-                    else:
-                        return layer
+            if (layers is None or len(layers) == 0) and fs.url is not None:
+                fs = arcrest.ags.FeatureService(
+                                    url=fs.url)
+                layers = fs.layers
+            if layers is not None:
+                for layer in layers:
+                    if layer.name == layerName:
+                        if returnURLOnly:
+                            return fs.url + '/' + str(layer.id)
+                        else:
+                            return layer
 
-                elif not layer.subLayers is None:
-                    for sublayer in layer.subLayers:
-                        if sublayer == layerName:
-                            return sublayer
-            for table in fs.tables:
-                if table.name == layerName:
-                    if returnURLOnly:
-                        return fs.url + '/' + str(layer.id)
-                    else:
-                        return table
+                    elif not layer.subLayers is None:
+                        for sublayer in layer.subLayers:
+                            if sublayer == layerName:
+                                return sublayer
+            if fs.tables is not None:
+                for table in fs.tables:
+                    if table.name == layerName:
+                        if returnURLOnly:
+                            return fs.url + '/' + str(layer.id)
+                        else:
+                            return table
             return None
 
         except:

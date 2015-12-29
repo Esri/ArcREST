@@ -265,6 +265,3 @@ def syncLayer(fst, fs, layer, layerName, displayName, lowerCaseFieldNames, showF
 
 if __name__ == "__main__":
     main()
-
-
-

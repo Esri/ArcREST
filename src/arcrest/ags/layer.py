@@ -7,7 +7,8 @@ from six.moves import urllib_parse as urlparse
 from .._abstract.abstract import BaseAGSServer
 from ..security import security
 from .._abstract.abstract import DynamicData, DataSource
-from ..common.spatial import scratchFolder, json_to_featureclass
+from ..common.spatial import scratchFolder, json_to_featureclass, \
+    featureclass_to_json
 from ..common import filters
 from ..common.general import _date_handler, Feature, FeatureSet
 ########################################################################
@@ -434,7 +435,115 @@ class FeatureLayer(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              param_dict=params, proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+
     #----------------------------------------------------------------------
+    def _chunks(self, l, n):
+        """ Yield n successive chunks from a list l.
+        """
+        l.sort()
+        newn = int(1.0 * len(l) / n + 0.5)
+        for i in xrange(0, n-1):
+            yield l[i*newn:i*newn+newn]
+        yield l[n*newn-newn:]
+    #----------------------------------------------------------------------
+    def addFeatures(self, fc, attachmentTable=None,
+                    nameField="ATT_NAME", blobField="DATA",
+                    contentTypeField="CONTENT_TYPE",
+                    rel_object_field="REL_OBJECTID",
+                    lowerCaseFieldNames=False):
+        """ adds a feature to the feature service
+           Inputs:
+              fc - string - path to feature class data to add.
+              attachmentTable - string - (optional) path to attachment table
+              nameField - string - (optional) name of file field in attachment table
+              blobField - string - (optional) name field containing blob data
+              contentTypeField - string - (optional) name of field containing content type
+              rel_object_field - string - (optional) name of field with OID of feature class
+           Output:
+              boolean, add results message as list of dictionaries
+
+        """
+        messages = {'addResults':[]}
+
+        if attachmentTable is None:
+            count = 0
+            bins = 1
+            uURL = self._url + "/addFeatures"
+            max_chunk = 250
+            js = json.loads(self._unicode_convert(
+                featureclass_to_json(fc)))
+            js = js['features']
+            if lowerCaseFieldNames == True:
+                for feat in js:
+                    feat['attributes'] = dict((k.lower(), v) for k,v in feat['attributes'].iteritems())
+            if len(js) == 0:
+                return {'addResults':None}
+            if len(js) <= max_chunk:
+                bins = 1
+            else:
+                bins = int(len(js)/max_chunk)
+                if len(js) % max_chunk > 0:
+                    bins += 1
+            chunks = self._chunks(l=js, n=bins)
+            for chunk in chunks:
+                params = {
+                    "f" : 'json',
+                    "features"  : json.dumps(chunk,
+                                             default=_date_handler)
+                }
+
+                result = self._do_post(url=uURL, param_dict=params,
+                                       securityHandler=self._securityHandler,
+                                       proxy_port=self._proxy_port,
+                                       proxy_url=self._proxy_url)
+                if messages is None:
+                    messages = result
+                else:
+                    if 'addResults' in result:
+                        if 'addResults' in messages:
+                            messages['addResults'] = messages['addResults'] + result['addResults']
+                        else:
+                            messages['addResults'] = result['addResults']
+                    else:
+                        messages['errors'] = result
+
+                del params
+                del result
+            return messages
+        else:
+            oid_field = get_OID_field(fc)
+            OIDs = get_records_with_attachments(attachment_table=attachmentTable)
+            fl = create_feature_layer(fc, "%s not in ( %s )" % (oid_field, ",".join(OIDs)))
+            result = self.addFeatures(fl)
+            if result is not None:
+                messages.update(result)
+            del fl
+            for oid in OIDs:
+                fl = create_feature_layer(fc, "%s = %s" % (oid_field, oid), name="layer%s" % oid)
+                msgs = self.addFeatures(fl)
+                for result in msgs['addResults']:
+                    oid_fs = result['objectId']
+                    sends = get_attachment_data(attachmentTable, sql="%s = %s" % (rel_object_field, oid))
+                    result['addAttachmentResults'] = []
+                    for s in sends:
+                        attRes = self.addAttachment(oid_fs, s['blob'])
+
+                        if 'addAttachmentResult' in attRes:
+                            attRes['addAttachmentResult']['AttachmentName'] = s['name']
+                            result['addAttachmentResults'].append(attRes['addAttachmentResult'])
+                        else:
+                            attRes['AttachmentName'] = s['name']
+                            result['addAttachmentResults'].append(attRes)
+                        del s
+                    del sends
+                    del result
+                messages.update( msgs)
+                del fl
+                del oid
+            del OIDs
+            return messages
+    #----------------------------------------------------------------------
+
     def addAttachments(self,
                        featureId,
                        attachment,
