@@ -82,9 +82,10 @@ def main():
             itemParams.tags = "tags"
             itemParams.snippet = "Test File"
             itemParams.typeKeywords = "Data,Image,png"
-            itemParams.filename = upload_file
+            #itemParams.filename = upload_file
             item = userInfo.addItem(
                 itemParameters=itemParams,
+                filePath= upload_file,
                 overwrite=True,
                 relationshipType=None,
                 originItemId=None,
