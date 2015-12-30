@@ -45,6 +45,7 @@ if six.PY2:
                            proxy_url=None, proxy_port=None):
             """ downloads a file """
             try:
+                url = self._urlsafe(url=url)
                 handlers = []
                 cj = None
                 handler = None
@@ -156,6 +157,14 @@ if six.PY2:
 
             return param_dict, handler, cj
         #----------------------------------------------------------------------
+        def _urlsafe(self,url):
+            #from six.moves import urllib_parse as urlparse
+            #parts= urlparse.urlparse(url)
+            #return urlparse.urlunparse(parts[:2] + urllib.quote(parts[2]) + parts[3:])
+
+            #url = quote(url, safe="%/:=&?~#+!$,;'@()*[]")
+            return url.replace(' ', '%20')
+        #----------------------------------------------------------------------
         def _do_get(self, url, param_dict, securityHandler=None,
                     header=None, proxy_url=None, proxy_port=None,
                     compress=True):
@@ -171,6 +180,8 @@ if six.PY2:
                proxy_port - port of the proxy
                compress - compression of the call
             """
+
+            url =self._urlsafe(url=url)
             handlers = []
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
                                                             param_dict=param_dict)
@@ -263,6 +274,7 @@ if six.PY2:
                      proxy_url=None,
                      proxy_port=None,
                      header={}):
+            url =self._urlsafe(url=url)
             """ performs the POST operation and returns dictionary result """
             handlers = []
             opener= None
@@ -366,6 +378,7 @@ if six.PY2:
                                    fields=params
                                    )
             """
+            selector =self._urlsafe(url=selector)
             cj = None
             handlers = []
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
@@ -556,6 +569,8 @@ elif six.PY3:
         _useragent = "ArcREST"
         _proxy_url = None
         _proxy_port = None
+        def _urlsafe(self,url):
+            return url.replace(' ', '%20')
         #----------------------------------------------------------------------
         def _download_file(self,
                            url, save_path,
@@ -564,6 +579,7 @@ elif six.PY3:
                            proxy_url=None, proxy_port=None):
             """ downloads a file """
             try:
+                url =self._urlsafe(url=url)
                 handlers = []
                 cj = None
                 handler = None
@@ -665,6 +681,7 @@ elif six.PY3:
                proxy_port - port of the proxy
                compress - compression of the call
             """
+            url =self._urlsafe(url=url)
             handlers = []
             opener= None
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
@@ -737,6 +754,7 @@ elif six.PY3:
                      proxy_port=None,
                      header={}):
             """ performs the POST operation and returns dictionary result """
+            url =self._urlsafe(url=url)
             handlers = []
             opener= None
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
@@ -818,6 +836,7 @@ elif six.PY3:
                                    fields=params
                                    )
             """
+            selector =self._urlsafe(url=selector)
             cj = None
             handlers = []
             param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
