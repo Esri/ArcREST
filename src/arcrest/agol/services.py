@@ -1499,6 +1499,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
               returnExtentOnly=False,
               groupByFieldsForStatistics=None,
               statisticFilter=None,
+              resultOffset="",
+              resultRecordCount="",
               out_fc=None,
               objectIds="",
               **kwargs):
@@ -1525,6 +1527,15 @@ class FeatureLayer(abstract.BaseAGOLClass):
                groupByFieldsForStatistics - One or more field names on
                                     which the values need to be grouped for
                                     calculating the statistics.
+               resultOffset - Default is 0. If set, this option can be used
+               for fetching query results by skipping the specified number of records and starting from the next record
+               (that is, resultOffset + 1th).
+
+               resultRecordCount - This option can be used for fetching query results up
+               to the resultRecordCount specified. When resultOffset is specified but this
+               parameter is not, the map service defaults it to maxRecordCount. The maximum
+               value for this parameter is the value of the layer's maxRecordCount property.
+
                statisticFilter - object that performs statistic queries
                out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
@@ -1544,7 +1555,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
                   "returnDistinctValues" : returnDistinctValues,
-                  "returnExtentOnly" : returnExtentOnly
+                  "returnExtentOnly" : returnExtentOnly,
+                  "resultOffset" : resultOffset,
+                  "resultRecordCount" : resultRecordCount
                   }
         for key, value in kwargs.items():
             params[key] = value
