@@ -1,0 +1,1 @@
+class BaseOpenData(object): pass
