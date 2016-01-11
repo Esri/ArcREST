@@ -142,8 +142,9 @@ if six.PY2:
             if securityHandler is None:
                 from cookielib import CookieJar
                 cj = CookieJar()
-            elif securityHandler.method.lower() == "token":
-                param_dict['token'] = securityHandler.token
+            elif securityHandler.method.lower() == "token" or securityHandler.method.lower() == "oauth":
+                if param_dict is not None: 
+                    param_dict['token'] = securityHandler.token
                 if hasattr(securityHandler, 'cookiejar'):
                     cj = securityHandler.cookiejar
                 if hasattr(securityHandler, 'handler'):
