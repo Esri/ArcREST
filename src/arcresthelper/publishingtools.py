@@ -2675,18 +2675,25 @@ class publishingtools(securityhandlerhelper):
 
             if isinstance(efs_config, list):
                 for ext_service in efs_config:
+                    cs = 0
+                    try:
+                        if 'ChunkSize' in ext_service:
+                            if common.is_number(ext_service['ChunkSize']):
+                                cs = ext_service['ChunkSize']
+                    except Exception as e:
+                        pass
                     resItm={"DeleteDetails": None,"AddDetails":None}
                     fURL = ext_service['URL']
 
                     if 'DeleteInfo' in ext_service:
                         if str(ext_service['DeleteInfo']['Delete']).upper() == "TRUE":
-                            resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=ext_service['DeleteInfo']['DeleteSQL'])
+                            resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=ext_service['DeleteInfo']['DeleteSQL'],chunksize=cs)
                             if not 'error' in resItm['DeleteDetails'] :
                                 print ("Delete Successful: %s" % fURL)
                             else:
                                 print (str(resItm['DeleteDetails']))
 
-                    resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = ext_service['FeatureClass'])
+                    resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = ext_service['FeatureClass'],chunksize=cs)
 
                     fsRes.append(resItm)
 
@@ -2698,16 +2705,22 @@ class publishingtools(securityhandlerhelper):
             else:
                 resItm={"DeleteDetails": None,"AddDetails":None}
                 fURL = efs_config['URL']
-
+                cs = 0
+                try:
+                    if 'ChunkSize' in efs_config:
+                        if common.is_number(efs_config['ChunkSize']):
+                            cs = efs_config['ChunkSize']
+                except Exception as e:
+                    pass
                 if 'DeleteInfo' in efs_config:
                     if str(efs_config['DeleteInfo']['Delete']).upper() == "TRUE":
-                        resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=efs_config['DeleteInfo']['DeleteSQL'])
+                        resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=efs_config['DeleteInfo']['DeleteSQL'],chunksize=cs)
                         if not 'error' in resItm['DeleteDetails'] :
                             print ("            Delete Successful: %s" % fURL)
                         else:
                             print ("            " + str(resItm['DeleteDetails']))
 
-                resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = efs_config['FeatureClass'])
+                resItm['AddDetails'] = fst.AddFeaturesToFeatureLayer(url=fURL, pathToFeatureClass = efs_config['FeatureClass'],chunksize=cs)
 
                 fsRes.append(resItm)
 
