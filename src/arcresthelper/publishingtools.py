@@ -2675,6 +2675,7 @@ class publishingtools(securityhandlerhelper):
 
             if isinstance(efs_config, list):
                 for ext_service in efs_config:
+                    fURL = None
                     cs = 0
                     try:
                         if 'ChunkSize' in ext_service:
@@ -2683,7 +2684,16 @@ class publishingtools(securityhandlerhelper):
                     except Exception as e:
                         pass
                     resItm={"DeleteDetails": None,"AddDetails":None}
-                    fURL = ext_service['URL']
+                    if 'ItemId' in ext_service and 'LayerName' in ext_service:
+                        fs = fst.GetFeatureService(itemId=ext_service['ItemId'],returnURLOnly=False)
+                        if not fs is None:
+                            fURL = fst.GetLayerFromFeatureService(fs=fs,layerName=ext_service['LayerName'],returnURLOnly=True)
+                    if fURL is None and 'URL' in ext_service:
+
+                        fURL = ext_service['URL']
+                    if fURL is None:
+                        print("Item and layer not found or URL not in config")
+                        continue
 
                     if 'DeleteInfo' in ext_service:
                         if str(ext_service['DeleteInfo']['Delete']).upper() == "TRUE":
@@ -2712,6 +2722,16 @@ class publishingtools(securityhandlerhelper):
                             cs = efs_config['ChunkSize']
                 except Exception as e:
                     pass
+                if 'ItemId' in efs_config and 'LayerName' in efs_config:
+                    fs = fst.GetFeatureService(itemId=efs_config['ItemId'],returnURLOnly=False)
+                    if not fs is None:
+                        fURL = fst.GetLayerFromFeatureService(fs=fs,layerName=efs_config['LayerName'],returnURLOnly=True)
+                if fURL is None and 'URL' in efs_config:
+
+                    fURL = efs_config['URL']
+                if fURL is None:
+                    print("Item and layer not found or URL not in config")
+                    continue
                 if 'DeleteInfo' in efs_config:
                     if str(efs_config['DeleteInfo']['Delete']).upper() == "TRUE":
                         resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=efs_config['DeleteInfo']['DeleteSQL'],chunksize=cs)
