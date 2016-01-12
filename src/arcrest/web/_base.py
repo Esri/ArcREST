@@ -385,11 +385,11 @@ class BaseWebOperations(object):
             if self.PY3:
                 data = data.encode('ascii')
             opener.data = data
-            resp = opener.open(url, data=data)
+            resp = opener.open(url.encode('ascii'), data=data)
         else:
             mpf = MultiPartForm(param_dict=param_dict,
                                 files=files)
-            req = request.Request(url)
+            req = request.Request(url.encode('ascii'))
             body = mpf.make_result
             req.add_header('User-agent', self.useragent)
             req.add_header('Content-type', mpf.get_content_type())
@@ -470,9 +470,9 @@ class BaseWebOperations(object):
         if param_dict is None:
             resp = opener.open(url, data=param_dict)
         elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-            resp = opener.open(url, data=urlencode(param_dict))
+            resp = opener.open(url.encode('ascii'), data=urlencode(param_dict))
         else:
-            format_url = url + "?%s" % urlencode(param_dict)
+            format_url = url.encode('ascii') + "?%s" % urlencode(param_dict)
             resp = opener.open(fullurl=format_url)
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
