@@ -32,7 +32,7 @@ class KML(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -59,7 +59,7 @@ class KML(BaseAGSServer):
             "f" : "json",
             "kml" : kmz_as_json
         }
-        return self._do_post(url=kmlURL, param_dict=params,
+        return self._post(url=kmlURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)

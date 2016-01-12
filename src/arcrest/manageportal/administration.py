@@ -45,7 +45,7 @@ class _log(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -87,7 +87,7 @@ class _log(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=url, param_dict=params,
+        return self._get(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -111,7 +111,7 @@ class _log(BaseAGOLClass):
             "logLevel" : logLevel,
             "maxLogFileAge" : maxLogFileAge
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -164,7 +164,7 @@ class _log(BaseAGOLClass):
         else:
             params['pageSize'] = 1000
         params['filter'] = filter_value
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -176,7 +176,7 @@ class _log(BaseAGOLClass):
         params = {
             "f":"json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -220,7 +220,7 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -290,7 +290,7 @@ class _Security(BaseAGOLClass):
         }
         if idpUsername is None:
             params['idpUsername'] = idpUsername
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -333,7 +333,7 @@ class _Security(BaseAGOLClass):
             "enableAutomaticAccountCreation": enableAutomaticAccountCreation,
             "disableServicesDirectory" : disableServicesDirectory
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -404,7 +404,7 @@ class _Security(BaseAGOLClass):
             "usernameAttribute" : usernameAttribute,
             "caseSensitive" : caseSensitive
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -423,7 +423,7 @@ class _Security(BaseAGOLClass):
             "f" : "json",
             "tokenConfig" : {"sharedKey" : sharedKey}
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -439,7 +439,7 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -461,7 +461,7 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -474,7 +474,7 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -517,7 +517,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -551,7 +551,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -574,7 +574,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -595,7 +595,7 @@ class _System(BaseAGOLClass):
             "f" : "json",
             "webAdaptorsConfig" : webAdaptorsConfig
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -616,7 +616,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -651,7 +651,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -676,7 +676,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -702,7 +702,7 @@ class _System(BaseAGOLClass):
             "physicalPath": physicalPath,
             "description" : description
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -723,7 +723,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -750,7 +750,7 @@ class _System(BaseAGOLClass):
             "username" : username,
             "password" : password
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -768,7 +768,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -789,7 +789,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -818,7 +818,7 @@ class _System(BaseAGOLClass):
             "mode" : mode,
             "includes" : includes
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -846,7 +846,7 @@ class _System(BaseAGOLClass):
             "indexerHost": indexerHost,
             "indexerPort": indexerPort
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -862,7 +862,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -910,7 +910,7 @@ class PortalAdministration(BaseAGOLClass):
             "f" : "json",
         }
 
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -1000,7 +1000,7 @@ class PortalAdministration(BaseAGOLClass):
             "securityQuerstionIdx" : securityQuerstionIdx,
             "securityQuestionAns" : securityQuestionAns
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,

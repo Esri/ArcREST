@@ -82,7 +82,7 @@ class AGSAdministration(BaseAGSServer):
         params = {
             "f": "json"
             }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -181,7 +181,7 @@ class AGSAdministration(BaseAGSServer):
             "logSettings" : logsSettings,
             "runAsync" : runAsync
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -216,7 +216,7 @@ class AGSAdministration(BaseAGSServer):
             "username" : username,
             "password" : password
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -242,7 +242,7 @@ class AGSAdministration(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -268,7 +268,7 @@ class AGSAdministration(BaseAGSServer):
         }
         if location is not None:
             params['location'] = location
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -299,7 +299,7 @@ class AGSAdministration(BaseAGSServer):
             "f" : "json",
             "location" : location
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -312,7 +312,7 @@ class AGSAdministration(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,

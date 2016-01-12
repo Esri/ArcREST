@@ -5,10 +5,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 import json
 from ._base import BaseOpenData
-#from _base import BaseOpenData
-from ._web import _get, _post
+from ._web import WebOperations
 ########################################################################
-class OpenData(BaseOpenData):
+class OpenData(BaseOpenData, WebOperations):
     """Represents an open data site
     Inputs:
        url - web address of the open data site
@@ -67,7 +66,7 @@ class OpenData(BaseOpenData):
             param_dict['sort_by'] = sort_by
         if sort_order is not None:
             param_dict['sort_order'] = sort_order
-        ds_data =  _get(url=url,
+        ds_data =  self._get(url=url,
                     param_dict=param_dict,
                     securityHandler=self._securityHandler,
                     additional_headers=[],
@@ -87,7 +86,7 @@ class OpenData(BaseOpenData):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
 ########################################################################
-class OpenDataItem(BaseOpenData):
+class OpenDataItem(BaseOpenData, WebOperations):
     """represents a single data object"""
     _url = None
     _itemId = None
@@ -127,7 +126,7 @@ class OpenDataItem(BaseOpenData):
         """gets the properties for the site"""
         url = "%s/%s.json" % (self._url, self._itemId)
         params = {"f": "json"}
-        json_dict = _get(url, params,
+        json_dict = self._get(url, params,
                          securityHandler=self._securityHandler,
                          proxy_port=self._proxy_port,
                          proxy_url=self._proxy_url)
@@ -144,7 +143,7 @@ class OpenDataItem(BaseOpenData):
         """exports a dataset t"""
         export_formats = {'shp':".zip", 'kml':'.kml', 'geojson':".geojson",'csv': '.csv'}
         url = "%s/%s%s" % (self._url, self._itemId, export_formats[outFormat])
-        results =  _get(url=url,
+        results =  self._get(url=url,
                     securityHandler=self._securityHandler,
                     out_folder=outFolder)
         if 'status' in results:

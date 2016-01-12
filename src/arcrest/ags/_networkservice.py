@@ -47,7 +47,7 @@ class NetworkService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -214,7 +214,7 @@ class NetworkLayer(BaseAGSServer):
         # TODO handle spaces in the url, 'Service Area' should be 'Service+Area'
         self._url = self._url.replace(' ','+')
 
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -408,7 +408,7 @@ class RouteNetworkLayer(NetworkLayer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -753,13 +753,13 @@ class RouteNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._do_post(url=url,
+            return self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         else:
-            return self._do_get(url=url,
+            return self._get(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
@@ -809,7 +809,7 @@ class ServiceAreaNetworkLayer(NetworkLayer):
 
         # TODO handle spaces in the url, 'Service Area' should be 'Service+Area'
         self._url = self._url.replace(' ','+')
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -1177,13 +1177,13 @@ class ServiceAreaNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._do_post(url=url,
+            return self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         else:
-            return self._do_get(url=url,
+            return self._get(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
@@ -1228,7 +1228,7 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
 
         # TODO handle spaces in the url, 'Closest Facility' should be 'Closest+Facility'
         self._url = self._url.replace(' ','+')
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -1572,13 +1572,13 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._do_post(url=url,
+            return self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         else:
-            return self._do_get(url=url,
+            return self._get(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,

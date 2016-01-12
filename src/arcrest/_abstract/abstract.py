@@ -1,18 +1,12 @@
 from __future__ import absolute_import
-import six
-if six.PY2:
-    import httplib
-    from ..web._base import BaseWebOperations as BaseWebOperations
-elif six.PY3:
-    from six.moves import http_client as httplib
-    from ..web._base import BaseWebOperations3 as BaseWebOperations
-
 import zipfile
 import datetime
 import calendar
 import glob
 import mimetypes
 import os
+from six.moves import http_client as httplib
+from ..web._base import BaseWebOperations
 class BaseOpenData(BaseWebOperations):
     """ base opendata site"""
     pass
@@ -79,7 +73,6 @@ class BaseSecurityHandler(BaseWebOperations):
     def valid(self):
         """ returns boolean wether handler is valid """
         return self._valid
-
 ########################################################################
 class AbstractGeometry(object):
     """ Base Geometry Class """

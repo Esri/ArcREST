@@ -1,957 +1,539 @@
 """
-   Base Class that all class that perform
-   web operations will inherit from.
+   Contains POST and GET web operations for
+   ArcREST Python Package.
 """
-
 from __future__ import absolute_import
 from __future__ import print_function
-import six
+import io
 import os
 import re
-import mimetypes
-import json
-import gzip
 import sys
-if six.PY2:
-    import urllib
-    import urllib2
-    import mimetools
+import json
+import uuid
+import zlib
+import shutil
+import tempfile
+import mimetypes
+import email.generator
+from io import BytesIO
+try:
     from cStringIO import StringIO
-    import gzip
-    class AGOLRedirectHandler(urllib2.HTTPRedirectHandler):
-        def http_error_301(self, req, fp, code, msg, headers):
-            result = urllib2.HTTPRedirectHandler.http_error_301(
-                self, req, fp, code, msg, headers)
-            result.status = code
-            return result
+except ImportError:
+    from io import StringIO
 
-        def http_error_302(self, req, fp, code, msg, headers):
-            result = urllib2.HTTPRedirectHandler.http_error_302(
-                self, req, fp, code, msg, headers)
-            result.status = code
-            return result
-
-    class BaseWebOperations(object):
-        """ base class that holds all the common web request operations """
-        _referer_url = None
-        _useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
-        _proxy_url = None
-        _proxy_port = None
-        #----------------------------------------------------------------------
-        def _download_file(self,
-                           url, save_path,
-                           securityHandler=None,
-                           file_name=None, param_dict=None,
-                           proxy_url=None, proxy_port=None):
-            """ downloads a file """
-            try:
-                url = self._urlsafe(url=url)
-                handlers = []
-                cj = None
-                handler = None
-                param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                               param_dict=param_dict)
-                handlers.append(urllib2.HTTPHandler(debuglevel=0))
-                handlers.append(AGOLRedirectHandler())
-                if proxy_url is not None:
-                    if proxy_port is None:
-                        proxy_port = 80
-                    proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                               "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                    proxy_support = urllib2.ProxyHandler(proxies)
-                    handlers.append(proxy_support)
-                if handler is not None:
-                    handlers.append(handler)
-                if cj is not None:
-                    handlers.append(urllib2.HTTPCookieProcessor(cj))
-                opener = urllib2.build_opener(*handlers)
-                urllib2.install_opener(opener)
-                if param_dict is not None and \
-                   len(param_dict.keys()) > 0:
-                    encoded_args = urllib.urlencode(param_dict)
-                    url = url + '?' + encoded_args
-
-                file_data = urllib2.urlopen(url)
-
-                file_data.getcode()
-                file_data.geturl()
-                if file_name is None:
-                    url = file_data.geturl()
-                    a = file_data.info().getheader('Content-Disposition')
-                    if a is not None:
-                        a = a.strip()
-                        file_name = re.findall(ur'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)', a)[0][0]#r'filename=\"(.+?)\"', a)[0]
-                    else:
-                        file_name = os.path.basename(file_data.geturl().split('?')[0])
-                if hasattr(file_data, "status") and \
-                   (int(file_data.status) >= 300 and int(file_data.status) < 400):
-                    if securityHandler is None or \
-                       securityHandler.method.lower() == "token":
-                        self._download_file(url=file_data.geturl(),
-                                            save_path=save_path,
-                                            file_name=file_name,
-                                            securityHandler=None,
-                                            proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
-                    else:
-                        self._download_file(url=file_data.geturl(),
-                                            save_path=save_path,
-                                            file_name=file_name,
-                                            securityHandler=securityHandler,
-                                            proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
-                    return save_path + os.sep + file_name
-                if (file_data.info().getheader('Content-Length')):
-                    total_size = int(file_data.info().getheader('Content-Length').strip())
-                    downloaded = 0
-                    CHUNK = 4096
-                    with open(save_path + os.sep + file_name, 'wb') as out_file:
-                        while True:
-                            chunk = file_data.read(CHUNK)
-                            downloaded += len(chunk)
-                            if not chunk: break
-                            out_file.write(chunk)
-                elif file_data.headers.maintype=='image':
-                    with open(save_path + os.sep + file_name, 'wb') as out_file:
-                        buf = file_data.read()
-                        out_file.write(buf)
-                else:
-                    CHUNK = 16 * 1024
-                    with open(os.path.join(save_path, file_name), 'wb') as f:
-                        while True:
-                            chunk = file_data.read(CHUNK)
-                            if not chunk: break
-                            f.write(chunk)
-                            f.flush()
-                        del f
-                return os.path.join(save_path, file_name)
-            except urllib2.HTTPError as e:
-                print ("HTTP Error: %s, %s " % (e.code , url))
-                return None
-            except urllib2.URLError as e:
-                print ("URL Error:%s, %s" % (e.reason , url))
-                return None
-        #----------------------------------------------------------------------
-        def _get_content_type(self, filename):
-            return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-        #----------------------------------------------------------------------
-        def __processHandler(self, securityHandler, param_dict):
-            """proceses the handler and returns the cookiejar"""
-            cj = None
-            handler = None
-            if securityHandler is None:
-                from cookielib import CookieJar
-                cj = CookieJar()
-            elif securityHandler.method.lower() == "token" or securityHandler.method.lower() == "oauth":
-                if param_dict is not None: 
-                    param_dict['token'] = securityHandler.token
-                if hasattr(securityHandler, 'cookiejar'):
-                    cj = securityHandler.cookiejar
-                if hasattr(securityHandler, 'handler'):
-                    handler = securityHandler.handler
-            elif securityHandler.method.lower() == "handler":
-                #if "token" in param_dict :
-                    #del param_dict['token']
-                handler = securityHandler.handler
-                cj = securityHandler.cookiejar
-
-
-            return param_dict, handler, cj
-        #----------------------------------------------------------------------
-        def _urlsafe(self,url):
-            #from six.moves import urllib_parse as urlparse
-            #parts= urlparse.urlparse(url)
-            #return urlparse.urlunparse(parts[:2] + urllib.quote(parts[2]) + parts[3:])
-
-            #url = quote(url, safe="%/:=&?~#+!$,;'@()*[]")
-            return url.replace(' ', '%20')
-        #----------------------------------------------------------------------
-        def _do_get(self, url, param_dict, securityHandler=None,
-                    header=None, proxy_url=None, proxy_port=None,
-                    compress=True):
-            """
-            Performs a standard GET method.
-            Inputs:
-               url - string of URI
-               param_dict - parameters dictionary that holds key/values for
-                            each function call.
-               handler - security Handler object
-               header - optional headers to add to a call
-               proxy_url - URI/IP of the proxy
-               proxy_port - port of the proxy
-               compress - compression of the call
-            """
-
-            url =self._urlsafe(url=url)
-            handlers = []
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                            param_dict=param_dict)
-
-            headers = [('User-Agent', self._useragent),
-                       ('Accept-Encoding', '')]
-            if securityHandler is not None:
-                headers.append (('Referer', securityHandler._referer_url))
-            else:
-                headers.append (('Referer', self._referer_url))
-            if not header is None  :
-                headers.append(header)
-
-            if compress:
-                headers.append(('Accept-encoding', 'gzip'))
-            opener= None
-
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                proxy_support = urllib2.ProxyHandler(proxies)
-                handlers.append(proxy_support)
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(urllib2.HTTPCookieProcessor(cj))
-            handlers.append(AGOLRedirectHandler())
-            if len(handlers) > 0:
-                opener = urllib2.build_opener(*handlers)
-            opener.addheaders = headers
-            try:
-                if len(str(urllib.urlencode(param_dict))) + len(url)> 1999:
-                    resp = opener.open(url, data=urllib.urlencode(param_dict))
-                else:
-                    format_url = url + "?%s" % urllib.urlencode(param_dict)
-                    resp = opener.open(format_url)
-            except urllib2.HTTPError as e:
-                e = sys.exc_info()[1]
-                print(("Http Error:%s, code:%s, %s" % (e.reason,e.code, url)))
-                return ("Http Error:%s, code:%s, %s" % (e.reason,e.code, url))
-            except urllib2.URLError as e:
-                print(("URL Error:%s, %s" % (e.reason , url)))
-                return ("URL Error:%s, %s" % (e.reason , url))
-            except Exception:
-                e = sys.exc_info()[1]
-                print (e)
-                return None
-            if resp.info().get('Content-Encoding') == 'gzip':
-                buf = StringIO(resp.read())
-                f = gzip.GzipFile(fileobj=buf)
-                resp_data = f.read()
-            else:
-                resp_data = resp.read()
-            if resp_data == "" or resp_data == None or resp_data == 'null':
-                return ""
-            result = None
-            try:
-                result = json.loads(resp_data)
-            except Exception:
-                e = sys.exc_info()[1]
-                return e
-            if result is None:
-                return None
-
-            if 'error' in result:
-                if 'message' in result['error']:
-                    if result['error']['message'] == 'Request not made over ssl':
-                        if url.startswith('http://'):
-                            url = url.replace('http://', 'https://')
-                            return self._do_get(url=url,
-                                                param_dict=param_dict,
-                                                securityHandler=securityHandler,
-                                                proxy_url=proxy_url,
-                                                proxy_port=proxy_port,
-                                                compress=compress)
-                    else:
-                        print (result['error'])
-            if 'status' in result and type(result) is dict:
-                if result['status'] == 'error':
-                    print (str(result['code']) + " " + str(result['messages']))
-            return self._unicode_convert(result)
-
-        #----------------------------------------------------------------------
-        def _do_post(self,
-                     url,
-                     param_dict,
-                     securityHandler=None,
-                     proxy_url=None,
-                     proxy_port=None,
-                     header={}):
-            url =self._urlsafe(url=url)
-            """ performs the POST operation and returns dictionary result """
-            handlers = []
-            opener= None
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                            param_dict=param_dict)
-            headers = {
-               'User-Agent': self._useragent,
-               'Accept-Encoding': ''}
-            if securityHandler is not None:
-                headers['Referer'] = securityHandler._referer_url
-            else:
-                headers['Referer'] = self._referer_url
-            if len(header) > 0 :
-                headers = dict(headers.items() + header.items())
-
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                proxy_support = urllib2.ProxyHandler(proxies)
-                handlers.append(proxy_support)
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(urllib2.HTTPCookieProcessor(cj))
-            handlers.append(AGOLRedirectHandler())
-            if len(handlers) > 0:
-                opener = urllib2.build_opener(*handlers)
-            urllib2.install_opener(opener)
-
-            request = urllib2.Request(url, urllib.urlencode(param_dict), headers=headers)
-            result = ""
-            try:
-                result = urllib2.urlopen(request,data=urllib.urlencode(param_dict)).read()
-
-            except urllib2.HTTPError as e:
-                e = sys.exc_info()[1]
-                print(("Http Error:%s, code:%s, %s" % (e.reason,e.code, url)))
-                return  ("Http Error:%s, code:%s, %s" % (e.reason,e.code, url))
-            except urllib2.URLError as e:
-                print(("URL Error:%s, %s" % (e.reason , url)))
-                return ("URL Error:%s, %s" % (e.reason , url))
-            except Exception:
-                e = sys.exc_info()[1]
-                print (e)
-                return None
-            if result =="":
-                return ""
-            try:
-                jres = json.loads(result)
-            except Exception:
-                e = sys.exc_info()[1]
-                print (e)
-                return None
-            if 'error' in jres:
-                if 'message' in jres['error']:
-                    if jres['error']['message'] == 'Request not made over ssl':
-                        if url.startswith('http://'):
-                            url = url.replace('http://', 'https://')
-                            return self._do_post(url,
-                                                 param_dict,
-                                                 securityHandler=securityHandler,
-                                                 header=header,
-                                                 proxy_url=proxy_url,
-                                                 proxy_port=proxy_port)
-                    else:
-                        print (jres['error'])
-            if 'status' in jres:
-                if jres['status'] == 'error':
-                    print (str(jres['code']) + " " + str(jres['messages']))
-            return self._unicode_convert(jres)
-        #----------------------------------------------------------------------
-        def _post_multipart(self, host, selector,
-                            fields, files,
-                            securityHandler=None,
-                            ssl=False,port=80,
-                            proxy_url=None,proxy_port=None):
-            """ performs a multi-post to AGOL, Portal, or AGS
-                Inputs:
-                   host - string - root url (no http:// or https://)
-                       ex: www.arcgis.com
-                   selector - string - everything after the host
-                       ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
-                   fields - dictionary - additional parameters like token and format information
-                   files - tuple array- tuple with the file name type, filename, full path
-                   ssl - option to use SSL
-                   proxy_url - string - url to proxy server
-                   proxy_port - interger - port value if not on port 80
-
-                Output:
-                   JSON response as dictionary
-                Useage:
-                   import urlparse
-                   url = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0/10261291"
-                   parsed_url = urlparse.urlparse(url)
-                   params = {"f":"json"}
-                   print _post_multipart(host=parsed_url.hostname,
-                                   selector=parsed_url.path,
-                                   files=files,
-                                   fields=params
-                                   )
-            """
-            selector =self._urlsafe(url=selector)
-            cj = None
-            handlers = []
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                           param_dict=fields)
-            content_type, body = self._encode_multipart_formdata(param_dict, files)
-            url = self._assemble_url(host, selector, port, ssl)
-            handlers.append(AGOLRedirectHandler())
-            handlers.append(urllib2.HTTPHandler(debuglevel=0))
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                handlers.append(urllib2.ProxyHandler(proxies))
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(urllib2.HTTPCookieProcessor(cj))
-            opener = urllib2.build_opener(*handlers)
-            urllib2.install_opener(opener)
-            request = urllib2.Request(url)
-            request.add_header('User-agent', self._useragent)
-            request.add_header('Content-type', content_type)
-            request.add_header('Content-length', len(body))
-            request.add_data(body)
-            result = urllib2.urlopen(request).read()
-            if result =="":
-                return ""
-            jres = json.loads(result)
-            if 'error' in jres:
-                if jres['error']['message'] == 'Request not made over ssl':
-                    if url.startswith('http://'):
-                        url = url.replace('http://', 'https://')
-                        return self._post_multipart(host, selector,
-                                                    fields, files,
-                                                    ssl=True,port=port,
-                                                    securityHandler=securityHandler,
-                                                    proxy_url=proxy_url,
-                                                    proxy_port=proxy_port)
-            return self._unicode_convert(jres)
-        #----------------------------------------------------------------------------------
-        def _encode_multipart_formdata(self, fields, files):
-            boundary = mimetools.choose_boundary()
-            buf = StringIO()
-            for (key, value) in fields.items():
-                buf.write('--%s\r\n' % boundary)
-                buf.write('Content-Disposition: form-data; name="%s"' % key)
-                buf.write('\r\n\r\n' + self._tostr(value) + '\r\n')
-            for (key, filepath, filename) in files:
-                if os.path.isfile(filepath):
-                    buf.write('--%s\r\n' % boundary)
-                    buf.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
-                    buf.write('Content-Type: %s\r\n' % (self._get_content_type(filename)))
-                    file = open(filepath, "rb")
-                    try:
-                        buf.write('\r\n' + file.read() + '\r\n')
-                    finally:
-                        file.close()
-            buf.write('--' + boundary + '--\r\n\r\n')
-            buf = buf.getvalue()
-            content_type = 'multipart/form-data; boundary=%s' % boundary
-            return content_type, buf
-        #----------------------------------------------------------------------
-        def _tostr(self,obj):
-            """ converts a object to list, if object is a list, it creates a
-                comma seperated string.
-            """
-            if not obj:
-                return ''
-            elif isinstance(obj, list):
-                return ', '.join(map(self._tostr, obj))
-            elif isinstance(obj, bool):
-                return json.dumps(obj)
-            return str(obj)
-        #----------------------------------------------------------------------
-        def _assemble_url(self, host, selector, port=80, ssl=False):
-            """creates the url string for the request"""
-            if not port is None and \
-               port != 80:
-                if ssl:
-                    url = "https://%s:%s%s" % (host, port, selector)
-                else:
-                    url = "http://%s:%s%s" % (host, port, selector)
-            else:
-                if ssl:
-                    url = "https://%s%s" % (host, selector)
-                else:
-                    url = "http://%s%s" % (host, selector)
-            return url
-        #----------------------------------------------------------------------
-        def _unicode_convert(self, obj):
-            """ converts unicode to anscii """
-            if isinstance(obj, dict):
-                return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.iteritems()}
-            elif isinstance(obj, list):
-                return [self._unicode_convert(element) for element in obj]
-            elif isinstance(obj, unicode):
-                return obj.encode('utf-8')
-            else:
-                return obj
-
-elif six.PY3:
-    from urllib.request import HTTPRedirectHandler, ProxyHandler, HTTPCookieProcessor
-    import urllib, urllib.request, urllib.parse
-    from io import StringIO, BytesIO
-    import itertools
-    import email.generator
-    ########################################################################
-    class MultiPartForm():
-        """Accumulate the data to be used when posting a form."""
-
-        def __init__(self):
+from six.moves.urllib import request
+from six.moves import http_cookiejar as cookiejar
+from six.moves.urllib_parse import urlencode
+########################################################################
+__version__ = '1.0.0'
+########################################################################
+class RedirectHandler(request.HTTPRedirectHandler):
+    def http_error_301(self, req, fp, code, msg, headers):
+        result = request.HTTPRedirectHandler.http_error_301(
+            self, req, fp, code, msg, headers)
+        result.status = code
+        return result
+    #----------------------------------------------------------------------
+    def http_error_302(self, req, fp, code, msg, headers):
+        result = request.HTTPRedirectHandler.http_error_302(
+            self, req, fp, code, msg, headers)
+        result.status = code
+        return result
+########################################################################
+class MultiPartForm(object):
+    """Accumulate the data to be used when posting a form."""
+    PY2 = sys.version_info[0] == 2
+    PY3 = sys.version_info[0] == 3
+    files = []
+    form_fields = []
+    boundary = None
+    form_data = ""
+    #----------------------------------------------------------------------
+    def __init__(self, param_dict={}, files={}):
+        if len(param_dict) == 0:
             self.form_fields = []
+        else:
+            for k,v in param_dict.items():
+                self.form_fields.append((k,v))
+                del k,v
+        if len(files) == 0:
             self.files = []
-            self.boundary = email.generator._make_boundary()
-            return
+        else:
+            for key,v in files.items():
+                self.add_file(fieldname=key,
+                              filename=os.path.basename(v),
+                              filePath=v,
+                              mimetype=None)
+        self.boundary = email.generator._make_boundary()
+    #----------------------------------------------------------------------
+    def get_content_type(self):
+        return 'multipart/form-data; boundary=%s' % self.boundary
+    #----------------------------------------------------------------------
+    def add_field(self, name, value):
+        """Add a simple field to the form data."""
+        self.form_fields.append((name, value))
+    #----------------------------------------------------------------------
+    def add_file(self, fieldname, filename, filePath, mimetype=None):
+        """Add a file to be uploaded.
+        Inputs:
+           fieldname - name of the POST value
+           fieldname - name of the file to pass to the server
+           filePath - path to the local file on disk
+           mimetype - MIME stands for Multipurpose Internet Mail Extensions.
+             It's a way of identifying files on the Internet according to
+             their nature and format. Default is None.
+        """
+        body = filePath
+        if mimetype is None:
+            mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+        self.files.append((fieldname, filename, mimetype, body))
+    #----------------------------------------------------------------------
+    @property
+    def make_result(self):
+        if self.PY2:
+            self._2()
+        elif self.PY3:
+            self._3()
+        return self.form_data
+    #----------------------------------------------------------------------
+    def _2(self):
+        """python 2.x version of formatting body data"""
+        boundary = self.boundary
+        buf = StringIO()
+        for (key, value) in self.form_fields:
+            buf.write('--%s\r\n' % boundary)
+            buf.write('Content-Disposition: form-data; name="%s"' % key)
+            buf.write('\r\n\r\n%s\r\n' % value)
+        for (key, filename, mimetype, filepath) in self.files:
+            if os.path.isfile(filepath):
+                buf.write('--{boundary}\r\n'
+                          'Content-Disposition: form-data; name="{key}"; '
+                          'filename="{filename}"\r\n'
+                          'Content-Type: {content_type}\r\n\r\n'.format(
+                              boundary=boundary,
+                              key=key,
+                              filename=filename,
+                              content_type=mimetype))
+                with open(filepath, "rb") as f:
+                    shutil.copyfileobj(f, buf)
+                buf.write('\r\n')
+        buf.write('--' + boundary + '--\r\n\r\n')
+        buf = buf.getvalue()
+        self.form_data = buf
+    #----------------------------------------------------------------------
+    def _3(self):
+        """ python 3 method"""
+        boundary = self.boundary
+        buf = BytesIO()
+        textwriter = io.TextIOWrapper(
+            buf, 'utf8', newline='', write_through=True)
 
-        def get_content_type(self):
-            return 'multipart/form-data; boundary=%s' % self.boundary
-
-        def add_field(self, name, value):
-            """Add a simple field to the form data."""
-            self.form_fields.append((name, value))
-            return
-
-        def add_file(self, fieldname, filename, fileHandle, mimetype=None):
-            """Add a file to be uploaded."""
-            body = fileHandle.read()
-            if mimetype is None:
-                mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-            self.files.append((fieldname, filename, mimetype, body))
-            return
-
-        def make_result(self):
-            """Return bytes representing the form data, including attached files."""
-            # Build a list of lists, each containing "lines" of the
-            # request.  Each part is separated by a boundary string.
-            # Once the list is built, return a string where each
-            # line is separated by '\r\n'.
-            parts = []
-            part_boundary = '--' + self.boundary
-
-            # Add the form fields
-            parts.extend(
-                [ bytes(part_boundary, 'utf-8'),
-                  bytes('Content-Disposition: form-data; name="%s"' % name, 'utf-8'),
-                  b'',
-                  bytes(value, 'utf-8'),
-                ]
-                for name, value in self.form_fields
-                )
-
-            # Add the files to upload
-            parts.extend(
-                [ bytes(part_boundary, 'utf-8'),
-                  bytes('Content-Disposition: file; name="%s"; filename="%s"' % (field_name, filename), 'utf-8'),
-                  bytes('Content-Type: %s' % content_type, 'utf-8'),
-                  b'',
-                  body,
-                ]
-                for field_name, filename, content_type, body in self.files
-                )
-
-            # Flatten the list and add closing boundary marker,
-            # then return CR+LF separated data
-            flattened = list(itertools.chain(*parts))
-            flattened.append(bytes('--' + self.boundary + '--', 'utf-8'))
-            flattened.append(b'')
-            self.form_data  = b'\r\n'.join(flattened)
-
-    class AGOLRedirectHandler(HTTPRedirectHandler):
-        """handles the redirects and moves the """
-        def http_error_301(self, req, fp, code, msg, headers):
-            result = HTTPRedirectHandler.http_error_301(
-                self, req, fp, code, msg, headers)
-            result.status = code
-            return result
-
-        def http_error_302(self, req, fp, code, msg, headers):
-            result = HTTPRedirectHandler.http_error_302(
-                self, req, fp, code, msg, headers)
-            result.status = code
-            return result
-
-    class BaseWebOperations3(object):
-        """ base class that holds all the common web request operations """
-        _referer_url = None
-        _useragent = "ArcREST"
-        _proxy_url = None
-        _proxy_port = None
-        def _urlsafe(self,url):
-            return url.replace(' ', '%20')
-        #----------------------------------------------------------------------
-        def _download_file(self,
-                           url, save_path,
-                           securityHandler=None,
-                           file_name=None, param_dict=None,
-                           proxy_url=None, proxy_port=None):
-            """ downloads a file """
-            try:
-                url =self._urlsafe(url=url)
-                handlers = []
-                cj = None
-                handler = None
-                param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                                param_dict={})
-                handlers.append(urllib.request.HTTPHandler(debuglevel=0))
-                handlers.append(AGOLRedirectHandler())
-                if proxy_url is not None:
-                    if proxy_port is None:
-                        proxy_port = 80
-                    proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                               "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                    proxy_support = urllib.request.ProxyHandler(proxies)
-                    handlers.append(proxy_support)
-                if handler is not None:
-                    handlers.append(handler)
-                if cj is not None:
-                    handlers.append(urllib.request.HTTPCookieProcessor(cj))
-                opener = urllib.request.build_opener(*handlers)
-                urllib.request.install_opener(opener)
-                if param_dict is not None and \
-                   len(list(param_dict.keys())) > 0:
-                    encoded_args = urllib.parse.urlencode(param_dict)
-                    url = url + '?' + encoded_args
-
-                file_data = urllib.request.urlopen(url)
-
-                file_data.getcode()
-                file_data.geturl()
-                if file_name is None:
-                    url = file_data.geturl()
-                    a = file_data.info().getheader('Content-Disposition')
-                    if a is not None:
-                        a = a.strip()
-                        file_name = re.findall(r'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)', a)[0][0]#r'filename=\"(.+?)\"', a)[0]
-                    else:
-                        file_name = os.path.basename(file_data.geturl().split('?')[0])
-                if hasattr(file_data, "status") and \
-                   (int(file_data.status) >= 300 and int(file_data.status) < 400):
-                    if securityHandler is None or \
-                       securityHandler.method.lower() == "token":
-                        self._download_file(url=file_data.geturl(),
-                                            save_path=save_path,
-                                            file_name=file_name,
-                                            securityHandler=None,
-                                            proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
-                    else:
-                        self._download_file(url=file_data.geturl(),
-                                            save_path=save_path,
-                                            file_name=file_name,
-                                            securityHandler=securityHandler,
-                                            proxy_url=self._proxy_url,
-                                            proxy_port=self._proxy_port)
-                    return save_path + os.sep + file_name
-                if (file_data.info().getheader('Content-Length')):
-                    total_size = int(file_data.info().getheader('Content-Length').strip())
-                    downloaded = 0
-                    CHUNK = 4096
-                    with open(save_path + os.sep + file_name, 'wb') as out_file:
-                        while True:
-                            chunk = file_data.read(CHUNK)
-                            downloaded += len(chunk)
-                            if not chunk: break
-                            out_file.write(chunk)
-                elif file_data.headers.maintype=='image':
-                    with open(save_path + os.sep + file_name, 'wb') as out_file:
-                        buf = file_data.read()
-                        out_file.write(buf)
-                else:
-                    CHUNK = 16 * 1024
-                    with open(os.path.join(save_path, file_name), 'wb') as f:
-                        while True:
-                            chunk = file_data.read(CHUNK)
-                            if not chunk: break
-                            f.write(chunk)
-                            f.flush()
-                        del f
-                return os.path.join(save_path, file_name)
-            except urllib.error.HTTPError as e:
-                print(("HTTP Error: %s, %s " % (e.code , url)))
-                return None
-            except urllib.error.URLError as e:
-                print(("URL Error:%s, %s" % (e.reason , url)))
-                return None
-        #----------------------------------------------------------------------
-        def _do_get(self, url, param_dict, securityHandler=None,
-                    header=None, proxy_url=None, proxy_port=None,
-                    compress=True):
-            """
-            Performs a standard GET method.
-            Inputs:
-               url - string of URI
-               param_dict - parameters dictionary that holds key/values for
-                            each function call.
-               handler - security Handler object
-               header - optional headers to add to a call
-               proxy_url - URI/IP of the proxy
-               proxy_port - port of the proxy
-               compress - compression of the call
-            """
-            url =self._urlsafe(url=url)
-            handlers = []
-            opener= None
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                            param_dict=param_dict)
-            if self._referer_url is None:
-                from six.moves import urllib_parse as urlparse
-                self._referer_url = urlparse.urlparse(self._url).netloc
-            default_headers = {
-                'Referer': self._referer_url,
-                'User-Agent': self._useragent
-            }
-
-            if not header is None:
-                if isinstance(header, (list, tuple)):
-                    for h in header:
-                        headers[h[0]] = h[1]
-                elif isinstance(header, dict):
-                    for h in header.items():
-                        default_headers[h[0]] = h[1]
-            if compress:
-                default_headers['Accept-encoding'] = 'gzip'
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                handlers.append(ProxyHandler(proxies))
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(HTTPCookieProcessor(cookiejar=cj))
-            handlers.append(AGOLRedirectHandler())
-            if len(handlers) > 0:
-                opener = urllib.request.build_opener(*handlers)
-                urllib.request.install_opener(opener)
-            data = urllib.parse.urlencode(param_dict)
-            url = url + "?%s" % data
-            if len(data) + len(url)> 1999:
-                resp = urllib.request.Request(url=url, data=None,
-                                              headers=default_headers, method='POST')
-            else:
-                resp = urllib.request.Request(url=url, data=None,
-                                              headers=default_headers, method='GET')
-            response = urllib.request.urlopen(resp)
-            return_headers = response.getheaders()
-            if response.getheader('Content-Encoding') == 'gzip':
-                bi = BytesIO(response.read())
-                gf = gzip.GzipFile(fileobj=bi, mode="rb")
-                resp_data = gf.read().decode('utf-8')
-            else:
-                resp_data = response.read().decode('utf-8')
-            result = json.loads(resp_data)
-            if 'error' in result:
-                if result['error']['message'] == 'Request not made over ssl':
-                    if url.startswith('http://'):
-                        url = url.replace('http://', 'https://')
-                        return self._do_get(url=url,
-                                            param_dict=param_dict,
-                                            securityHandler=securityHandler,
-                                            proxy_url=proxy_url,
-                                            proxy_port=proxy_port,
-                                            compress=compress)
-            return result
-        #----------------------------------------------------------------------
-        def _do_post(self,
-                     url,
-                     param_dict,
-                     securityHandler=None,
-                     proxy_url=None,
-                     proxy_port=None,
-                     header={}):
-            """ performs the POST operation and returns dictionary result """
-            url =self._urlsafe(url=url)
-            handlers = []
-            opener= None
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                            param_dict=param_dict)
-            headers = {'Referer': self._referer_url,
-                       'User-Agent': self._useragent,
-                       'Accept-Encoding': ''}
-            if len(header) > 0 :
-                headers = dict(list(headers.items()) + list(header.items()))
-
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                proxy_support = urllib.request.ProxyHandler(proxies)
-                handlers.append(proxy_support)
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(urllib.request.HTTPCookieProcessor(cj))
-            handlers.append(AGOLRedirectHandler())
-            if len(handlers) > 0:
-                opener = urllib.request.build_opener(*handlers)
-            urllib.request.install_opener(opener)
-
-            request = urllib.request.Request(url, bytes(urllib.parse.urlencode(param_dict), 'utf-8'), headers=headers)
-            result = ""
-            try:
-                result = urllib.request.urlopen(request,data=None).read()
-            except urllib.error.HTTPError as e:
-                return {'error':{'code':e.code}}
-            except urllib.error.URLError as e:
-                return {'error':{'code':e.code}}
-            if result =="":
-                return ""
-            if isinstance(result, bytes):
-                result = result.decode('utf-8')
-            jres = json.loads(result)
-            if 'error' in jres:
-                if jres['error']['message'] == 'Request not made over ssl':
-                    if url.startswith('http://'):
-                        url = url.replace('http://', 'https://')
-                        return self._do_post(url,
-                                             param_dict,
-                                             securityHandler=securityHandler,
-                                             header=header,
-                                             proxy_url=proxy_url,
-                                             proxy_port=proxy_port)
-
-            return jres
-        def _post_multipart(self, host, selector,
-                            fields, files,
-                            securityHandler=None,
-                            ssl=False,port=80,
-                            proxy_url=None,proxy_port=None):
-            """ performs a multi-post to AGOL, Portal, or AGS
-                Inputs:
-                   host - string - root url (no http:// or https://)
-                       ex: www.arcgis.com
-                   selector - string - everything after the host
-                       ex: /PWJUSsdoJDp7SgLj/arcgis/rest/services/GridIndexFeatures/FeatureServer/0/1/addAttachment
-                   fields - dictionary - additional parameters like token and format information
-                   files - tuple array- tuple with the file name type, filename, full path
-                   ssl - option to use SSL
-                   proxy_url - string - url to proxy server
-                   proxy_port - interger - port value if not on port 80
-
-                Output:
-                   JSON response as dictionary
-                Useage:
-                   import urlparse
-                   url = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0/10261291"
-                   parsed_url = urlparse.urlparse(url)
-                   params = {"f":"json"}
-                   print _post_multipart(host=parsed_url.hostname,
-                                   selector=parsed_url.path,
-                                   files=files,
-                                   fields=params
-                                   )
-            """
-            selector =self._urlsafe(url=selector)
-            cj = None
-            handlers = []
-            param_dict, handler, cj = self.__processHandler(securityHandler=securityHandler,
-                                                            param_dict=fields)
-            form = MultiPartForm()
-            for item in param_dict.items():
-                form.add_field(item[0], item[1])
-            for f in files:
-                form.add_file(f[0], f[2], fileHandle=open(f[1], 'rb'))
-            form.make_result()
-            #content_type, body = self._encode_multipart_formdata(param_dict, files)
-            url = self._assemble_url(host, selector, port, ssl)
-            handlers.append(AGOLRedirectHandler())
-            handlers.append(urllib.request.HTTPHandler(debuglevel=0))
-            if proxy_url is not None:
-                if proxy_port is None:
-                    proxy_port = 80
-                proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
-                           "https":"https://%s:%s" % (proxy_url, proxy_port)}
-                handlers.append(urllib.request.ProxyHandler(proxies))
-            if handler is not None:
-                handlers.append(handler)
-            if cj is not None:
-                handlers.append(urllib.request.HTTPCookieProcessor(cj))
-            opener = urllib.request.build_opener(*handlers)
-            urllib.request.install_opener(opener)
-            request = urllib.request.Request(url, method="POST")
-            request.add_header('User-agent', 'ArcREST')
-            request.add_header('Content-type', form.get_content_type())
-            request.add_header('Content-length', len(form.form_data))
-            request.data = form.form_data
-            result = urllib.request.urlopen(request).read()
-            if result =="":
-                return ""
-            print (result)
-            jres = json.loads(result)
-            if 'error' in jres:
-                if jres['error']['message'] == 'Request not made over ssl':
-                    if url.startswith('http://'):
-                        url = url.replace('http://', 'https://')
-                        return self._post_multipart(host, selector,
-                                                    fields, files,
-                                                    ssl=True,port=port,
-                                                    securityHandler=securityHandler,
-                                                    proxy_url=proxy_url,
-                                                    proxy_port=proxy_port)
-            return self._unicode_convert(jres)
-        #----------------------------------------------------------------------
-        def __processHandler(self, securityHandler, param_dict):
-            """proceses the handler and returns the cookiejar"""
-            cj = None
-            handler = None
-            if securityHandler is None:
-                return param_dict, securityHandler, cj
-            elif securityHandler.method.lower() == "token":
-                param_dict['token'] = securityHandler.token
-            elif securityHandler.method.lower() == "handler":
-                if "token" in param_dict :
-                    del param_dict['token']
-                handler = securityHandler.handler
+        for (key, value) in self.form_fields:
+            textwriter.write(
+                '--{boundary}\r\n'
+                'Content-Disposition: form-data; name="{key}"\r\n\r\n'
+                '{value}\r\n'.format(
+                    boundary=boundary, key=key, value=value))
+        for(key, filename, mimetype, filepath) in self.files:
+            if os.path.isfile(filepath):
+                textwriter.write(
+                    '--{boundary}\r\n'
+                    'Content-Disposition: form-data; name="{key}"; '
+                    'filename="{filename}"\r\n'
+                    'Content-Type: {content_type}\r\n\r\n'.format(
+                        boundary=boundary, key=key, filename=filename,
+                        content_type=mimetype))
+                with open(filepath, "rb") as f:
+                    shutil.copyfileobj(f, buf)
+                textwriter.write('\r\n')
+        textwriter.write('--{}--\r\n\r\n'.format(boundary))
+        self.form_data = buf.getvalue()
+########################################################################
+class BaseWebOperations(object):
+    """performs the get/post operations"""
+    PY3 = sys.version_info[0] == 3
+    PY2 = sys.version_info[0] == 2
+    _referer_url = None
+    _last_url = None
+    _last_code = None
+    _last_method = None
+    _useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+    #----------------------------------------------------------------------
+    @property
+    def last_method(self):
+        """gets the last method used (either POST or GET)"""
+        return self._last_method
+    #----------------------------------------------------------------------
+    @property
+    def last_code(self):
+        """gets the last code from the last web operation"""
+        return self._last_code
+    #----------------------------------------------------------------------
+    @property
+    def last_url(self):
+        """gets the last web url called"""
+        return self._last_url
+    #----------------------------------------------------------------------
+    @property
+    def referer_url(self):
+        """gets/sets the referer url value"""
+        return self._referer_url
+    #----------------------------------------------------------------------
+    @referer_url.setter
+    def referer_url(self, value):
+        """gets/sets the referer url value"""
+        if self._referer_url != value:
+            self._referer_url = value
+    #----------------------------------------------------------------------
+    @property
+    def useragent(self):
+        """gets/sets the user agent value"""
+        return self._useragent
+    #----------------------------------------------------------------------
+    @useragent.setter
+    def useragent(self, value):
+        """gets/sets the user agent value"""
+        if value is None:
+            self._useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+        elif self._useragent != value:
+            self._useragent = value
+    #----------------------------------------------------------------------
+    def _get_file_name(self, contentDisposition,
+                       url, ext=".unknown"):
+        """ gets the file name from the header or url if possible """
+        if self.PY2:
+            if contentDisposition is not None:
+                return re.findall(r'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)',
+                                  contentDisposition.strip().replace('"', ''))[0][0]
+            elif os.path.basename(url).find('.') > -1:
+                return os.path.basename(url)
+        elif self.PY3:
+            if contentDisposition is not None:
+                p = re.compile(r'filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)')
+                return p.findall(contentDisposition.strip().replace('"', ''))[0][0]
+            elif os.path.basename(url).find('.') > -1:
+                return os.path.basename(url)
+        return "%s.%s" % (uuid.uuid4().get_hex(), ext)
+    #----------------------------------------------------------------------
+    def _processHandler(self, securityHandler, param_dict):
+        """proceses the handler and returns the cookiejar"""
+        cj = None
+        handler = None
+        if securityHandler is None:
+            cj = cookiejar.CookieJar()
+        elif securityHandler.method.lower() == "token" or \
+             securityHandler.method.lower() == "oauth":
+            param_dict['token'] = securityHandler.token
+            if hasattr(securityHandler, 'cookiejar'):
                 cj = securityHandler.cookiejar
-            return param_dict, handler, cj
-        #----------------------------------------------------------------------
-        def _tostr(self,obj):
-            """ converts a object to list, if object is a list, it creates a
-                comma seperated string.
-            """
-            if not obj:
-                return ''
-            elif isinstance(obj, list):
-                return ', '.join(map(self._tostr, obj))
-            elif isinstance(obj, bool):
-                return json.dumps(obj)
-            return str(obj)
-        #----------------------------------------------------------------------
-        def _get_content_type(self, filename):
-            return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-        #----------------------------------------------------------------------------------
-        def _encode_multipart_formdata(self, fields, files):
-            """ encodes the files and fields for the post """
-            boundary = '----------ThIs_Is_tHe_bouNdaRY_$'
-            buf = BytesIO()
+            if hasattr(securityHandler, 'handler'):
+                handler = securityHandler.handler
+        elif securityHandler.method.lower() == "handler":
+            handler = securityHandler.handler
+            cj = securityHandler.cookiejar
+        return param_dict, handler, cj
+    #----------------------------------------------------------------------
+    def _process_response(self, resp, out_folder=None):
+        """ processes the response object"""
+        CHUNK = 4056
+        maintype = self._mainType(resp)
+        contentDisposition = resp.headers.get('content-disposition')
+        contentEncoding = resp.headers.get('content-encoding')
+        contentType = resp.headers.get('content-type')
+        contentLength = resp.headers.get('content-length')
+        if maintype.lower() in ('image',
+                                'application/x-zip-compressed') or \
+           contentType == 'application/x-zip-compressed' or \
+           (contentDisposition is not None and \
+            contentDisposition.lower().find('attachment;') > -1):
+            fname = self._get_file_name(
+                contentDisposition=contentDisposition,
+                url=resp.geturl())
+            if out_folder is None:
+                out_folder = tempfile.gettempdir()
+            if contentLength is not None:
+                max_length = int(contentLength)
+                if max_length < CHUNK:
+                    CHUNK = max_length
+            file_name = os.path.join(out_folder, fname)
+            with open(file_name, 'wb') as writer:
+                for data in self._chunk(response=resp):
+                    writer.write(data)
+                    del data
+                del writer
+            return file_name
+        else:
+            read = ""
+            for data in self._chunk(response=resp, size=4096):
+                read += data.decode('ascii')
+                del data
+            try:
+                return json.loads(read.strip())
+            except:
+                return read
+        return None
+    #----------------------------------------------------------------------
+    def _make_boundary(self):
+        """ creates a boundary for multipart post (form post)"""
+        if self.PY2:
+            return '===============%s==' % uuid.uuid4().get_hex()
+        elif self.PY3:
+            return '===============%s==' % uuid.uuid4().hex
+        else:
+            from random import choice
+            digits = "0123456789"
+            letters = "abcdefghijklmnopqrstuvwxyz"
+            return '===============%s==' % ''.join(choice(letters + digits) \
+                                                   for i in range(15))
+    #----------------------------------------------------------------------
+    def _get_content_type(self, filename):
+        return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+    #----------------------------------------------------------------------
+    def _mainType(self, resp):
+        """ gets the main type from the response object"""
+        if self.PY2:
+            return resp.headers.maintype
+        elif self.PY3:
+            return resp.headers.get_content_maintype()
+        else:
+            return None
+    #----------------------------------------------------------------------
+    def _chunk(self, response, size=4096):
+        """ downloads a web response in pieces """
+        method = response.headers.get("content-encoding")
+        if method == "gzip":
+            d = zlib.decompressobj(16+zlib.MAX_WBITS)
+            b = response.read(size)
+            while b:
+                data = d.decompress(b)
+                yield data
+                b = response.read(size)
+                del data
+        else:
+            while True:
+                chunk = response.read(size)
+                if not chunk: break
+                yield chunk
+    #----------------------------------------------------------------------
+    def _post(self, url,
+              param_dict={},
+              files={},
+              securityHandler=None,
+              additional_headers={},
+              custom_handlers=[],
+              proxy_url=None,
+              proxy_port=80,
+              compress=True,
+              out_folder=None,
+              file_name=None):
+        """
+        Performs a POST operation on a URL.
 
-            for (key, value) in fields.items():
-                buf.write(bytes('--%s\r\n' % boundary, 'utf-8'))
-                buf.write(bytes('Content-Disposition: form-data; name="%s"' % key, 'utf-8'))
-                buf.write(bytes('\r\n\r\n' + self._tostr(value) + '\r\n', 'utf-8'))
-            for (key, filepath, filename) in files:
-                if os.path.isfile(filepath):
-                    buf.write(bytes('--%s\r\n' % boundary, 'utf-8'))
-                    buf.write(bytes('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename), 'utf-8'))
-                    buf.write(bytes('Content-Type: %s\r\n' % (self._get_content_type(filename)), 'utf-8'))
-                    file = open(filepath, "rb")
-                    try:
-                        print (type(file.read()))
-                        buf.write(bytes('\r\n', 'utf-8') + file.read() + bytes('\r\n', 'utf-8'))
-                    finally:
-                        file.close()
-            buf.write(bytes('--' + boundary + '--\r\n\r\n', 'utf-8'))
-            buf = buf.getvalue()
-            content_type = 'multipart/form-data; boundary=%s' % boundary
-            return content_type, buf
-        #----------------------------------------------------------------------
-        def _assemble_url(self, host, selector, port=80, ssl=False):
-            """creates the url string for the request"""
-            if not port is None and \
-               port != 80:
-                if ssl:
-                    url = "https://%s:%s%s" % (host, port, selector)
-                else:
-                    url = "http://%s:%s%s" % (host, port, selector)
-            else:
-                if ssl:
-                    url = "https://%s%s" % (host, selector)
-                else:
-                    url = "http://%s%s" % (host, selector)
-            return url
+        Inputs:
+           param_dict - key/value pair of values
+              ex: {"foo": "bar"}
+           files - key/value pair of file objects where the key is
+              the input name and the value is the file path
+              ex: {"file": r"c:\temp\myfile.zip"}
+           securityHandler - object that handles the token or other site
+              security.  It must inherit from the base security class.
+              ex: arcrest.AGOLSecurityHandler("SomeUsername", "SOMEPASSWORD")
+           additional_headers - are additional key/value headers that a user
+              wants to pass during the operation.
+              ex: {"accept-encoding": "gzip"}
+           custom_handlers - this is additional web operation handlers as a
+              list of objects.
+              Ex: [CustomAuthHandler]
+           proxy_url - url of the proxy
+           proxy_port - default 80, port number of the proxy
+           compress - default true, determines if gzip should be used of not for
+              the web operation.
+           out_folder - if the URL requested returns a file, this will be the
+              disk save location
+           file_name - if the operation returns a file and the file name is not
+             given in the header or a user wishes to override the return saved
+             file name, provide value here.
+        Output:
+           returns dictionary or string depending on web operation.
+        """
+        self._last_method = "POST"
+        headers = {}
+        opener = None
+        return_value = None
+        handlers = [RedirectHandler()]
+        param_dict, handler, cj = self._processHandler(securityHandler, param_dict)
+        if handler is not None:
+            handlers.append(handler)
+        if cj is not None:
+            handlers.append(request.HTTPCookieProcessor(cj))
+        if isinstance(custom_handlers, list) and \
+           len(custom_handlers) > 0:
+            for h in custom_handlers:
+                handlers.append(h)
+        if compress:
+            headers['Accept-Encoding'] = 'gzip'
+        else:
+            headers['Accept-Encoding'] = ''
+        for k,v in additional_headers.items():
+            headers[k] = v
+            del k,v
+        opener = request.build_opener(*handlers)
+        request.install_opener(opener)
+        opener.addheaders = [(k,v) for k,v in headers.items()]
+        if len(files) == 0:
+            data = urlencode(param_dict)
+            if self.PY3:
+                data = data.encode('ascii')
+            opener.data = data
+            resp = opener.open(url.encode('ascii'), data=data)
+        else:
+            mpf = MultiPartForm(param_dict=param_dict,
+                                files=files)
+            req = request.Request(url.encode('ascii'))
+            body = mpf.make_result
+            req.add_header('User-agent', self.useragent)
+            req.add_header('Content-type', mpf.get_content_type())
+            req.add_header('Content-length', len(body))
+            req.data = body
+            resp = request.urlopen(req)
+        self._last_code = resp.getcode()
+        self._last_url = resp.geturl()
+        return_value = self._process_response(resp=resp,
+                                              out_folder=out_folder)
+        if isinstance(return_value, dict):
+            if "error" in return_value and \
+               'message' in return_value['error']:
+                if return_value['error']['message'].lower() == 'request not made over ssl':
+                    if url.startswith('http://'):
+                        url = url.replace('http://', 'https://')
+                        return self._post(url,
+                                          param_dict,
+                                          files,
+                                          securityHandler,
+                                          additional_headers,
+                                          custom_handlers,
+                                          proxy_url,
+                                          proxy_port,
+                                          compress,
+                                          out_folder,
+                                          file_name)
+            return return_value
+        else:
+            return return_value
+        return return_value
+    #----------------------------------------------------------------------
+    def _get(self, url,
+             param_dict={},
+             securityHandler=None,
+             additional_headers=[],
+             handlers=[],
+             proxy_url=None,
+             proxy_port=None,
+             compress=True,
+             custom_handlers=[],
+             out_folder=None,
+             file_name=None):
+        """
+        Performs a GET operation
+        Inputs:
+
+        Output:
+           returns dictionary, string or None
+        """
+        self._last_method = "GET"
+        CHUNK = 4056
+        param_dict, handler, cj = self._processHandler(securityHandler, param_dict)
+        headers = [] + additional_headers
+        if compress:
+            headers.append(('Accept-encoding', 'gzip'))
+        else:
+            headers.append(('Accept-encoding', ''))
+        headers.append(('User-Agent', self.useragent))
+        if len(param_dict.keys()) == 0:
+            param_dict = None
+        if handlers is None:
+            handlers = []
+        if handler is not None:
+            handlers.append(handler)
+        handlers.append(RedirectHandler())
+        if cj is not None:
+            handlers.append(request.HTTPCookieProcessor(cj))
+        if proxy_url is not None:
+            if proxy_port is None:
+                proxy_port = 80
+            proxies = {"http":"http://%s:%s" % (proxy_url, proxy_port),
+                       "https":"https://%s:%s" % (proxy_url, proxy_port)}
+            proxy_support = request.ProxyHandler(proxies)
+            handlers.append(proxy_support)
+        opener = request.build_opener(*handlers)
+        opener.addheaders = headers
+        if param_dict is None:
+            resp = opener.open(url, data=param_dict)
+        elif len(str(urlencode(param_dict))) + len(url) >= 1999:
+            resp = opener.open(url.encode('ascii'), data=urlencode(param_dict))
+        else:
+            format_url = url.encode('ascii') + "?%s" % urlencode(param_dict)
+            resp = opener.open(fullurl=format_url)
+        self._last_code = resp.getcode()
+        self._last_url = resp.geturl()
+        #  Get some headers from the response
+        maintype = self._mainType(resp)
+        contentDisposition = resp.headers.get('content-disposition')
+        contentEncoding = resp.headers.get('content-encoding')
+        contentType = resp.headers.get('content-Type').split(';')[0].lower()
+        contentLength = resp.headers.get('content-length')
+        if maintype.lower() in ('image',
+                                'application/x-zip-compressed') or \
+           contentType == 'application/x-zip-compressed' or \
+           (contentDisposition is not None and \
+            contentDisposition.lower().find('attachment;') > -1):
+
+            fname = self._get_file_name(
+                contentDisposition=contentDisposition,
+                url=url)
+            if out_folder is None:
+                out_folder = tempfile.gettempdir()
+            if contentLength is not None:
+                max_length = int(contentLength)
+                if max_length < CHUNK:
+                    CHUNK = max_length
+            file_name = os.path.join(out_folder, fname)
+            with open(file_name, 'wb') as writer:
+                for data in self._chunk(response=resp,
+                                        size=CHUNK):
+                    writer.write(data)
+                    writer.flush()
+                writer.flush()
+                del writer
+            return file_name
+        else:
+            read = ""
+            for data in self._chunk(response=resp,
+                                    size=CHUNK):
+                try:
+                    read += data.decode('ascii')
+                except:
+                    read += data.decode('utf-8')
+
+                del data
+            try:
+                results = json.loads(read)
+                if 'error' in results:
+                    if 'message' in results['error']:
+                        if results['error']['message'] == 'Request not made over ssl':
+                            if url.startswith('http://'):
+                                url = url.replace('http://', 'https://')
+                                return self._get(url,
+                                                 param_dict,
+                                                 securityHandler,
+                                                 additional_headers,
+                                                 handlers,
+                                                 proxy_url,
+                                                 proxy_port,
+                                                 compress,
+                                                 custom_handlers,
+                                                 out_folder,
+                                                 file_name)
+                return results
+            except:
+                return read

@@ -47,7 +47,7 @@ class Machines(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -135,7 +135,7 @@ class Machines(BaseAGSServer):
             "adminURL" : adminURL
         }
         uURL = "%s/register" % self._url
-        return self._do_post(url=uURL, param_dict=params,
+        return self._post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -162,7 +162,7 @@ class Machines(BaseAGSServer):
             "newMachineName" : newMachineName
         }
         uURL = self._url + "/rename"
-        return self._do_post(url=uURL, param_dict=params,
+        return self._post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url                             )
@@ -225,7 +225,7 @@ class Machine(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._currentURL,
+        json_dict = self._get(url=self._currentURL,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -339,7 +339,7 @@ class Machine(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=uURL, param_dict=params,
+        return self._get(url=uURL, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
@@ -350,7 +350,7 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._do_post(url=uURL, param_dict=params,
+        return self._post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -361,7 +361,7 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/stop"
-        return self._do_post(url=uURL, param_dict=params,
+        return self._post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -383,7 +383,7 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._do_post(url=uURL, param_dict=params,
+        return self._post(url=uURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
