@@ -221,7 +221,8 @@ class BaseWebOperations(object):
         handler = None
         if securityHandler is None:
             cj = cookiejar.CookieJar()
-        elif securityHandler.method.lower() == "token":
+        elif securityHandler.method.lower() == "token" or \
+             securityHandler.method.lower() == "oauth":
             param_dict['token'] = securityHandler.token
             if hasattr(securityHandler, 'cookiejar'):
                 cj = securityHandler.cookiejar
