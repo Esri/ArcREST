@@ -36,7 +36,7 @@ class Log(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -85,7 +85,7 @@ class Log(BaseAGSServer):
             "f": "json",
             "machine" : machine
         }
-        return self._do_post(url=self._url + "/countErrorReports",
+        return self._post(url=self._url + "/countErrorReports",
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -96,7 +96,7 @@ class Log(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        return self._do_post(url=self._url + "/clean",
+        return self._post(url=self._url + "/clean",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -109,7 +109,7 @@ class Log(BaseAGSServer):
             "f" : "json"
         }
         sURL = self._url + "/settings"
-        return self._do_get(url=sURL, param_dict=params,
+        return self._get(url=sURL, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)['settings']
@@ -146,7 +146,7 @@ class Log(BaseAGSServer):
            isinstance(maxErrorReportsCount, int) and\
            maxErrorReportsCount > 0:
             currentSettings['maxErrorReportsCount'] = maxErrorReportsCount
-        return self._do_post(url=lURL, param_dict=currentSettings,
+        return self._post(url=lURL, param_dict=currentSettings,
                              securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -204,7 +204,7 @@ class Log(BaseAGSServer):
         params['filter'] = qFilter
         if export == True and \
            out_path is not None:
-            messages = self._do_post(self._url + "/query", params,
+            messages = self._post(self._url + "/query", params,
                                      securityHandler=self._securityHandler,
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
@@ -224,7 +224,7 @@ class Log(BaseAGSServer):
             del messages
             return out_path
         else:
-            return self._do_post(self._url + "/query", params,
+            return self._post(self._url + "/query", params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)

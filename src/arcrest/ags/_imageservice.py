@@ -97,7 +97,7 @@ class ImageService(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -572,24 +572,28 @@ class ImageService(BaseAGSServer):
             params['renderingRule'] = renderingRule
         params["f" ] = f
         if f == "json":
-            return self._do_get(url=url,
+            return self._get(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
         elif f == "image":
-            url = url + "?%s"  % urllib.urlencode(params)
-            return self._download_file(url=url,
-                                       save_path=saveFolder,
-                                       file_name=saveFile)
+            result = self._get(url=url,
+                               param_dict=params,
+                               securityHandler=self._securityHandler,
+                               proxy_url=self._proxy_url,
+                               proxy_port=self._proxy_port,
+                               out_folder=saveFolder,
+                               file_name=saveFile)
+            return result
         elif f == "kmz":
-            url = url + "?%s"  % urllib.urlencode(params)
-            return self._download_file(url=url,
-                                       save_path=saveFolder,
-                                       securityHandler=self._securityHandler,
-                                       file_name=saveFile,
-                                       proxy_url=self._proxy_url,
-                                       proxy_port=self._proxy_port)
+            return self._get(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port,
+                             out_folder=saveFolder,
+                             file_name=saveFile)
     #----------------------------------------------------------------------
     def query(self,
               where="1=1",
@@ -668,7 +672,7 @@ class ImageService(BaseAGSServer):
             params['returnDistinctValues'] = returnDistinctValues
 
         url = self._url + "/query"
-        return self._do_get(url=url, param_dict=params,
+        return self._get(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -799,7 +803,7 @@ class ImageService(BaseAGSServer):
             params['itemIds'] = itemIds
         if not serviceUrl is None:
             params['serviceUrl'] = serviceUrl
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -816,7 +820,7 @@ class ImageService(BaseAGSServer):
             params = {
                 "f" : "json"
             }
-            return self._do_get(url=url,
+            return self._get(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,

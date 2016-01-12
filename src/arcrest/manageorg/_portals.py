@@ -50,7 +50,7 @@ class Portals(BaseAGOLClass):
         """gets the regions value"""
         url = "%s/regions" % self.root
         params = {"f": "json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -60,7 +60,7 @@ class Portals(BaseAGOLClass):
         """returns the site's languages"""
         url = "%s/languages" % self.root
         params = {'f': "json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -70,7 +70,7 @@ class Portals(BaseAGOLClass):
         """gets the sharing api information"""
         url = "%s/info" % self.root
         params = {"f": "json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                     param_dict=params,
                     proxy_url=self._proxy_url,
                     proxy_port=self._proxy_port)
@@ -222,7 +222,7 @@ class Portal(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self.root,
+        json_dict = self._get(url=self.root,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -247,7 +247,7 @@ class Portal(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        res = self._do_get(url=url, param_dict=params,
+        res = self._get(url=url, param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
@@ -953,7 +953,7 @@ class Portal(BaseAGOLClass):
         """gets the urls for a portal"""
         url = "%s/urls" % self.root
         params = {"f":"json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                      param_dict=params,
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
@@ -1037,7 +1037,7 @@ class Portal(BaseAGOLClass):
         """gets the portal's purchases"""
         url = "%s/purchases" % self.root
         params = {"f":"json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1048,7 +1048,7 @@ class Portal(BaseAGOLClass):
         """gets the site's customers"""
         url = "%s/customers" % self.root
         params = {"f":"json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1061,11 +1061,17 @@ class Portal(BaseAGOLClass):
         """
         url = "%s/customers/export" % self.root
         params = {"f":"csv"}
-        return self._download_file(url=url, save_path=outPath,
-                                   securityHandler=self._securityHandler,
-                                   param_dict=params,
-                                   proxy_url=self._proxy_url,
-                                   proxy_port=self._proxy_port)
+        dirPath = None
+        fileName = None
+        if outPath is not None:
+            dirPath = os.path.dirname(outPath)
+            fileName = os.path.basename(outPath)
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler, proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port,
+                        out_folder=dirPath,
+                        file_name=fileName)
     #----------------------------------------------------------------------
     def update(self,
                updatePortalParameters,
@@ -1088,7 +1094,7 @@ class Portal(BaseAGOLClass):
             params.update(updatePortalParameters.value)
         else:
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1122,7 +1128,7 @@ class Portal(BaseAGOLClass):
             "user" : user,
             "role" : role
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1142,7 +1148,7 @@ class Portal(BaseAGOLClass):
             "f" : "json",
             "users" : users
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -1168,7 +1174,7 @@ class Portal(BaseAGOLClass):
             "name" : name,
             "type" : serviceType
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1207,7 +1213,7 @@ class Portal(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/assignUserCredits"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1255,7 +1261,7 @@ class Portal(BaseAGOLClass):
         if not sortOrder is None:
             params['sortOrder'] = sortOrder
         from ._community import Community
-        res = self._do_post(url=url,
+        res = self._post(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1291,7 +1297,7 @@ class Portal(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/createRole"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1343,7 +1349,7 @@ class Portal(BaseAGOLClass):
             "geocodeCount" : geocodeCount
         }
         url = self._url + "/cost"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1367,7 +1373,7 @@ class Portal(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1394,17 +1400,15 @@ class Portal(BaseAGOLClass):
         "key" : key,
         "text" : text
         }
-        parsed = urlparse.urlparse(url)
-        files = []
-        files.append(('file', filePath, os.path.basename(filePath)))
-        res = self._post_multipart(host=parsed.hostname,
-                                           selector=parsed.path,
-                                           files = files,
-                                           fields=params,
-                                           port=parsed.port,
-                                           ssl=parsed.scheme.lower() == 'https',
-                                           proxy_port=self._proxy_port,
-                                           proxy_url=self._proxy_url)
+
+        files = {}
+        files['file'] = filePath
+        res = self._post(url=url,
+                         param_dict=params,
+                         files=files,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
         return res
     #----------------------------------------------------------------------
     def removeResource(self, key):
@@ -1420,7 +1424,7 @@ class Portal(BaseAGOLClass):
             "key" : key,
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1431,7 +1435,7 @@ class Portal(BaseAGOLClass):
         """gets the object to manage the portal's security policy"""
         url = "%s/securityPolicy" % self.root
         params = {'f': 'json'}
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1441,7 +1445,7 @@ class Portal(BaseAGOLClass):
         """resets the security policy to default install"""
         params = {"f" : "json"}
         url = "%s/securityPolicy/reset" % self.root
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1469,7 +1473,7 @@ class Portal(BaseAGOLClass):
             "historySize": historySize
         }
         url = "%s/securityPolicy/update" % self.root
-        return self._do_post(url=url,
+        return self._post(url=url,
                      param_dict=params,
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
@@ -1503,7 +1507,7 @@ class Portal(BaseAGOLClass):
             params['invitationList'] = invitationList.value()
         params['html'] = html
         params['subject'] = subject
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1540,7 +1544,7 @@ class Portal(BaseAGOLClass):
             "mustApprove": mustApprove,
             "expiration" : expiration
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -1550,7 +1554,7 @@ class Portal(BaseAGOLClass):
         """gets all the invitations to the current portal"""
         params = {"f": "json"}
         url = "%s/invitations" % self.root
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1578,7 +1582,7 @@ class Portal(BaseAGOLClass):
         }
         if not groupby is None:
             params['groupby'] = groupby
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1589,7 +1593,7 @@ class Portal(BaseAGOLClass):
         """gets the IDP information for the portal/agol"""
         url = "%s/idp" % self.root
         params = {"f": "json"}
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1649,7 +1653,7 @@ class Servers(BaseAGOLClass):
             params = {
                 "f" : "pjson"
             }
-            json_dict = self._do_get(url=self._surl,
+            json_dict = self._get(url=self._surl,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
@@ -1748,7 +1752,7 @@ class Servers(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            return self._do_post(url=url,
+            return self._post(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
@@ -1788,7 +1792,7 @@ class Servers(BaseAGOLClass):
                 "isHosted" : isHosted,
                 "serverType" : serverType
             }
-            return self._do_post(url=url,
+            return self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -1817,7 +1821,7 @@ class Servers(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._surl,
+        json_dict = self._get(url=self._surl,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -1901,7 +1905,7 @@ class Servers(BaseAGOLClass):
             "name" : name,
             "serverType" : serverType
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -1985,7 +1989,7 @@ class Roles(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -2000,7 +2004,7 @@ class Roles(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -2013,7 +2017,7 @@ class Roles(BaseAGOLClass):
             "f" : "json"
         }
         url = self._url + "/%s/update"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -2022,7 +2026,7 @@ class Roles(BaseAGOLClass):
         """"""
         url = self._url + "/%s" % roleID
         params = {"f" : "json"}
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -2040,7 +2044,7 @@ class Roles(BaseAGOLClass):
         """returns the assigned priveleges for a given custom role"""
         url = self._url + "/%s/privileges" % roleID
         params = {"f" : "json"}
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -2062,7 +2066,7 @@ class Roles(BaseAGOLClass):
 
         }
         url = self._url + "/%s/setPrivileges" % roleID
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,

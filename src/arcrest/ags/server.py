@@ -6,7 +6,6 @@ user/developer would.
 from __future__ import absolute_import
 from __future__ import print_function
 from . import BaseAGSServer
-import six
 from six.moves.urllib_parse import urlparse
 
 import json
@@ -74,7 +73,7 @@ class Server(BaseAGSServer):
             url = self.root
         else:
             url = self.location
-        json_dict = self._do_get(url=url,
+        json_dict = self._get(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -91,7 +90,7 @@ class Server(BaseAGSServer):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print("%s - attribute not implemented in ags.Server class." % k)
-        json_dict = self._do_get(url=self.root,
+        json_dict = self._get(url=self.root,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,

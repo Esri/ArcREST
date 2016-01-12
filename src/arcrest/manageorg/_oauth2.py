@@ -74,7 +74,7 @@ class oauth2(BaseAGOLClass):
         }
         if redirect_uris is None:
             params['redirect_uris'] = redirect_uris
-        return self._do_post(url=url,
+        return self._post(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -92,7 +92,7 @@ class oauth2(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,

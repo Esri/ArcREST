@@ -155,7 +155,7 @@ class GeoEnrichment(BaseGeoEnrichment):
         params = {
             "f" : "json",
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -242,13 +242,13 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['studyAreasOptions'] = studyAreasOptions
         if not useData is None:
             params['useData'] = useData
-        return self._download_file(url=url,
-                                   save_path=os.path.dirname(out_file_path),
-                                   file_name=None,
-                                   param_dict=params,
-                                   securityHandler=self._securityHandler,
-                                   proxy_url=self._proxy_url,
-                                   proxy_port=self._proxy_port)
+        result = self._get(url=url,
+                           param_dict=params,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port,
+                           out_folder=os.path.dirname(out_file_path))
+        return result
     #----------------------------------------------------------------------
     def dataCollections(self,
                         countryName=None,
@@ -303,7 +303,7 @@ class GeoEnrichment(BaseGeoEnrichment):
                 params['suppressNullValues'] = "true"
             else:
                 params['suppressNullValues'] = "false"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -406,7 +406,7 @@ class GeoEnrichment(BaseGeoEnrichment):
             params["searchText"] = searchText
         if not optionalCountryDataset is None:
             params['optionalCountryDataset'] = optionalCountryDataset
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -572,7 +572,7 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['featureLimit'] = featureLimit
         else:
             params['featureLimit'] = 1000
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,

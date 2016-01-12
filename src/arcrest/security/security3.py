@@ -366,7 +366,7 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
         parameters = {
             'f': 'json'
         }
-        portal_info = self._do_post(url=url,
+        portal_info = self._post(url=url,
                                     param_dict=parameters,
                                     securityHandler=self,
                                     proxy_port=self._proxy_port,
@@ -798,7 +798,7 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
             "grant_type":grant_type,
             "f" : "json"
         }
-        token = self._do_post(url=token_url,
+        token = self._post(url=token_url,
                               param_dict=params,
                               securityHandler=None,
                               proxy_port=self._proxy_port,
@@ -875,7 +875,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         parameters = {
             'f': 'json'
         }
-        portal_info = self._do_post(url=url,
+        portal_info = self._post(url=url,
                                     param_dict=parameters,
                                     securityHandler=self,
                                     proxy_port=self._proxy_port,
@@ -886,9 +886,8 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
                 self._username = portal_info['user']['username']
 
 
-        results = self._do_get(url= self._surl + '/portals/info',
+        results = self._get(url= self._surl + '/portals/info',
                                param_dict={'f':'json'},
-                               header=None,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
         if 'authInfo' in results and 'tokenServicesUrl' in results['authInfo']:
@@ -1023,7 +1022,7 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         if expiration is not None:
             query_dict['expiration'] = expiration
 
-        server_token = self._do_post(url=self._token_url,
+        server_token = self._post(url=self._token_url,
                                      param_dict=query_dict,
                                      securityHandler=None,
                                      proxy_port=self._proxy_port,
@@ -1123,9 +1122,8 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         if token_url is None:
 
-            results = self._do_get(url= self._surl + '/info',
+            results = self._get(url= self._surl + '/info',
                                    param_dict={'f':'json'},
-                                   header=None,
                                    proxy_port=self._proxy_port,
                                    proxy_url=self._proxy_url)
             if 'authInfo' in results and 'tokenServicesUrl' in results['authInfo']:
@@ -1174,7 +1172,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
             "f" : "json",
             "token" : self.token
         }
-        val = self._do_get(url=url, param_dict=params,
+        val = self._get(url=url, param_dict=params,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
         self._referer_url = "arcgis.com"#"http://%s.%s" % (val['urlKey'], val['customBaseUrl'])
@@ -1313,7 +1311,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         if expiration is not None:
             query_dict['expiration'] = str(expiration)
         self._token_created_on = datetime.datetime.now()
-        token = self._do_post(url=tokenUrl,
+        token = self._post(url=tokenUrl,
                               param_dict=query_dict,
                               securityHandler=None,
                               proxy_port=self._proxy_port,
@@ -1384,7 +1382,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
             parts = urlparse.urlparse(org_url)
             p = parts.path[1:].strip().split('/')[0]
             url = "%s://%s/%s/rest/info" % (parts.scheme, parts.netloc, p)
-            result = self._do_get(url=url, param_dict=params,
+            result = self._get(url=url, param_dict=params,
                                   securityHandler=None,
                                   proxy_url=proxy_url,
                                   proxy_port=proxy_port)
@@ -1490,7 +1488,7 @@ class AGSTokenSecurityHandler(abstract.BaseSecurityHandler):
                       'f': 'json'}
         if expiration is not None:
             query_dict['expiration'] = expiration
-        token = self._do_post(url=tokenUrl,
+        token = self._post(url=tokenUrl,
                               param_dict=query_dict,
                               securityHandler=None,
                               proxy_port=self._proxy_port,
@@ -1603,10 +1601,9 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             self._surl  =  self._url
 
         if token_url is None:
-            results = self._do_get(url= self._surl + '/portals/info',
+            results = self._get(url= self._surl + '/portals/info',
                                    param_dict={'f':'json'},
                                    securityHandler=None,
-                                   header=None,
                                    proxy_port=self._proxy_port,
                                    proxy_url=self._proxy_url)
             if 'authInfo' in results and 'tokenServicesUrl' in results['authInfo']:
@@ -1807,7 +1804,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             if secHandler is not None:
                 secHandler._method = "HANDLER"
 
-        server_token = self._do_post(url=tokenUrl,
+        server_token = self._post(url=tokenUrl,
                                      param_dict=query_dict,
                                      securityHandler=secHandler,
                                      proxy_port=self._proxy_port,
@@ -1852,7 +1849,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
             secHandler = self
             if secHandler is not None:
                 secHandler._method = "HANDLER"
-        token = self._do_post(url=tokenUrl,
+        token = self._post(url=tokenUrl,
                               param_dict=query_dict,
                               securityHandler=secHandler,
                               proxy_port=self._proxy_port,

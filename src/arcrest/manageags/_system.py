@@ -37,7 +37,7 @@ class System(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -82,7 +82,7 @@ class System(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        res = self._do_get(url=url,
+        res = self._get(url=url,
                            param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
@@ -109,7 +109,7 @@ class System(BaseAGSServer):
             "f" : "json"
         }
 
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -139,7 +139,7 @@ class System(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url, param_dict=params,
+        return self._get(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -157,7 +157,7 @@ class System(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -177,7 +177,7 @@ class System(BaseAGSServer):
             "f" : "json",
             "webAdaptorConfig" : webAdaptorConfig
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -224,7 +224,7 @@ class ConfigurationStore(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -307,7 +307,7 @@ class ConfigurationStore(BaseAGSServer):
             "move" : move,
             "runAsync" : runAsync
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -347,7 +347,7 @@ class Jobs(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -387,7 +387,7 @@ class Jobs(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -509,7 +509,7 @@ class ServerProperties(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -538,7 +538,7 @@ class ServerProperties(BaseAGSServer):
             "f" : "json",
             "properties" : properties
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -601,7 +601,7 @@ class ServerDirectory(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url, param_dict=params,
+        json_dict = self._get(url=self._url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -704,7 +704,7 @@ class ServerDirectory(BaseAGSServer):
             "maxFileAge" : maxFileAge,
             "description" : description
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -724,7 +724,7 @@ class ServerDirectory(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -740,7 +740,7 @@ class ServerDirectory(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
