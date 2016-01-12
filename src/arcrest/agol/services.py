@@ -347,7 +347,7 @@ class FeatureService(abstract.BaseAGOLClass):
             if isinstance(json_dict, dict) and \
                json_dict.has_key("tables"):
                 for l in json_dict['tables']:
-                    self._layers.append(FeatureLayer(url=self._url + "/%s" % l['id'],
+                    self._tables.append(FeatureLayer(url=self._url + "/%s" % l['id'],
                                                      securityHandler=self._securityHandler,
                                                      proxy_port=self._proxy_port,
                                                      proxy_url=self._proxy_url))
