@@ -50,6 +50,12 @@ class MultiPartForm(object):
     form_data = ""
     #----------------------------------------------------------------------
     def __init__(self, param_dict={}, files={}):
+        self.boundary = None
+        self.files = []
+        self.form_data = ""
+        if len(self.form_fields) > 0:
+            self.form_fields = []
+
         if len(param_dict) == 0:
             self.form_fields = []
         else:
@@ -396,6 +402,7 @@ class BaseWebOperations(object):
             req.add_header('Content-length', len(body))
             req.data = body
             resp = request.urlopen(req)
+            del body, mpf
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
         return_value = self._process_response(resp=resp,
