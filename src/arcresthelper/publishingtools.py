@@ -2731,7 +2731,7 @@ class publishingtools(securityhandlerhelper):
                     fURL = efs_config['URL']
                 if fURL is None:
                     print("Item and layer not found or URL not in config")
-                    continue
+                    return None
                 if 'DeleteInfo' in efs_config:
                     if str(efs_config['DeleteInfo']['Delete']).upper() == "TRUE":
                         resItm['DeleteDetails'] = fst.DeleteFeaturesFromFeatureLayer(url=fURL, sql=efs_config['DeleteInfo']['DeleteSQL'],chunksize=cs)
