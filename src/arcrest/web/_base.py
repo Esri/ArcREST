@@ -265,7 +265,7 @@ class BaseWebOperations(object):
         else:
             read = ""
             for data in self._chunk(response=resp, size=4096):
-                read += data.decode('ascii')
+                read += data.decode('utf')
                 del data
             try:
                 return json.loads(read.strip())
