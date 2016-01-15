@@ -1545,9 +1545,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
                   "returnDistinctValues" : returnDistinctValues,
-                  "returnExtentOnly" : returnExtentOnly,
-                  "resultOffset" : resultOffset,
-                  "resultRecordCount" : resultRecordCount
+                  "returnExtentOnly" : returnExtentOnly
                   }
         for key, value in kwargs.items():
             params[key] = value
@@ -1563,6 +1561,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['inSR'] = gf['inSR']
         if objectIds is not None and objectIds != "":
             params['objectIds'] = objectIds
+        if resultOffset is not None and resultOffset != "":
+            params['resultOffset'] = resultOffset
+        if resultRecordCount is not None and resultRecordCount != "":
+            params['resultRecordCount'] = resultRecordCount
         if not groupByFieldsForStatistics is None:
             params['groupByFieldsForStatistics'] = groupByFieldsForStatistics
         if not statisticFilter is None and \
