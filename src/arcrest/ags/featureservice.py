@@ -66,7 +66,7 @@ class FeatureService(BaseAGSServer):
     def __init(self):
         """ loads the data into the class """
         params = {"f": "json"}
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -102,7 +102,7 @@ class FeatureService(BaseAGSServer):
         """gets the item's info"""
         params = {"f" : "json"}
         url = self._url + "/info/iteminfo"
-        return self._do_get(url=url, param_dict=params,
+        return self._get(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -111,26 +111,26 @@ class FeatureService(BaseAGSServer):
         """downloads the items's thumbnail"""
         url = self._url + "/info/thumbnail"
         params = {}
-        return self._download_file(url=url,
-                            save_path=outPath,
-                            securityHandler=self._securityHandler,
-                            file_name=None,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._get(url=url,
+                         out_folder=outPath,
+                         securityHandler=self._securityHandler,
+                         file_name=None,
+                         param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def downloadMetadataFile(self, outPath):
         """downloads the metadata file to a given path"""
         fileName = "metadata.xml"
         url = self._url + "/info/metadata"
         params = {}
-        return self._download_file(url=url,
-                                   save_path=outPath,
-                                   file_name=fileName,
-                                   param_dict=params,
-                                   securityHandler=self._securityHandler,
-                                   proxy_url=self._proxy_url,
-                                   proxy_port=self._proxy_port)
+        return self._get(url=url,
+                         out_folder=outPath,
+                         file_name=fileName,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as a string"""
@@ -272,7 +272,7 @@ class FeatureService(BaseAGSServer):
         """ gets layers for the featuer service """
         params = {"f": "json"}
 
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -381,7 +381,7 @@ class FeatureService(BaseAGSServer):
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
 
-        res = self._do_post(url=qurl,
+        res = self._post(url=qurl,
                            param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,

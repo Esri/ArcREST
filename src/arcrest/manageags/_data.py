@@ -48,7 +48,7 @@ class Data(BaseAGSServer):
             "f" : "json"
         }
         dURL = self._url + "/config"
-        return self._do_get(url=dURL, param_dict=params,
+        return self._get(url=dURL, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -69,7 +69,7 @@ class Data(BaseAGSServer):
             "datastoreConfig" : datastoreConfig
         }
         url = self._url + "/config/update"
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -90,7 +90,7 @@ class Data(BaseAGSServer):
             "f" : "json",
             "path" : path
         }
-        return self._do_post(url=cURL,
+        return self._post(url=cURL,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -122,7 +122,7 @@ class Data(BaseAGSServer):
         if id is not None:
             params['id'] = id
         fURL = self._url + "/findItems"
-        return self._do_post(url=fURL, param_dict=params,
+        return self._post(url=fURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -141,7 +141,7 @@ class Data(BaseAGSServer):
             "f" : "json"
         }
         rURL = self._url + "/registerItem"
-        return self._do_post(url=rURL, param_dict=params,
+        return self._post(url=rURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -155,7 +155,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
@@ -167,7 +167,7 @@ class Data(BaseAGSServer):
         params = {
         "f" : "json"}
         url = self._url + "/validateAllDataItems"
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -193,7 +193,7 @@ class Data(BaseAGSServer):
             "item" : item
         }
         url = self._url + "/validateDataItem"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -209,7 +209,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -228,7 +228,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -245,7 +245,7 @@ class Data(BaseAGSServer):
         params = {
             "f": "json"
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -262,7 +262,7 @@ class Data(BaseAGSServer):
         params = {
             "f": "json"
         }
-        return self._do_post(url=url, param_dict=params,
+        return self._post(url=url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -284,7 +284,7 @@ class Data(BaseAGSServer):
             "f" : "json",
             "itempath" : path
         }
-        return self._do_post(url, param_dict=params,
+        return self._post(url, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
@@ -302,7 +302,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,

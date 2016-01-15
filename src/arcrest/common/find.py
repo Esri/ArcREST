@@ -1,10 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import six
-if six.PY2:
-    from ..web._base import BaseWebOperations
-else:
-    from ..web._base import BaseWebOperations3 as BaseWebOperations
+from ..web._base import BaseWebOperations
 _url = None
 _securityHandler = None
 
@@ -131,7 +128,7 @@ class search(BaseWebOperations):
 
         else:
             pass
-        jsonResponse = self._do_get(url=self._url,
+        jsonResponse = self._get(url=self._url,
                                    securityHandler=self._securityHandler,
                                    param_dict=params,
                                    proxy_url=self._proxy_url,

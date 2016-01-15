@@ -54,7 +54,7 @@ class Community(BaseAGOLClass):
             "usernames" : username
         }
         url = self._url + "/checkUsernames"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              proxy_url=self._proxy_url,
                              securityHandler=self._securityHandler,
@@ -67,7 +67,7 @@ class Community(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_get(url=self._url + "/self",
+        return self._get(url=self._url + "/self",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -110,7 +110,7 @@ class Community(BaseAGOLClass):
         if not sortOrder is None:
             params['sortOrder'] = sortOrder
         url = self._url + "/groups"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -206,25 +206,19 @@ class Community(BaseAGOLClass):
             "isViewOnly" : isViewOnly,
             "isInvitationOnly" : isInvitationOnly
         }
-        files = []
         url = self._url + "/createGroup"
-        parsed = urlparse.urlparse(url)
+
         groups = self.groups
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
-            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
-            res = self._post_multipart(host=parsed.hostname,
-                                       port=parsed.port,
-                                       selector=parsed.path,
-                                       fields=params,
-                                       files=files,
-                                       securityHandler=self._securityHandler,
-                                       ssl=parsed.scheme.lower() == 'https',
-                                       proxy_url=self._proxy_url,
-                                       proxy_port=self._proxy_port)
-
+            res = self._post(url=url,
+                             param_dict=params,
+                             files={'thumbnail': thumbnail},
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
         else:
-            res = self._do_post(url=url, param_dict=params,
+            res = self._post(url=url, param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -391,7 +385,7 @@ class Groups(BaseAGOLClass):
             "sortOrder" : sortOrder,
             "sortField" : sortField
         }
-        return self._do_get(url=self._url,
+        return self._get(url=self._url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -476,7 +470,7 @@ class Group(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -685,7 +679,7 @@ class Group(BaseAGOLClass):
                     "f" : "json",
                     "targetUsername" : targetUsername
                 }
-        return self._do_post(url=self._url + "/reassign",
+        return self._post(url=self._url + "/reassign",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -768,27 +762,24 @@ class Group(BaseAGOLClass):
             params['isInvitationOnly'] = isInvitationOnly
         if clearEmptyFields is not None:
             params['clearEmptyFields'] = clearEmptyFields
-        files = []
+        files = {}
         url = self._url + "/update"
-        parsed = urlparse.urlparse(url)
+
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
-            files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+            files['thumbnail'] =thumbnail
         res = None
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
-            res = self._post_multipart(host=parsed.hostname,
-                                       port=parsed.port,
-                                       securityHandler=self._securityHandler,
-                                       selector=parsed.path,
-                                       fields=params,
-                                       files=files,
-                                       ssl=parsed.scheme.lower() == 'https',
-                                       proxy_url=self._proxy_url,
-                                       proxy_port=self._proxy_port)
+            res = self._post(url=url,
+                             param_dict=params,
+                             files=files,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
             return res
         else:
-            res = self._do_post(url=url, param_dict=params,
+            res = self._post(url=url, param_dict=params,
                                 securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
@@ -802,7 +793,7 @@ class Group(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_post(url=self._url + "/delete",
+        return self._post(url=self._url + "/delete",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -829,7 +820,7 @@ class Group(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._do_post(url=self._url + "/join",
+        return self._post(url=self._url + "/join",
                              securityHandler=self._securityHandler,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -870,7 +861,7 @@ class Group(BaseAGOLClass):
             "role" : role,
             "expiration" : expiration
         }
-        return self._do_post(url=self._url + "/invite",
+        return self._post(url=self._url + "/invite",
                              securityHandler=self._securityHandler,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -889,7 +880,7 @@ class Group(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=self._url + "/leave",
+        return self._post(url=self._url + "/leave",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -913,7 +904,7 @@ class Group(BaseAGOLClass):
             "f" : "json",
             "users" : users
         }
-        return self._do_post(url=self._url + "/removeUsers",
+        return self._post(url=self._url + "/removeUsers",
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -940,7 +931,7 @@ class Group(BaseAGOLClass):
             "f" : "json",
             "users" : users,
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -954,7 +945,7 @@ class Group(BaseAGOLClass):
         params = {
             "f" : "json"
             }
-        return self._do_get(url=self._url + "/users",
+        return self._get(url=self._url + "/users",
                             securityHandler=self._securityHandler,
                              param_dict=params,
                              proxy_url=self._proxy_url,
@@ -965,7 +956,7 @@ class Group(BaseAGOLClass):
         """returns all the group applications to join"""
         url = self._url + "/applications"
         params = {"f" : "json"}
-        res = self._do_get(url=url,
+        res = self._get(url=url,
                            param_dict=params,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
@@ -1010,7 +1001,7 @@ class Group(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            json_dict = self._do_get(url=self._url,
+            json_dict = self._get(url=self._url,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
@@ -1078,7 +1069,7 @@ class Group(BaseAGOLClass):
             params = {
                 "f" : "json",
             }
-            return self._do_post(url="%s/accept" % (self.root),
+            return self._post(url="%s/accept" % (self.root),
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -1097,7 +1088,7 @@ class Group(BaseAGOLClass):
             params = {
                 "f" : "json",
             }
-            return self._do_post(url="%s/decline" % self.root,
+            return self._post(url="%s/decline" % self.root,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -1175,7 +1166,7 @@ class Users(BaseAGOLClass):
             "sortOrder" : sortOrder
         }
         url = self._url
-        return self._do_get(
+        return self._get(
             url = url,
             param_dict=params,
             securityHandler=self._securityHandler,
@@ -1248,7 +1239,7 @@ class User(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -1490,7 +1481,7 @@ class User(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1526,7 +1517,7 @@ class User(BaseAGOLClass):
         """
         url = "%s/invalidateSessions" % self.root
         params = {"f": "json"}
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1554,7 +1545,7 @@ class User(BaseAGOLClass):
             expiration = -1
         params['expiration'] = expiration
         url = "%s/expirePassword" % self.root
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1569,7 +1560,7 @@ class User(BaseAGOLClass):
                     "f" : "json"
                 }
         url = "%s/disable" % self.root
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1587,7 +1578,7 @@ class User(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/enable"
-        return self._do_get(securityHandler=self._securityHandler,
+        return self._get(securityHandler=self._securityHandler,
                             url = url,
                             param_dict=params,
                             proxy_url=self._proxy_url,
@@ -1671,28 +1662,25 @@ class User(BaseAGOLClass):
         if securityAnswer is not None:
             params['securityAnswer'] = securityAnswer
 
-        files = []
+        files = {}
 
 
         url =  "%s/update" % self.root
-        parsed = urlparse.urlparse(url)
+
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
             files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
         res = None
         if thumbnail is not None and \
            os.path.isfile(thumbnail):
-            res = self._post_multipart(host=parsed.hostname,
-                                       port=parsed.port,
-                                       selector=parsed.path,
-                                       fields=params,
-                                       files=files,
-                                       securityHandler=self._securityHandler,
-                                       ssl=parsed.scheme.lower() == 'https',
-                                       proxy_url=self._proxy_url,
-                                       proxy_port=self._proxy_port)
+            res = self._post(url=url,
+                             param_dict=params,
+                             files=files,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
         else:
-            res = self._do_post(url=url,
+            res = self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -1716,7 +1704,7 @@ class User(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/delete"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
@@ -1776,7 +1764,7 @@ class Invitations(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            json_dict = self._do_get(url=self._url,
+            json_dict = self._get(url=self._url,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
@@ -1948,7 +1936,7 @@ class Invitations(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -2045,7 +2033,7 @@ class Notifications(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            json_dict = self._do_get(url=self._url,
+            json_dict = self._get(url=self._url,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_port=self._proxy_port,
@@ -2130,7 +2118,7 @@ class Notifications(BaseAGOLClass):
             """deletes the current notification from the user"""
             url = "%s/delete" % self.root
             params = {"f":"json"}
-            return self._do_post(url=url,
+            return self._post(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
@@ -2157,7 +2145,7 @@ class Notifications(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=self._url,
+        json_dict = self._get(url=self._url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,

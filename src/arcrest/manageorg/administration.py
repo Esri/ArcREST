@@ -59,7 +59,7 @@ class Administration(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        json_dict = self._do_get(url=url,
+        json_dict = self._get(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
@@ -245,7 +245,7 @@ class Administration(BaseAGOLClass):
         if bbox is not None:
             params['bbox'] = bbox
 
-        return self._do_get(url=url,
+        return self._get(url=url,
                         param_dict=params,
                         securityHandler=self._securityHandler,
                         proxy_url=self._proxy_url,

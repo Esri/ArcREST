@@ -105,10 +105,10 @@ class FeatureService(abstract.BaseAGOLClass):
         """ loads the data into the class """
         params = {"f": "json"}
 
-        json_dict = self._do_get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+        json_dict = self._get(self._url, params,
+                              securityHandler=self._securityHandler,
+                              proxy_url=self._proxy_url,
+                              proxy_port=self._proxy_port)
         self._json_dict = json_dict
         self._json = json.dumps(self._json_dict,
                                 default=_date_handler)
@@ -321,10 +321,10 @@ class FeatureService(abstract.BaseAGOLClass):
         if self._layers is None:
             self._layers = []
             params = {"f": "json"}
-            json_dict = self._do_get(self._url, params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
+            json_dict = self._get(self._url, params,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port)
             if isinstance(json_dict, dict) and \
                json_dict.has_key("layers"):
                 for l in json_dict['layers']:
@@ -340,14 +340,14 @@ class FeatureService(abstract.BaseAGOLClass):
         if self._tables is None:
             self._tables = []
             params = {"f": "json"}
-            json_dict = self._do_get(self._url, params,
+            json_dict = self._get(self._url, params,
                                      securityHandler=self._securityHandler,
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
             if isinstance(json_dict, dict) and \
                json_dict.has_key("tables"):
                 for l in json_dict['tables']:
-                    self._layers.append(FeatureLayer(url=self._url + "/%s" % l['id'],
+                    self._tables.append(FeatureLayer(url=self._url + "/%s" % l['id'],
                                                      securityHandler=self._securityHandler,
                                                      proxy_port=self._proxy_port,
                                                      proxy_url=self._proxy_url))
@@ -476,11 +476,11 @@ class FeatureService(abstract.BaseAGOLClass):
         if not timeFilter is None and \
            isinstance(timeFilter, TimeFilter):
             params['time'] = timeFilter.filter
-        res =  self._do_get(url=qurl,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        res =  self._get(url=qurl,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
         if returnIdsOnly == False and returnCountOnly == False:
             if isinstance(res, str):
                 jd = json.loads(res)
@@ -576,9 +576,9 @@ class FeatureService(abstract.BaseAGOLClass):
         if geometryPrecision is not None:
             params['geometryPrecision'] = geometryPrecision
         quURL = self._url + "/queryRelatedRecords"
-        res = self._do_get(url=quURL, param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url, proxy_port=self._proxy_port)
+        res = self._get(url=quURL, param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         return res
     #----------------------------------------------------------------------
     @property
@@ -589,10 +589,10 @@ class FeatureService(abstract.BaseAGOLClass):
 
         }
         url = self._url + "/replicas"
-        return self._do_get(url, params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._get(url, params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def unRegisterReplica(self, replica_id):
         """
@@ -606,10 +606,10 @@ class FeatureService(abstract.BaseAGOLClass):
             "replicaID" : replica_id
         }
         url = self._url + "/unRegisterReplica"
-        return self._do_post(url, params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._post(url, params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def replicaInfo(self, replica_id):
         """
@@ -623,7 +623,7 @@ class FeatureService(abstract.BaseAGOLClass):
             "f" : "json"
         }
         url = self._url + "/replicas/" + replica_id
-        return self._do_get(url, param_dict=params,
+        return self._get(url, param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
@@ -745,7 +745,7 @@ class FeatureService(abstract.BaseAGOLClass):
 
         if async:
             if wait:
-                exportJob = self._do_post(url=url,
+                exportJob = self._post(url=url,
                                           param_dict=params,
                                           securityHandler=self._securityHandler,
                                           proxy_url=self._proxy_url,
@@ -759,13 +759,13 @@ class FeatureService(abstract.BaseAGOLClass):
                 res = status
 
             else:
-                res = self._do_post(url=url,
+                res = self._post(url=url,
                                      param_dict=params,
                                      securityHandler=self._securityHandler,
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
         else:
-            res = self._do_post(url=url,
+            res = self._post(url=url,
                                 param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,
@@ -781,11 +781,11 @@ class FeatureService(abstract.BaseAGOLClass):
             elif 'responseUrl' in res:
                 dlURL = res["responseUrl"]
             if dlURL is not None:
-                return self._download_file(url=dlURL,
-                                           save_path=out_path,
-                                           securityHandler=self._securityHandler,
-                                           proxy_url=self._proxy_url,
-                                           proxy_port=self._proxy_port)
+                return self._get(url=dlURL,
+                                 securityHandler=self._securityHandler,
+                                 proxy_url=self._proxy_url,
+                                 proxy_port=self._proxy_port,
+                                 out_folder=out_path)
             else:
                 return res
         elif res is not None:
@@ -827,7 +827,7 @@ class FeatureService(abstract.BaseAGOLClass):
         """gets the replica status when exported async set to True"""
         params = {"f" : "json"}
         url = url + "/status"
-        return self._do_get(url=url,
+        return self._get(url=url,
                             param_dict=params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
@@ -930,7 +930,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
@@ -1385,17 +1385,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params = {'f':'json'}
             parsed = urlparse.urlparse(attachURL)
 
-            files = []
-            files.append(('attachment', file_path, os.path.basename(file_path)))
-            res = self._post_multipart(host=parsed.hostname,
-                                       selector=parsed.path,
-                                       securityHandler=self._securityHandler,
-                                       files=files,
-                                       fields=params,
-                                       port=parsed.port,
-                                       ssl=parsed.scheme.lower() == 'https',
-                                       proxy_url=self._proxy_url,
-                                       proxy_port=self._proxy_port)
+            files = {'attachment', file_path}
+            res = self._post(url=attachURL,
+                             param_dict=params,
+                             files=files,
+                             securityHandler=self._securityHandler,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
             return self._unicode_convert(res)
         else:
             return "Attachments are not supported for this feature service."
@@ -1413,7 +1409,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f":"json",
             "attachmentIds" : "%s" % attachment_id
         }
-        return self._do_post(url, params,
+        return self._post(url, params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -1432,19 +1428,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
             "f":"json",
             "attachmentId" : "%s" % attachment_id
         }
-        parsed = urlparse(url)
-        port = parsed.port
-        files = []
-        files.append(('attachment', file_path, os.path.basename(file_path)))
-        res = self._post_multipart(host=parsed.hostname,
-                                   selector=parsed.path,
-                                   files=files,
-                                   port=port,
-                                   fields=params,
-                                   securityHandler=self._securityHandler,
-                                   ssl=parsed.scheme.lower() == 'https',
-                                   proxy_port=self._proxy_port,
-                                   proxy_url=self._proxy_url)
+        files = {'attachment': file_path }
+        res = self._post(url=url,
+                             param_dict=params,
+                             files=files,
+                             securityHandler=self._securityHandler,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
         return self._unicode_convert(res)
     #----------------------------------------------------------------------
     def listAttachments(self, oid):
@@ -1453,7 +1443,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         params = {
             "f":"json"
         }
-        return self._do_get(url, params,
+        return self._get(url, params,
                             securityHandler=self._securityHandler,
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
@@ -1579,7 +1569,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
            isinstance(statisticFilter, filters.StatisticFilter):
             params['outStatistics'] = statisticFilter.filter
         fURL = self._url + "/query"
-        results = self._do_post(fURL, params,
+        results = self._post(fURL, params,
                                securityHandler=self._securityHandler,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
@@ -1688,7 +1678,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if geometryPrecision is not None:
             params['geometryPrecision'] = geometryPrecision
         quURL = self._url + "/queryRelatedRecords"
-        res = self._do_get(url=quURL, param_dict=params,
+        res = self._get(url=quURL, param_dict=params,
                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
@@ -1709,7 +1699,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 'f' : "json"
             }
 
-            return self._do_get(url=popURL, param_dict=params,
+            return self._get(url=popURL, param_dict=params,
                                 securityHandler=self._securityHandler,
                                 proxy_port=self._proxy_port,
                                 proxy_url=self._proxy_url)
@@ -1737,14 +1727,19 @@ class FeatureLayer(abstract.BaseAGOLClass):
            self.parentLayer.syncEnabled:
             return self.parentLayer.createReplica(replicaName="fgdb_dump",
                                                   layers="%s" % self.id,
-                                                  returnAsFeatureClass=True,
+                                                  attachmentsSyncDirection="upload",
+                                                  async=True,
+                                                  wait=True,
                                                   returnAttachments=includeAttachments,
                                                   out_path=out_path)[0]
         elif self.hasAttachments == False and \
              self.parentLayer.syncEnabled:
             return self.parentLayer.createReplica(replicaName="fgdb_dump",
                                                   layers="%s" % self.id,
-                                                  returnAsFeatureClass=True,
+                                                  attachmentsSyncDirection="upload",
+                                                  async=True,
+                                                  wait=True,
+                                                  returnAttachments=includeAttachments,
                                                   out_path=out_path)[0]
         else:
             result_features = []
@@ -1813,7 +1808,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         else:
             return {'message' : "invalid inputs"}
         updateURL = self._url + "/updateFeatures"
-        res = self._do_post(url=updateURL,
+        res = self._post(url=updateURL,
                             securityHandler=self._securityHandler,
                             param_dict=params, proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
@@ -1865,7 +1860,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if objectIds is not None and \
            objectIds != "":
             params['objectIds'] = objectIds
-        result = self._do_post(url=dURL, param_dict=params,
+        result = self._post(url=dURL, param_dict=params,
                                securityHandler=self._securityHandler,
                                proxy_port=self._proxy_port,
                                proxy_url=self._proxy_url)
@@ -1914,7 +1909,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
-        return self._do_post(url=editURL, param_dict=params,
+        return self._post(url=editURL, param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
@@ -1957,7 +1952,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                             default=_date_handler)
         else:
             return None
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -2009,7 +2004,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                              default=_date_handler)
                 }
 
-                result = self._do_post(url=uURL, param_dict=params,
+                result = self._post(url=uURL, param_dict=params,
                                        securityHandler=self._securityHandler,
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
@@ -2115,7 +2110,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['sqlFormat'] = sqlFormat.lower()
         else:
             params['sqlFormat'] = "standard"
-        return self._do_post(url=url,
+        return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
@@ -2181,7 +2176,7 @@ class TiledService(BaseAGOLClass):
     def __init(self):
         """ loads the data into the class """
         params = {"f": "json"}
-        json_dict = self._do_get(self._url, params,
+        json_dict = self._get(self._url, params,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url, proxy_port=self._proxy_port)
         attributes = [attr for attr in dir(self)

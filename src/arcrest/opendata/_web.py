@@ -1,8 +1,9 @@
 """
    Contains POST and GET web operations for
-   ArcREST Python Package.
+   OpenData Python Package.
 """
-from __future__ import absolute_import
+
+#from __future__ import absolute_import
 from __future__ import print_function
 import io
 import os
@@ -18,7 +19,7 @@ import email.generator
 from io import BytesIO
 try:
     from cStringIO import StringIO
-except ImportError:
+except:
     from io import StringIO
 
 from six.moves.urllib import request
@@ -26,6 +27,7 @@ from six.moves import http_cookiejar as cookiejar
 from six.moves.urllib_parse import urlencode
 ########################################################################
 __version__ = '1.0.0'
+
 ########################################################################
 class RedirectHandler(request.HTTPRedirectHandler):
     def http_error_301(self, req, fp, code, msg, headers):
@@ -50,12 +52,6 @@ class MultiPartForm(object):
     form_data = ""
     #----------------------------------------------------------------------
     def __init__(self, param_dict={}, files={}):
-        self.boundary = None
-        self.files = []
-        self.form_data = ""
-        if len(self.form_fields) > 0:
-            self.form_fields = []
-
         if len(param_dict) == 0:
             self.form_fields = []
         else:
@@ -113,13 +109,13 @@ class MultiPartForm(object):
         for (key, filename, mimetype, filepath) in self.files:
             if os.path.isfile(filepath):
                 buf.write('--{boundary}\r\n'
-                          'Content-Disposition: form-data; name="{key}"; '
-                          'filename="{filename}"\r\n'
-                          'Content-Type: {content_type}\r\n\r\n'.format(
-                              boundary=boundary,
-                              key=key,
-                              filename=filename,
-                              content_type=mimetype))
+                    'Content-Disposition: form-data; name="{key}"; '
+                    'filename="{filename}"\r\n'
+                    'Content-Type: {content_type}\r\n\r\n'.format(
+                        boundary=boundary,
+                        key=key,
+                        filename=filename,
+                        content_type=mimetype))
                 with open(filepath, "rb") as f:
                     shutil.copyfileobj(f, buf)
                 buf.write('\r\n')
@@ -155,7 +151,7 @@ class MultiPartForm(object):
         textwriter.write('--{}--\r\n\r\n'.format(boundary))
         self.form_data = buf.getvalue()
 ########################################################################
-class BaseWebOperations(object):
+class WebOperations(object):
     """performs the get/post operations"""
     PY3 = sys.version_info[0] == 3
     PY2 = sys.version_info[0] == 2
@@ -227,8 +223,7 @@ class BaseWebOperations(object):
         handler = None
         if securityHandler is None:
             cj = cookiejar.CookieJar()
-        elif securityHandler.method.lower() == "token" or \
-             securityHandler.method.lower() == "oauth":
+        elif securityHandler.method.lower() == "token":
             param_dict['token'] = securityHandler.token
             if hasattr(securityHandler, 'cookiejar'):
                 cj = securityHandler.cookiejar
@@ -271,7 +266,7 @@ class BaseWebOperations(object):
         else:
             read = ""
             for data in self._chunk(response=resp, size=4096):
-                read += data.decode('utf')
+                read += data.decode('ascii')
                 del data
             try:
                 return json.loads(read.strip())
@@ -391,18 +386,17 @@ class BaseWebOperations(object):
             if self.PY3:
                 data = data.encode('ascii')
             opener.data = data
-            resp = opener.open(url.encode('ascii'), data=data)
+            resp = opener.open(url, data=data)
         else:
             mpf = MultiPartForm(param_dict=param_dict,
                                 files=files)
-            req = request.Request(url.encode('ascii'))
+            req = request.Request(url)
             body = mpf.make_result
             req.add_header('User-agent', self.useragent)
             req.add_header('Content-type', mpf.get_content_type())
             req.add_header('Content-length', len(body))
             req.data = body
             resp = request.urlopen(req)
-            del body, mpf
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
         return_value = self._process_response(resp=resp,
@@ -414,16 +408,16 @@ class BaseWebOperations(object):
                     if url.startswith('http://'):
                         url = url.replace('http://', 'https://')
                         return self._post(url,
-                                          param_dict,
-                                          files,
-                                          securityHandler,
-                                          additional_headers,
-                                          custom_handlers,
-                                          proxy_url,
-                                          proxy_port,
-                                          compress,
-                                          out_folder,
-                                          file_name)
+                                     param_dict,
+                                     files,
+                                     securityHandler,
+                                     additional_headers,
+                                     custom_handlers,
+                                     proxy_url,
+                                     proxy_port,
+                                     compress,
+                                     out_folder,
+                                     file_name)
             return return_value
         else:
             return return_value
@@ -477,9 +471,9 @@ class BaseWebOperations(object):
         if param_dict is None:
             resp = opener.open(url, data=param_dict)
         elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-            resp = opener.open(url.encode('ascii'), data=urlencode(param_dict))
+            resp = opener.open(url, data=urlencode(param_dict))
         else:
-            format_url = url.encode('ascii') + "?%s" % urlencode(param_dict)
+            format_url = url + "?%s" % urlencode(param_dict)
             resp = opener.open(fullurl=format_url)
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
@@ -493,7 +487,7 @@ class BaseWebOperations(object):
                                 'application/x-zip-compressed') or \
            contentType == 'application/x-zip-compressed' or \
            (contentDisposition is not None and \
-            contentDisposition.lower().find('attachment;') > -1):
+           contentDisposition.lower().find('attachment;') > -1):
 
             fname = self._get_file_name(
                 contentDisposition=contentDisposition,
@@ -531,16 +525,16 @@ class BaseWebOperations(object):
                             if url.startswith('http://'):
                                 url = url.replace('http://', 'https://')
                                 return self._get(url,
-                                                 param_dict,
-                                                 securityHandler,
-                                                 additional_headers,
-                                                 handlers,
-                                                 proxy_url,
-                                                 proxy_port,
-                                                 compress,
-                                                 custom_handlers,
-                                                 out_folder,
-                                                 file_name)
+                                               param_dict,
+                                               securityHandler,
+                                               additional_headers,
+                                               handlers,
+                                               proxy_url,
+                                               proxy_port,
+                                               compress,
+                                               custom_handlers,
+                                               out_folder,
+                                               file_name)
                 return results
             except:
                 return read

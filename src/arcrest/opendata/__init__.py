@@ -1,2 +1,6 @@
+"""
+initializer code.
+"""
 from __future__ import absolute_import
-from ._opendata import OpenData, OpenDataItem
+from .opendata import OpenDataItem, OpenData
+from ._web import WebOperations
