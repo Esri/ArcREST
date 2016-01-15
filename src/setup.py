@@ -6,7 +6,7 @@ setup(
     license='Apache',
     url='www.github.com/Esri/ArcREST',
     name='ArcREST',
-    version='3.5.0',
+    version='3.5.1',
     packages=['arcresthelper',
               'arcrest','arcrest/agol','arcrest/agol/helperservices', 'arcrest/ags', 'arcrest/common',
               'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
