@@ -898,6 +898,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _supportsCoordinatesQuantization = None
     _supportsApplyEditsWithGlobalIds = None
     _serviceItemId = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -934,6 +936,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                  securityHandler=self._securityHandler,
                                  proxy_port=self._proxy_port,
                                  proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(json_dict, default=self._date_handler)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -955,7 +959,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
-        return json.dumps(dict(self), default=_date_handler)
+        return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
         """ iterator generator for public values/properties

@@ -391,11 +391,12 @@ class BaseWebOperations(object):
             if self.PY3:
                 data = data.encode('ascii')
             opener.data = data
-            resp = opener.open(url.encode('ascii'), data=data)
+            resp = opener.open(self._asString(url),
+                               data=data)
         else:
             mpf = MultiPartForm(param_dict=param_dict,
                                 files=files)
-            req = request.Request(url.encode('ascii'))
+            req = request.Request(self._asString(url))
             body = mpf.make_result
             req.add_header('User-agent', self.useragent)
             req.add_header('Content-type', mpf.get_content_type())
@@ -428,6 +429,16 @@ class BaseWebOperations(object):
         else:
             return return_value
         return return_value
+    #----------------------------------------------------------------------
+    def _asString(self, value):
+        """converts the value as a string"""
+        if sys.version_info[0] == 3:
+            if isinstance(value, str):
+                return value
+            elif isinstance(value, bytes):
+                return value.decode('utf-8')
+        elif sys.version_info[0] == 2:
+            return value.encode('ascii')
     #----------------------------------------------------------------------
     def _get(self, url,
              param_dict={},
@@ -475,11 +486,12 @@ class BaseWebOperations(object):
         opener = request.build_opener(*handlers)
         opener.addheaders = headers
         if param_dict is None:
-            resp = opener.open(url, data=param_dict)
+            resp = opener.open(self._asString(url), data=param_dict)
         elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-            resp = opener.open(url.encode('ascii'), data=urlencode(param_dict))
+            resp = opener.open(self._asString(url),
+                               data=urlencode(param_dict))
         else:
-            format_url = url.encode('ascii') + "?%s" % urlencode(param_dict)
+            format_url = self._asString(url) + "?%s" % urlencode(param_dict)
             resp = opener.open(fullurl=format_url)
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
