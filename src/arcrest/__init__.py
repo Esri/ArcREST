@@ -11,6 +11,7 @@ from . import manageags
 from . import manageportal
 from . import hostedservice
 from . import opendata
+from . import cmp
 #import webmap
 from .geometryservice import *
 from .enrichment import GeoEnrichment
