@@ -489,6 +489,9 @@ class portalautomation(securityhandlerhelper):
                                     print (" ")
                                     print ("Creating Feature Services: %s" % str(startSectTime.strftime(dateTimeFormat)))
                                     resultFS = resultFS + publishTools.publishFsFromMXD(fs_config=publishingConfig['FeatureServices'])
+                                    if len(resultFS) == 0:
+                                        print ("Exiting, error creating feature services")
+                                        return
                                     print ("Feature Services published, time to complete: %s" % str(datetime.datetime.now() - startSectTime))
                                 if 'ExistingServices' in publishingConfig:
 

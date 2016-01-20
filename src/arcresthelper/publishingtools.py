@@ -1398,6 +1398,10 @@ class publishingtools(securityhandlerhelper):
 
 
             admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
+            hostingServers = admin.hostingServers()
+            if len(hostingServers) == 0:
+                return "No hosting servers can be found, if this is portal, update the settings to include a hosting server."
+
             content = admin.content
             userInfo = content.users.user()
             userCommunity = admin.community
@@ -1473,6 +1477,10 @@ class publishingtools(securityhandlerhelper):
 
 
             itemParams = arcrest.manageorg.ItemParameter()
+            #if isinstance(hostingServers[0],arcrest.manageags.administration.AGSAdministration):
+                #itemParams.title = service_name_safe
+            #else:
+                #itemParams.title = service_name
             itemParams.title = service_name
             itemParams.thumbnail = thumbnail
             itemParams.type = searchType
@@ -1533,7 +1541,7 @@ class publishingtools(securityhandlerhelper):
                     overwrite = True,
                     wait=True)
             except Exception as e:
-                print ("Overwrite failed")
+                print ("Error publishing item: Error Details: {0}".format(str(e)))
 
                 sea = arcrest.find.search(securityHandler=self._securityHandler)
                 items = sea.findItem(title =service_name, itemType='Feature Service',searchorg=False)

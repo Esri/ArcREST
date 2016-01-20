@@ -2240,6 +2240,10 @@ class User(BaseAGOLClass):
         if 'services' in res:
             if len(res['services']) > 0:
                 if 'error' in res['services'][0]:
+                    if 'message' in res['services'][0]['error']:
+                        print(res['services'][0]['error']['message'])
+                    else:
+                        print(res['services'][0]['error'])
                     raise Exception("Could not publish item: %s" % itemId)
                 else:
                     itemId = res['services'][0]['serviceItemId']
@@ -2253,8 +2257,9 @@ class User(BaseAGOLClass):
                             status = ui.status(jobId=res['services'][0]['jobId'], jobType="publish")
 
                             if status['status'] == 'failed':
-                                if 'statusMessage' in status:
-                                    print( status['statusMessage'])
+                                #if 'statusMessage' in status:
+                                    #print( status['statusMessage'])
+                                print (str(status))
                                 raise Exception("Could not publish item: %s" % itemId)
 
                             elif status['status'].lower() == "completed":
