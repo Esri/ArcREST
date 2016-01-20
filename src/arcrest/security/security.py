@@ -17,8 +17,72 @@ from .._abstract import abstract
 from six.moves.urllib import request
 from six.moves.urllib_parse import urlencode, urlparse, urlunparse
 
-_defaultTokenExpiration = 5 #Minutes
-
+_defaultTokenExpiration = 15 #Minutes
+########################################################################
+class CommunityMapsSecurityHandler(abstract.BaseSecurityHandler):
+    """
+    Handler that allows access to the community maps program
+    """
+    _referer_url = "esri"
+    _method = "TOKEN"
+    _username = None
+    _password = None
+    _agolSecurityHandler = None
+    _securityHandler = None
+    _token = None
+    _expire = _defaultTokenExpiration
+    _proxy_url = None
+    _proxy_port = None
+    #----------------------------------------------------------------------
+    def __init__(self,
+                 url,
+                 username,
+                 password,
+                 proxy_url=None,
+                 proxy_port=None):
+        """ initialize"""
+        self._url = url
+        self._username = username
+        self._password = password
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+        self._agolSecurityHandler = AGOLTokenSecurityHandler(username=username,
+                                                            password=password)
+        self._referer_url = urlparse(url).netloc
+    @property
+    def securityhandler(self):
+        """ges/set the AGOLTokenSecurityHandler"""
+        return self._agolSecurityHandler
+    @securityhandler.setter
+    def securityhandler(self, value):
+        """get/set the AGOLTokenSecurityHandler"""
+        if isinstance(value, AGOLTokenSecurityHandler):
+            self._agolSecurityHandler = value
+    #----------------------------------------------------------------------
+    @property
+    def token(self):
+        """ generates a token """
+        return self._generateForTokenSecurity()
+    #----------------------------------------------------------------------
+    def _generateForTokenSecurity(self):
+        """ generates a token for a feature service """
+        agolToken = self._agolSecurityHandler.token
+        url = self._url + "/getProxyUserToken"
+        params = {"token" : self._agolSecurityHandler.token,
+                  "contributorUid" : self._contributionUID}
+        res = self._post(url=url, param_dict=params,
+                         additional_headers={ "Referer": self._agolSecurityHandler._referer_url},
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+        return res['token']
+    #----------------------------------------------------------------------
+    @property
+    def _contributionUID(self):
+        """"""
+        url = self._url + "/users/" + self._username
+        params = {'f': 'json'}
+        res = self._get(url=url, param_dict=params)
+        return res["ContributorUID"]
 ########################################################################
 class LDAPSecurityHandler(abstract.BaseSecurityHandler):
     """
