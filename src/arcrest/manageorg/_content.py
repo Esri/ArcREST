@@ -1579,13 +1579,20 @@ class UserItem(BaseAGOLClass):
 
         for key in dictItem:
             if key == "thumbnail":
-                thumbnail = dictItem['thumbnail']
-                files.append(('thumbnail', thumbnail, os.path.basename(thumbnail)))
+                files['thumbnail'] = dictItem['thumbnail']
             elif key == "largeThumbnail":
-                largeThumbnail = dictItem['largeThumbnail']
-                files.append(('largeThumbnail', largeThumbnail, os.path.basename(largeThumbnail)))
+                files['largeThumbnail'] = dictItem['largeThumbnail']
             elif key == "metadata":
-                files.append(('metadata', metadata, 'metadata.xml'))
+                metadata = dictItem['metadata']
+                if os.path.basename(metadata) != 'metadata.xml':
+                    tempfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tempfile) == True:
+                        os.remove(path=tempfile)
+                    import shutil
+                    shutil.copy(metadata, tempfile)
+
+                    metadata = tempfile
+                files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]
         if data is not None:
