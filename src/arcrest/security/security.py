@@ -9,7 +9,7 @@ try:
 except:
     arcpyFound = False
 try:
-    from .ntlm3 import HTTPNtlmAuthHandler
+    from ..packages.ntlm3 import HTTPNtlmAuthHandler
     hasNTLM = True
 except:
     hasNTLM = False
