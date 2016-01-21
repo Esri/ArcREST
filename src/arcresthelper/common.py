@@ -9,7 +9,7 @@ import string
 import datetime
 import time
 
-from ..packages.six.moves import urllib_parse as urlparse
+from ...arcrest.packages.six.moves import urllib_parse as urlparse
 import gc
 import operator
 #----------------------------------------------------------------------
