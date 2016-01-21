@@ -17,7 +17,7 @@ import arcresthelper.common as common
 import gc
 import sys
 
-from ..packages.six.moves import urllib_parse as urlparse
+from packages.six.moves import urllib_parse as urlparse
 
 try:
     import pyparsing
