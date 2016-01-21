@@ -13,7 +13,7 @@ setup(
               'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
               'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
               'arcrest/enrichment', 'arcrest/opendata', 'arcrest/cmp', 'arcrest/packages',
-              'arcrest/security/ntlm3'],
+              'arcrest/packages/ntlm3'],
     package_data = {'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},
     package_dir={'':''}
     )
