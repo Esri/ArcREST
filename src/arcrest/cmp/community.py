@@ -117,9 +117,6 @@ class CommunityMapsProgram(BaseCMP):
     def addItem(self, filePath):
         """"""
         from ..packages.six.moves.urllib_parse import urlparse
-        #from six.moves.url_parse import urlparse
-        #http://sea-web-bm-s01.dmz.esri.com/communitymaps-services-2/rest/sharing/content/users/CommunityMapsTeam
-        #http://sea-web-bm-s01.dmz.esri.com/sharing/content/users/CommunityMapsTeam
         url = "%s/sharing/content/users/CommunityMapsTeam" % self.root
         files = {'file' : filePath}
         params = {

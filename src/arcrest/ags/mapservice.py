@@ -52,6 +52,7 @@ class MapService(BaseAGSServer):
     _securityHandler = None
     _proxy_url = None
     _proxy_port = None
+    _tileServers = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False, proxy_url=None,
@@ -191,6 +192,13 @@ class MapService(BaseAGSServer):
             self.__init()
         for k,v in self._json_dict.items():
             yield [k,v]
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """ gets the tileServers for the service"""
+        if self._tileServers is None:
+            self.__init()
+        return self._tileServers
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):
