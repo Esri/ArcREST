@@ -6,7 +6,7 @@ from ..hostedservice import Services
 from ..common.general import local_time_to_online
 from .._abstract.abstract import BaseAGOLClass
 import os
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
 from . import _parameters as parameters
 import json
 ########################################################################

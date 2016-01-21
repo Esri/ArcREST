@@ -12,13 +12,12 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import os
-import six
 import uuid
 import json
 import types
-import mimetypes
 from re import search
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
+#from six.moves import urllib_parse as urlparse
 from ._uploads import Uploads
 from ..security import security
 from .._abstract import abstract
@@ -26,7 +25,7 @@ from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 from ..common.general import FeatureSet
 from ..common import filters
 from ..common.geometry import SpatialReference
-from ..common.general import _date_handler, _unicode_convert, Feature
+from ..common.general import _date_handler, Feature
 from ..common.spatial import scratchFolder, scratchGDB, json_to_featureclass
 from ..common.spatial import get_OID_field, get_records_with_attachments
 from ..common.spatial import create_feature_layer, merge_feature_class

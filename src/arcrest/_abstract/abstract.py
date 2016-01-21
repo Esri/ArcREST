@@ -5,7 +5,7 @@ import calendar
 import glob
 import mimetypes
 import os
-from six.moves import http_client as httplib
+from ..packages.six.moves import http_client as httplib
 from ..web._base import BaseWebOperations
 class BaseCMP(BaseWebOperations):
     """ base community mapping program class"""

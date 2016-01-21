@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 import mmap
 import json
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
 from ..security import security
 from .._abstract import abstract
 ########################################################################

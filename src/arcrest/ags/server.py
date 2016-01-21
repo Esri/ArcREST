@@ -6,7 +6,7 @@ user/developer would.
 from __future__ import absolute_import
 from __future__ import print_function
 from . import BaseAGSServer
-from six.moves.urllib_parse import urlparse
+from ..packages.six.moves.urllib_parse import urlparse
 
 import json
 from ._geoprocessing import GPService

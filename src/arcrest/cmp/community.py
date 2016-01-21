@@ -1,7 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 import json
-from six.moves.urllib_parse import quote
+from ..packages.six.moves.urllib_parse import quote
 from ..agol import FeatureService
 from .._abstract.abstract import BaseCMP
 from ..security.security import AGOLTokenSecurityHandler, CommunityMapsSecurityHandler
@@ -116,7 +116,7 @@ class CommunityMapsProgram(BaseCMP):
     #----------------------------------------------------------------------
     def addItem(self, filePath):
         """"""
-        from six.moves.urllib_parse import urlparse
+        from ..packages.six.moves.urllib_parse import urlparse
         #from six.moves.url_parse import urlparse
         #http://sea-web-bm-s01.dmz.esri.com/communitymaps-services-2/rest/sharing/content/users/CommunityMapsTeam
         #http://sea-web-bm-s01.dmz.esri.com/sharing/content/users/CommunityMapsTeam

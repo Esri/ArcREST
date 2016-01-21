@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 import json
 import uuid
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
 from .._abstract.abstract import BaseAGSServer
 from ..security import security
 from .._abstract.abstract import DynamicData, DataSource

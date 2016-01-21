@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from .._abstract.abstract import BaseAGSServer
-from six.moves.urllib_parse import urlparse
+from ..packages.six.moves.urllib_parse import urlparse
 from .parameters import Extension
 import os
 import json

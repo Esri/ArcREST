@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
 
 from .._abstract.abstract import BaseAGOLClass
 from datetime import datetime, timedelta

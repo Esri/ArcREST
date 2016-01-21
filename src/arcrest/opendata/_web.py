@@ -22,11 +22,11 @@ try:
 except:
     from io import StringIO
 
-from six.moves.urllib import request
-from six.moves import http_cookiejar as cookiejar
-from six.moves.urllib_parse import urlencode
+from ..packages.six.moves.urllib import request
+from ..packages.six.moves import http_cookiejar as cookiejar
+from ..packages.six.moves.urllib_parse import urlencode
 ########################################################################
-__version__ = '1.0.0'
+__version__ = "3.5.3"
 
 ########################################################################
 class RedirectHandler(request.HTTPRedirectHandler):

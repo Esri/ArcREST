@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import six
-from six.moves import urllib_parse as urlparse
+from ..packages.six.moves import urllib_parse as urlparse
 from ..security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
 from .._abstract.abstract import BaseAGOLClass
 from ._parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
@@ -2918,7 +2918,7 @@ class Group(BaseAGOLClass):
     def __assembleURL(self, url, groupId):
         """private function that assembles the URL for the community.Group
         class"""
-        from six.moves.urllib_parse import urlparse
+        from ..packages.six.moves.urllib_parse import urlparse
         parsed = urlparse(url)
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],

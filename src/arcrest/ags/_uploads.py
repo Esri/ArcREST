@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from six.moves import urllib_parse as urlparse
-from six.moves.urllib.parse import urlencode
+from ..packages.six.moves import urllib_parse as urlparse
+from ..packages.six.moves.urllib.parse import urlencode
 from .._abstract.abstract import BaseAGSServer
 #import urlparse, urllib
 import os

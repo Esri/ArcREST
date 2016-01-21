@@ -14,8 +14,8 @@ try:
 except:
     hasNTLM = False
 from .._abstract import abstract
-from six.moves.urllib import request
-from six.moves.urllib_parse import urlencode, urlparse, urlunparse
+from ..packages.six.moves.urllib import request
+from ..packages.six.moves.urllib_parse import urlencode, urlparse, urlunparse
 
 _defaultTokenExpiration = 15 #Minutes
 ########################################################################
@@ -531,7 +531,7 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
             self._proxy_port = value
     #----------------------------------------------------------------------
     class HTTPSClientAuthHandler(request.HTTPSHandler):
-        from six.moves import http_client as httplib#import httplib
+        from ..packages.six.moves import http_client as httplib#import httplib
         def __init__(self, key, cert):
             request.HTTPSHandler.__init__(self)
             self.key = key
