@@ -144,6 +144,17 @@ class Server(BaseAGSServer):
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
+    def self(self):
+        """gets the logged in user"""
+        params = {"f" : "json"}
+        url = "%s/self" % self.root.replace("/services", "")
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    @property
     def services(self):
         """gets the services in the current folder"""
         services = []

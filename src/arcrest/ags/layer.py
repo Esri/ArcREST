@@ -66,6 +66,7 @@ class FeatureLayer(BaseAGSServer):
     _proxy_port = None
     _json = None
     _advancedQueryCapabilities = None
+    _indexes = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False,
@@ -113,6 +114,13 @@ class FeatureLayer(BaseAGSServer):
                 setattr(self, "_"+ k, v)
             else:
                 print("%s - attribute not implemented for layer.FeatureLayer." % k)
+    #----------------------------------------------------------------------
+    @property
+    def indexes(self):
+        """ gets the indexes for the Featurelayer object"""
+        if self._indexes is None:
+            self.__init()
+        return self._indexes
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
