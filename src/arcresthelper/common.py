@@ -273,7 +273,7 @@ def unicode_convert(obj):
         """ converts unicode to anscii """
 
         if isinstance(obj, dict):
-            return {unicode_convert(key): unicode_convert(value) for key, value in obj.iteritems()}
+            return {unicode_convert(key): unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [unicode_convert(element) for element in obj]
         elif isinstance(obj, unicode):
@@ -307,7 +307,7 @@ def find_replace(obj,find,replace):
     """ searchs an object and does a find and replace """
     try:
         if isinstance(obj, dict):
-            return {find_replace(key,find,replace): find_replace(value,find,replace) for key, value in obj.iteritems()}
+            return {find_replace(key,find,replace): find_replace(value,find,replace) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [find_replace(element,find,replace) for element in obj]
         elif obj == find:

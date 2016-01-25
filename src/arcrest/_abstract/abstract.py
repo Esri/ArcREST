@@ -142,7 +142,7 @@ class BaseAGSServer(BaseWebOperations):
     def _unicode_convert(self, obj):
         """ converts unicode to anscii """
         if isinstance(obj, dict):
-            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.iteritems()}
+            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [self._unicode_convert(element) for element in obj]
         elif isinstance(obj, unicode):
@@ -262,7 +262,7 @@ class BaseAGOLClass(BaseWebOperations):
     def _unicode_convert(self, obj):
         """ converts unicode to anscii """
         if isinstance(obj, dict):
-            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.iteritems()}
+            return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [self._unicode_convert(element) for element in obj]
         elif isinstance(obj, unicode):
