@@ -1098,11 +1098,11 @@ class AdminFeatureService(BaseAGOLClass):
                     if 'allowOthersToQuery' in json_dict['editorTrackingInfo']:
                         definition['editorTrackingInfo']['allowOthersToQuery'] = json_dict['editorTrackingInfo']['allowOthersToQuery']
                     if isinstance(json_dict['editorTrackingInfo'],dict):
-                        for k,v in json_dict['editorTrackingInfo'].iteritems():
+                        for k,v in json_dict['editorTrackingInfo'].items():
                             if k not in definition['editorTrackingInfo']:
                                 definition['editorTrackingInfo'][k] = v
                 if isinstance(json_dict,dict):
-                    for k,v in json_dict.iteritems():
+                    for k,v in json_dict.items():
                         if k not in definition:
                             definition[k] = v
 

@@ -22,7 +22,7 @@ __all__ = ['_unicode_convert', "Feature", "FeatureSet",
 def _unicode_convert(obj):
     """ converts unicode to anscii """
     if isinstance(obj, dict):
-        return {_unicode_convert(key): _unicode_convert(value) for key, value in obj.iteritems()}
+        return {_unicode_convert(key): _unicode_convert(value) for key, value in obj.items()}
     elif isinstance(obj, list):
         return [_unicode_convert(element) for element in obj]
     elif isinstance(obj, unicode):

@@ -483,7 +483,7 @@ class FeatureLayer(BaseAGSServer):
             js = js['features']
             if lowerCaseFieldNames == True:
                 for feat in js:
-                    feat['attributes'] = dict((k.lower(), v) for k,v in feat['attributes'].iteritems())
+                    feat['attributes'] = dict((k.lower(), v) for k,v in feat['attributes'].items())
             if len(js) == 0:
                 return {'addResults':None}
             if len(js) <= max_chunk:

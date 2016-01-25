@@ -25,7 +25,7 @@ def featureclass_to_json(fc):
     if arcpyFound == False:
         raise Exception("ArcPy is required to use this function")
     desc = arcpy.Describe(fc)
-    if desc.dataType == "Table" or desc.dataType == "TableView":    
+    if desc.dataType == "Table" or desc.dataType == "TableView":
         return recordset_to_json(table=fc)
     else:
         return arcpy.FeatureSet(fc).JSON
@@ -284,7 +284,7 @@ def _unicode_convert(obj):
     if isinstance(obj, dict):
         return {_unicode_convert(key): \
                 _unicode_convert(value) \
-                for key, value in obj.iteritems()}
+                for key, value in obj.items()}
     elif isinstance(obj, list):
         return [_unicode_convert(element) for element in obj]
     elif isinstance(obj, unicode):

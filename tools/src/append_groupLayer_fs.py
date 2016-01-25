@@ -120,7 +120,7 @@ def main():
                     del row
                 if groupLayer.isGroupLayer:
                     for lyr in groupLayer:
-                        for key, value in layerToServiceLayer.iteritems():
+                        for key, value in layerToServiceLayer.items():
                             if str(matchEntireName).lower() =='true' and key == lyr.name:
                                 matches = True
                             elif str(matchEntireName).lower() =='false' and str(lyr.name).startswith(key):
