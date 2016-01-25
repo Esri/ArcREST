@@ -1173,8 +1173,35 @@ class Users(BaseAGOLClass):
             proxy_url=self._proxy_url,
             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def user(self, username):
+    def __getUsername(self):
+        """tries to parse the user name from various objects"""
+
+        if isinstance(self._securityHandler, (AGOLTokenSecurityHandler,
+                                              PortalTokenSecurityHandler)):
+            return self._securityHandler._username
+        elif self._securityHandler is not None and \
+               hasattr(self._securityHandler, "org_url") and \
+               self._securityHandler.org_url is not None:
+            from .administration import Administration
+            user = Administration(url=self._securityHandler.org_url,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port).portals.portalSelf.user
+            return user['username']
+        else:
+            from .administration import Administration
+            url = self._url.lower().split('/content/')[0]
+            user = Administration(url=url,
+                                  securityHandler=self._securityHandler,
+                                  proxy_url=self._proxy_url,
+                                  proxy_port=self._proxy_port).portals.portalSelf.user
+            return user['username']
+
+    #----------------------------------------------------------------------
+    def user(self, username=None):
         """A user resource that represents a registered user in the portal."""
+        if username is None:
+            username = self.__getUsername()
         url = self.root + "/%s" % username
         return User(url=url,
                     securityHandler=self._securityHandler,
