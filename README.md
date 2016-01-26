@@ -8,17 +8,20 @@ Stable release ArcREST 3.0.1 can be downloaded here: https://github.com/Esri/Arc
 
 A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.
 
-This is not a full implementation of the Esri REST API.  Please feel free to contribute.
+This is not a full implementation of the Esri REST API, but we would like to make it, so help out!  Please feel free to contribute.
 
 ## Features
 
 * Add, Delete, Update and Query Feature Services
 * Upload attachments to feature services
-* Publish an MXD to AGOL as a feature service
-* Get AGOL,AGS item information
+* Assists in managing and publishing content
+* Allows users to control, migrate and update online content
+* Manage users on Portal, ArcGIS Server, and ArcGIS Online sites
+* Plus additional information not even listed here!
 
 ## Documentation
  The help documents are hosted here: http://esri.github.io/ArcREST/index.html
+ 
 ### General Help
 
 [New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
@@ -26,7 +29,7 @@ This is not a full implementation of the Esri REST API.  Please feel free to con
 ## Requirements
 
 * Python 2.7.x/Python 3.4 (https://www.python.org/)
-* Six (https://pypi.python.org/pypi/six)
+* ~~Six (https://pypi.python.org/pypi/six)~~ (Six is included in current version)
 
 ## Recommended Installation
 
