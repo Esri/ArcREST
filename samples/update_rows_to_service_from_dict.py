@@ -7,7 +7,7 @@
 """
 
 from arcresthelper import securityhandlerhelper
-from arcrest.agol import FeatureLayer
+
 from arcrest.common.general import Feature
 
 if __name__ == "__main__":

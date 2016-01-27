@@ -91,7 +91,7 @@ def main():
         else:
             projection = None
             #outputPrinter(message="No Projection defined")
-        arcpy.SetParameterAsText(6, "true")
+        arcpy.SetParameterAsText(7, "true")
 
         scratchGDB = arcpy.env.scratchWorkspace
         scratchLayName = "tempAppGrpFS"
