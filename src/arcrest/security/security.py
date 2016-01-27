@@ -16,6 +16,7 @@ except:
 from .._abstract import abstract
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves.urllib_parse import urlencode, urlparse, urlunparse
+from ..packages.moves.http_cookiejar import CookieJar
 
 _defaultTokenExpiration = 15 #Minutes
 ########################################################################
@@ -224,7 +225,6 @@ class LDAPSecurityHandler(abstract.BaseSecurityHandler):
     def cookiejar(self):
         """gets the cookiejar"""
         if self._jar is None:
-            from cookielib import CookieJar
             self._jar = CookieJar()
         return self._jar
 
@@ -352,7 +352,6 @@ class NTLMSecurityHandler(LDAPSecurityHandler):
     def cookiejar(self):
         """gets the cookiejar"""
         if self._jar is None:
-            from cookielib import CookieJar
             self._jar = CookieJar()
         return self._jar
 ########################################################################
@@ -505,7 +504,6 @@ class PKISecurityHandler(abstract.BaseSecurityHandler):
     def cookiejar(self):
         """gets the cookiejar"""
         if self._jar is None:
-            from cookielib import CookieJar
             self._jar = CookieJar()
         return self._jar
     #----------------------------------------------------------------------
