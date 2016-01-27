@@ -87,7 +87,9 @@ def main():
         description = arcpy.GetParameterAsText(4)
         assignmentType = arcpy.GetParameterAsText(5)
         workOrderId = arcpy.GetParameterAsText(6)
-        showFullResponse = arcpy.GetParameterAsText(7)
+        location = arcpy.GetParameterAsText(7)
+        locationField = arcpy.GetParameterAsText(8)
+        showFullResponse = arcpy.GetParameterAsText(9)
 
         sr_web = arcpy.SpatialReference(102100)
         scratchGDB = arcpy.env.scratchWorkspace
@@ -111,7 +113,10 @@ def main():
                                               "",
                                               "PRESERVE_SHAPE",
                                               "")
+
                         field_names = ["SHAPE@X", "SHAPE@Y", workOrderId]
+                        if locationField is not None and locationField != '#' and locationField != '':
+                            field_names.append(locationField)
                         #Get a cursor to the point layer
                         rows = arcpy.da.SearchCursor(in_table=pointLayerProj,
                                                   field_names=field_names
@@ -127,7 +132,11 @@ def main():
                             #json_string['attributes']['notes'] = ''
                             json_string['attributes']['priority'] = priority
                             json_string['attributes']['assignmentType'] = assignmentType
-                            json_string['attributes']['workOrderId'] = row[1]
+                            json_string['attributes']['workOrderId'] = row[2]
+                            if locationField is not None and locationField != '#' and locationField != '':
+                                json_string['attributes']['location'] = location + ": " + row[3]
+                            else:
+                                json_string['attributes']['location'] = location
 
                             features.append(Feature(json_string=json_string))
 
