@@ -272,7 +272,7 @@ class BaseWebOperations(object):
             read = ""
             for data in self._chunk(response=resp, size=4096):
                 if self.PY3 == True:
-                    read += data.decode('ascii')
+                    read += data.decode('utf-8')
                 else:
                     read += data
 
@@ -534,7 +534,7 @@ class BaseWebOperations(object):
             for data in self._chunk(response=resp,
                                     size=CHUNK):
                 if self.PY3 == True:
-                    read += data.decode('ascii')
+                    read += data.decode('utf-8')
                 else:
                     read += data
 
