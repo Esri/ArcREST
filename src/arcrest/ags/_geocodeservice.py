@@ -226,6 +226,8 @@ class GeocodeService(BaseAGSServer):
             url = self._url + "/find"
             params = {
                 "f" : "json",
+                "text" : text,
+                #"token" : self._securityHandler.token
             }
             if not magicKey is None:
                 params['magicKey'] = magicKey
@@ -233,14 +235,13 @@ class GeocodeService(BaseAGSServer):
                 params['sourceCountry'] = sourceCountry
             if not bbox is None:
                 params['bbox'] = bbox
-            if not location is None and \
-               isinstance(location, Point):
-                params['location'] = location.asDictionary
-            elif not location is None and \
-                 isinstance(location, list):
-                params['location'] = "%s,%s" % (location[0], location[1])
-            if not distance is None:
-                params['distance'] = distance
+            if not location is None:
+                if isinstance(location, Point):
+                    params['location'] = location.asDictionary
+                if isinstance(location, list):
+                    params['location'] = "%s,%s" % (location[0], location[1])
+                if not distance is None:
+                    params['distance'] = distance
             if not outSR is None:
                 params['outSR'] = outSR
             if not category is None:

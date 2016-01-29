@@ -973,7 +973,8 @@ class Item(BaseAGOLClass):
         """
         ip = ItemParameter()
         ip.metadata = metadataFile
-        res = self.userItem.updateItem(itemParameters=ip)
+        res = self.userItem.updateItem(itemParameters=ip,
+                                       metadata=metadataFile)
         del ip
         return res
 ########################################################################
@@ -1603,6 +1604,8 @@ class UserItem(BaseAGOLClass):
                 params[key] = dictItem[key]
         if data is not None:
             files['file'] = data
+        if os.path.isfile(metadata):
+            files['metadata'] = metadata
         url = "%s/update" % self.root
         res = self._post(url=url,
                  param_dict=params,
