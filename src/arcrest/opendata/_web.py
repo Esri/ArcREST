@@ -266,7 +266,10 @@ class WebOperations(object):
         else:
             read = ""
             for data in self._chunk(response=resp, size=4096):
-                read += data.decode('ascii')
+                if self.PY3 == True:
+                    read += data.decode('utf-8')
+                else:
+                    read += data
                 del data
             try:
                 return json.loads(read.strip())
@@ -511,10 +514,10 @@ class WebOperations(object):
             read = ""
             for data in self._chunk(response=resp,
                                     size=CHUNK):
-                try:
-                    read += data.decode('ascii')
-                except:
+                if self.PY3 == True:
                     read += data.decode('utf-8')
+                else:
+                    read += data
 
                 del data
             try:
