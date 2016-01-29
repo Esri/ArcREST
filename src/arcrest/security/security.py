@@ -16,7 +16,7 @@ except:
 from .._abstract import abstract
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves.urllib_parse import urlencode, urlparse, urlunparse
-from ..packages.moves.http_cookiejar import CookieJar
+from ..packages.six.moves.http_cookiejar import CookieJar
 
 _defaultTokenExpiration = 15 #Minutes
 ########################################################################

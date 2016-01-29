@@ -9,7 +9,10 @@ import os
 import numpy as np
 ########################################################################
 class GeoEnrichment(BaseGeoEnrichment):
-    """"""
+    """
+    The GeoEnrichment service provides the ability to get facts about a
+    location or area.
+    """
     _url = None
     _proxy_url = None
     _proxy_port = None
@@ -25,6 +28,7 @@ class GeoEnrichment(BaseGeoEnrichment):
     _url_getVariables = "/GetVariables/execute" # returns report
     _url_create_report = "/GeoEnrichment/createreport" # generates a report
     _url_list_reports = "/Geoenrichment/Reports" # return report types for a country
+    _url_enrich_data = "/Geoenrichment/Enrich"
     _url_data_collection = "/Geoenrichment/dataCollections"
     #----------------------------------------------------------------------
     def __init__(self,
@@ -161,6 +165,131 @@ class GeoEnrichment(BaseGeoEnrichment):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def enrich(self,
+               studyAreas,
+               dataCollections=None,
+               analysisVariables=None,
+               addDerivativeVariables="all",
+               studyAreasOptions=None,
+               useData=None,
+               intersectingGeographies=None,
+               returnGeometry=False,
+               inSR=4326,
+               outSR=4326,
+               suppressNullValues=False,
+               forStorage=True
+               ):
+        """
+        The GeoEnrichment service uses the concept of a study area to
+        define the location of the point or area that you want to enrich
+        with additional information. If one or many points are input as
+        a study area, the service will create a 1-mile ring buffer around
+        the point to collect and append enrichment data. You can optionally
+        change the ring buffer size or create drive-time service areas
+        around the point. The most common method to determine the center
+        point for a study areas is a set of one or many point locations
+        defined as XY locations. More specifically, one or many input
+        points (latitude and longitude) can be provided to the service to
+        set the study areas that you want to enrich with additional
+        information. You can create a buffer ring or drive-time service
+        area around the points to aggregate data for the study areas. You
+        can also return enrichment data for buffers around input line
+        features.
+
+        Inputs:
+           studyAreas - Required parameter to specify a list of input
+              features to be enriched. Study areas can be input XY point
+              locations.
+           dataCollections - A Data Collection is a preassembled list of
+              attributes that will be used to enrich the input features.
+              Enrichment attributes can describe various types of
+              information such as demographic characteristics and
+              geographic context of the locations or areas submitted as
+              input features in studyAreas.
+           analysisVariables - A Data Collection is a preassembled list of
+              attributes that will be used to enrich the input features.
+              With the analysisVariables parameter you can return a subset
+              of variables Enrichment attributes can describe various types
+              of information such as demographic characteristics and
+              geographic context of the locations or areas submitted as
+              input features in studyAreas.
+           addDerivativeVariables - Optional parameter to specify an array
+              of string values that describe what derivative variables to
+              include in the output.
+           studyAreasOptions - Optional parameter to specify enrichment
+              behavior. For points described as map coordinates, a 1-mile
+              ring area centered on each site will be used by default. You
+              can use this parameter to change these default settings.
+              With this parameter, the caller can override the default
+              behavior describing how the enrichment attributes are
+              appended to the input features described in studyAreas. For
+              example, you can change the output ring buffer to 5 miles,
+              change the number of output buffers created around each point,
+              and also change the output buffer type to a drive-time service
+              area rather than a simple ring buffer.
+           useData - Optional parameter to explicitly specify the country
+              or dataset to query.
+           intersectingGeographies - Optional parameter to explicitly
+              define the geographic layers used to provide geographic
+              context during the enrichment process. For example, you can
+              use this optional parameter to return the U.S. county and ZIP
+              Code that each input study area intersects.
+              You can intersect input features defined in the studyAreas
+              parameter with standard geography layers that are provided by
+              the GeoEnrichment service for each country. You can also
+              intersect features from a publicly available feature service.
+           returnGeometry - Optional parameter to request the output
+              geometries in the response.
+              When this parameter is set to true, the output geometries
+              associated with each feature will be included in the response.
+              The output geometries will be in the spatial reference system
+              defined by outSR.
+           inSR - Optional parameter to define the input geometries in the
+              studyAreas parameter in a specified spatial reference system.
+           outSR - Optional parameter to request the output geometries in a
+              specified spatial reference system.
+           suppressNullValues - Optional parameter to return only values
+              that are not NULL in the output response. Adding the optional
+              suppressNullValues parameter to any data collections
+              discovery method will reduce the size of the output that is
+              returned.
+           forStorage - Optional parameter to define if GeoEnrichment
+              output is being stored. The price for using the Enrich method
+              varies according to whether the data returned is being
+              persisted, i.e. being stored, or whether it is merely being
+              used in an interactive context and is discarded after being
+              viewed. If the data is being stored, the terms of use for the
+              GeoEnrichment service require that you specify the forStorage
+              parameter to true.
+        """
+        params = {
+            "f" : "json",
+            "outSR": outSR,
+            "inSR" : inSR,
+            "suppressNullValues" : suppressNullValues,
+            "addDerivativeVariables" : addDerivativeVariables,
+            "studyareas" : studyAreas,
+            "forStorage" : forStorage
+        }
+        params['returnGeometry'] = returnGeometry
+        if studyAreasOptions is not None:
+            params['studyAreasOptions'] = studyAreasOptions
+        if dataCollections is not None:
+            params['dataCollections'] = dataCollections
+
+        if useData is not None:
+            params['useData'] = useData
+        if intersectingGeographies is not None:
+            params['intersectingGeographies'] = intersectingGeographies
+        if analysisVariables is not None:
+            params['analysisVariables'] = analysisVariables
+        url = self._base_url + self._url_enrich_data
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def createReport(self,
                      out_file_path,
                      studyAreas,
@@ -252,8 +381,8 @@ class GeoEnrichment(BaseGeoEnrichment):
     #----------------------------------------------------------------------
     def dataCollections(self,
                         countryName=None,
-                        addDerivativeVariables=["*"],
-                        outFields=["*"],
+                        addDerivativeVariables=None,
+                        outFields=None,
                         suppressNullValues=False):
         """
         The GeoEnrichment service uses the concept of a data collection to
@@ -285,6 +414,10 @@ class GeoEnrichment(BaseGeoEnrichment):
              suppressNullValues parameter to any data collections discovery
              method will reduce the size of the output that is returned
         """
+        if addDerivativeVariables is None:
+            addDerivativeVariables = ["*"]
+        if outFields is None:
+            outFields = ["*"]
         if countryName is None:
             url = self._base_url + self._url_data_collection
         else:

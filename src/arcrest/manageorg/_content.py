@@ -618,6 +618,10 @@ class Item(BaseAGOLClass):
         """returns the base url"""
         return self._curl
     #----------------------------------------------------------------------
+    def refresh(self):
+        """refreshes the item class properties"""
+        self.__init()
+    #----------------------------------------------------------------------
     @property
     def userItem(self):
         """returns a reference to the UserItem class"""
@@ -1022,6 +1026,7 @@ class UserItem(BaseAGOLClass):
     _sourceUrl = None
     __curl = None
     _privateUrl = None
+    _itemControl = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1065,8 +1070,9 @@ class UserItem(BaseAGOLClass):
             else:
                 print( k, " - attribute not implemented in UserItem class.")
     #----------------------------------------------------------------------
-    _itemControl = None
-
+    def refresh(self):
+        """ refreshes the UserItem properties """
+        self.__init()
     #----------------------------------------------------------------------
     @property
     def itemControl(self):
@@ -1597,10 +1603,7 @@ class UserItem(BaseAGOLClass):
                 params[key] = dictItem[key]
         if data is not None:
             files['file'] = data
-
         url = "%s/update" % self.root
-
-
         res = self._post(url=url,
                  param_dict=params,
                  files=files,
