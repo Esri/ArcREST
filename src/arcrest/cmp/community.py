@@ -235,7 +235,6 @@ class CMPUser(BaseCMP):
     #----------------------------------------------------------------------
     def __init(self):
         """loads the property data into the class"""
-        #http://sea-web-bm-s01.dmz.esri.com/communitymaps-services-2/rest/user/CMP2Demo?f=json
         params = {
             "f" : "json"
         }
