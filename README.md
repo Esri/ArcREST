@@ -2,11 +2,10 @@
 
 Stable release ArcREST 3.0.1 can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/v3.0.1
 
-*If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
+* If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
+* If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
 
-*If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
-
-A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS) ,ArcGIS Online (AGOL), and ArcGIS WebMap JSON.
+A set of python tools to assist working with ArcGIS REST API for ArcGIS Server (AGS), ArcGIS Online (AGOL), and ArcGIS WebMap JSON.
 
 This is not a full implementation of the Esri REST API, but we would like to make it, so help out!  Please feel free to contribute.
 
@@ -20,7 +19,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 * Plus additional information not even listed here!
 
 ## Documentation
- The help documents are hosted here: http://esri.github.io/ArcREST/index.html
+ The API reference is [hosted here](http://esri.github.io/ArcREST/index.html).
  
 ### General Help
 
@@ -38,13 +37,38 @@ This is not a full implementation of the Esri REST API, but we would like to mak
   - If ArcPy is not installed, there will be limited functionality.
 
 ## Installation
-To install the package, run the setup.py.  This should copy it to your python's site-package folder.
 
-Installing the Requirements
-    - pip install -r requirements.txt
+1. Install requirements
+2. run the setup.py.  This should copy it to your python's site-package folder.
 
-Running Installation Code:
-    - python.exe setup.py install
+```bash
+pip install -r requirements.txt
+python setup.py install
+```
+
+## Getting Started
+
+Fetch your folders:
+
+```python
+import arcrest
+from arcresthelper import securityhandlerhelper
+
+config = {'username': 'myusername', 'password': 'myp4ssword'}
+token = securityhandlerhelper.securityhandlerhelper(config)
+admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+content = admin.content
+userInfo = content.users.user()
+userInfo.folders
+```
+
+Get item metadata:
+
+```python
+item = admin.content.getItem(itemId=itemId)
+item.title
+ u'Streets'
+```
 
 ## Issues
 
@@ -57,7 +81,7 @@ Please see our [guidelines for contributing](https://github.com/esri/contributin
 
 ## Licensing
 
-Copyright 2014 Esri
+Copyright 2016 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

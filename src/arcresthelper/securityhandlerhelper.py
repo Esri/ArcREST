@@ -55,6 +55,7 @@ class securityhandlerhelper(object):
     _client_id = None
     _secret_id = None
     _is_portal = False
+    _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI']
 
     #----------------------------------------------------------------------
     def __init__(self, securityinfo):
@@ -116,9 +117,13 @@ class securityhandlerhelper(object):
                 if 'security_type' in securityinfo:
                     self._security_type = securityinfo['security_type']
                 else:
-                    self._message = 'Security type not specified'
+                    self._security_type = 'Portal'
+
+                if not any(self._security_type in s for s in self._supported_types):
+                    self._message = 'Security type not supported: ' + self._security_type
                     self._valid = False
                     return
+                     
 
                 if 'proxy_url' in securityinfo:
                     self._proxy_url = securityinfo['proxy_url']
@@ -155,7 +160,7 @@ class securityhandlerhelper(object):
                 if 'secret_id' in securityinfo:
                     self._secret_id = securityinfo['secret_id']
 
-                if str(securityinfo['security_type']).upper() == 'ArcGIS'.upper():
+                if str(self._security_type).upper() == 'ArcGIS'.upper():
 
                     self._securityHandler = security.ArcGISTokenSecurityHandler(proxy_url=self._proxy_url,
                                                 proxy_port=self._proxy_port)
@@ -164,8 +169,8 @@ class securityhandlerhelper(object):
                     self._username = self._securityHandler.username
                     self._valid = True
                     self._message = "ArcGIS security handler created"
-                elif str(securityinfo['security_type']).upper() == 'Portal'.upper() or \
-                     str(securityinfo['security_type']).upper() == 'AGOL'.upper():
+                elif str(self._security_type).upper() == 'Portal'.upper() or \
+                     str(self._security_type).upper() == 'AGOL'.upper():
                     if self._org_url is None or self._org_url == '':
                         self._org_url = 'http://www.arcgis.com'
                     if self._username is None or self._username == '' or \
@@ -189,7 +194,7 @@ class securityhandlerhelper(object):
                                                                                        proxy_port=self._proxy_port)
                             self._message = "Portal security handler created"
 
-                elif str(securityinfo['security_type']).upper() == 'NTLM'.upper():
+                elif str(self._security_type).upper() == 'NTLM'.upper():
                     if self._username is None or self._username == '' or \
                         self._password is None or self._password == '':
                         self._message = "Username and password required for NTLM"
@@ -202,7 +207,7 @@ class securityhandlerhelper(object):
                                                                             proxy_port=self._proxy_port,
                                                                             referer_url=self._referer_url)
                         self._message = "NTLM security handler created"
-                elif str(securityinfo['security_type']).upper() == 'LDAP'.upper():
+                elif str(self._security_type).upper() == 'LDAP'.upper():
                     if self._username is None or self._username == '' or \
                         self._password is None or self._password == '':
                         self._message = "Username and password required for LDAP"
@@ -215,7 +220,7 @@ class securityhandlerhelper(object):
                                                                             proxy_port=self._proxy_port,
                                                                             referer_url=self._referer_url)
                         self._message = "LDAP security handler created"
-                elif str(securityinfo['security_type']).upper() == 'PKI'.upper():
+                elif str(self._security_type).upper() == 'PKI'.upper():
                     if self._keyfile is None or self._keyfile == '' or \
                         self._certificatefile is None or self._certificatefile == '':
                         self._message = "Key file and certification file required for PKI"
