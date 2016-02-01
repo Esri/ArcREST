@@ -377,18 +377,14 @@ class featureservicetools(securityhandlerhelper):
                 else:
                     inDesc = arcpy.Describe(pathToFeatureClass)
                     oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
-                    sql = '%s = (select min(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
-                    cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
-                    minOID = cur.next()[0]
-                    del cur, sql
-                    sql = '%s = (select max(%s) from %s)' % (oidName,oidName,os.path.basename(pathToFeatureClass))
-                    cur = arcpy.da.SearchCursor(pathToFeatureClass,[inDesc.oidFieldName],sql)
-                    maxOID = cur.next()[0]
-                    del cur, sql
-                    breaks = range(minOID,maxOID)[0:-1:chunksize]
+                    fc = os.path.basename(pathToFeatureClass)
+                    sql = "{0} IN ((SELECT MIN({0}) FROM {1}), (SELECT MAX({0}) FROM {1}))".format(oidName, fc)
+                    minOID,maxOID = list(zip(*arcpy.da.SearchCursor(pathToFeatureClass, "OID@", sql)))[0]
+                    breaks = list(range(minOID,maxOID))[0:-1:chunksize]
                     breaks.append(maxOID+1)
-                    exprList = [oidName + ' >= ' + str(breaks[b]) + ' and ' + \
-                                oidName + ' < ' + str(breaks[b+1]) for b in range(len(breaks)-1)]
+                    exprList = ["{0} >= {1} AND {0} < {2}".format(oidName, breaks[b], breaks[b+1])
+                                for b in range(len(breaks)-1)]
+
                     for expr in exprList:
                         UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
                         result = fl.addFeatures(fc=UploadLayer,lowerCaseFieldNames=lowerCaseFieldNames)
