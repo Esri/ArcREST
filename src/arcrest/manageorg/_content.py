@@ -2633,6 +2633,8 @@ class User(BaseAGOLClass):
                 params["filename"] = os.path.basename(filePath)
             elif filePath is not None and multipart:
                 params["filename"] = os.path.basename(filePath)
+            elif filePath is not None and not os.path.isfile(filePath):
+                print ("{0} not found".format(filePath))
             if 'thumbnail' in params:
                 v = params['thumbnail']
                 del params['thumbnail']
