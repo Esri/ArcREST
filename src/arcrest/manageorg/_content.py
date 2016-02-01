@@ -715,7 +715,7 @@ class Item(BaseAGOLClass):
             if os.path.isdir(savePath) == False:
                 os.makedirs(savePath)
             result = self._get(url=url,
-                               param_dict=param_dict,
+                               param_dict=params,
                                securityHandler=self._securityHandler,
                                proxy_url=self._proxy_url,
                                proxy_port=self._proxy_port,
