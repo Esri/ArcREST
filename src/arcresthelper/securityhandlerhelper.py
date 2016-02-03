@@ -55,7 +55,7 @@ class securityhandlerhelper(object):
     _client_id = None
     _secret_id = None
     _is_portal = False
-    _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI']
+    _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI', "ArcGIS"]
 
     #----------------------------------------------------------------------
     def __init__(self, securityinfo):
@@ -123,7 +123,7 @@ class securityhandlerhelper(object):
                     self._message = 'Security type not supported: ' + self._security_type
                     self._valid = False
                     return
-                     
+
 
                 if 'proxy_url' in securityinfo:
                     self._proxy_url = securityinfo['proxy_url']

@@ -1,0 +1,3 @@
+﻿description,status,notes,priority,assignmentType,workOrderId,dueDate,location,x,y
+Test Assignment,0,Test Notes,1,1,123,1/28/2016 4:59:59 AM,Sample Loc Info,-88.1504416227191,41.7798509169729
+Test Assignement,0,Teest Notes,1,1,123,1/28/2016 4:59:59 AM,Samplee Loc Info,-88.1204416227191,41.7398509169729
