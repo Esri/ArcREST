@@ -12,7 +12,7 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
 try:
     with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-        long_description = f.read()
+        long_decription = f.read()
 except:
     long_decription = "ArcREST Python Package"
 
