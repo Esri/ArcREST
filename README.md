@@ -30,6 +30,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 * Python 2.7.x/Python 3.4 (https://www.python.org/)
 * numpy >= 1.7.1 (numpy is included with ArcGIS default installation)
 * ~~Six (https://pypi.python.org/pypi/six)~~ (Six is included in current version)
+* pip (https://pip.pypa.io/en/stable/installing/)
 
 ## Recommended Installation
 
@@ -38,6 +39,8 @@ This is not a full implementation of the Esri REST API, but we would like to mak
   - If ArcPy is not installed, there will be limited functionality.
 
 ## Installation
+
+* Note:  If you have not done so, you may need to add your python install path and scripts folder to your environment variables.  In your system PATH environment variable, add both the path to Python and the Python Scripts folder. ex: C:\Python27\ArcGIS10.3;C:\Python27\ArcGIS10.3\Scripts
 
 1. Install requirements
 2. run the setup.py.  This should copy it to your python's site-package folder.

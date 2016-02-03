@@ -130,9 +130,14 @@ class Community(BaseAGOLClass):
         if communityInfo is None:
             communityInfo = self.communitySelf
 
+        if isinstance(groupNames,list):
+            groupNames = map(str.upper, groupNames)
+        else:
+            groupNames = groupNames.upper()
         if 'groups' in communityInfo:
             for gp in communityInfo['groups']:
-                if gp['title'] in groupNames:
+
+                if str(gp['title']).upper() in groupNames:
                     group_ids.append(gp['id'])
         del communityInfo
         return group_ids
