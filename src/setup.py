@@ -9,6 +9,14 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
+packages = ['arcresthelper','arcresthelper/packages',
+            'arcrest','arcrest/agol','arcrest/agol/helperservices', 'arcrest/ags', 'arcrest/common',
+            'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
+            'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
+            'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
+            'arcrest/enrichment', 'arcrest/opendata', 'arcrest/cmp', 'arcrest/packages',
+            'arcrest/packages/ntlm3']
+
 # Get the long description from the README file
 try:
     with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -52,13 +60,10 @@ setup(
         'Programming Language :: Python :: 3.4'
     ],
     keywords='REST, Esri, ArcGIS, Python, ArcPy',
-    packages=find_packages(exclude=['arcresthelper','arcresthelper/packages',
-                                    'arcrest','arcrest/agol','arcrest/agol/helperservices', 'arcrest/ags', 'arcrest/common',
-                                    'arcrest/manageorg', 'arcrest/security', 'arcrest/web',
-                                    'arcrest/_abstract', 'arcrest/webmap', 'arcrest/geometryservice',
-                                    'arcrest/manageags', 'arcrest/manageportal', 'arcrest/hostedservice',
-                                    'arcrest/enrichment', 'arcrest/opendata', 'arcrest/cmp', 'arcrest/packages',
-                                    'arcrest/packages/ntlm3']),
+    packages=packages,
+    package_dir={'requests': 'requests'},
+    include_package_data=True,
+    zip_safe=False,
     install_requires=['numpy>=1.7.1'],
     extras_require={},
     package_data={'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},
