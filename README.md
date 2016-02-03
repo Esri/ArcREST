@@ -28,6 +28,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 ## Requirements
 
 * Python 2.7.x/Python 3.4 (https://www.python.org/)
+* numpy >= 1.7.1 (numpy is included with ArcGIS default installation)
 * ~~Six (https://pypi.python.org/pypi/six)~~ (Six is included in current version)
 
 ## Recommended Installation
