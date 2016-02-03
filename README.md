@@ -40,7 +40,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 
 ## Installation
 
-* Note:  If you have not done so, you may need to add your python install path and scripts folder to your enviroment variables.  In your system PATH folder, add both the path to Python and the Python Scripts folder. ex: C:\Python27\ArcGIS10.3;C:\Python27\ArcGIS10.3\Scripts
+* Note:  If you have not done so, you may need to add your python install path and scripts folder to your environment variables.  In your system PATH environment variable, add both the path to Python and the Python Scripts folder. ex: C:\Python27\ArcGIS10.3;C:\Python27\ArcGIS10.3\Scripts
 
 1. Install requirements
 2. run the setup.py.  This should copy it to your python's site-package folder.
