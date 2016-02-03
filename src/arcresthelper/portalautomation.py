@@ -296,7 +296,8 @@ class portalautomation(securityhandlerhelper):
 
             print ("Script started at %s" % scriptStartTime.strftime(dateTimeFormat))
 
-            if self.securityhandler.valid == False:
+            if self.securityhandler is None or \
+                self.securityhandler.valid == False:
                 print ("Login required")
             else:
                 orgTools = orgtools.orgtools(securityinfo=self)
