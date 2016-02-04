@@ -54,7 +54,7 @@ def main():
             rst.removeUserData(users=users)
             rst.removeUserGroups(users=users)
         else:
-            print rst.message
+            print (rst.message)
     except (common.ArcRestHelperError),e:
         print ("error in function: %s" % e[0]['function'])
         print ("error on line: %s" % e[0]['line'])
