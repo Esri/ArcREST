@@ -15,6 +15,7 @@ import shutil
 import tempfile
 import mimetypes
 import email.generator
+
 from io import BytesIO
 try:
     from cStringIO import StringIO
@@ -24,8 +25,31 @@ except ImportError:
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
+
 ########################################################################
 __version__ = "3.5.3"
+########################################################################
+class BaseOperation(object):
+    """base class for all objects"""
+    _error = None
+    @property
+    def error(self):
+        if self._error is None:
+            try:
+                #__init is renamed to the class with an _
+                init = getattr(self, "_" + self.__class__.__name__ + "__init", None)
+                if init is not None and callable(init):
+                    init()
+            except Exception,e:
+                pass
+        """gets the error"""
+        return self._error
+    #----------------------------------------------------------------------
+    def hasError(self):
+        if self.error is None:
+            return False
+        else:
+            return True
 ########################################################################
 class RedirectHandler(request.HTTPRedirectHandler):
     def http_error_301(self, req, fp, code, msg, headers):
@@ -155,7 +179,7 @@ class MultiPartForm(object):
         textwriter.write('--{}--\r\n\r\n'.format(boundary))
         self.form_data = buf.getvalue()
 ########################################################################
-class BaseWebOperations(object):
+class BaseWebOperations(BaseOperation):
     """performs the get/post operations"""
     PY3 = sys.version_info[0] == 3
     PY2 = sys.version_info[0] == 2

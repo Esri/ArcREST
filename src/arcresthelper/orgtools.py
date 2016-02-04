@@ -62,10 +62,14 @@ class orgtools(securityhandlerhelper):
                         print ("%s shared with %s" % (item.title,shareToGroupName))
                     results.append(res)
             if not groups is None:
-                for group in groups:
-                    group = admin.content.group(groupId=group)
+                for groupId in groups:
+                    group = admin.content.group(groupId=groupId)
+
                     if group is None:
-                        print ("Group not found")
+                        print ("Group with ID {0} was not found".format(groupId))
+
+                    elif group.hasError() == True:
+                        print ("Group with ID {0} returned the following error {1}".format(groupId,group.error))
                     else:
                         for itemJSON in group.items:
                             if 'id' in itemJSON:

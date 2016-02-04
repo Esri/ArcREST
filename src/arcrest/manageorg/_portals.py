@@ -199,7 +199,7 @@ class Portal(BaseAGOLClass):
     _contacts = None
     _appInfo = None
     _creditAssignments = None
-
+    _updateUserProfileDisabled = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -265,6 +265,13 @@ class Portal(BaseAGOLClass):
     #def tileServers(self):
         #""""""
         #return
+    #----------------------------------------------------------------------
+    @property
+    def updateUserProfileDisabled(self):
+        '''gets the property value for updateUserProfileDisabled'''
+        if self._updateUserProfileDisabled is None:
+            self.__init()
+        return self._updateUserProfileDisabled
     #----------------------------------------------------------------------
     @property
     def bingKey(self):

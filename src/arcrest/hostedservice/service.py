@@ -1279,6 +1279,9 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _supportsApplyEditsWithGlobalIds = None
     _supportsValidateSQL = None
     _serviceItemId = None
+    _standardMaxRecordCount = None
+    _tileMaxRecordCount = None
+    _maxRecordCountFactor = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1381,7 +1384,28 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         self.__init()
         return res
     #----------------------------------------------------------------------
+    @property
+    def standardMaxRecordCount(self):
+        '''gets the property value for standardMaxRecordCount'''
+        if self._standardMaxRecordCount is None:
+            self.__init()
+        return self._standardMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def tileMaxRecordCount(self):
+        '''gets the property value for tileMaxRecordCount'''
+        if self._tileMaxRecordCount is None:
+            self.__init()
+        return self._tileMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCountFactor(self):
+        '''gets the property value for maxRecordCountFactor'''
+        if self._maxRecordCountFactor is None:
+            self.__init()
+        return self._maxRecordCountFactor
 
+    #----------------------------------------------------------------------
     @property
     def supportsApplyEditsWithGlobalIds(self):
         '''gets the property value for supportsApplyEditsWithGlobalIds'''

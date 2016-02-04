@@ -7,6 +7,8 @@ import mimetypes
 import os
 from ..packages.six.moves import http_client as httplib
 from ..web._base import BaseWebOperations
+
+###########################################################################
 class BaseCMP(BaseWebOperations):
     """ base community mapping program class"""
     pass

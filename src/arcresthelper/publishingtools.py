@@ -1740,7 +1740,8 @@ class publishingtools(securityhandlerhelper):
                                                     results['messages'] = layUpdateResult['error']
 
             return results
-
+        except common.ArcRestHelperError as e:
+            raise e
         except Exception as e:
 
             line, filename, synerror = trace()

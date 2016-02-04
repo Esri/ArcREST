@@ -2886,7 +2886,7 @@ class Group(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print( k, " - attribute not implemented in Content.Groups class.")
+                print(k, " - attribute not implemented in Content.Groups class.")
     #----------------------------------------------------------------------
     @property
     def root(self):
