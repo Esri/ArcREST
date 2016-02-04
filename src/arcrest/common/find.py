@@ -96,6 +96,8 @@ class search(BaseWebOperations):
               'Workflow Manager Package',
               'Web Mapping Application',
               'Web Map']
+        title = title.replace(":"," ")
+
         if username is None:
             username = self._securityHandler.username
         if searchorg == True:
