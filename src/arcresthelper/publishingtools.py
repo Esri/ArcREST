@@ -1451,7 +1451,7 @@ class publishingtools(securityhandlerhelper):
                                                                      maxRecordCount=maxRecordCount,
                                                                      server_type='MY_HOSTED_SERVICES',
                                                                      url=url)
-                publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=sd_Info['tags'],
+                publishParameters = arcrest.manageorg.PublishSDParameters(tags=sd_Info['tags'],
                                                                           overwrite='true')
             elif (extension == ".zip"):
                 dataFileType = "Shapefile"
