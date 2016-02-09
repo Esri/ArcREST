@@ -1338,7 +1338,7 @@ class publishingtools(securityhandlerhelper):
         definition = None
         try:
             # Report settings
-            dataFle = None
+            dataFile = None
             if 'Mxd' in config:
                 dataFile = config['Mxd']
             elif 'Zip' in config:
