@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-import six
+from ..packages import six
 from ..web._base import BaseWebOperations
 _url = None
 _securityHandler = None
