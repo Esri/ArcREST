@@ -2,7 +2,7 @@
 ArcREST Setup Code
 
 """
-from setuptools import setup, find_packages
+from distutils.core import setup
 from codecs import open
 from os import path
 
