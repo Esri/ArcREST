@@ -39,7 +39,7 @@ if __name__ == "__main__":
         user.currentFolder = itemFolder
     #   Provide the Publish parameters
     #
-    publishParameters = arcrest.manageorg.PublishSDParmaeters(tags=tags)
+    publishParameters = arcrest.manageorg.PublishSDParameters(tags=tags)
     #   Publish the service to the site
     #
     print (user.publishItem(

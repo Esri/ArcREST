@@ -2533,7 +2533,7 @@ class PublishFGDBParameter(BaseParameters):
         return json.dumps(self.value)
 
 ########################################################################
-class PublishSDParmaeters(BaseParameters):
+class PublishSDParameters(BaseParameters):
     """
     Required parameters to publish SD Parameters
     """
