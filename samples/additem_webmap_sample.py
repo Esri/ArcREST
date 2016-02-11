@@ -106,6 +106,6 @@ if __name__ == "__main__":
 
     #   Add the Web Map
     #
-    print user.addItem(itemParameters=itemParams,
+    print (user.addItem(itemParameters=itemParams,
                               overwrite=True,
-                              text=json.dumps(map_json))
+                              text=json.dumps(map_json)))
