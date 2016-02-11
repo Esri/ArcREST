@@ -1551,8 +1551,8 @@ class UserItem(BaseAGOLClass):
                    data=None,
                    metadata=None,
                    text=None,
-                   serviceUrl=None
-                   ):
+                   serviceUrl=None,
+                   multipart=False):
         """
         updates an item's properties using the ItemParameter class.
 
@@ -1563,6 +1563,8 @@ class UserItem(BaseAGOLClass):
            metadata - this is an xml file that contains metadata information
            text - The text content for the item to be updated.
            serviceUrl - this is a service url endpoint.
+           multipart - this is a boolean value that means the file will be
+              broken up into smaller pieces and uploaded.
         """
         thumbnail = None
         largeThumbnail = None
@@ -1607,14 +1609,28 @@ class UserItem(BaseAGOLClass):
         if metadata and os.path.isfile(metadata):
             files['metadata'] = metadata
         url = "%s/update" % self.root
-        res = self._post(url=url,
+        if multipart:
+            itemID = self.id
+            params['multipart'] = True
+            params['fileName'] = os.path.basename(data)
+            res = self._post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+            itemPartJSON = self.addByPart(filePath=data)
+            res = self.commit(wait=True, additionalParams=\
+                              {'type' : self.type })
+
+        else:
+            res = self._post(url=url,
                  param_dict=params,
                  files=files,
                  securityHandler=self._securityHandler,
                  proxy_url=self._proxy_url,
                  proxy_port=self._proxy_port)
         self.__init()
-        return res
+        return self
     #----------------------------------------------------------------------
     def deleteInfo(self, infoFile="metadata/metadata.xml"):
         """
@@ -2618,12 +2634,10 @@ class User(BaseAGOLClass):
                               proxy_url=self._proxy_url,
                               proxy_port=self._proxy_port)
                 res = ui.addByPart(filePath=filePath)
-                #itemId = res['id']
                 # need to pass 'type' on commit
                 res = ui.commit(wait=True, additionalParams=\
                                   {'type' : itemParameters.type }
                                   )
-                #itemId = res['id']
                 if itemParameters is not None:
                     res = ui.updateItem(itemParameters=itemParameters)
                 return ui
