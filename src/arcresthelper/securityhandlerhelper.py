@@ -5,8 +5,8 @@ import arcrest
 from arcrest.manageags import AGSAdministration
 from arcrest.manageorg import Administration
 from packages import six
-import six.moves.urllib as urllib
-from six.moves.urllib.error import HTTPError
+import packages.six.moves.urllib as urllib
+from packages.six.moves.urllib.error import HTTPError
 import os
 import common
 import copy
