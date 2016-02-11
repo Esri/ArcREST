@@ -20,7 +20,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 
 ## Documentation
  The API reference is [hosted here](http://esri.github.io/ArcREST/index.html).
- 
+
 ### General Help
 
 [New to Github? Get started here.](http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html)
@@ -82,6 +82,10 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 
 Esri welcomes contributions from anyone and everyone.
 Please see our [guidelines for contributing](https://github.com/esri/contributing).
+
+## PyPi
+
+Please see our [PyPi page](https://pypi.python.org/pypi/ArcREST_Package).
 
 ## Licensing
 
