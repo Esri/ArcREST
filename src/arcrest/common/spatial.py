@@ -28,13 +28,35 @@ def featureclass_to_json(fc):
     if desc.dataType == "Table" or desc.dataType == "TableView":
         return recordset_to_json(table=fc)
     else:
-        return arcpy.FeatureSet(fc).JSON
+        json = None
+        rs = arcpy.FeatureSet(fc)
+        try:
+            if hasattr(rs, 'JSON'):
+                json = rs.JSON
+            else:
+                desc = arcpy.Describe(rs)
+                json = desc.JSON
+        except:
+            desc = arcpy.Describe(rs)
+            json = desc.JSON
+        return json
 #----------------------------------------------------------------------
 def recordset_to_json(table):
     """ converts the table to JSON """
     if arcpyFound == False:
         raise Exception("ArcPy is required to use this function")
-    return arcpy.RecordSet(table).JSON
+    json = None
+    rs = arcpy.RecordSet(table)
+    try:
+        if hasattr(rs, 'JSON'):
+            json = rs.JSON
+        else:
+            desc = arcpy.Describe(rs)
+            json = desc.JSON
+    except:
+        desc = arcpy.Describe(rs)
+        json = desc.JSON
+    return json
 #----------------------------------------------------------------------
 def json_to_featureclass(json_file, out_fc):
     """ converts a json file (.json) to a feature class """
