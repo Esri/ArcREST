@@ -7,10 +7,12 @@
     @requirements: Python 2.7.x, ArcGIS 10.2.1
     @copyright: Esri, 2016
 '''
+from __future__ import print_function
 import gc
 import os
 import sys
 import arcpy
+import re
 
 from arcresthelper import featureservicetools
 from arcresthelper import common
@@ -39,7 +41,7 @@ def outputPrinter(message,typeOfMessage='message'):
     else:
         arcpy.AddMessage(message=message)
 
-    print message
+    print (message)
 def main():
 
     fsId = None
@@ -57,12 +59,12 @@ def main():
     showfullResponse = False
 
     try:
+        arcpy.env.overwriteOutput = True
 
         proxy_port = None
         proxy_url = None
 
         securityinfo = {}
-        securityinfo['security_type'] = 'ArcGIS'#LDAP, NTLM, OAuth, Portal, PKI
 
         securityinfo['proxy_url'] = proxy_url
         securityinfo['proxy_port'] = proxy_port
@@ -73,13 +75,38 @@ def main():
         securityinfo['client_id'] = None
         securityinfo['secret_id'] = None
 
-        fsId = arcpy.GetParameterAsText(1)
-        groupLayer = arcpy.GetParameterAsText(0)
-        layerMap = arcpy.GetParameterAsText(2)
-        matchEntireName = arcpy.GetParameterAsText(3)
-        projection = arcpy.GetParameterAsText(4)
-        lowerCaseFieldNames =arcpy.GetParameterAsText(5)
-        showfullResponse =arcpy.GetParameterAsText(6)
+        username = arcpy.GetParameterAsText(0)
+        password = arcpy.GetParameterAsText(1)
+        siteURL = arcpy.GetParameterAsText(2)
+
+        version = arcpy.GetInstallInfo()['Version']
+        if re.search("^10\.[0-2]", version) is not None:
+            bReqUserName = True
+        else:
+            bReqUserName = False
+
+        if bReqUserName and \
+            (username == None or username == "#" or str(username).strip() == "" or \
+             password == None or password== "#" or str(password).strip() == ""):
+            outputPrinter ("{0} Requires a username and password".format(version), typeOfMessage='error')
+            return
+
+        if bReqUserName:
+            securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+            securityinfo['username'] = username
+            securityinfo['password'] = password
+            securityinfo['org_url'] = siteURL
+
+        else:
+            securityinfo['security_type'] = 'ArcGIS'#LDAP, NTLM, OAuth, Portal, PKI
+
+        groupLayer = arcpy.GetParameterAsText(3)
+        fsId = arcpy.GetParameterAsText(4)
+        layerMap = arcpy.GetParameterAsText(5)
+        matchEntireName = arcpy.GetParameterAsText(6)
+        projection = arcpy.GetParameterAsText(7)
+        lowerCaseFieldNames =arcpy.GetParameterAsText(8)
+        showfullResponse =arcpy.GetParameterAsText(9)
 
         if str(lowerCaseFieldNames).upper() == 'TRUE':
             lowerCaseFieldNames = True
@@ -91,7 +118,7 @@ def main():
         else:
             projection = None
             #outputPrinter(message="No Projection defined")
-        arcpy.SetParameterAsText(7, "true")
+        arcpy.SetParameterAsText(10, "true")
 
         scratchGDB = arcpy.env.scratchWorkspace
         scratchLayName = "tempAppGrpFS"
@@ -141,11 +168,7 @@ def main():
                                             outputPrinter(message="\t\tProjecting %s" % (lyr.name))
                                             result = arcpy.Project_management(layerNameFull,
                                                                     scratchLayer,
-                                                                    projection,
-                                                                    "",
-                                                                    "",
-                                                                    "PRESERVE_SHAPE",
-                                                                    "")
+                                                                    projection)
 
 
                                         else:
@@ -178,10 +201,10 @@ def main():
                     outputPrinter (message="Group layer is not a group layer", typeOfMessage='error')
             else:
                 outputPrinter(message="Feature Service with id %s was not found" % fsId, typeOfMessage='error')
-                arcpy.SetParameterAsText(7, "false")
+                arcpy.SetParameterAsText(10, "false")
         else:
             outputPrinter(fst.message,typeOfMessage='error')
-            arcpy.SetParameterAsText(7, "false")
+            arcpy.SetParameterAsText(10, "false")
 
 
 
@@ -191,16 +214,16 @@ def main():
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(10, "false")
     except (common.ArcRestHelperError),e:
         outputPrinter(message=e,typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(10, "false")
     except:
         line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
         outputPrinter(message="error in file name: %s" % filename,typeOfMessage='error')
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
-        arcpy.SetParameterAsText(7, "false")
+        arcpy.SetParameterAsText(10, "false")
     finally:
         pass
         if scratchLayer is not None:
@@ -243,7 +266,7 @@ def syncLayer(fst, fs, layer, layerName, displayName, lowerCaseFieldNames, showF
             outputPrinter(message="\t\tResponse:  %s" % results)
         if 'error' in results:
             outputPrinter(message="\t\tError in response from server:  %s" % results['error'],typeOfMessage='error')
-            arcpy.SetParameterAsText(5, "false")
+            arcpy.SetParameterAsText(10, "false")
         else:
             if results['addResults'] is not None:
                 featSucces = 0
@@ -261,7 +284,8 @@ def syncLayer(fst, fs, layer, layerName, displayName, lowerCaseFieldNames, showF
                 outputPrinter (message="\t\t0 features added to %s /n result info %s" % (layerName,str(results)))
     else:
         outputPrinter(message="\t\tLayer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
-        arcpy.SetParameterAsText(5, "false")
+        arcpy.SetParameterAsText(10, "false")
 
 if __name__ == "__main__":
+
     main()
