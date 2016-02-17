@@ -1,0 +1,449 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcresthelper.orgtools &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for arcresthelper.orgtools</h1><div class="highlight"><pre>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
+
+<span class="n">dateTimeFormat</span> <span class="o">=</span> <span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M&#39;</span>
+<span class="kn">import</span> <span class="nn">arcrest</span>
+<span class="kn">from</span> <span class="nn">arcrest.agol</span> <span class="kn">import</span> <span class="n">FeatureLayer</span>
+<span class="kn">from</span> <span class="nn">arcrest.agol</span> <span class="kn">import</span> <span class="n">FeatureService</span>
+<span class="kn">from</span> <span class="nn">arcrest.hostedservice</span> <span class="kn">import</span> <span class="n">AdminFeatureService</span>
+<span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">common</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+
+<span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        trace finds the line, the filename</span>
+<span class="sd">        and error message and returns it</span>
+<span class="sd">        to the user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span><span class="o">,</span> <span class="nn">sys</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">tbinfo</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
+    <span class="c"># script name + line number</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">tbinfo</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c"># Get Python syntax error</span>
+    <span class="c">#</span>
+    <span class="n">synerror</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span></div>
+
+<div class="viewcode-block" id="orgtools"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools">[docs]</a><span class="k">class</span> <span class="nc">orgtools</span><span class="p">(</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
+
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.shareItemsToGroup"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.shareItemsToGroup">[docs]</a>    <span class="k">def</span> <span class="nf">shareItemsToGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">,</span><span class="n">items</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">groups</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">group_ids</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">groupContent</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">community</span>
+            <span class="n">group_ids</span> <span class="o">=</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">getGroupIDs</span><span class="p">(</span><span class="n">groupNames</span><span class="o">=</span><span class="n">shareToGroupName</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemId</span> <span class="o">=</span> <span class="n">item</span><span class="p">)</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">shareItem</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group_ids</span><span class="p">),</span><span class="n">everyone</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">org</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> shared with </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">groups</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">groupId</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">groupId</span><span class="o">=</span><span class="n">groupId</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Group with ID {0} was not found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groupId</span><span class="p">))</span>
+
+                    <span class="k">elif</span> <span class="n">group</span><span class="o">.</span><span class="n">hasError</span><span class="p">()</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Group with ID {0} returned the following error {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groupId</span><span class="p">,</span><span class="n">group</span><span class="o">.</span><span class="n">error</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">itemJSON</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="s">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">itemJSON</span><span class="p">:</span>
+                                <span class="n">item</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemId</span> <span class="o">=</span> <span class="n">itemJSON</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+                                <span class="n">res</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">shareItem</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group_ids</span><span class="p">),</span><span class="n">everyone</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">org</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                                    <span class="k">print</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
+                                <span class="k">elif</span> <span class="s">&#39;notSharedWith&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                                    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> shared with </span><span class="si">%s</span><span class="s">, not Shared With </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> \
+                                          <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">,</span><span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s">&#39;notSharedWith&#39;</span><span class="p">])))</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> shared with </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
+                                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;shareItemsToGroup&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">group_ids</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">groupContent</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">userCommunity</span>
+            <span class="k">del</span> <span class="n">group_ids</span>
+
+            <span class="k">del</span> <span class="n">item</span>
+            <span class="k">del</span> <span class="n">res</span>
+            <span class="k">del</span> <span class="n">group</span>
+            <span class="k">del</span> <span class="n">groupContent</span>
+            <span class="k">del</span> <span class="n">result</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.getGroupContentItems"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContentItems">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContentItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">groupName</span><span class="p">):</span>
+
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">groupIds</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">groupId</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">groupContent</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">community</span>
+            <span class="n">groupIds</span> <span class="o">=</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">getGroupIDs</span><span class="p">(</span><span class="n">groupNames</span><span class="o">=</span><span class="n">groupName</span><span class="p">)</span>
+            <span class="c">#groupContent = admin.query(q=&quot;group:&quot; + group_ids , bbox=None, start=1, num=100, sortField=None,</span>
+                       <span class="c">#sortOrder=&quot;asc&quot;)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">groupIds</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">groupId</span> <span class="ow">in</span> <span class="n">groupIds</span><span class="p">:</span>
+                    <span class="n">groupContent</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">groupContent</span><span class="p">(</span><span class="n">groupId</span><span class="o">=</span><span class="n">groupId</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">groupContent</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="n">groupContent</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">groupContent</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]:</span>
+                            <span class="n">item</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemId</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+                            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">items</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;getGroupContent&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">groupIds</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">groupId</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">groupContent</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">userCommunity</span>
+            <span class="k">del</span> <span class="n">groupIds</span>
+            <span class="k">del</span> <span class="n">groupId</span>
+            <span class="k">del</span> <span class="n">groupContent</span>
+            <span class="k">del</span> <span class="n">result</span>
+            <span class="k">del</span> <span class="n">item</span>
+
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.getGroupContent"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContent">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">groupName</span><span class="p">,</span><span class="n">onlyInOrg</span><span class="p">,</span><span class="n">onlyInUser</span><span class="p">):</span>
+
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">groups</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">groupName</span>
+            <span class="k">if</span> <span class="n">onlyInOrg</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">+</span> <span class="s">&quot; orgid: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">admin</span><span class="o">.</span><span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">if</span> <span class="n">onlyInUser</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">+</span> <span class="s">&quot; owner: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">username</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;total&#39;</span> <span class="ow">in</span> <span class="n">results</span> <span class="ow">and</span> <span class="s">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;total&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;results&#39;</span><span class="p">]:</span>
+                        <span class="n">group</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">groupId</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+                        <span class="k">return</span> <span class="n">group</span><span class="o">.</span><span class="n">items</span>
+
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;getGroupContent&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">groups</span>
+            <span class="k">del</span> <span class="n">q</span>
+            <span class="k">del</span> <span class="n">results</span>
+            <span class="k">del</span> <span class="n">res</span>
+
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.getThumbnailForItem"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getThumbnailForItem">[docs]</a>    <span class="k">def</span> <span class="nf">getThumbnailForItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">itemId</span><span class="p">,</span><span class="n">fileName</span><span class="p">,</span><span class="n">filePath</span><span class="p">):</span>
+
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemId</span> <span class="o">=</span> <span class="n">itemId</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">saveThumbnail</span><span class="p">(</span><span class="n">fileName</span><span class="o">=</span><span class="n">fileName</span><span class="p">,</span><span class="n">filePath</span><span class="o">=</span><span class="n">filePath</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;getThumbnailForItem&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">item</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.createGroup"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.createGroup">[docs]</a>    <span class="k">def</span> <span class="nf">createGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">title</span><span class="p">,</span>
+                    <span class="n">tags</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">snippet</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">phone</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">access</span><span class="o">=</span><span class="s">&quot;org&quot;</span><span class="p">,</span> <span class="n">sortField</span><span class="o">=</span><span class="s">&quot;title&quot;</span><span class="p">,</span>
+                    <span class="n">sortOrder</span><span class="o">=</span><span class="s">&quot;asc&quot;</span><span class="p">,</span> <span class="n">isViewOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">isInvitationOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">community</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">groupExist</span> <span class="o">=</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">getGroupIDs</span><span class="p">(</span><span class="n">groupNames</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groupExist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Group </span><span class="si">%s</span><span class="s"> already exist&quot;</span> <span class="o">%</span> <span class="n">title</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">None</span>
+                <span class="k">return</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">createGroup</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+                            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                            <span class="n">snippet</span><span class="o">=</span><span class="n">snippet</span><span class="p">,</span>
+                            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+                            <span class="n">access</span><span class="o">=</span><span class="n">access</span><span class="p">,</span>
+                            <span class="n">sortField</span><span class="o">=</span><span class="n">sortField</span><span class="p">,</span>
+                            <span class="n">sortOrder</span><span class="o">=</span><span class="n">sortOrder</span><span class="p">,</span>
+                            <span class="n">isViewOnly</span><span class="o">=</span><span class="n">isViewOnly</span><span class="p">,</span>
+                            <span class="n">isInvitationOnly</span><span class="o">=</span><span class="n">isInvitationOnly</span><span class="p">,</span>
+                            <span class="n">thumbnail</span><span class="o">=</span><span class="n">thumbnail</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">None</span>
+
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;createGroup&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">userCommunity</span>
+
+
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+    <span class="c">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="orgtools.createRole"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.createRole">[docs]</a>    <span class="k">def</span> <span class="nf">createRole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">privileges</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">portal</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">setPrivResults</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">roleID</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">createResults</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">manageorg</span><span class="o">.</span><span class="n">Administration</span><span class="p">(</span><span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+            <span class="n">portal</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">roleID</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">findRoleID</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">roleID</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">createResults</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">createRole</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s">&#39;success&#39;</span> <span class="ow">in</span> <span class="n">createResults</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">createResults</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+
+                            <span class="n">setPrivResults</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">setPrivileges</span><span class="p">(</span><span class="n">createResults</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span><span class="n">privileges</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="s">&#39;success&#39;</span> <span class="ow">in</span> <span class="n">setPrivResults</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> role created&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="p">(</span><span class="n">setPrivResults</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">print</span> <span class="p">(</span><span class="n">createResults</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="n">createResults</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> role already exist&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">None</span>
+
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
+                        <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;createGroup&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                        <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                        <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                                        <span class="p">}</span>
+                                        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">portal</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">setPrivResults</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">roleID</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">createResults</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">del</span> <span class="n">admin</span>
+            <span class="k">del</span> <span class="n">portal</span>
+            <span class="k">del</span> <span class="n">setPrivResults</span>
+            <span class="k">del</span> <span class="n">roleID</span>
+            <span class="k">del</span> <span class="n">createResults</span>
+
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

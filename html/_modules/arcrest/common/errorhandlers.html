@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.common.errorhandlers &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for arcrest.common.errorhandlers</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">contains all error handlers for ArcREST</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="n">MSGS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">100</span> <span class="p">:</span> <span class="s">&quot;100: Invalid Inputs&quot;</span><span class="p">,</span>
+    <span class="mi">200</span> <span class="p">:</span> <span class="s">&quot;200: Error with the GET Operation&quot;</span><span class="p">,</span>
+    <span class="mi">201</span> <span class="p">:</span> <span class="s">&quot;201: Error with the POST operation&quot;</span><span class="p">,</span>
+    <span class="mi">202</span> <span class="p">:</span> <span class="s">&quot;202: Error with the MultiPart POST operation&quot;</span><span class="p">,</span>
+    <span class="mi">203</span> <span class="p">:</span> <span class="s">&quot;203: Error with the download operation&quot;</span><span class="p">,</span>
+    <span class="mi">400</span> <span class="p">:</span> <span class="s">&quot;Invalid Username/Password&quot;</span><span class="p">,</span>
+    <span class="mi">401</span> <span class="p">:</span> <span class="s">&quot;Invalid token. Check the username and password and try again.&quot;</span><span class="p">,</span>
+    <span class="mi">404</span> <span class="p">:</span> <span class="s">&quot;Invalid URL&quot;</span><span class="p">,</span>
+    <span class="o">-</span><span class="mi">99999</span> <span class="p">:</span> <span class="s">&quot;An unknown error has been raised.&quot;</span>
+
+<span class="p">}</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.errorhandlers.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        trace finds the line, the filename</span>
+<span class="sd">        and error message and returns it</span>
+<span class="sd">        to the user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">traceback</span>
+    <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">inspect</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">tbinfo</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c"># script name + line number</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">tbinfo</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c"># Get Python syntax error</span>
+    <span class="c">#</span>
+    <span class="n">synerror</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">__file__</span><span class="p">,</span> <span class="n">synerror</span></div>
+<span class="c">########################################################################</span>
+<div class="viewcode-block" id="ArcRESTError"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.errorhandlers.ArcRESTError">[docs]</a><span class="k">class</span> <span class="nc">ArcRESTError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;default type of error handler raised&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

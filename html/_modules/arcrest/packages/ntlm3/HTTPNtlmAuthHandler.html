@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.packages.ntlm3.HTTPNtlmAuthHandler &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for arcrest.packages.ntlm3.HTTPNtlmAuthHandler</h1><div class="highlight"><pre>
+<span class="c"># This library is free software: you can redistribute it and/or</span>
+<span class="c"># modify it under the terms of the GNU Lesser General Public</span>
+<span class="c"># License as published by the Free Software Foundation, either</span>
+<span class="c"># version 3 of the License, or (at your option) any later version.</span>
+
+<span class="c"># This library is distributed in the hope that it will be useful,</span>
+<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<span class="c"># Lesser General Public License for more details.</span>
+
+<span class="c"># You should have received a copy of the GNU Lesser General Public</span>
+<span class="c"># License along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt; or &lt;http://www.gnu.org/licenses/lgpl.txt&gt;.</span>
+<span class="kn">from</span> <span class="nn">..six.moves</span> <span class="kn">import</span> <span class="n">urllib</span>
+<span class="kn">from</span> <span class="nn">..six.moves.http_client</span> <span class="kn">import</span> <span class="n">HTTPConnection</span><span class="p">,</span> <span class="n">HTTPSConnection</span>
+
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ntlm</span>
+
+
+<div class="viewcode-block" id="AbstractNtlmAuthHandler"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler">[docs]</a><span class="k">class</span> <span class="nc">AbstractNtlmAuthHandler</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password_mgr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">debuglevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">password_mgr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">password_mgr</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">HTTPPasswordMgr</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span> <span class="o">=</span> <span class="n">password_mgr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span><span class="o">.</span><span class="n">add_password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debuglevel</span> <span class="o">=</span> <span class="n">debuglevel</span>
+
+<div class="viewcode-block" id="AbstractNtlmAuthHandler.set_http_debuglevel"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.set_http_debuglevel">[docs]</a>    <span class="k">def</span> <span class="nf">set_http_debuglevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debuglevel</span> <span class="o">=</span> <span class="n">level</span></div>
+
+<div class="viewcode-block" id="AbstractNtlmAuthHandler.http_error_authentication_required"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.http_error_authentication_required">[docs]</a>    <span class="k">def</span> <span class="nf">http_error_authentication_required</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth_header_field</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="n">auth_header_value</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">auth_header_field</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">auth_header_field</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">auth_header_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s">&#39;ntlm&#39;</span> <span class="ow">in</span> <span class="n">auth_header_value</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_using_http_NTLM_auth</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">auth_header_field</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractNtlmAuthHandler.retry_using_http_NTLM_auth"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.retry_using_http_NTLM_auth">[docs]</a>    <span class="k">def</span> <span class="nf">retry_using_http_NTLM_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">auth_header_field</span><span class="p">,</span> <span class="n">realm</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">pw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span><span class="o">.</span><span class="n">find_user_password</span><span class="p">(</span><span class="n">realm</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">get_full_url</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">pw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">user_parts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\\</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">UserName</span> <span class="o">=</span> <span class="n">user_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">DomainName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+                <span class="n">type1_flags</span> <span class="o">=</span> <span class="n">ntlm</span><span class="o">.</span><span class="n">NTLM_TYPE1_FLAGS</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ntlm</span><span class="o">.</span><span class="n">NTLM_NegotiateOemDomainSupplied</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">DomainName</span> <span class="o">=</span> <span class="n">user_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">UserName</span> <span class="o">=</span> <span class="n">user_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">type1_flags</span> <span class="o">=</span> <span class="n">ntlm</span><span class="o">.</span><span class="n">NTLM_TYPE1_FLAGS</span>
+                <span class="c"># ntlm secures a socket, so we must use the same socket for the complete handshake</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">unredirected_hdrs</span><span class="p">)</span>
+            <span class="n">auth</span> <span class="o">=</span> <span class="s">&#39;NTLM </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">ntlm</span><span class="o">.</span><span class="n">create_NTLM_NEGOTIATE_MESSAGE</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">type1_flags</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auth_header</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">auth</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+            <span class="n">headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">auth_header</span><span class="p">]</span> <span class="o">=</span> <span class="n">auth</span>
+
+            <span class="n">host</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">host</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">host</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">URLError</span><span class="p">(</span><span class="s">&#39;no host given&#39;</span><span class="p">)</span>
+
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">get_full_url</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;https://&#39;</span><span class="p">):</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">HTTPSConnection</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>  <span class="c"># will parse host:port</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="n">HTTPConnection</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>  <span class="c"># will parse host:port</span>
+
+            <span class="n">h</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_debuglevel</span><span class="p">)</span>
+
+            <span class="c"># we must keep the connection because NTLM authenticates the connection, not single requests</span>
+            <span class="n">headers</span><span class="p">[</span><span class="s">&quot;Connection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Keep-Alive&quot;</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+            <span class="c"># For some reason, six doesn&#39;t do this translation correctly</span>
+            <span class="c"># TODO rsanders low - find bug in six &amp; fix it</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">selector</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">selector</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">selector</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">get_selector</span><span class="p">()</span>
+
+            <span class="n">h</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">get_method</span><span class="p">(),</span> <span class="n">selector</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+            <span class="n">r</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
+
+            <span class="n">r</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+
+            <span class="n">r</span><span class="o">.</span><span class="n">_safe_read</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">&#39;content-length&#39;</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">&#39;set-cookie&#39;</span><span class="p">):</span>
+                <span class="c"># this is important for some web applications that store authentication-related info in cookies (it took a long time to figure out)</span>
+                <span class="n">headers</span><span class="p">[</span><span class="s">&#39;Cookie&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">&#39;set-cookie&#39;</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">fp</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># remove the reference to the socket, so that it can not be closed by the response object (we want to keep the socket open)</span>
+            <span class="n">auth_header_value</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">auth_header_field</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+            <span class="c"># some Exchange servers send two WWW-Authenticate headers, one with the NTLM challenge</span>
+            <span class="c"># and another with the &#39;Negotiate&#39; keyword - make sure we operate on the right one</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&#39;(NTLM [A-Za-z0-9+\-/=]+)&#39;</span><span class="p">,</span> <span class="n">auth_header_value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">auth_header_value</span><span class="p">,</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+            <span class="p">(</span><span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">NegotiateFlags</span><span class="p">)</span> <span class="o">=</span> <span class="n">ntlm</span><span class="o">.</span><span class="n">parse_NTLM_CHALLENGE_MESSAGE</span><span class="p">(</span><span class="n">auth_header_value</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span>
+            <span class="n">auth</span> <span class="o">=</span> <span class="s">&#39;NTLM </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">ntlm</span><span class="o">.</span><span class="n">create_NTLM_AUTHENTICATE_MESSAGE</span><span class="p">(</span><span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">UserName</span><span class="p">,</span> <span class="n">DomainName</span><span class="p">,</span> <span class="n">pw</span><span class="p">,</span>
+                                                                     <span class="n">NegotiateFlags</span><span class="p">)</span>
+            <span class="n">headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">auth_header</span><span class="p">]</span> <span class="o">=</span> <span class="n">auth</span>
+            <span class="n">headers</span><span class="p">[</span><span class="s">&quot;Connection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Close&quot;</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">h</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">get_method</span><span class="p">(),</span> <span class="n">selector</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+                <span class="c"># none of the configured handlers are triggered, for example redirect-responses are not handled!</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
+
+                <span class="k">def</span> <span class="nf">notimplemented</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+                <span class="n">response</span><span class="o">.</span><span class="n">readline</span> <span class="o">=</span> <span class="n">notimplemented</span>
+                <span class="n">infourl</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">addinfourl</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">get_full_url</span><span class="p">())</span>
+                <span class="n">infourl</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span>
+                <span class="n">infourl</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span>
+                <span class="k">return</span> <span class="n">infourl</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">urllib</span><span class="o">.</span><span class="n">URLError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span></div></div>
+
+
+<div class="viewcode-block" id="HTTPNtlmAuthHandler"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler">[docs]</a><span class="k">class</span> <span class="nc">HTTPNtlmAuthHandler</span><span class="p">(</span><span class="n">AbstractNtlmAuthHandler</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">BaseHandler</span><span class="p">):</span>
+    <span class="n">auth_header</span> <span class="o">=</span> <span class="s">&#39;Authorization&#39;</span>
+
+<div class="viewcode-block" id="HTTPNtlmAuthHandler.http_error_401"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler.http_error_401">[docs]</a>    <span class="k">def</span> <span class="nf">http_error_401</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_error_authentication_required</span><span class="p">(</span><span class="s">&#39;www-authenticate&#39;</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ProxyNtlmAuthHandler"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler">[docs]</a><span class="k">class</span> <span class="nc">ProxyNtlmAuthHandler</span><span class="p">(</span><span class="n">AbstractNtlmAuthHandler</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">BaseHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        CAUTION: this class has NOT been tested at all!!!</span>
+<span class="sd">        use at your own risk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">auth_header</span> <span class="o">=</span> <span class="s">&#39;Proxy-authorization&#39;</span>
+
+<div class="viewcode-block" id="ProxyNtlmAuthHandler.http_error_407"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler.http_error_407">[docs]</a>    <span class="k">def</span> <span class="nf">http_error_407</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_error_authentication_required</span><span class="p">(</span><span class="s">&#39;proxy-authenticate&#39;</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
