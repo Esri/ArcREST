@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.common.servicedef &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for arcrest.common.servicedef</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">..packages</span> <span class="kn">import</span> <span class="n">six</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">xml.etree</span> <span class="kn">import</span> <span class="n">ElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">arcpy</span>
+        <span class="kn">from</span> <span class="nn">arcpy</span> <span class="kn">import</span> <span class="n">mapping</span>
+        <span class="kn">from</span> <span class="nn">arcpy</span> <span class="kn">import</span> <span class="n">env</span>
+        <span class="n">arcpyFound</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">arcpyFound</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c">########################################################################</span>
+<div class="viewcode-block" id="MXDtoFeatureServiceDef"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.servicedef.MXDtoFeatureServiceDef">[docs]</a>    <span class="k">def</span> <span class="nf">MXDtoFeatureServiceDef</span><span class="p">(</span> <span class="n">mxd_path</span><span class="p">,</span>
+                                <span class="n">service_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">tags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">capabilities</span> <span class="o">=</span><span class="s">&#39;Query,Create,Update,Delete,Uploads,Editing,Sync&#39;</span><span class="p">,</span>
+                                <span class="n">maxRecordCount</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                <span class="n">server_type</span><span class="o">=</span><span class="s">&#39;MY_HOSTED_SERVICES&#39;</span><span class="p">,</span>
+                                <span class="n">url</span><span class="o">=</span><span class="s">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            converts an MXD to a service defenition</span>
+<span class="sd">            Inputs:</span>
+<span class="sd">                mxd_path - Path to the ArcMap Map Document(MXD)</span>
+<span class="sd">                service_name - Name of the Feature Service</span>
+<span class="sd">                tags - Tags for the service, if none, the tags from the MXD are used</span>
+<span class="sd">                description - Summary for the Feature Service, if none, info from the MXD is used</span>
+<span class="sd">                folder_name - Folder in the Data store</span>
+<span class="sd">                capabilities - A Comma delimited list of feature service capabolities &#39;Query,Create,Update,Delete,Uploads,Editing,Sync&#39;</span>
+<span class="sd">                maxRecordCount - The max returned record count for the feature service</span>
+<span class="sd">                server_type - The type of connection or publishing server</span>
+<span class="sd">                      Values: ARCGIS_SERVER | FROM_CONNECTION_FILE | SPATIAL_DATA_SERVER | MY_HOSTED_SERVICES</span>
+<span class="sd">            Output:</span>
+<span class="sd">                Service Definition File - *.sd</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">mxd_path</span><span class="p">):</span>
+            <span class="n">sciptPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+            <span class="n">mxd_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sciptPath</span><span class="p">,</span><span class="n">mxd_path</span><span class="p">)</span>
+
+        <span class="n">mxd</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">MapDocument</span><span class="p">(</span><span class="n">mxd_path</span><span class="p">)</span>
+        <span class="n">sddraftFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;draft&quot;</span>
+        <span class="n">sdFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;sd&quot;</span>
+        <span class="n">sddraft</span> <span class="o">=</span> <span class="n">sddraftFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">service_name</span> <span class="o">+</span> <span class="s">&quot;.sddraft&quot;</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.sd&quot;</span> <span class="o">%</span> <span class="n">service_name</span>
+        <span class="n">mxd</span> <span class="o">=</span> <span class="n">_prep_mxd</span><span class="p">(</span><span class="n">mxd</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">service_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">service_name</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sddraftFolder</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sddraftFolder</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">sddraftFolder</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sddraftFolder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sddraft</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
+
+        <span class="n">res</span><span class="p">[</span><span class="s">&#39;service_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_name</span>
+        <span class="n">res</span><span class="p">[</span><span class="s">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="n">res</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">analysis</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">CreateMapSDDraft</span><span class="p">(</span><span class="n">map_document</span><span class="o">=</span><span class="n">mxd</span><span class="p">,</span>
+                                           <span class="n">out_sddraft</span><span class="o">=</span><span class="n">sddraft</span><span class="p">,</span>
+                                           <span class="n">service_name</span><span class="o">=</span><span class="n">service_name</span><span class="p">,</span>
+                                           <span class="n">server_type</span><span class="o">=</span><span class="n">server_type</span><span class="p">,</span>
+                                           <span class="n">connection_file_path</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                           <span class="n">copy_data_to_server</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                           <span class="n">folder_name</span><span class="o">=</span><span class="n">folder_name</span><span class="p">,</span>
+                                           <span class="n">summary</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                                           <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+
+        <span class="n">sddraft</span> <span class="o">=</span> <span class="n">_modify_sddraft</span><span class="p">(</span><span class="n">sddraft</span><span class="o">=</span><span class="n">sddraft</span><span class="p">,</span>
+                                  <span class="n">capabilities</span><span class="o">=</span><span class="n">capabilities</span><span class="p">,</span>
+                                  <span class="n">maxRecordCount</span><span class="o">=</span><span class="n">maxRecordCount</span><span class="p">,</span>
+                                  <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">analysis</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">AnalyzeForSD</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">):</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">analysis</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="c"># Stage the service</span>
+            <span class="n">arcpy</span><span class="o">.</span><span class="n">StageService_server</span><span class="p">(</span><span class="n">sddraft</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s">&#39;servicedef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sd</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># If the sddraft analysis contained errors, display them and quit.</span>
+            <span class="k">print</span> <span class="p">(</span><span class="n">analysis</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="bp">None</span></div>
+
+
+
+    <span class="k">def</span> <span class="nf">_modify_sddraft</span><span class="p">(</span><span class="n">sddraft</span><span class="p">,</span>
+                        <span class="n">capabilities</span><span class="p">,</span>
+                        <span class="n">maxRecordCount</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">,</span>
+                        <span class="n">url</span><span class="o">=</span><span class="s">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; modifies the sddraft for agol publishing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
+
+        <span class="n">root_elem</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">root_elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s">&quot;SVCManifest&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Root tag is incorrect. Is {} a .sddraft file?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sddraft</span><span class="p">))</span>
+
+        <span class="c"># The following 6 code pieces modify the SDDraft from a new MapService</span>
+        <span class="c"># with caching capabilities to a FeatureService with Query,Create,</span>
+        <span class="c"># Update,Delete,Uploads,Editing capabilities as well as the ability to set the max</span>
+        <span class="c"># records on the service.</span>
+        <span class="c"># The first two lines (commented out) are no longer necessary as the FS</span>
+        <span class="c"># is now being deleted and re-published, not truly overwritten as is the</span>
+        <span class="c"># case when publishing from Desktop.</span>
+        <span class="c"># The last three pieces change Map to Feature Service, disable caching</span>
+        <span class="c"># and set appropriate capabilities. You can customize the capabilities by</span>
+        <span class="c"># removing items.</span>
+        <span class="c"># Note you cannot disable Query from a Feature Service.</span>
+
+        <span class="c"># Change service type from map service to feature service</span>
+        <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Type&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&quot;esriServiceDefinitionType_New&quot;</span><span class="p">:</span>
+                <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&#39;esriServiceDefinitionType_Replacement&#39;</span>
+
+        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/TypeName&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&quot;MapServer&quot;</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;FeatureServer&quot;</span>
+
+        <span class="c">#Turn off caching</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/&quot;</span> <span class="o">+</span>
+                                <span class="s">&quot;ConfigurationProperties/PropertyArray/&quot;</span> <span class="o">+</span>
+                                <span class="s">&quot;PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;isCached&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;false&quot;</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;maxRecordCount&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">maxRecordCount</span>
+
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/Extensions/SVCExtension&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;TypeName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;KmlServer&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Enabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;false&quot;</span>
+
+        <span class="c"># Turn on feature access capabilities</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;WebCapabilities&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">capabilities</span>
+
+        <span class="c"># Update url for portal</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./StagingSettings/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;ServerConnectionString&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
+        <span class="c"># Update url for portal</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./itemInfo/url&quot;</span><span class="p">):</span>
+            <span class="n">prop</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
+        <span class="c"># Add the namespaces which get stripped, back into the .SD</span>
+        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&quot;xmlns:typens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;http://www.esri.com/schemas/ArcGIS/10.2&#39;</span>
+        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&quot;xmlns:xs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;http://www.w3.org/2001/XMLSchema&#39;</span>
+        <span class="n">newSDdraft</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;draft_mod.sddraft&quot;</span>
+        <span class="c"># Write the new draft to disk</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">newSDdraft</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">doc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">doc</span>
+        <span class="k">return</span> <span class="n">newSDdraft</span>
+
+    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_prep_mxd</span><span class="p">(</span><span class="n">mxd</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="sd">&quot;&quot;&quot; ensures the requires mxd properties are set to something &quot;&quot;&quot;</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">changed</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">mxd</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

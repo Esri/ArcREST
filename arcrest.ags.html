@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.ags package &mdash; ArcREST 3.0.0 documentation</title>
+    <title>arcrest.ags package &mdash; src  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.0.0',
+        VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="up" title="arcrest package" href="arcrest.html" />
+    <link rel="next" title="arcrest.cmp package" href="arcrest.cmp.html" />
+    <link rel="prev" title="arcrest.agol.helperservices package" href="arcrest.agol.helperservices.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -36,17 +39,1831 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-arcrest.ags">
-<span id="arcrest-ags-package"></span><h1>arcrest.ags package<a class="headerlink" href="#module-arcrest.ags" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="arcrest-ags-package">
+<h1>arcrest.ags package<a class="headerlink" href="#arcrest-ags-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.ags.featureservice.html">arcrest.ags.featureservice module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.ags.layer.html">arcrest.ags.layer module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.ags.mapservice.html">arcrest.ags.mapservice module</a></li>
-</ul>
 </div>
+<div class="section" id="module-arcrest.ags.featureservice">
+<span id="arcrest-ags-featureservice-module"></span><h2>arcrest.ags.featureservice module<a class="headerlink" href="#module-arcrest.ags.featureservice" title="Permalink to this headline">¶</a></h2>
+<p>Contains information regarding an ArcGIS Server Feature Server</p>
+<dl class="class">
+<dt id="arcrest.ags.featureservice.FeatureService">
+<em class="property">class </em><code class="descclassname">arcrest.ags.featureservice.</code><code class="descname">FeatureService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/featureservice.html#FeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>contains information about a feature service</p>
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.administration">
+<code class="descname">administration</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.administration" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service admin object (if accessible)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.allowGeometryUpdates">
+<code class="descname">allowGeometryUpdates</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.allowGeometryUpdates" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if the data allows geometry updates</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.documentInfo">
+<code class="descname">documentInfo</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.documentInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.featureservice.FeatureService.downloadMetadataFile">
+<code class="descname">downloadMetadataFile</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/featureservice.html#FeatureService.downloadMetadataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.downloadMetadataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the metadata file to a given path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.featureservice.FeatureService.downloadThumbnail">
+<code class="descname">downloadThumbnail</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/featureservice.html#FeatureService.downloadThumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.downloadThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the items&#8217;s thumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.editorTrackingInfo">
+<code class="descname">editorTrackingInfo</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.editorTrackingInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.enableZDefaults">
+<code class="descname">enableZDefaults</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.enableZDefaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.hasStaticData">
+<code class="descname">hasStaticData</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.hasStaticData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.hasVersionedData">
+<code class="descname">hasVersionedData</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.hasVersionedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean for versioned data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the initial extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.itemInfo">
+<code class="descname">itemInfo</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.itemInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the item&#8217;s info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the layers for the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max record count</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.featureservice.FeatureService.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>layerDefsFilter=None</em>, <em>geometryFilter=None</em>, <em>timeFilter=None</em>, <em>returnGeometry=True</em>, <em>returnIdsOnly=False</em>, <em>returnCountOnly=False</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>outSR=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/featureservice.html#FeatureService.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Query operation is performed on a feature service resource</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the serviceDescription of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatial reference</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.supportsDisconnectedEditing">
+<code class="descname">supportsDisconnectedEditing</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.supportsDisconnectedEditing" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean is disconnecting editted supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.syncCapabilities">
+<code class="descname">syncCapabilities</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.syncCapabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>type of sync that can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.syncEnabled">
+<code class="descname">syncEnabled</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.syncEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if sync of data can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists the tables on the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the measurement unit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.featureservice.FeatureService.zDefault">
+<code class="descname">zDefault</code><a class="headerlink" href="#arcrest.ags.featureservice.FeatureService.zDefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.ags.layer">
+<span id="arcrest-ags-layer-module"></span><h2>arcrest.ags.layer module<a class="headerlink" href="#module-arcrest.ags.layer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.ags.layer.DynamicDataLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">DynamicDataLayer</code><span class="sig-paren">(</span><em>dataSource</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#DynamicDataLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.DynamicDataLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DynamicData</span></code></p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicDataLayer.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.DynamicDataLayer.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the value as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicDataLayer.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.DynamicDataLayer.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicDataLayer.dataSource">
+<code class="descname">dataSource</code><a class="headerlink" href="#arcrest.ags.layer.DynamicDataLayer.dataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicDataLayer.fields">
+<code class="descname">fields</code><a class="headerlink" href="#arcrest.ags.layer.DynamicDataLayer.fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the fields</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.DynamicMapLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">DynamicMapLayer</code><span class="sig-paren">(</span><em>mapLayerId</em>, <em>gdbVersion=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#DynamicMapLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.DynamicMapLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DynamicData</span></code></p>
+<p>creates a dynamic map layer object
+A dynamic map layer refers to a layer in the current map service.
+If supported, use gdbVersion to specify an alternate geodatabase
+version.</p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicMapLayer.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.DynamicMapLayer.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the object to a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.DynamicMapLayer.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.DynamicMapLayer.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts the dynamic object to a string</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.FeatureLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">FeatureLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>This contains information about a feature service&#8217;s layer.</p>
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.addAttachments">
+<code class="descname">addAttachments</code><span class="sig-paren">(</span><em>featureId</em>, <em>attachment</em>, <em>gdbVersion=None</em>, <em>uploadId=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.addAttachments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.addAttachments" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operation adds an attachment to the associated feature (POST
+only). The addAttachment operation is performed on a feature
+service feature resource.
+Since this request uploads a file, it must be a multipart request
+pursuant to IETF RFC1867.
+This operation is available only if the layer has advertised that
+it has attachments. A layer has attachments if its hasAttachments
+property is true.
+See the Limiting upload file size and file types section under
+Uploads to learn more about default file size and file type
+limitations imposed on attachments.
+The result of this operation is an array of edit result objects.
+Each edit result indicates whether or not the edit was successful.
+If successful, the objectId of the result is the ID of the new
+attachment. If unsuccessful, it also includes an error code and
+error description.
+You can provide arguments to the addAttachment operation as defined
+in the following parameters table:</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>attachment - The file to be uploaded as a new feature</dt>
+<dd>attachment. The content type, size, and name of the attachment
+will be derived from the uploaded file.</dd>
+<dt>gdbVersion - Geodatabase version to apply the edits. This</dt>
+<dd>parameter applies only if the isDataVersioned property of the
+layer is true. If the gdbVersion parameter is not specified,
+edits are made to the published map&#8217;s version.</dd>
+<dt>uploadId - This option was added to the July 2014 of ArcGIS</dt>
+<dd>Online. It is not available with ArcGIS Server. The ID of the
+attachment that has already been uploaded to the server. This
+parameter only applies if the supportsAttachmentsByUploadId
+property of the layer is true.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.addFeature">
+<code class="descname">addFeature</code><span class="sig-paren">(</span><em>features</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.addFeature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.addFeature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a single feature to the service
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>feature - list of common.Feature object or a single</dt>
+<dd>common.Feature Object</dd>
+</dl>
+<p>gdbVersion - Geodatabase version to apply the edits
+rollbackOnFailure - Optional parameter to specify if the</p>
+<blockquote>
+<div>edits should be applied only if all
+submitted edits succeed. If false, the
+server will apply the edits that succeed
+even if some of the submitted edits fail.
+If true, the server will apply the edits
+only if all edits succeed. The default
+value is true.</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>JSON message as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.addFeatures">
+<code class="descname">addFeatures</code><span class="sig-paren">(</span><em>fc</em>, <em>attachmentTable=None</em>, <em>nameField='ATT_NAME'</em>, <em>blobField='DATA'</em>, <em>contentTypeField='CONTENT_TYPE'</em>, <em>rel_object_field='REL_OBJECTID'</em>, <em>lowerCaseFieldNames=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.addFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.addFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a feature to the feature service
+Inputs:</p>
+<blockquote>
+<div>fc - string - path to feature class data to add.
+attachmentTable - string - (optional) path to attachment table
+nameField - string - (optional) name of file field in attachment table
+blobField - string - (optional) name field containing blob data
+contentTypeField - string - (optional) name of field containing content type
+rel_object_field - string - (optional) name of field with OID of feature class</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>boolean, add results message as list of dictionaries</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.advancedQueryCapabilities">
+<code class="descname">advancedQueryCapabilities</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.advancedQueryCapabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the advancedQueryCapabilities property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.allowGeometryUpdates">
+<code class="descname">allowGeometryUpdates</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.allowGeometryUpdates" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the boolean value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.applyEdits">
+<code class="descname">applyEdits</code><span class="sig-paren">(</span><em>addFeatures=[]</em>, <em>updateFeatures=[]</em>, <em>deleteFeatures=None</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.applyEdits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.applyEdits" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operation adds, updates, and deletes features to the
+associated feature layer or table in a single call.
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>addFeatures - The array of features to be added.  These</dt>
+<dd>features should be common.general.Feature
+objects, or they should be a
+common.general.FeatureSet object.</dd>
+<dt>updateFeatures - The array of features to be updateded.</dt>
+<dd>These features should be common.Feature
+objects</dd>
+</dl>
+<p>deleteFeatures - string of OIDs to remove from service
+gdbVersion - Geodatabase version to apply the edits.
+rollbackOnFailure - Optional parameter to specify if the</p>
+<blockquote>
+<div>edits should be applied only if all
+submitted edits succeed. If false, the
+server will apply the edits that succeed
+even if some of the submitted edits fail.
+If true, the server will apply the edits
+only if all edits succeed. The default
+value is true.</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>dictionary of messages</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>where</em>, <em>calcExpression</em>, <em>sqlFormat='standard'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calculate operation is performed on a feature service layer
+resource. It updates the values of one or more fields in an
+existing feature service layer based on SQL expressions or scalar
+values. The calculate operation can only be used if the
+supportsCalculate property of the layer is true.
+Neither the Shape field nor system fields can be updated using
+calculate. System fields include ObjectId and GlobalId.
+See Calculate a field for more information on supported expressions</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>where - A where clause can be used to limit the updated records.</dt>
+<dd>Any legal SQL where clause operating on the fields in
+the layer is allowed.</dd>
+<dt>calcExpression - The array of field/value info objects that</dt>
+<dd><p class="first">contain the field or fields to update and their
+scalar values or SQL expression.  Allowed types
+are dictionary and list.  List must be a list
+of dictionary objects.
+Calculation Format is as follows:</p>
+<blockquote class="last">
+<div>{&#8220;field&#8221; : &#8220;&lt;field name&gt;&#8221;,
+&#8220;value&#8221; : &#8220;&lt;value&gt;&#8221;}</div></blockquote>
+</dd>
+<dt>sqlFormat - The SQL format for the calcExpression. It can be</dt>
+<dd>either standard SQL92 (standard) or native SQL
+(native). The default is standard.
+Values: standard, native</dd>
+</dl>
+</dd>
+<dt>Output:</dt>
+<dd>JSON as string</dd>
+</dl>
+<p>Usage:
+&gt;&gt;&gt;sh = arcrest.AGOLTokenSecurityHandler(&#8220;user&#8221;, &#8220;pw&#8221;)
+&gt;&gt;&gt;fl = arcrest.agol.FeatureLayer(url=&#8221;someurl&#8221;,</p>
+<blockquote>
+<div>securityHandler=sh, initialize=True)</div></blockquote>
+<dl class="docutils">
+<dt>&gt;&gt;&gt;print fl.calculate(where=&#8221;OBJECTID &lt; 2&#8221;,</dt>
+<dd><dl class="first last docutils">
+<dt>calcExpression={&#8220;field&#8221;: &#8220;ZONE&#8221;,</dt>
+<dd>&#8220;value&#8221; : &#8220;R1&#8221;})</dd>
+</dl>
+</dd>
+</dl>
+<p>{&#8216;updatedFeatureCount&#8217;: 1, &#8216;success&#8217;: True}</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.canModifyLayer">
+<code class="descname">canModifyLayer</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.canModifyLayer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.canScaleSymbols">
+<code class="descname">canScaleSymbols</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.canScaleSymbols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.defaultVisibility">
+<code class="descname">defaultVisibility</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.defaultVisibility" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.definitionExpression">
+<code class="descname">definitionExpression</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.definitionExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the definitionExpression</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.deleteFeatures">
+<code class="descname">deleteFeatures</code><span class="sig-paren">(</span><em>objectIds=''</em>, <em>where=''</em>, <em>geometryFilter=None</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.deleteFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.deleteFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes 1:n features based on a sql statement
+Input:</p>
+<blockquote>
+<div><p>objectIds - The object IDs of this layer/table to be deleted
+where - A where clause for the query filter. Any legal SQL</p>
+<blockquote>
+<div>where clause operating on the fields in the layer is
+allowed. Features conforming to the specified where
+clause will be deleted.</div></blockquote>
+<dl class="docutils">
+<dt>geometryFilter - a filters.GeometryFilter object to limit</dt>
+<dd>deletion by a geometry.</dd>
+<dt>gdbVersion - Geodatabase version to apply the edits. This</dt>
+<dd>parameter applies only if the isDataVersioned
+property of the layer is true</dd>
+<dt>rollbackOnFailure - parameter to specify if the edits should</dt>
+<dd>be applied only if all submitted edits
+succeed. If false, the server will apply
+the edits that succeed even if some of
+the submitted edits fail. If true, the
+server will apply the edits only if all
+edits succeed. The default value is true.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>JSON response as dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the layer&#8217;s description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.displayField">
+<code class="descname">displayField</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.displayField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.drawingInfo">
+<code class="descname">drawingInfo</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.drawingInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.editFieldsInfo">
+<code class="descname">editFieldsInfo</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.editFieldsInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the edit field information</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.effectiveMaxScale">
+<code class="descname">effectiveMaxScale</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.effectiveMaxScale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.effectiveMinScale">
+<code class="descname">effectiveMinScale</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.effectiveMinScale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.extent">
+<code class="descname">extent</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.extent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.fields">
+<code class="descname">fields</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.geometryType">
+<code class="descname">geometryType</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.geometryType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the geometry type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.globalIdField">
+<code class="descname">globalIdField</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.globalIdField" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the global id field</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.hasAttachments">
+<code class="descname">hasAttachments</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.hasAttachments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.hasLabels">
+<code class="descname">hasLabels</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.hasLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.hasM">
+<code class="descname">hasM</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.hasM" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns if it has a m value or not</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.hasZ">
+<code class="descname">hasZ</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.hasZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns if it has a Z value or not</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.htmlPopupType">
+<code class="descname">htmlPopupType</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.htmlPopupType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.id">
+<code class="descname">id</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.indexes">
+<code class="descname">indexes</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the indexes for the Featurelayer object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.isDataVersioned">
+<code class="descname">isDataVersioned</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.isDataVersioned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets the max scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>minimum scale layer will show</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.name">
+<code class="descname">name</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.objectIdField">
+<code class="descname">objectIdField</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.objectIdField" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object id field</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.ownershipBasedAccessControlForFeatures">
+<code class="descname">ownershipBasedAccessControlForFeatures</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.ownershipBasedAccessControlForFeatures" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.parentLayer">
+<code class="descname">parentLayer</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.parentLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns information about the parent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>where='1=1'</em>, <em>out_fields='*'</em>, <em>timeFilter=None</em>, <em>geometryFilter=None</em>, <em>returnGeometry=True</em>, <em>returnIDsOnly=False</em>, <em>returnCountOnly=False</em>, <em>returnFeatureClass=False</em>, <em>returnDistinctValues=False</em>, <em>returnExtentOnly=False</em>, <em>maxAllowableOffset=None</em>, <em>geometryPrecision=None</em>, <em>outSR=None</em>, <em>groupByFieldsForStatistics=None</em>, <em>statisticFilter=None</em>, <em>out_fc=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>queries a feature service based on a sql statement
+Inputs:</p>
+<blockquote>
+<div><p>where - the selection sql statement
+out_fields - the attribute fields to return
+timeFilter - a TimeFilter object where either the start time</p>
+<blockquote>
+<div>or start and end time are defined to limit the
+search results for a given time.  The values in
+the timeFilter should be as UTC timestampes in
+milliseconds.  No checking occurs to see if they
+are in the right format.</div></blockquote>
+<dl class="docutils">
+<dt>geometryFilter - a GeometryFilter object to parse down a given</dt>
+<dd>query by another spatial dataset.</dd>
+<dt>returnGeometry - true means a geometry will be returned,</dt>
+<dd>else just the attributes</dd>
+<dt>returnIDsOnly - false is default.  True means only OBJECTIDs</dt>
+<dd>will be returned</dd>
+<dt>returnCountOnly - if True, then an integer is returned only</dt>
+<dd>based on the sql statement</dd>
+<dt>returnFeatureClass - Default False. If true, query will be</dt>
+<dd>returned as feature class</dd>
+<dt>out_fc - only valid if returnFeatureClass is set to True.</dt>
+<dd>Output location of query.</dd>
+<dt>groupByFieldsForStatistics - One or more field names on</dt>
+<dd>which the values need to be grouped for
+calculating the statistics.</dd>
+</dl>
+<p>statisticFilter - object that performs statistic queries
+kwargs - optional parameters that can be passed to the Query</p>
+<blockquote>
+<div>function.  This will allow users to pass additional
+parameters not explicitly implemented on the function. A
+complete list of functions available is documented on the
+Query REST API.</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>A list of Feature Objects (default) or a path to the output featureclass if
+returnFeatureClass is set to True.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.relationships">
+<code class="descname">relationships</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.relationships" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.subLayers">
+<code class="descname">subLayers</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.subLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns sublayers for layer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsAdvancedQueries">
+<code class="descname">supportsAdvancedQueries</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsAdvancedQueries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsRollbackOnFailureParameter">
+<code class="descname">supportsRollbackOnFailureParameter</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsRollbackOnFailureParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the value for the supportsRollbackOnFailureParameter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsStatistics">
+<code class="descname">supportsStatistics</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsStatistics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.syncCanReturnChanges">
+<code class="descname">syncCanReturnChanges</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.syncCanReturnChanges" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the sync can return changes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.templates">
+<code class="descname">templates</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the templates</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.timeInfo">
+<code class="descname">timeInfo</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.timeInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.type">
+<code class="descname">type</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.typeIdField">
+<code class="descname">typeIdField</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.typeIdField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.types">
+<code class="descname">types</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.updateFeature">
+<code class="descname">updateFeature</code><span class="sig-paren">(</span><em>features</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.updateFeature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.updateFeature" title="Permalink to this definition">¶</a></dt>
+<dd><p>updates an existing feature in a feature service layer
+Input:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>feature - feature object(s) to get updated.  A single feature</dt>
+<dd>or a list of feature objects can be passed</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>dictionary of result messages</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.useStandardizedQueries">
+<code class="descname">useStandardizedQueries</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.useStandardizedQueries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.validateSQL">
+<code class="descname">validateSQL</code><span class="sig-paren">(</span><em>sql</em>, <em>sqlType='where'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.validateSQL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.validateSQL" title="Permalink to this definition">¶</a></dt>
+<dd><p>The validateSQL operation validates an SQL-92 expression or WHERE
+clause.
+The validateSQL operation ensures that an SQL-92 expression, such
+as one written by a user through a user interface, is correct
+before performing another operation that uses the expression. For
+example, validateSQL can be used to validate information that is
+subsequently passed in as part of the where parameter of the
+calculate operation.
+validateSQL also prevents SQL injection. In addition, all table and
+field names used in the SQL expression or WHERE clause are
+validated to ensure they are valid tables and fields.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">sql - The SQL expression or WHERE clause to validate.
+sqlType - Three SQL types are supported in validateSQL:</p>
+<blockquote class="last">
+<div>where (default) - Represents the custom WHERE clause the user
+can compose when querying a layer or using calculate.
+expression - Represents an SQL-92 expression. Currently,
+expression is used as a default value expression when adding a
+new field or using the calculate API.
+statement - Represents the full SQL-92 statement that can be
+passed directly to the database. No current ArcGIS REST API
+resource or operation supports using the full SQL-92 SELECT
+statement directly. It has been added to the validateSQL for
+completeness.
+Values: where | expression | statement</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.GroupLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">GroupLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#GroupLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.GroupLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><code class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></code></a></p>
+<p>represents a group layer</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.JoinTableDataSource">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">JoinTableDataSource</code><span class="sig-paren">(</span><em>leftTableSource</em>, <em>rightTableSource</em>, <em>leftTableKey</em>, <em>rightTableKey</em>, <em>joinType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#JoinTableDataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.JoinTableDataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DataSource</span></code></p>
+<p>joinTable data source is the result of a join operation. Nested
+joins are supported. To use nested joins, set either
+leftTableSource or rightTableSource to be a joinTable.</p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.JoinTableDataSource.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.JoinTableDataSource.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.JoinTableDataSource.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.JoinTableDataSource.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object as JSON string</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.JoinTableDataSource.datatype">
+<code class="descname">datatype</code><a class="headerlink" href="#arcrest.ags.layer.JoinTableDataSource.datatype" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.JoinTableDataSource.joinTypes">
+<code class="descname">joinTypes</code><em class="property"> = ['esriLeftOuterJoin', 'esriLeftInnerJoin']</em><a class="headerlink" href="#arcrest.ags.layer.JoinTableDataSource.joinTypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.QueryTableDataSource">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">QueryTableDataSource</code><span class="sig-paren">(</span><em>workspaceId</em>, <em>query</em>, <em>oidFields</em>, <em>wkid</em>, <em>geometryType=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#QueryTableDataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DataSource</span></code></p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.QueryTableDataSource.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.QueryTableDataSource.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.QueryTableDataSource.datatype">
+<code class="descname">datatype</code><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource.datatype" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.QueryTableDataSource.geometryType">
+<code class="descname">geometryType</code><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource.geometryType" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the geometry type of the query table</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.QueryTableDataSource.workspaceId">
+<code class="descname">workspaceId</code><a class="headerlink" href="#arcrest.ags.layer.QueryTableDataSource.workspaceId" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the workspace id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.RasterDataSource">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">RasterDataSource</code><span class="sig-paren">(</span><em>workspaceId</em>, <em>dataSourceName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#RasterDataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DataSource</span></code></p>
+<p>Raster data source is a file-based raster that resides in a
+registered raster workspace.</p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.RasterDataSource.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.RasterDataSource.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.RasterDataSource.dataSourceName">
+<code class="descname">dataSourceName</code><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource.dataSourceName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the dataSourceName</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.RasterDataSource.datatype">
+<code class="descname">datatype</code><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource.datatype" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.RasterDataSource.workspaceId">
+<code class="descname">workspaceId</code><a class="headerlink" href="#arcrest.ags.layer.RasterDataSource.workspaceId" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the workspace id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.RasterLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">RasterLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#RasterLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.RasterLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><code class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></code></a></p>
+<p>Raster Layer is exactly like FeatureLayer object</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.TableDataSource">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">TableDataSource</code><span class="sig-paren">(</span><em>workspaceId</em>, <em>dataSourceName</em>, <em>gdbVersion=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#TableDataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.TableDataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.DataSource</span></code></p>
+<p>Table data source is a table, feature class, or raster that
+resides in a registered workspace (either a folder or geodatabase).
+In the case of a geodatabase, if versioned, use version to switch
+to an alternate geodatabase version. If version is empty or
+missing, the registered geodatabase version will be used.</p>
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.asJSON">
+<code class="descname">asJSON</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.asJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the data source as JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.dataSourceName">
+<code class="descname">dataSourceName</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.dataSourceName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the dataSourceName</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.datatype">
+<code class="descname">datatype</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.datatype" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.gdbVersion">
+<code class="descname">gdbVersion</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.gdbVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the gdbVersion</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.TableDataSource.workspaceId">
+<code class="descname">workspaceId</code><a class="headerlink" href="#arcrest.ags.layer.TableDataSource.workspaceId" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the workspace id</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.TableLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">TableLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#TableLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.TableLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><code class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></code></a></p>
+<p>Table object is exactly like FeatureLayer object</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.ags.mapservice">
+<span id="arcrest-ags-mapservice-module"></span><h2>arcrest.ags.mapservice module<a class="headerlink" href="#module-arcrest.ags.mapservice" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.ags.mapservice.MapService">
+<em class="property">class </em><code class="descclassname">arcrest.ags.mapservice.</code><code class="descname">MapService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>contains information about a map service</p>
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.allLayers">
+<code class="descname">allLayers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.allLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all layers for the service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service&#8217;s capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.documentInfo">
+<code class="descname">documentInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.documentInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the document information as a dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.downloadMetadataFile">
+<code class="descname">downloadMetadataFile</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.downloadMetadataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.downloadMetadataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the metadata file to a given path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.downloadThumbnail">
+<code class="descname">downloadThumbnail</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.downloadThumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.downloadThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the items&#8217;s thumbnail</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.estimateExportTilesSize">
+<code class="descname">estimateExportTilesSize</code><span class="sig-paren">(</span><em>exportBy</em>, <em>levels</em>, <em>tilePackage=False</em>, <em>exportExtent='DEFAULTEXTENT'</em>, <em>areaOfInterest=None</em>, <em>async=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.estimateExportTilesSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.estimateExportTilesSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>The estimateExportTilesSize operation is an asynchronous task that
+allows estimation of the size of the tile package or the cache data
+set that you download using the Export Tiles operation. This
+operation can also be used to estimate the tile count in a tile
+package and determine if it will exceced the maxExportTileCount
+limit set by the administrator of the service. The result of this
+operation is Map Service Job. This job response contains reference
+to Map Service Result resource that returns the total size of the
+cache to be exported (in bytes) and the number of tiles that will
+be exported.</p>
+<p>Inputs:</p>
+<dl class="docutils">
+<dt>tilePackage - Allows estimating the size for either a tile package</dt>
+<dd><p class="first">or a cache raster data set. Specify the value true for tile
+packages format and false for Cache Raster data set. The default
+value is False</p>
+<blockquote class="last">
+<div>Values: True | False</div></blockquote>
+</dd>
+<dt>exportExtent - The extent (bounding box) of the tile package or the</dt>
+<dd><p class="first">cache dataset to be exported. If extent does not include a spatial
+reference, the extent values are assumed to be in the spatial
+reference of the map. The default value is full extent of the
+tiled map service.</p>
+<blockquote class="last">
+<div>Syntax: &lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+Example 1: -104,35.6,-94.32,41</div></blockquote>
+</dd>
+<dt>exportBy - The criteria that will be used to select the tile</dt>
+<dd><p class="first">service levels to export. The values can be Level IDs, cache scales
+or the Resolution (in the case of image services).</p>
+<blockquote class="last">
+<div>Values: LevelID | Resolution | Scale</div></blockquote>
+</dd>
+<dt>levels - Specify the tiled service levels for which you want to get</dt>
+<dd><p class="first">the estimates. The values should correspond to Level IDs, cache
+scales or the Resolution as specified in exportBy parameter. The
+values can be comma separated values or a range.</p>
+<blockquote class="last">
+<div>Example 1: 1,2,3,4,5,6,7,8,9
+Example 2: 1-4,7-9</div></blockquote>
+</dd>
+<dt>areaOfInterest - (Optional) The areaOfInterest polygon allows</dt>
+<dd><p class="first">exporting tiles within the specified polygon areas. This parameter
+supersedes exportExtent parameter. Also excepts geometry.Polygon.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>Example: { &#8220;features&#8221;: [{&#8220;geometry&#8221;:{&#8220;rings&#8221;:[[[-100,35],</dt>
+<dd>[-100,45],[-90,45],[-90,35],[-100,35]]],
+&#8220;spatialReference&#8221;:{&#8220;wkid&#8221;:4326}}}]}</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>async - (optional) the estimate function is run asynchronously</dt>
+<dd><p class="first">requiring the tool status to be checked manually to force it to
+run synchronously the tool will check the status until the
+estimation completes.  The default is True, which means the status
+of the job and results need to be checked manually.  If the value
+is set to False, the function will wait until the task completes.</p>
+<blockquote class="last">
+<div>Values: True | False</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.exportMap">
+<code class="descname">exportMap</code><span class="sig-paren">(</span><em>bbox</em>, <em>size='600</em>, <em>550'</em>, <em>dpi=200</em>, <em>imageSR=None</em>, <em>image_format='png'</em>, <em>layerDefFilter=None</em>, <em>layers=None</em>, <em>transparent=False</em>, <em>timeFilter=None</em>, <em>layerTimeOptions=None</em>, <em>dynamicLayers=None</em>, <em>mapScale=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.exportMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>The export operation is performed on a map service resource.
+The result of this operation is a map image resource. This
+resource provides information about the exported map image such
+as its URL, its width and height, extent and scale.
+Inputs:</p>
+<blockquote>
+<div><p>bbox - envelope geometry object
+size - size of image in pixels
+dpi - dots per inch
+imageSR - spatial reference of the output image
+image_format - Description: The format of the exported image.</p>
+<blockquote>
+<div><p>The default format is .png.
+Values: png | png8 | png24 | jpg | pdf | bmp | gif</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">svg | svgz | emf | ps | png32</div>
+</div>
+</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>layerDefFilter - Description: Allows you to filter the</dt>
+<dd>features of individual layers in the exported
+map by specifying definition expressions for
+those layers. Definition expression for a
+layer that is published with the service will
+be always honored.</dd>
+<dt>layers - Determines which layers appear on the exported map.</dt>
+<dd><dl class="first last docutils">
+<dt>There are four ways to specify which layers are shown:</dt>
+<dd><dl class="first last docutils">
+<dt>show: Only the layers specified in this list will</dt>
+<dd>be exported.</dd>
+<dt>hide: All layers except those specified in this</dt>
+<dd>list will be exported.</dd>
+<dt>include: In addition to the layers exported by</dt>
+<dd>default, the layers specified in this list
+will be exported.</dd>
+<dt>exclude: The layers exported by default excluding</dt>
+<dd>those specified in this list will be
+exported.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>transparent - If true, the image will be exported with the</dt>
+<dd>background color of the map set as its
+transparent color. The default is false. Only
+the .png and .gif formats support transparency.
+Internet Explorer 6 does not display transparency
+correctly for png24 image formats.</dd>
+<dt>timeFilter - The time instant or time extent of the exported</dt>
+<dd>map image.</dd>
+<dt>layerTimeOptions - The time options per layer. Users can</dt>
+<dd>indicate whether or not the layer should use
+the time extent specified by the time
+parameter or not, whether to draw the layer
+features cumulatively or not and the time
+offsets for the layer.
+see: <a class="reference external" href="http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Export_Map/02r3000000v7000000/">http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Export_Map/02r3000000v7000000/</a></dd>
+<dt>dynamicLayers - Use dynamicLayers parameter to modify the layer</dt>
+<dd>drawing order, change layer drawing info, and
+change layer data source version for this request.
+New layers (dataLayer) can also be added to the
+dynamicLayers based on the map service registered
+workspaces.</dd>
+<dt>mapScale - Use this parameter to export a map image at a specific</dt>
+<dd>scale, with the map centered around the center of the
+specified bounding box (bbox).</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.exportTiles">
+<code class="descname">exportTiles</code><span class="sig-paren">(</span><em>levels</em>, <em>exportBy='LevelID'</em>, <em>tilePackage=False</em>, <em>exportExtent='DEFAULT'</em>, <em>optimizeTilesForSize=True</em>, <em>compressionQuality=0</em>, <em>areaOfInterest=None</em>, <em>async=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.exportTiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportTiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>The exportTiles operation is performed as an asynchronous task and
+allows client applications to download map tiles from a server for
+offline use. This operation is performed on a Map Service that
+allows clients to export cache tiles. The result of this operation
+is Map Service Job. This job response contains a reference to the
+Map Service Result resource, which returns a URL to the resulting
+tile package (.tpk) or a cache raster dataset.
+exportTiles can be enabled in a service by using ArcGIS for Desktop
+or the ArcGIS Server Administrator Directory. In ArcGIS for Desktop
+make an admin or publisher connection to the server, go to service
+properties, and enable Allow Clients to Export Cache Tiles in the
+advanced caching page of the Service Editor. You can also specify
+the maximum tiles clients will be allowed to download. The default
+maximum allowed tile count is 100,000. To enable this capability
+using the Administrator Directory, edit the service, and set the
+properties exportTilesAllowed=true and maxExportTilesCount=100000.</p>
+<p>At 10.2.2 and later versions, exportTiles is supported as an
+operation of the Map Server. The use of the
+<a class="reference external" href="http://Map">http://Map</a> Service/exportTiles/submitJob operation is deprecated.
+You can provide arguments to the exportTiles operation as defined
+in the following parameters table:</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>exportBy - The criteria that will be used to select the tile</dt>
+<dd>service levels to export. The values can be Level IDs, cache
+scales. or the resolution (in the case of image services).
+Values: LevelID | Resolution | Scale</dd>
+</dl>
+</dd>
+<dt>levels - Specifies the tiled service levels to export. The values</dt>
+<dd><p class="first">should correspond to Level IDs, cache scales. or the resolution
+as specified in exportBy parameter. The values can be comma
+separated values or a range. Make sure tiles are present at the
+levels where you attempt to export tiles.</p>
+<blockquote class="last">
+<div>Example 1: 1,2,3,4,5,6,7,8,9
+Example 2: 1-4,7-9</div></blockquote>
+</dd>
+<dt>tilePackage - Allows exporting either a tile package or a cache</dt>
+<dd><p class="first">raster data set. If the value is true, output will be in tile
+package format, and if the value is false, a cache raster data
+set is returned. The default value is false</p>
+<blockquote class="last">
+<div>Values: true | false</div></blockquote>
+</dd>
+<dt>exportExtent - The extent (bounding box) of the tile package or the</dt>
+<dd><p class="first">cache dataset to be exported. If extent does not include a
+spatial reference, the extent values are assumed to be in the
+spatial reference of the map. The default value is full extent of
+the tiled map service.</p>
+<blockquote class="last">
+<div><p>Syntax: &lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+Example 1: -104,35.6,-94.32,41
+Example 2: {&#8220;xmin&#8221; : -109.55, &#8220;ymin&#8221; : 25.76,</p>
+<blockquote>
+<div>&#8220;xmax&#8221; : -86.39, &#8220;ymax&#8221; : 49.94,
+&#8220;spatialReference&#8221; : {&#8220;wkid&#8221; : 4326}}</div></blockquote>
+</div></blockquote>
+</dd>
+<dt>optimizeTilesForSize - (Optional) Use this parameter to enable</dt>
+<dd><p class="first">compression of JPEG tiles and reduce the size of the downloaded
+tile package or the cache raster data set. Compressing tiles
+slightly compromises the quality of tiles but helps reduce the
+size of the download. Try sample compressions to determine the
+optimal compression before using this feature.</p>
+<blockquote class="last">
+<div>Values: true | false</div></blockquote>
+</dd>
+<dt>compressionQuality - (Optional) When optimizeTilesForSize=true, you</dt>
+<dd>can specify a compression factor. The value must be between 0 and
+100. The value cannot be greater than the default compression
+already set on the original tile. For example, if the default
+value is 75, the value of compressionQuality must be between 0 and
+75. A value greater than 75 in this example will attempt to up
+sample an already compressed tile and will further degrade the
+quality of tiles.</dd>
+<dt>areaOfInterest - (Optional) The areaOfInterest polygon allows</dt>
+<dd>exporting tiles within the specified polygon areas. This parameter
+supersedes the exportExtent parameter. Must be geometry.Polygon
+object.</dd>
+<dt>Example: { &#8220;features&#8221;: [{&#8220;geometry&#8221;:{&#8220;rings&#8221;:[[[-100,35],</dt>
+<dd>[-100,45],[-90,45],[-90,35],[-100,35]]],
+&#8220;spatialReference&#8221;:{&#8220;wkid&#8221;:4326}}}]}</dd>
+<dt>async - default True, this value ensures the returns are returned</dt>
+<dd>to the user instead of the user having the check the job status
+manually.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.exportTilesAllowed">
+<code class="descname">exportTilesAllowed</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.exportTilesAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean if export tiles is allowed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>searchText</em>, <em>layers</em>, <em>contains=True</em>, <em>searchFields=''</em>, <em>sr=''</em>, <em>layerDefs=''</em>, <em>returnGeometry=True</em>, <em>maxAllowableOffset=''</em>, <em>geometryPrecision=''</em>, <em>dynamicLayers=''</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>gdbVersion=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs the map service find operation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent of the map service</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.generateKML">
+<code class="descname">generateKML</code><span class="sig-paren">(</span><em>save_location</em>, <em>docName</em>, <em>layers</em>, <em>layerOptions='composite'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.generateKML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.generateKML" title="Permalink to this definition">¶</a></dt>
+<dd><p>The generateKml operation is performed on a map service resource.
+The result of this operation is a KML document wrapped in a KMZ
+file. The document contains a network link to the KML Service
+endpoint with properties and parameters you specify.
+Inputs:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>docName - The name of the resulting KML document. This is the</dt>
+<dd>name that appears in the Places panel of Google
+Earth.</dd>
+<dt>layers - the layers to perform the generateKML operation on.</dt>
+<dd>The layers are specified as a comma-separated list
+of layer ids.</dd>
+<dt>layerOptions - The layer drawing options. Based on the option</dt>
+<dd><p class="first">chosen, the layers are drawn as one composite
+image, as separate images, or as vectors. When
+the KML capability is enabled, the ArcGIS
+Server administrator has the option of setting
+the layer operations allowed. If vectors are
+not allowed, then the caller will not be able
+to get vectors. Instead, the caller receives a
+single composite image.
+values: composite | separateImage |</p>
+<blockquote class="last">
+<div>nonComposite</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.getFeatureDynamicLayer">
+<code class="descname">getFeatureDynamicLayer</code><span class="sig-paren">(</span><em>oid</em>, <em>dynamicLayer</em>, <em>returnZ=False</em>, <em>returnM=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.getFeatureDynamicLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.getFeatureDynamicLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>The feature resource represents a single feature in a dynamic
+layer in a map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.hasVersionedData">
+<code class="descname">hasVersionedData</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.hasVersionedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>reutrn boolean if has versioned data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.identify">
+<code class="descname">identify</code><span class="sig-paren">(</span><em>geometry</em>, <em>mapExtent</em>, <em>imageDisplay</em>, <em>tolerance</em>, <em>geometryType='esriGeometryPoint'</em>, <em>sr=None</em>, <em>layerDefs=None</em>, <em>time=None</em>, <em>layerTimeOptions=None</em>, <em>layers='top'</em>, <em>returnGeometry=True</em>, <em>maxAllowableOffset=None</em>, <em>geometryPrecision=None</em>, <em>dynamicLayers=None</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>gdbVersion=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.identify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.identify" title="Permalink to this definition">¶</a></dt>
+<dd><p>The identify operation is performed on a map service resource
+to discover features at a geographic location. The result of this
+operation is an identify results resource. Each identified result
+includes its name, layer ID, layer name, geometry and geometry type,
+and other attributes of that result as name-value pairs.</p>
+<p>Inputs:
+geometry - The geometry to identify on. The type of the geometry is</p>
+<blockquote>
+<div>specified by the geometryType parameter. The structure of
+the geometries is same as the structure of the JSON geometry
+objects returned by the ArcGIS REST API. In addition to the
+JSON structures, for points and envelopes, you can specify
+the geometries with a simpler comma-separated syntax.
+Syntax:
+JSON structures:
+&lt;geometryType&gt;&amp;geometry={ geometry}
+Point simple syntax:
+esriGeometryPoint&amp;geometry=&lt;x&gt;,&lt;y&gt;
+Envelope simple syntax:
+esriGeometryEnvelope&amp;geometry=&lt;xmin&gt;,&lt;ymin&gt;,&lt;xmax&gt;,&lt;ymax&gt;</div></blockquote>
+<dl class="docutils">
+<dt>geometryType - The type of geometry specified by the geometry parameter.</dt>
+<dd>The geometry type could be a point, line, polygon, or
+an envelope.
+Values:
+esriGeometryPoint | esriGeometryMultipoint |
+esriGeometryPolyline | esriGeometryPolygon |
+esriGeometryEnvelope</dd>
+<dt>sr - The well-known ID of the spatial reference of the input and</dt>
+<dd>output geometries as well as the mapExtent. If sr is not specified,
+the geometry and the mapExtent are assumed to be in the spatial
+reference of the map, and the output geometries are also in the
+spatial reference of the map.</dd>
+<dt>layerDefs - Allows you to filter the features of individual layers in</dt>
+<dd>the exported map by specifying definition expressions for
+those layers. Definition expression for a layer that is
+published with the service will be always honored.</dd>
+</dl>
+<p>time - The time instant or the time extent of the features to be
+identified.</p>
+<dl class="docutils">
+<dt>layerTimeOptions - The time options per layer. Users can indicate</dt>
+<dd>whether or not the layer should use the time extent
+specified by the time parameter or not, whether to
+draw the layer features cumulatively or not and the
+time offsets for the layer.</dd>
+<dt>layers - The layers to perform the identify operation on. There are</dt>
+<dd>three ways to specify which layers to identify on:
+top: Only the top-most layer at the specified location.
+visible: All visible layers at the specified location.
+all: All layers at the specified location.</dd>
+<dt>tolerance - The distance in screen pixels from the specified geometry</dt>
+<dd>within which the identify should be performed. The value for
+the tolerance is an integer.</dd>
+<dt>mapExtent - The extent or bounding box of the map currently being viewed.</dt>
+<dd>Unless the sr parameter has been specified, the mapExtent is
+assumed to be in the spatial reference of the map.
+Syntax: &lt;xmin&gt;, &lt;ymin&gt;, &lt;xmax&gt;, &lt;ymax&gt;
+The mapExtent and the imageDisplay parameters are used by the
+server to determine the layers visible in the current extent.
+They are also used to calculate the distance on the map to
+search based on the tolerance in screen pixels.</dd>
+<dt>imageDisplay - The screen image display parameters (width, height, and DPI)</dt>
+<dd>of the map being currently viewed. The mapExtent and the
+imageDisplay parameters are used by the server to determine
+the layers visible in the current extent. They are also used
+to calculate the distance on the map to search based on the
+tolerance in screen pixels.
+Syntax: &lt;width&gt;, &lt;height&gt;, &lt;dpi&gt;</dd>
+<dt>returnGeometry - If true, the resultset will include the geometries</dt>
+<dd>associated with each result. The default is true.</dd>
+<dt>maxAllowableOffset - This option can be used to specify the maximum allowable</dt>
+<dd>offset to be used for generalizing geometries returned by
+the identify operation. The maxAllowableOffset is in the units
+of the sr. If sr is not specified, maxAllowableOffset is
+assumed to be in the unit of the spatial reference of the map.</dd>
+<dt>geometryPrecision - This option can be used to specify the number of decimal places</dt>
+<dd>in the response geometries returned by the identify operation.
+This applies to X and Y values only (not m or z-values).</dd>
+<dt>dynamicLayers - Use dynamicLayers property to reorder layers and change the layer</dt>
+<dd>data source. dynamicLayers can also be used to add new layer that
+was not defined in the map used to create the map service. The new
+layer should have its source pointing to one of the registered
+workspaces that was defined at the time the map service was created.
+The order of dynamicLayers array defines the layer drawing order.
+The first element of the dynamicLayers is stacked on top of all
+other layers. When defining a dynamic layer, source is required.</dd>
+<dt>returnZ - If true, Z values will be included in the results if the features have</dt>
+<dd>Z values. Otherwise, Z values are not returned. The default is false.
+This parameter only applies if returnGeometry=true.</dd>
+<dt>returnM - If true, M values will be included in the results if the features have</dt>
+<dd>M values. Otherwise, M values are not returned. The default is false.
+This parameter only applies if returnGeometry=true.</dd>
+</dl>
+<p>gdbVersion - Switch map layers to point to an alternate geodatabase version.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the initial extent of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.itemInfo">
+<code class="descname">itemInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.itemInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the item&#8217;s info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.json_dict">
+<code class="descname">json_dict</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.json_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns object as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all the layers in the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.mapName">
+<code class="descname">mapName</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.mapName" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map name value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxExportTilesCount">
+<code class="descname">maxExportTilesCount</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxExportTilesCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the maximum export tiles count</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxImageHeight">
+<code class="descname">maxImageHeight</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxImageHeight" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max image height</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxImageWidth">
+<code class="descname">maxImageWidth</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxImageWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max image width</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max number of records returned by a query/display ect.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.maxScale">
+<code class="descname">maxScale</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.maxScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max scale for a map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.minScale">
+<code class="descname">minScale</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.minScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service minimum scale</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the serviceDescription of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.singleFusedMapCache">
+<code class="descname">singleFusedMapCache</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.singleFusedMapCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean for this property</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatialreference information for the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedExtensions">
+<code class="descname">supportedExtensions</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedExtensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported extensions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedImageFormatTypes">
+<code class="descname">supportedImageFormatTypes</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedImageFormatTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported image format types</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the supported query formats</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.supportsDynamicLayers">
+<code class="descname">supportsDynamicLayers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.supportsDynamicLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean (True/False) if it support dynamic layers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all tables in the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.tileInfo">
+<code class="descname">tileInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.tileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns tile info for cached services</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.tileServers">
+<code class="descname">tileServers</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.tileServers" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the tileServers for the service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.timeInfo">
+<code class="descname">timeInfo</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.timeInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the timeInformation for a given service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.mapservice.MapService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.ags.mapservice.MapService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service&#8217;s measurement units</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.ags.server">
+<span id="arcrest-ags-server-module"></span><h2>arcrest.ags.server module<a class="headerlink" href="#module-arcrest.ags.server" title="Permalink to this headline">¶</a></h2>
+<p>This provides access to a server and it&#8217;s services for non administrative
+functions.  This allows developers to access a REST service just like a
+user/developer would.</p>
+<dl class="class">
+<dt id="arcrest.ags.server.Server">
+<em class="property">class </em><code class="descclassname">arcrest.ags.server.</code><code class="descname">Server</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em>, <em>initialize=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.server.Server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>This object represents an ArcGIS Server instance</p>
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.admin">
+<code class="descname">admin</code><a class="headerlink" href="#arcrest.ags.server.Server.admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>points to the adminstrative side of ArcGIS Server</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.currentFolder">
+<code class="descname">currentFolder</code><a class="headerlink" href="#arcrest.ags.server.Server.currentFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the current folder name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.server.Server.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the current version of arcgis server</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.folders">
+<code class="descname">folders</code><a class="headerlink" href="#arcrest.ags.server.Server.folders" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the folders on server</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.location">
+<code class="descname">location</code><a class="headerlink" href="#arcrest.ags.server.Server.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current url position in the server folder structure</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.root">
+<code class="descname">root</code><a class="headerlink" href="#arcrest.ags.server.Server.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the url of the class</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.self">
+<code class="descname">self</code><a class="headerlink" href="#arcrest.ags.server.Server.self" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the logged in user</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.server.Server.services">
+<code class="descname">services</code><a class="headerlink" href="#arcrest.ags.server.Server.services" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the services in the current folder</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.ags.services">
+<span id="arcrest-ags-services-module"></span><h2>arcrest.ags.services module<a class="headerlink" href="#module-arcrest.ags.services" title="Permalink to this headline">¶</a></h2>
+<p>Contains information regarding an ArcGIS Server Feature Server</p>
+<dl class="class">
+<dt id="arcrest.ags.services.FeatureService">
+<em class="property">class </em><code class="descclassname">arcrest.ags.services.</code><code class="descname">FeatureService</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/services.html#FeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.services.FeatureService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>contains information about a feature service</p>
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.administration">
+<code class="descname">administration</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.administration" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service admin object (if accessible)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.allowGeometryUpdates">
+<code class="descname">allowGeometryUpdates</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.allowGeometryUpdates" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if the data allows geometry updates</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.copyrightText">
+<code class="descname">copyrightText</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.copyrightText" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the copyright text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the map service current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.description">
+<code class="descname">description</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the service description</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.documentInfo">
+<code class="descname">documentInfo</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.documentInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.services.FeatureService.downloadMetadataFile">
+<code class="descname">downloadMetadataFile</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/services.html#FeatureService.downloadMetadataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.services.FeatureService.downloadMetadataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the metadata file to a given path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.services.FeatureService.downloadThumbnail">
+<code class="descname">downloadThumbnail</code><span class="sig-paren">(</span><em>outPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/services.html#FeatureService.downloadThumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.services.FeatureService.downloadThumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads the items&#8217;s thumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.editorTrackingInfo">
+<code class="descname">editorTrackingInfo</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.editorTrackingInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.enableZDefaults">
+<code class="descname">enableZDefaults</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.enableZDefaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.fullExtent">
+<code class="descname">fullExtent</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.fullExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.hasStaticData">
+<code class="descname">hasStaticData</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.hasStaticData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.hasVersionedData">
+<code class="descname">hasVersionedData</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.hasVersionedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean for versioned data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.initialExtent">
+<code class="descname">initialExtent</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.initialExtent" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the initial extent of the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.itemInfo">
+<code class="descname">itemInfo</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.itemInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the item&#8217;s info</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.layers">
+<code class="descname">layers</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the layers for the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.maxRecordCount">
+<code class="descname">maxRecordCount</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.maxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the max record count</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.services.FeatureService.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>layerDefsFilter=None</em>, <em>geometryFilter=None</em>, <em>timeFilter=None</em>, <em>returnGeometry=True</em>, <em>returnIdsOnly=False</em>, <em>returnCountOnly=False</em>, <em>returnZ=False</em>, <em>returnM=False</em>, <em>outSR=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/services.html#FeatureService.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.services.FeatureService.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Query operation is performed on a feature service resource</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.securityHandler">
+<code class="descname">securityHandler</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.securityHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the security handler</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.serviceDescription">
+<code class="descname">serviceDescription</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.serviceDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the serviceDescription of the map service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.spatialReference">
+<code class="descname">spatialReference</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.spatialReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatial reference</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.supportedQueryFormats">
+<code class="descname">supportedQueryFormats</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.supportedQueryFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.supportsDisconnectedEditing">
+<code class="descname">supportsDisconnectedEditing</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.supportsDisconnectedEditing" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns boolean is disconnecting editted supported</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.syncCapabilities">
+<code class="descname">syncCapabilities</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.syncCapabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>type of sync that can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.syncEnabled">
+<code class="descname">syncEnabled</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.syncEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>informs the user if sync of data can be performed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.tables">
+<code class="descname">tables</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists the tables on the feature service</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.units">
+<code class="descname">units</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the measurement unit</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.services.FeatureService.zDefault">
+<code class="descname">zDefault</code><a class="headerlink" href="#arcrest.ags.services.FeatureService.zDefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.ags">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-arcrest.ags" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -60,6 +1877,12 @@
   <ul>
 <li><a class="reference internal" href="#">arcrest.ags package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags.featureservice">arcrest.ags.featureservice module</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags.layer">arcrest.ags.layer module</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags.mapservice">arcrest.ags.mapservice module</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags.server">arcrest.ags.server module</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags.services">arcrest.ags.services module</a></li>
+<li><a class="reference internal" href="#module-arcrest.ags">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -67,6 +1890,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="arcrest.html">arcrest package</a><ul>
+      <li>Previous: <a href="arcrest.agol.helperservices.html" title="previous chapter">arcrest.agol.helperservices package</a></li>
+      <li>Next: <a href="arcrest.cmp.html" title="next chapter">arcrest.cmp package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -95,10 +1922,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2015, Andrew Chapkowski, Mike Miller.
+      &copy;2016, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
       
       |

@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>arcrest.packages.ntlm3 package &mdash; src  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="up" title="arcrest.packages package" href="arcrest.packages.html" />
+    <link rel="next" title="arcrest.security package" href="arcrest.security.html" />
+    <link rel="prev" title="arcrest.packages package" href="arcrest.packages.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="arcrest-packages-ntlm3-package">
+<h1>arcrest.packages.ntlm3 package<a class="headerlink" href="#arcrest-packages-ntlm3-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.HTTPNtlmAuthHandler">
+<span id="arcrest-packages-ntlm3-httpntlmauthhandler-module"></span><h2>arcrest.packages.ntlm3.HTTPNtlmAuthHandler module<a class="headerlink" href="#module-arcrest.packages.ntlm3.HTTPNtlmAuthHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.HTTPNtlmAuthHandler.</code><code class="descname">AbstractNtlmAuthHandler</code><span class="sig-paren">(</span><em>password_mgr=None</em>, <em>debuglevel=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#AbstractNtlmAuthHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.http_error_authentication_required">
+<code class="descname">http_error_authentication_required</code><span class="sig-paren">(</span><em>auth_header_field</em>, <em>req</em>, <em>fp</em>, <em>headers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#AbstractNtlmAuthHandler.http_error_authentication_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.http_error_authentication_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.retry_using_http_NTLM_auth">
+<code class="descname">retry_using_http_NTLM_auth</code><span class="sig-paren">(</span><em>req</em>, <em>auth_header_field</em>, <em>realm</em>, <em>headers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#AbstractNtlmAuthHandler.retry_using_http_NTLM_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.retry_using_http_NTLM_auth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.set_http_debuglevel">
+<code class="descname">set_http_debuglevel</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#AbstractNtlmAuthHandler.set_http_debuglevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler.set_http_debuglevel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.HTTPNtlmAuthHandler.</code><code class="descname">HTTPNtlmAuthHandler</code><span class="sig-paren">(</span><em>password_mgr=None</em>, <em>debuglevel=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#HTTPNtlmAuthHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler" title="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler"><code class="xref py py-class docutils literal"><span class="pre">arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler</span></code></a>, <code class="xref py py-class docutils literal"><span class="pre">urllib2.BaseHandler</span></code></p>
+<dl class="attribute">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler.auth_header">
+<code class="descname">auth_header</code><em class="property"> = 'Authorization'</em><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler.auth_header" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler.http_error_401">
+<code class="descname">http_error_401</code><span class="sig-paren">(</span><em>req</em>, <em>fp</em>, <em>code</em>, <em>msg</em>, <em>headers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#HTTPNtlmAuthHandler.http_error_401"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.HTTPNtlmAuthHandler.http_error_401" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.HTTPNtlmAuthHandler.</code><code class="descname">ProxyNtlmAuthHandler</code><span class="sig-paren">(</span><em>password_mgr=None</em>, <em>debuglevel=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#ProxyNtlmAuthHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler" title="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler"><code class="xref py py-class docutils literal"><span class="pre">arcrest.packages.ntlm3.HTTPNtlmAuthHandler.AbstractNtlmAuthHandler</span></code></a>, <code class="xref py py-class docutils literal"><span class="pre">urllib2.BaseHandler</span></code></p>
+<p>CAUTION: this class has NOT been tested at all!!!
+use at your own risk</p>
+<dl class="attribute">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler.auth_header">
+<code class="descname">auth_header</code><em class="property"> = 'Proxy-authorization'</em><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler.auth_header" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler.http_error_407">
+<code class="descname">http_error_407</code><span class="sig-paren">(</span><em>req</em>, <em>fp</em>, <em>code</em>, <em>msg</em>, <em>headers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/HTTPNtlmAuthHandler.html#ProxyNtlmAuthHandler.http_error_407"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.HTTPNtlmAuthHandler.ProxyNtlmAuthHandler.http_error_407" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.U32">
+<span id="arcrest-packages-ntlm3-u32-module"></span><h2>arcrest.packages.ntlm3.U32 module<a class="headerlink" href="#module-arcrest.packages.ntlm3.U32" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.U32.U32">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.U32.</code><code class="descname">U32</code><span class="sig-paren">(</span><em>value=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/U32.html#U32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.U32.U32" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="arcrest.packages.ntlm3.U32.U32.set">
+<code class="descname">set</code><span class="sig-paren">(</span><em>value=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/U32.html#U32.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.U32.U32.set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.U32.U32.truth">
+<code class="descname">truth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/U32.html#U32.truth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.U32.U32.truth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.packages.ntlm3.U32.U32.v">
+<code class="descname">v</code><em class="property"> = 0</em><a class="headerlink" href="#arcrest.packages.ntlm3.U32.U32.v" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.U32.norm">
+<code class="descclassname">arcrest.packages.ntlm3.U32.</code><code class="descname">norm</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/U32.html#norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.U32.norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.compat">
+<span id="arcrest-packages-ntlm3-compat-module"></span><h2>arcrest.packages.ntlm3.compat module<a class="headerlink" href="#module-arcrest.packages.ntlm3.compat" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.des">
+<span id="arcrest-packages-ntlm3-des-module"></span><h2>arcrest.packages.ntlm3.des module<a class="headerlink" href="#module-arcrest.packages.ntlm3.des" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.des.DES">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.des.</code><code class="descname">DES</code><span class="sig-paren">(</span><em>key_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#DES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.DES" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="arcrest.packages.ntlm3.des.DES.decrypt">
+<code class="descname">decrypt</code><span class="sig-paren">(</span><em>crypted_text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#DES.decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.DES.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.packages.ntlm3.des.DES.des_c_obj">
+<code class="descname">des_c_obj</code><em class="property"> = None</em><a class="headerlink" href="#arcrest.packages.ntlm3.des.DES.des_c_obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.des.DES.encrypt">
+<code class="descname">encrypt</code><span class="sig-paren">(</span><em>plain_text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#DES.encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.DES.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des.key56_to_key64">
+<code class="descclassname">arcrest.packages.ntlm3.des.</code><code class="descname">key56_to_key64</code><span class="sig-paren">(</span><em>key_56</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#key56_to_key64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.key56_to_key64" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des.set_key_odd_parity">
+<code class="descclassname">arcrest.packages.ntlm3.des.</code><code class="descname">set_key_odd_parity</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#set_key_odd_parity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.set_key_odd_parity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des.str_to_key56">
+<code class="descclassname">arcrest.packages.ntlm3.des.</code><code class="descname">str_to_key56</code><span class="sig-paren">(</span><em>key_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des.html#str_to_key56"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des.str_to_key56" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.des_c">
+<span id="arcrest-packages-ntlm3-des-c-module"></span><h2>arcrest.packages.ntlm3.des_c module<a class="headerlink" href="#module-arcrest.packages.ntlm3.des_c" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.packages.ntlm3.des_c.DES">
+<em class="property">class </em><code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">DES</code><span class="sig-paren">(</span><em>key_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#DES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.DES" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="arcrest.packages.ntlm3.des_c.DES.KeySched">
+<code class="descname">KeySched</code><em class="property"> = None</em><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.DES.KeySched" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.des_c.DES.decrypt">
+<code class="descname">decrypt</code><span class="sig-paren">(</span><em>str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#DES.decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.DES.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="arcrest.packages.ntlm3.des_c.DES.encrypt">
+<code class="descname">encrypt</code><span class="sig-paren">(</span><em>plaintext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#DES.encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.DES.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.D_ENCRYPT">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">D_ENCRYPT</code><span class="sig-paren">(</span><em>tup</em>, <em>u</em>, <em>t</em>, <em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#D_ENCRYPT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.D_ENCRYPT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.HPERM_OP">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">HPERM_OP</code><span class="sig-paren">(</span><em>tup</em>, <em>n</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#HPERM_OP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.HPERM_OP" title="Permalink to this definition">¶</a></dt>
+<dd><p>tup - (a, t)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.PERM_OP">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">PERM_OP</code><span class="sig-paren">(</span><em>tup</em>, <em>n</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#PERM_OP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.PERM_OP" title="Permalink to this definition">¶</a></dt>
+<dd><p>tup - (a, b, t)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.c2l">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">c2l</code><span class="sig-paren">(</span><em>c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#c2l"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.c2l" title="Permalink to this definition">¶</a></dt>
+<dd><p>char[4] to unsigned long</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.des_ecb_encrypt">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">des_ecb_encrypt</code><span class="sig-paren">(</span><em>input</em>, <em>ks</em>, <em>encrypt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#des_ecb_encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.des_ecb_encrypt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.des_encript">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">des_encript</code><span class="sig-paren">(</span><em>input</em>, <em>ks</em>, <em>encrypt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#des_encript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.des_encript" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.des_set_key">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">des_set_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#des_set_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.des_set_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.des_c.l2c">
+<code class="descclassname">arcrest.packages.ntlm3.des_c.</code><code class="descname">l2c</code><span class="sig-paren">(</span><em>l</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/des_c.html#l2c"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.des_c.l2c" title="Permalink to this definition">¶</a></dt>
+<dd><p>unsigned long to char[4]</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.des_data">
+<span id="arcrest-packages-ntlm3-des-data-module"></span><h2>arcrest.packages.ntlm3.des_data module<a class="headerlink" href="#module-arcrest.packages.ntlm3.des_data" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-arcrest.packages.ntlm3.ntlm">
+<span id="arcrest-packages-ntlm3-ntlm-module"></span><h2>arcrest.packages.ntlm3.ntlm module<a class="headerlink" href="#module-arcrest.packages.ntlm3.ntlm" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.ComputeResponse">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">ComputeResponse</code><span class="sig-paren">(</span><em>ResponseKeyNT</em>, <em>ResponseKeyLM</em>, <em>ServerChallenge</em>, <em>ServerName</em>, <em>ClientChallenge='\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'</em>, <em>Time='\x00\x00\x00\x00\x00\x00\x00\x00'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#ComputeResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.ComputeResponse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="arcrest.packages.ntlm3.ntlm.NTLM_MsAvRestrictions">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">NTLM_MsAvRestrictions</code><em class="property"> = 8</em><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.NTLM_MsAvRestrictions" title="Permalink to this definition">¶</a></dt>
+<dd><p>utility functions for Microsoft NTLM authentication</p>
+<p>References:
+[MS-NLMP]: NT LAN Manager (NTLM) Authentication Protocol Specification
+<a class="reference external" href="http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NLMP%5D.pdf">http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NLMP%5D.pdf</a></p>
+<p>[MS-NTHT]: NTLM Over HTTP Protocol Specification
+<a class="reference external" href="http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NTHT%5D.pdf">http://download.microsoft.com/download/a/e/6/ae6e4142-aa58-45c6-8dcf-a657e5900cd3/%5BMS-NTHT%5D.pdf</a></p>
+<p>Cntlm Authentication Proxy
+<a class="reference external" href="http://cntlm.awk.cz/">http://cntlm.awk.cz/</a></p>
+<p>NTLM Authorization Proxy Server
+<a class="reference external" href="http://sourceforge.net/projects/ntlmaps/">http://sourceforge.net/projects/ntlmaps/</a></p>
+<p>Optimized Attack for NTLM2 Session Response
+<a class="reference external" href="http://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-seki.pdf">http://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-seki.pdf</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.calc_resp">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">calc_resp</code><span class="sig-paren">(</span><em>password_hash</em>, <em>server_challenge</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#calc_resp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.calc_resp" title="Permalink to this definition">¶</a></dt>
+<dd><p>calc_resp generates the LM response given a 16-byte password hash and the
+challenge from the Type-2 message.
+&#64;param password_hash</p>
+<blockquote>
+<div>16-byte password hash</div></blockquote>
+<dl class="docutils">
+<dt>&#64;param server_challenge</dt>
+<dd>8-byte challenge from Type-2 message</dd>
+<dt>returns</dt>
+<dd>24-byte buffer to contain the LM response upon return</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_LM_hashed_password_v1">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_LM_hashed_password_v1</code><span class="sig-paren">(</span><em>passwd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_LM_hashed_password_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_LM_hashed_password_v1" title="Permalink to this definition">¶</a></dt>
+<dd><p>create LanManager hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_NTLM_AUTHENTICATE_MESSAGE">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_NTLM_AUTHENTICATE_MESSAGE</code><span class="sig-paren">(</span><em>nonce</em>, <em>user</em>, <em>domain</em>, <em>password</em>, <em>NegotiateFlags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_NTLM_AUTHENTICATE_MESSAGE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_NTLM_AUTHENTICATE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_NTLM_NEGOTIATE_MESSAGE">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_NTLM_NEGOTIATE_MESSAGE</code><span class="sig-paren">(</span><em>user</em>, <em>type1_flags=2718478855L</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_NTLM_NEGOTIATE_MESSAGE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_NTLM_NEGOTIATE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v1">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_NT_hashed_password_v1</code><span class="sig-paren">(</span><em>passwd</em>, <em>user=None</em>, <em>domain=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_NT_hashed_password_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v1" title="Permalink to this definition">¶</a></dt>
+<dd><p>create NT hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v2">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_NT_hashed_password_v2</code><span class="sig-paren">(</span><em>passwd</em>, <em>user</em>, <em>domain</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_NT_hashed_password_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v2" title="Permalink to this definition">¶</a></dt>
+<dd><p>create NT hashed password</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.create_sessionbasekey">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">create_sessionbasekey</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#create_sessionbasekey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.create_sessionbasekey" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.ntlm2sr_calc_resp">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">ntlm2sr_calc_resp</code><span class="sig-paren">(</span><em>ResponseKeyNT</em>, <em>ServerChallenge</em>, <em>ClientChallenge='\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#ntlm2sr_calc_resp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.ntlm2sr_calc_resp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="arcrest.packages.ntlm3.ntlm.parse_NTLM_CHALLENGE_MESSAGE">
+<code class="descclassname">arcrest.packages.ntlm3.ntlm.</code><code class="descname">parse_NTLM_CHALLENGE_MESSAGE</code><span class="sig-paren">(</span><em>msg2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/packages/ntlm3/ntlm.html#parse_NTLM_CHALLENGE_MESSAGE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.packages.ntlm3.ntlm.parse_NTLM_CHALLENGE_MESSAGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-arcrest.packages.ntlm3"></span></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">arcrest.packages.ntlm3 package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.HTTPNtlmAuthHandler">arcrest.packages.ntlm3.HTTPNtlmAuthHandler module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.U32">arcrest.packages.ntlm3.U32 module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.compat">arcrest.packages.ntlm3.compat module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.des">arcrest.packages.ntlm3.des module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.des_c">arcrest.packages.ntlm3.des_c module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.des_data">arcrest.packages.ntlm3.des_data module</a></li>
+<li><a class="reference internal" href="#module-arcrest.packages.ntlm3.ntlm">arcrest.packages.ntlm3.ntlm module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="arcrest.html">arcrest package</a><ul>
+  <li><a href="arcrest.packages.html">arcrest.packages package</a><ul>
+      <li>Previous: <a href="arcrest.packages.html" title="previous chapter">arcrest.packages package</a></li>
+      <li>Next: <a href="arcrest.security.html" title="next chapter">arcrest.security package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/arcrest.packages.ntlm3.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/arcrest.packages.ntlm3.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

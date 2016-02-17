@@ -1,16 +1,30 @@
 arcrest.manageags package
 =========================
 
-.. automodule:: arcrest.manageags
+Submodules
+----------
+
+arcrest.manageags.administration module
+---------------------------------------
+
+.. automodule:: arcrest.manageags.administration
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+arcrest.manageags.parameters module
+-----------------------------------
 
-.. toctree::
+.. automodule:: arcrest.manageags.parameters
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-   arcrest.manageags.administration
-   arcrest.manageags.parameters
 
+Module contents
+---------------
+
+.. automodule:: arcrest.manageags
+    :members:
+    :undoc-members:
+    :show-inheritance:

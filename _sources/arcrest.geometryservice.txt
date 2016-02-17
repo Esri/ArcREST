@@ -1,15 +1,22 @@
 arcrest.geometryservice package
 ===============================
 
-.. automodule:: arcrest.geometryservice
+Submodules
+----------
+
+arcrest.geometryservice.geometryservice module
+----------------------------------------------
+
+.. automodule:: arcrest.geometryservice.geometryservice
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
 
-.. toctree::
+Module contents
+---------------
 
-   arcrest.geometryservice.geometryservice
-
+.. automodule:: arcrest.geometryservice
+    :members:
+    :undoc-members:
+    :show-inheritance:

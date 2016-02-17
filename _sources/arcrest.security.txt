@@ -1,22 +1,22 @@
 arcrest.security package
 ========================
 
-.. automodule:: arcrest.security
+Submodules
+----------
+
+arcrest.security.security module
+--------------------------------
+
+.. automodule:: arcrest.security.security
     :members:
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
 
-.. toctree::
+Module contents
+---------------
 
-    arcrest.security.ntlm3
-
-Submodules
-----------
-
-.. toctree::
-
-   arcrest.security.security
-
+.. automodule:: arcrest.security
+    :members:
+    :undoc-members:
+    :show-inheritance:

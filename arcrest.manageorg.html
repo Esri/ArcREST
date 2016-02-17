@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.manageorg package &mdash; ArcREST 3.0.0 documentation</title>
+    <title>arcrest.manageorg package &mdash; src  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.0.0',
+        VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="up" title="arcrest package" href="arcrest.html" />
+    <link rel="next" title="arcrest.manageportal package" href="arcrest.manageportal.html" />
+    <link rel="prev" title="arcrest.manageags package" href="arcrest.manageags.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -36,16 +39,146 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-arcrest.manageorg">
-<span id="arcrest-manageorg-package"></span><h1>arcrest.manageorg package<a class="headerlink" href="#module-arcrest.manageorg" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="arcrest-manageorg-package">
+<h1>arcrest.manageorg package<a class="headerlink" href="#arcrest-manageorg-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.manageorg.administration.html">arcrest.manageorg.administration module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.manageorg.parameters.html">arcrest.manageorg.parameters module</a></li>
-</ul>
 </div>
+<div class="section" id="module-arcrest.manageorg.administration">
+<span id="arcrest-manageorg-administration-module"></span><h2>arcrest.manageorg.administration module<a class="headerlink" href="#module-arcrest.manageorg.administration" title="Permalink to this headline">¶</a></h2>
+<p>Manages Portal/AGOL content, users, items, etc..</p>
+<dl class="class">
+<dt id="arcrest.manageorg.administration.Administration">
+<em class="property">class </em><code class="descclassname">arcrest.manageorg.administration.</code><code class="descname">Administration</code><span class="sig-paren">(</span><em>url=None</em>, <em>securityHandler=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em>, <em>initialize=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageorg/administration.html#Administration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageorg.administration.Administration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGOLClass</span></code></p>
+<p>Administers the AGOL/Portal Site</p>
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.asDictionary">
+<code class="descname">asDictionary</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.asDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns object as a dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.community">
+<code class="descname">community</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.community" title="Permalink to this definition">¶</a></dt>
+<dd><p>The portal community root covers user and group resources and
+operations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.content">
+<code class="descname">content</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns access into the site&#8217;s content</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current version of the site</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageorg.administration.Administration.hostingServers">
+<code class="descname">hostingServers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageorg/administration.html#Administration.hostingServers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageorg.administration.Administration.hostingServers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the objects to manage site&#8217;s hosted services. It returns
+AGSAdministration object if the site is Portal and it returns a
+hostedservice.Services object if it is AGOL.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.oauth2">
+<code class="descname">oauth2</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.oauth2" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the oauth2 class</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.portals">
+<code class="descname">portals</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.portals" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the Portals class that provides administration access
+into a given organization</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.root">
+<code class="descname">root</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the base url</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageorg.administration.Administration.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>q</em>, <em>t=None</em>, <em>focus=None</em>, <em>bbox=None</em>, <em>start=1</em>, <em>num=10</em>, <em>sortField=None</em>, <em>sortOrder='asc'</em>, <em>useSecurity=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageorg/administration.html#Administration.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageorg.administration.Administration.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operation searches for content items in the portal. The
+searches are performed against a high performance index that
+indexes the most popular fields of an item. See the Search
+reference page for information on the fields and the syntax of the
+query.
+The search index is updated whenever users add, update, or delete
+content. There can be a lag between the time that the content is
+updated and the time when it&#8217;s reflected in the search results.
+The results of a search only contain items that the user has
+permission to access.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">q - The query string used to search
+t - type of content to search for.
+focus - another content filter. Ex: files
+bbox - The bounding box for a spatial search defined as minx,</p>
+<blockquote>
+<div>miny, maxx, or maxy. Search requires q, bbox, or both.
+Spatial search is an overlaps/intersects function of the
+query bbox and the extent of the document.
+Documents that have no extent (e.g., mxds, 3dds, lyr)
+will not be found when doing a bbox search.
+Document extent is assumed to be in the WGS84 geographic
+coordinate system.</div></blockquote>
+<dl class="last docutils">
+<dt>start -  The number of the first entry in the result set</dt>
+<dd>response. The index number is 1-based.
+The default value of start is 1 (that is, the first
+search result).
+The start parameter, along with the num parameter, can
+be used to paginate the search results.</dd>
+<dt>num - The maximum number of results to be included in the result</dt>
+<dd>set response.
+The default value is 10, and the maximum allowed value is
+100.
+The start parameter, along with the num parameter, can be
+used to paginate the search results.</dd>
+<dt>sortField - Field to sort by. You can also sort by multiple</dt>
+<dd>fields (comma separated) for an item.
+The allowed sort field names are title, created,
+type, owner, modified, avgRating, numRatings,
+numComments, and numViews.</dd>
+<dt>sortOrder - Describes whether the results return in ascending or</dt>
+<dd>descending order. Default is ascending.
+Values: asc | desc</dd>
+<dt>useSecurity - boolean value that determines if the security</dt>
+<dd>handler object&#8217;s token will be appended on the
+search call.  If the value is set to False, then
+the search will be performed without
+authentication.  This means only items that have
+been shared with everyone on AGOL or portal site
+will be found.  If it is set to True, then all
+items the user has permission to see based on the
+query passed will be returned.</dd>
+<dt>Output:</dt>
+<dd>returns a list of dictionary</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageorg.administration.Administration.tokenURL">
+<code class="descname">tokenURL</code><a class="headerlink" href="#arcrest.manageorg.administration.Administration.tokenURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the token url</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.manageorg">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-arcrest.manageorg" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -59,6 +192,8 @@
   <ul>
 <li><a class="reference internal" href="#">arcrest.manageorg package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-arcrest.manageorg.administration">arcrest.manageorg.administration module</a></li>
+<li><a class="reference internal" href="#module-arcrest.manageorg">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -66,6 +201,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="arcrest.html">arcrest package</a><ul>
+      <li>Previous: <a href="arcrest.manageags.html" title="previous chapter">arcrest.manageags package</a></li>
+      <li>Next: <a href="arcrest.manageportal.html" title="next chapter">arcrest.manageportal package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -94,10 +233,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2015, Andrew Chapkowski, Mike Miller.
+      &copy;2016, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
       
       |

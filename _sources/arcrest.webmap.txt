@@ -1,18 +1,46 @@
 arcrest.webmap package
 ======================
 
-.. automodule:: arcrest.webmap
+Submodules
+----------
+
+arcrest.webmap.domain module
+----------------------------
+
+.. automodule:: arcrest.webmap.domain
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+arcrest.webmap.operationallayers module
+---------------------------------------
 
-.. toctree::
+.. automodule:: arcrest.webmap.operationallayers
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-   arcrest.webmap.domain
-   arcrest.webmap.operationallayers
-   arcrest.webmap.renderer
-   arcrest.webmap.symbols
+arcrest.webmap.renderer module
+------------------------------
 
+.. automodule:: arcrest.webmap.renderer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+arcrest.webmap.symbols module
+-----------------------------
+
+.. automodule:: arcrest.webmap.symbols
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: arcrest.webmap
+    :members:
+    :undoc-members:
+    :show-inheritance:

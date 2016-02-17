@@ -1,17 +1,54 @@
 arcrest.ags package
 ===================
 
-.. automodule:: arcrest.ags
+Submodules
+----------
+
+arcrest.ags.featureservice module
+---------------------------------
+
+.. automodule:: arcrest.ags.featureservice
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+arcrest.ags.layer module
+------------------------
 
-.. toctree::
+.. automodule:: arcrest.ags.layer
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-   arcrest.ags.featureservice
-   arcrest.ags.layer
-   arcrest.ags.mapservice
+arcrest.ags.mapservice module
+-----------------------------
 
+.. automodule:: arcrest.ags.mapservice
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+arcrest.ags.server module
+-------------------------
+
+.. automodule:: arcrest.ags.server
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+arcrest.ags.services module
+---------------------------
+
+.. automodule:: arcrest.ags.services
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: arcrest.ags
+    :members:
+    :undoc-members:
+    :show-inheritance:

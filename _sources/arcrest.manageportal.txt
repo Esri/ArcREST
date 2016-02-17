@@ -1,15 +1,22 @@
 arcrest.manageportal package
 ============================
 
-.. automodule:: arcrest.manageportal
+Submodules
+----------
+
+arcrest.manageportal.administration module
+------------------------------------------
+
+.. automodule:: arcrest.manageportal.administration
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
 
-.. toctree::
+Module contents
+---------------
 
-   arcrest.manageportal.administration
-
+.. automodule:: arcrest.manageportal
+    :members:
+    :undoc-members:
+    :show-inheritance:

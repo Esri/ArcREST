@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.manageags package &mdash; ArcREST 3.0.0 documentation</title>
+    <title>arcrest.manageags package &mdash; src  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.0.0',
+        VERSION:     '',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ArcREST 3.0.0 documentation" href="index.html" />
+    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="up" title="arcrest package" href="arcrest.html" />
+    <link rel="next" title="arcrest.manageorg package" href="arcrest.manageorg.html" />
+    <link rel="prev" title="arcrest.hostedservice package" href="arcrest.hostedservice.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -36,16 +39,367 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-arcrest.manageags">
-<span id="arcrest-manageags-package"></span><h1>arcrest.manageags package<a class="headerlink" href="#module-arcrest.manageags" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="arcrest-manageags-package">
+<h1>arcrest.manageags package<a class="headerlink" href="#arcrest-manageags-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.manageags.administration.html">arcrest.manageags.administration module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="arcrest.manageags.parameters.html">arcrest.manageags.parameters module</a></li>
-</ul>
 </div>
+<div class="section" id="module-arcrest.manageags.administration">
+<span id="arcrest-manageags-administration-module"></span><h2>arcrest.manageags.administration module<a class="headerlink" href="#module-arcrest.manageags.administration" title="Permalink to this headline">¶</a></h2>
+<p>Adminstration.py allows users to control ArcGIS Server 10.1+
+through the Administration REST API</p>
+<dl class="class">
+<dt id="arcrest.manageags.administration.AGSAdministration">
+<em class="property">class </em><code class="descclassname">arcrest.manageags.administration.</code><code class="descname">AGSAdministration</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em>, <em>initialize=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">arcrest._abstract.abstract.BaseAGSServer</span></code></p>
+<p>Wrapper for the ArcGIS Server REST API</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><p class="first">url - Administration REST URL
+securityHandler - security handler object for ArcGIS Server
+proxy_url - optional URL of a proxy
+proxy_port - optional port of a proxy
+initialize - default is false.  False means the object does not make</p>
+<blockquote class="last">
+<div>any REST calls until the object is actually needed,
+whereas True means the object&#8217;s properties are
+initialized at creation.</div></blockquote>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.acceptLanguage">
+<code class="descname">acceptLanguage</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.acceptLanguage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the accepted lanaguage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.clusters">
+<code class="descname">clusters</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the clusters functions if supported in resources</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageags.administration.AGSAdministration.createSite">
+<code class="descname">createSite</code><span class="sig-paren">(</span><em>username</em>, <em>password</em>, <em>configStoreConnection</em>, <em>directories</em>, <em>cluster=None</em>, <em>logsSettings=None</em>, <em>runAsync=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration.createSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.createSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the first operation that you must invoke when you install
+ArcGIS Server for the first time. Creating a new site involves:</p>
+<blockquote>
+<div><p>-Allocating a store to save the site configuration
+-Configuring the server machine and registering it with the site
+-Creating a new cluster configuration that includes the server</p>
+<blockquote>
+<div>machine</div></blockquote>
+<p>-Configuring server directories
+-Deploying the services that are marked to auto-deploy</p>
+</div></blockquote>
+<p>Because of the sheer number of tasks, it usually takes a little
+while for this operation to complete. Once a site has been created,
+you can publish GIS services and deploy them to your server
+machines.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first docutils">
+<dt>username - The name of the administrative account to be used by</dt>
+<dd>the site. This can be changed at a later stage.</dd>
+</dl>
+<p>password - The credentials of the administrative account.
+configStoreConnection - A JSON object representing the</p>
+<blockquote>
+<div>connection to the configuration store. By default, the
+configuration store will be maintained in the ArcGIS Server
+installation directory.</div></blockquote>
+<dl class="docutils">
+<dt>directories - A JSON object representing a collection of server</dt>
+<dd>directories to create. By default, the server directories will
+be created locally.</dd>
+<dt>cluster - An optional cluster configuration. By default, the</dt>
+<dd>site will create a cluster called &#8216;default&#8217; with the first
+available port numbers starting from 4004.</dd>
+</dl>
+<p>logsSettings - Optional log settings.
+runAsync - A flag to indicate if the operation needs to be run</p>
+<blockquote class="last">
+<div>asynchronously. Values: true | false</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.currentVersion">
+<code class="descname">currentVersion</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.currentVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the current version</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.data">
+<code class="descname">data</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the reference to the data functions as a class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageags.administration.AGSAdministration.deleteSite">
+<code class="descname">deleteSite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration.deleteSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.deleteSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the site configuration and releases all server resources.
+This is an unrecoverable operation. This operation is well suited
+for development or test servers that need to be cleaned up
+regularly. It can also be performed prior to uninstall. Use caution
+with this option because it deletes all services, settings, and
+other configurations.
+This operation performs the following tasks:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Stops all server machines participating in the site. This in
+turn stops all GIS services hosted on the server machines.</li>
+<li>All services and cluster configurations are deleted.</li>
+<li>All server machines are unregistered from the site.</li>
+<li>All server machines are unregistered from the site.</li>
+<li>The configuration store is deleted.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageags.administration.AGSAdministration.exportSite">
+<code class="descname">exportSite</code><span class="sig-paren">(</span><em>location=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration.exportSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.exportSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports the site configuration to a location you specify as input
+to this operation.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first last docutils">
+<dt>location - A path to a folder accessible to the server where the</dt>
+<dd>exported site configuration will be written. If a location is
+not specified, the server writes the exported site
+configuration file to directory owned by the server and returns
+a virtual path (an HTTP URL) to that location from where it can
+be downloaded.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.fullVersion">
+<code class="descname">fullVersion</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.fullVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the full version of the arcgis server software</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageags.administration.AGSAdministration.importSite">
+<code class="descname">importSite</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration.importSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.importSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>This operation imports a site configuration into the currently
+running site. Importing a site means replacing all site
+configurations (including GIS services, security configurations,
+and so on) of the currently running site with those contained in
+the site configuration file you supply as input. The input site
+configuration file can be obtained through the exportSite
+operation.
+This operation will restore all information included in the backup,
+as noted in exportSite. When it is complete, this operation returns
+a report as the response. You should review this report and fix any
+problems it lists to ensure your site is fully functioning again.
+The importSite operation lets you restore your site from a backup
+that you created using the exportSite operation.</p>
+<dl class="docutils">
+<dt>Input:</dt>
+<dd><dl class="first last docutils">
+<dt>location - A file path to an exported configuration or an ID</dt>
+<dd>referencing the stored configuration on the server.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.info">
+<code class="descname">info</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only resource that returns meta information about the server</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.manageags.administration.AGSAdministration.joinSite">
+<code class="descname">joinSite</code><span class="sig-paren">(</span><em>adminURL</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/administration.html#AGSAdministration.joinSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.joinSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Join Site operation is used to connect a server machine to an
+existing site. This is considered a &#8216;push&#8217; mechanism, in which a
+server machine pushes its configuration to the site. For the
+operation to be successful, you need to provide an account with
+administrative privileges to the site.
+When an attempt is made to join a site, the site validates the
+administrative credentials, then returns connection information
+about its configuration store back to the server machine. The
+server machine then uses the connection information to work with
+the configuration store.
+If this is the first server machine in your site, use the Create
+Site operation instead.</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd><dl class="first docutils">
+<dt>adminURL - The site URL of the currently live site. This is</dt>
+<dd>typically the Administrator Directory URL of one of the server
+machines of a site.</dd>
+</dl>
+<p class="last">username - The name of an administrative account for the site.
+password - The password of the administrative account.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.kml">
+<code class="descname">kml</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.kml" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the kml functions for server</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.logs">
+<code class="descname">logs</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns an object to work with the site logs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.machines">
+<code class="descname">machines</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.machines" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets a reference to the machines object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.publicKey">
+<code class="descname">publicKey</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.publicKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the public key</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.resources">
+<code class="descname">resources</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the resources on the server</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.security">
+<code class="descname">security</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.security" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns an object to work with the site security</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.services">
+<code class="descname">services</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the services object which will provide the ArcGIS Server&#8217;s
+admin information about services and folders.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.system">
+<code class="descname">system</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.system" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns an object to work with the site system</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.uploads">
+<code class="descname">uploads</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.uploads" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns an object to work with the site uploads</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.administration.AGSAdministration.usagereports">
+<code class="descname">usagereports</code><a class="headerlink" href="#arcrest.manageags.administration.AGSAdministration.usagereports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the services object which will provide the ArcGIS Server&#8217;s
+admin information about the usagereports.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.manageags.parameters">
+<span id="arcrest-manageags-parameters-module"></span><h2>arcrest.manageags.parameters module<a class="headerlink" href="#module-arcrest.manageags.parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="arcrest.manageags.parameters.ClusterProtocol">
+<em class="property">class </em><code class="descclassname">arcrest.manageags.parameters.</code><code class="descname">ClusterProtocol</code><span class="sig-paren">(</span><em>tcpClusterPort</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/parameters.html#ClusterProtocol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.parameters.ClusterProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The clustering protocol defines a channel which is used by server
+machines within a cluster to communicate with each other. A server
+machine will communicate with its peers information about the status of
+objects running within it for load balancing and fault tolerance.
+ArcGIS Server supports the TCP clustering protocols where server
+machines communicate with each other over a TCP channel (port).</p>
+<dl class="docutils">
+<dt>Inputs:</dt>
+<dd>tcpClusterPort - The port to use when configuring a TCP based
+protocol. By default, the server will pick up the next value in the
+assigned ports on all machines.</dd>
+</dl>
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.ClusterProtocol.tcpClusterPort">
+<code class="descname">tcpClusterPort</code><a class="headerlink" href="#arcrest.manageags.parameters.ClusterProtocol.tcpClusterPort" title="Permalink to this definition">¶</a></dt>
+<dd><p>The port to use when configuring a TCP based protocol. By default,
+the server will pick up the next value in the assigned ports on
+all machines.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.ClusterProtocol.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageags.parameters.ClusterProtocol.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tcpClusterPort as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.manageags.parameters.Extension">
+<em class="property">class </em><code class="descclassname">arcrest.manageags.parameters.</code><code class="descname">Extension</code><span class="sig-paren">(</span><em>typeName</em>, <em>capabilities</em>, <em>enabled</em>, <em>maxUploadFileSize</em>, <em>allowedUploadFileType</em>, <em>properties</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/parameters.html#Extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.parameters.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>represents a service extension</p>
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.allowedUploadFileTypes">
+<code class="descname">allowedUploadFileTypes</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.allowedUploadFileTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the allowedUploadFileTypes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.capabilities">
+<code class="descname">capabilities</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.capabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the capabilities</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the extension is enabled</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="arcrest.manageags.parameters.Extension.fromJSON">
+<em class="property">static </em><code class="descname">fromJSON</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/manageags/parameters.html#Extension.fromJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.manageags.parameters.Extension.fromJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object from json string or dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.maxUploadFileSize">
+<code class="descname">maxUploadFileSize</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.maxUploadFileSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>sets/gets the maxUploadFileSize</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.properties">
+<code class="descname">properties</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets/sets the extension properties</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.typeName">
+<code class="descname">typeName</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.typeName" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the extension type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.manageags.parameters.Extension.value">
+<code class="descname">value</code><a class="headerlink" href="#arcrest.manageags.parameters.Extension.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the object as a dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-arcrest.manageags">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-arcrest.manageags" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -59,6 +413,9 @@
   <ul>
 <li><a class="reference internal" href="#">arcrest.manageags package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-arcrest.manageags.administration">arcrest.manageags.administration module</a></li>
+<li><a class="reference internal" href="#module-arcrest.manageags.parameters">arcrest.manageags.parameters module</a></li>
+<li><a class="reference internal" href="#module-arcrest.manageags">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -66,6 +423,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="arcrest.html">arcrest package</a><ul>
+      <li>Previous: <a href="arcrest.hostedservice.html" title="previous chapter">arcrest.hostedservice package</a></li>
+      <li>Next: <a href="arcrest.manageorg.html" title="next chapter">arcrest.manageorg package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -94,10 +455,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2015, Andrew Chapkowski, Mike Miller.
+      &copy;2016, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
       
       |

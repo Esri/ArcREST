@@ -1,16 +1,22 @@
 arcrest.manageorg package
 =========================
 
-.. automodule:: arcrest.manageorg
+Submodules
+----------
+
+arcrest.manageorg.administration module
+---------------------------------------
+
+.. automodule:: arcrest.manageorg.administration
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
 
-.. toctree::
+Module contents
+---------------
 
-   arcrest.manageorg.administration
-   arcrest.manageorg.parameters
-
+.. automodule:: arcrest.manageorg
+    :members:
+    :undoc-members:
+    :show-inheritance:

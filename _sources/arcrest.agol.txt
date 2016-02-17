@@ -1,11 +1,6 @@
 arcrest.agol package
 ====================
 
-.. automodule:: arcrest.agol
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 
@@ -16,9 +11,19 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
+arcrest.agol.services module
+----------------------------
 
-   arcrest.agol.featureservice
-   arcrest.agol.layer
-   arcrest.agol.tiledservice
+.. automodule:: arcrest.agol.services
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: arcrest.agol
+    :members:
+    :undoc-members:
+    :show-inheritance:

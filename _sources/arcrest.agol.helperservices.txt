@@ -1,17 +1,46 @@
 arcrest.agol.helperservices package
 ===================================
 
-.. automodule:: arcrest.agol.helperservices
+Submodules
+----------
+
+arcrest.agol.helperservices.analysis module
+-------------------------------------------
+
+.. automodule:: arcrest.agol.helperservices.analysis
     :members:
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+arcrest.agol.helperservices.elevation module
+--------------------------------------------
 
-.. toctree::
+.. automodule:: arcrest.agol.helperservices.elevation
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-   arcrest.agol.helperservices.analysis
-   arcrest.agol.helperservices.elevation
-   arcrest.agol.helperservices.hydrology
+arcrest.agol.helperservices.geocoder module
+-------------------------------------------
 
+.. automodule:: arcrest.agol.helperservices.geocoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+arcrest.agol.helperservices.hydrology module
+--------------------------------------------
+
+.. automodule:: arcrest.agol.helperservices.hydrology
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: arcrest.agol.helperservices
+    :members:
+    :undoc-members:
+    :show-inheritance:
