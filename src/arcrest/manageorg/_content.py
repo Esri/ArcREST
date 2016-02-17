@@ -2622,10 +2622,10 @@ class User(BaseAGOLClass):
             params["filename"] = os.path.basename(filePath)
             params['itemType'] = 'file'
             res = self._post(url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+                            param_dict=params,
+                            securityHandler=self._securityHandler,
+                            proxy_url=self._proxy_url,
+                            proxy_port=self._proxy_port)
             if 'id' in res.keys():
                 itemId = res['id']
                 iUrl = "%s/items/%s" % (self.location, itemId)

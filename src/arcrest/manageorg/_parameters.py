@@ -1282,7 +1282,9 @@ class ItemParameter(BaseParameters):
                          Server service. It is valid on Map Services,
                          Feature Services, and Image Services only.
        fileName - name of the file updating (optional)
+       archiveSelect - type of archive. Values: filegeodatabase
     """
+    _archiveSelect = None
     _title = None
     _thumbnail = None
     _thumbnailurl = None
@@ -1461,6 +1463,16 @@ class ItemParameter(BaseParameters):
         """gets/sets an item description of any length"""
         if self._description != value:
             self._description = value
+    @property
+    def archiveSelect(self):
+        """ gets/sets an item archiveSelect value"""
+        return self._archiveSelect
+    #----------------------------------------------------------------------
+    @archiveSelect.setter
+    def archiveSelect(self, value):
+        """gets/sets an item description of any length"""
+        if self._archiveSelect != value:
+            self._archiveSelect = value
     #----------------------------------------------------------------------
     @property
     def tags(self):
