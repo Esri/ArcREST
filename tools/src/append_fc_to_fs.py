@@ -169,7 +169,7 @@ def main(*argv):
 
 
             else:
-                outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
+                outputPrinter(message="\tFeature Service with id %s was not found" % fsId,typeOfMessage='error')
                 arcpy.SetParameterAsText(9, "false")
 
     except arcpy.ExecuteError:

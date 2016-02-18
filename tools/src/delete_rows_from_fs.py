@@ -133,7 +133,7 @@ def main(*argv):
                                         else:
                                             featSucces = featSucces + 1
 
-                                outputPrinter (message="\t\t%s features delete from %s" % (featSucces,layerName) )
+                                outputPrinter (message="\t\t%s features deleted from %s" % (featSucces,layerName) )
                             else:
                                 outputPrinter (message="\t\t0 features deleted from %s /n result info %s" % (layerName,str(results)))
                     else:
@@ -141,11 +141,11 @@ def main(*argv):
                         arcpy.SetParameterAsText(7, "false")
                         break
             else:
-                outputPrinter(message="Feature Service with id %s was not found" % fsId,typeOfMessage='error')
+                outputPrinter(message="\tFeature Service with id %s was not found" % fsId, typeOfMessage='error')
                 arcpy.SetParameterAsText(7, "false")
 
         else:
-            outputPrinter(message="Security handler not created, exiting")
+            outputPrinter(message=fst.message, typeOfMessage='error')
             arcpy.SetParameterAsText(7, "false")
 
     except arcpy.ExecuteError:
