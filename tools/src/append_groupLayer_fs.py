@@ -97,7 +97,7 @@ def main(*argv):
 
         if bReqUserName and \
             (username == None or username == "#" or str(username).strip() == "" or \
-             password == None or password== "#" or str(password).strip() == ""):
+             password == None or password== "#" or password== "*" or str(password).strip() == ""):
             outputPrinter ("{0} Requires a username and password".format(version), typeOfMessage='error')
             return
 
