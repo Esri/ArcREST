@@ -60,7 +60,7 @@ from arcresthelper import securityhandlerhelper
 
 config = {'username': 'myusername', 'password': 'myp4ssword'}
 token = securityhandlerhelper.securityhandlerhelper(config)
-admin = arcrest.manageorg.Administration(securityHandler=shh.securityhandler)
+admin = arcrest.manageorg.Administration(securityHandler=token.securityhandler)
 content = admin.content
 userInfo = content.users.user()
 userInfo.folders
