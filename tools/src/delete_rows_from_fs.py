@@ -86,7 +86,7 @@ def main(*argv):
 
         if bReqUserName and \
            (username == None or username == "#" or str(username).strip() == "" or \
-            password == None or password== "#" or str(password).strip() == ""):
+            password == None or password== "#" or password== "*" or str(password).strip() == ""):
             outputPrinter ("{0} Requires a username and password".format(version), typeOfMessage='error')
             return
 
@@ -133,7 +133,7 @@ def main(*argv):
                                         else:
                                             featSucces = featSucces + 1
 
-                                outputPrinter (message="\t\t%s features delete from %s" % (featSucces,layerName) )
+                                outputPrinter (message="\t\t%s features deleted from %s" % (featSucces,layerName) )
                             else:
                                 outputPrinter (message="\t\t0 features deleted from %s /n result info %s" % (layerName,str(results)))
                     else:
