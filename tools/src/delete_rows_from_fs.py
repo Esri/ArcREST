@@ -2,15 +2,19 @@
     @author: ArcGIS for Water Utilities
     @contact: ArcGISTeamUtilities@esri.com
     @company: Esri
-    @version: 1.1
+    @version: 1.2
     @description: Used to delete content from a feature service
     @requirements: Python 2.7.x, ArcGIS 10.2.1
-    @copyright: Esri, 2014
+    @copyright: Esri, 2016
 """
+
+from __future__ import print_function
+
 import gc
 import os
 import sys
 import arcpy
+import re
 
 from arcresthelper import featureservicetools
 from arcresthelper import common
@@ -20,7 +24,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -38,11 +42,12 @@ def outputPrinter(message,typeOfMessage='message'):
     else:
         arcpy.AddMessage(message=message)
 
-    print message
+    print (message)
 def main(*argv):
-    userName = None
-    password = None
-    org_url = None
+
+    proxy_port = None
+    proxy_url = None
+
     layerNames = None
     layerName = None
     layerName = None
@@ -54,14 +59,12 @@ def main(*argv):
     existingDef = None
     try:
 
+
         proxy_port = None
-        proxy_url = None    
+        proxy_url = None
 
         securityinfo = {}
-        securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
-        securityinfo['username'] = argv[0]
-        securityinfo['password'] = argv[1]
-        securityinfo['org_url'] = argv[2]
+
         securityinfo['proxy_url'] = proxy_url
         securityinfo['proxy_port'] = proxy_port
         securityinfo['referer_url'] = None
@@ -69,40 +72,72 @@ def main(*argv):
         securityinfo['certificatefile'] = None
         securityinfo['keyfile'] = None
         securityinfo['client_id'] = None
-        securityinfo['secret_id'] = None   
-        
+        securityinfo['secret_id'] = None
+
+        username = argv[0]
+        password = argv[1]
+        siteURL = argv[2]
+
+        version = arcpy.GetInstallInfo()['Version']
+        if re.search("^10\.[0-2]", version) is not None:
+            bReqUserName = True
+        else:
+            bReqUserName = False
+
+        if bReqUserName and \
+           (username == None or username == "#" or str(username).strip() == "" or \
+            password == None or password== "#" or str(password).strip() == ""):
+            outputPrinter ("{0} Requires a username and password".format(version), typeOfMessage='error')
+            return
+
+        if bReqUserName:
+            securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
+            securityinfo['username'] = username
+            securityinfo['password'] = password
+            securityinfo['org_url'] = siteURL
+
+        else:
+            securityinfo['security_type'] = 'ArcGIS'#LDAP, NTLM, OAuth, Portal, PKI
+
         fsId = argv[3]
         layerNames = argv[4]
         sql = argv[5]
-        toggleEditCapabilities = argv[6]
+        showFullResponse = argv[6]
 
         fst = featureservicetools.featureservicetools(securityinfo)
         if fst.valid:
 
             fs = fst.GetFeatureService(itemId=fsId,returnURLOnly=False)
-
-            outputPrinter("Logged in successful")
             if not fs is None:
-                if str(toggleEditCapabilities).upper() == 'TRUE':
-                    existingDef = fst.EnableEditingOnService(url=fs.url)
                 for layerName in layerNames.split(','):
+                    layerName = layerName.strip()
                     fl = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=False)
                     if not fl is None:
-                        outputPrinter(message="Attempting to delete features matching this query: %s " % sql)
+                        outputPrinter(message="\tAttempting to delete features matching this query: %s " % sql)
                         results = fl.deleteFeatures(where=sql)
 
+                        if str(showFullResponse).lower() =='true':
+                            outputPrinter(message="\t\tResponse:  %s" % results)
                         if 'error' in results:
-                            outputPrinter(message="Error in response from server: " % results['error'],typeOfMessage='error')
+                            outputPrinter(message="\t\tError in response from server:  %s" % results['error'],typeOfMessage='error')
                             arcpy.SetParameterAsText(7, "false")
-                            break
-
                         else:
-                            outputPrinter (message="%s features deleted" % len(results['deleteResults']) )
-                            if toggleEditCapabilities:
-                                existingDef = fst.EnableEditingOnService(url=fs.url)
-                            arcpy.SetParameterAsText(7, "true")
+                            if results['deleteResults'] is not None:
+                                featSucces = 0
+                                for result in results['deleteResults']:
+                                    if 'success' in result:
+                                        if result['success'] == False:
+                                            if 'error' in result:
+
+                                                outputPrinter (message="\t\t\tError info: %s" % (result['error']) )
+                                        else:
+                                            featSucces = featSucces + 1
+
+                                outputPrinter (message="\t\t%s features delete from %s" % (featSucces,layerName) )
+                            else:
+                                outputPrinter (message="\t\t0 features deleted from %s /n result info %s" % (layerName,str(results)))
                     else:
-                        outputPrinter(message="Layer %s was not found, please check your credentials and layer name" % layerName,typeOfMessage='error')
+                        outputPrinter(message="\t\tLayer %s was not found, please check your credentials and layer name"    % layerName,typeOfMessage='error')
                         arcpy.SetParameterAsText(7, "false")
                         break
             else:
@@ -131,9 +166,6 @@ def main(*argv):
         arcpy.SetParameterAsText(7, "false")
     finally:
         existingDef = None
-        userName = None
-        password = None
-        org_url = None
         fsId = None
         layerNames = None
         layerName = None
@@ -144,9 +176,7 @@ def main(*argv):
         fl = None
 
         del existingDef
-        del userName
-        del password
-        del org_url
+
         del fsId
         del layerNames
         del layerName
