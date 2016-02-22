@@ -1152,6 +1152,15 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._proxy_port = proxy_port
         self._proxy_url = proxy_url
         self._token_expires_on = datetime.datetime.now() + datetime.timedelta(seconds=_defaultTokenExpiration)
+        if org_url.lower().find('www.arcgis.com') > -1:
+            self._initURL(org_url=org_url,token_url=token_url)
+            if self._url.lower().find("www.arcgis.com") > -1:
+                from ..manageorg import Administration
+                admin = Administration(securityHandler=self)
+                portalSelf = admin.portals.portalSelf
+                org_url = "https://%s.%s/sharing/rest" % (portalSelf.urlKey, portalSelf.customBaseUrl)
+                del portalSelf
+                del admin
         self._initURL(org_url=org_url,token_url=token_url)
     #----------------------------------------------------------------------
     def _initURL(self, org_url=None,

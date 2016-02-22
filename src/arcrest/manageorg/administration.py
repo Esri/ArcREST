@@ -33,32 +33,35 @@ class Administration(BaseAGOLClass):
             url = securityHandler.org_url
         if url is None or url == '':
             raise AttributeError("URL or Security Handler needs to be specified")
-
         if url.lower().find("/sharing") > -1:
             pass
         else:
             url = url + "/sharing"
-
         if url.lower().find("/rest") > -1:
             self._url = url
         else:
             self._url = url + "/rest"
-
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if securityHandler is not None:
-
             self._referer_url = securityHandler.referer_url
         else:
             raise AttributeError("Security Handler is required for the administration function")
+
+        if self._url.lower().find("www.arcgis.com") > -1:
+            portalSelf = self.portals.portalSelf
+            self._url = "https://%s.%s/sharing/rest" % (portalSelf.urlKey, portalSelf.customBaseUrl)
+            del portalSelf
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------
-    def __init(self, url):
+    def __init(self, url=None):
         """ initializes the site properties """
         params = {
             "f" : "json"
         }
+        if url is None:
+            url = self._url
         json_dict = self._get(url=url,
                                  param_dict=params,
                                  securityHandler=self._securityHandler,

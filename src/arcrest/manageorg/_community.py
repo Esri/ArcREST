@@ -1249,6 +1249,8 @@ class User(BaseAGOLClass):
     _preferredView = None
     _lastLogin = None
     _validateUserProfile = None
+    _assignedCredits = None
+    _availableCredits = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1316,6 +1318,20 @@ class User(BaseAGOLClass):
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
                     proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def assignedCredits(self):
+        """returns the assignedCredits value"""
+        if self._assignedCredits is None:
+            self.__init()
+        return self._assignedCredits
+    #----------------------------------------------------------------------
+    @property
+    def availableCredits(self):
+        """gets the availableCredits value"""
+        if self._availableCredits is None:
+            self.__init()
+        return self._availableCredits
     #----------------------------------------------------------------------
     @property
     def disabled(self):
