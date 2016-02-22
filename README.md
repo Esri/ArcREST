@@ -1,6 +1,6 @@
 # ArcREST Version 3.5.4
 
-A Stable release candidate of ArcREST 3.5.3 can be downloaded here: https://github.com/Esri/ArcREST/tree/3.5_Release
+A latest release(v3.5.3) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.3
 * If you are using an older version(v3.0.1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/releases/tag/v3.0.1
 * If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
 * If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
