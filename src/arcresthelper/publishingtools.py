@@ -1416,28 +1416,29 @@ class publishingtools(securityhandlerhelper):
             if skipIfExist == True:
                 sea = arcrest.find.search(securityHandler=self._securityHandler)
                 items = sea.findItem(title=service_name, itemType='Feature Service',searchorg=False)
+                if 'total' in items:
+                    if items['total'] >= 1:
+                        for res in items['results']:
+                            if 'type' in res and res['type'] == 'Feature Service':
+                                if 'name' in res and res['name'] == service_name:
+                                    itemId = res['id']
+                                    break
+                                if 'title' in res and res['title'] == service_name:
+                                    itemId = res['id']
+                                    break
+                        if itemId is not None:
+                            defItem = content.getItem(itemId)
 
-                if items['total'] >= 1:
-                    for res in items['results']:
-                        if 'type' in res and res['type'] == 'Feature Service':
-                            if 'name' in res and res['name'] == service_name:
-                                itemId = res['id']
-                                break
-                            if 'title' in res and res['title'] == service_name:
-                                itemId = res['id']
-                                break
-                    if itemId is not None:
-                        defItem = content.getItem(itemId)
-
-                        results = {
-                            "url": defItem.url,
-                            "folderId": folderId,
-                            "itemId": defItem.id,
-                            "convertCase": self._featureServiceFieldCase,
-                            "messages":"Exist"
-                        }
-                        return results
-
+                            results = {
+                                "url": defItem.url,
+                                "folderId": folderId,
+                                "itemId": defItem.id,
+                                "convertCase": self._featureServiceFieldCase,
+                                "messages":"Exist"
+                            }
+                            return results
+                else:
+                    print ("Error searching organzation, {0}".format(items))
 
             if (extension == ".mxd"):
                 dataFileType = "serviceDefinition"
@@ -1451,7 +1452,7 @@ class publishingtools(securityhandlerhelper):
                                                                      maxRecordCount=maxRecordCount,
                                                                      server_type='MY_HOSTED_SERVICES',
                                                                      url=url)
-                if sd_Info is not None:                                                     
+                if sd_Info is not None:
                     publishParameters = arcrest.manageorg.PublishSDParameters(tags=sd_Info['tags'],
                                                                               overwrite='true')
             elif (extension == ".zip"):
