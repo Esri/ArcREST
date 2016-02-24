@@ -1571,6 +1571,27 @@ class User(BaseAGOLClass):
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def resetPassword(self, email=True):
+        """
+        resets a password for an account.  The password will be randomly
+        generated and emailed by the system.
+
+        Input:
+           email - boolean that an email password will be sent to the
+                   user's profile email address.  The default is True.
+
+        """
+        url = self.root + "/reset"
+        params = {
+            "f" : "json",
+            "email" : email
+        }
+        return self._post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_url=self._proxy_url,
+                             proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def expirePassword(self,
                        hours="now"):
         """sets a time when a user must reset their password"""
@@ -1642,7 +1663,8 @@ class User(BaseAGOLClass):
                securityQuestionIdx=None,
                securityAnswer=None,
                culture=None,
-               region=None
+               region=None,
+               userType=None
                ):
         """
         The Update User operation (POST only) modifies properties such as
@@ -1687,6 +1709,11 @@ class User(BaseAGOLClass):
                   browser/machine language setting.
         region - Specifies the region of featured maps and apps and the
                  basemap gallery.
+        userType - if the value is set to "both", then the value will allow
+                   users to access both ArcGIS Org and the forums from this
+                   account.  'arcgisorg' means the account is only valid
+                   for the organizational site.  This is an AGOL only
+                   parameter.
         """
         params = {
             "f" : "json"
@@ -1709,7 +1736,9 @@ class User(BaseAGOLClass):
             params['securityQuestionIdx'] = securityQuestionIdx
         if securityAnswer is not None:
             params['securityAnswer'] = securityAnswer
-
+        if userType is not None and \
+           userType.lower() in ['both', 'arcgisorg']:
+            params['userType'] = userType.lower()
         files = {}
 
 
