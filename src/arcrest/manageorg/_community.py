@@ -1587,7 +1587,7 @@ class User(BaseAGOLClass):
     #----------------------------------------------------------------------
     def resetPassword(self, email=True):
         """
-        resets a password for an account.  The password will be randomly
+        resets a users password for an account.  The password will be randomly
         generated and emailed by the system.
 
         Input:
