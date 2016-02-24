@@ -1824,6 +1824,7 @@ class User(BaseAGOLClass):
     _start = None
     _num = None
     _total = None
+
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1998,6 +1999,7 @@ class User(BaseAGOLClass):
                             proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
+
     @property
     def username(self):
         '''gets the property value for username'''

@@ -1251,6 +1251,8 @@ class User(BaseAGOLClass):
     _validateUserProfile = None
     _assignedCredits = None
     _availableCredits = None
+    _firstName = None
+    _lastName = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1318,6 +1320,18 @@ class User(BaseAGOLClass):
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
                     proxy_port=self._proxy_port)
+    @property
+    def lastName(self):
+        '''gets the property value for username'''
+        if self._lastName is None:
+            self.__init()
+        return self._lastName
+    @property
+    def firstName(self):
+        '''gets the property value for username'''
+        if self._firstName is None:
+            self.__init()
+        return self._firstName
     #----------------------------------------------------------------------
     @property
     def assignedCredits(self):
