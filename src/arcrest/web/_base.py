@@ -7,10 +7,12 @@ from __future__ import print_function
 import io
 import os
 import re
+import ssl
 import sys
 import json
 import uuid
 import zlib
+from inspect import getargspec
 import shutil
 import tempfile
 import mimetypes
@@ -29,6 +31,8 @@ from ..packages.six.moves.urllib_parse import urlencode
 ########################################################################
 __version__ = "3.5.3"
 ########################################################################
+VERIFY_SSL_CERTIFICATES = True
+USER_AGENT = "python-requests/2.9.1"
 class BaseOperation(object):
     """base class for all objects"""
     _error = None
@@ -90,11 +94,17 @@ class MultiPartForm(object):
             self.files = []
         else:
             for key,v in files.items():
+                if isinstance(v, list):
+                    fileName = os.path.basename(v[1])
+                    filePath = v[0]
+                else:
+                    filePath = v
+                    fileName = os.path.basename(v)
                 self.add_file(fieldname=key,
-                              filename=os.path.basename(v),
-                              filePath=v,
+                              filename=fileName,#os.path.basename(v),
+                              filePath=filePath,#,v
                               mimetype=None)
-        self.boundary = email.generator._make_boundary()
+        self.boundary = "-%s" % email.generator._make_boundary()
     #----------------------------------------------------------------------
     def get_content_type(self):
         return 'multipart/form-data; boundary=%s' % self.boundary
@@ -261,6 +271,10 @@ class BaseWebOperations(BaseOperation):
         elif securityHandler.method.lower() == "handler":
             handler = securityHandler.handler
             cj = securityHandler.cookiejar
+        if len(param_dict) > 0:
+            for k,v in param_dict.items():
+                if isinstance(v, bool):
+                    param_dict[k] = json.dumps(v)
         return param_dict, handler, cj
     #----------------------------------------------------------------------
     def _process_response(self, resp, out_folder=None):
@@ -310,14 +324,14 @@ class BaseWebOperations(BaseOperation):
     def _make_boundary(self):
         """ creates a boundary for multipart post (form post)"""
         if self.PY2:
-            return '===============%s==' % uuid.uuid4().get_hex()
+            return '-===============%s==' % uuid.uuid4().get_hex()
         elif self.PY3:
-            return '===============%s==' % uuid.uuid4().hex
+            return '-===============%s==' % uuid.uuid4().hex
         else:
             from random import choice
             digits = "0123456789"
             letters = "abcdefghijklmnopqrstuvwxyz"
-            return '===============%s==' % ''.join(choice(letters + digits) \
+            return '-===============%s==' % ''.join(choice(letters + digits) \
                                                    for i in range(15))
     #----------------------------------------------------------------------
     def _get_content_type(self, filename):
@@ -359,7 +373,8 @@ class BaseWebOperations(BaseOperation):
               proxy_port=80,
               compress=True,
               out_folder=None,
-              file_name=None):
+              file_name=None,
+              force_form_post=False):
         """
         Performs a POST operation on a URL.
 
@@ -387,11 +402,22 @@ class BaseWebOperations(BaseOperation):
            file_name - if the operation returns a file and the file name is not
              given in the header or a user wishes to override the return saved
              file name, provide value here.
+           force_form_post - boolean -
         Output:
            returns dictionary or string depending on web operation.
         """
-        self._last_method = "POST"
-        headers = {}
+        if len(files) == 0 and force_form_post == False:
+            self._last_method = "POST"
+        elif len(files) == 0 and force_form_post == True:
+            self._last_method = "FORM-MULTIPART"
+        elif len(files) > 0:
+            self._last_method = "FORM-MULTIPART"
+            force_form_post = True
+
+        headers = {
+            "User-Agent": USER_AGENT,
+            'Accept': '*/*'
+        }
         opener = None
         return_value = None
         handlers = [RedirectHandler()]
@@ -413,14 +439,26 @@ class BaseWebOperations(BaseOperation):
             del k,v
         opener = request.build_opener(*handlers)
         request.install_opener(opener)
+        hasContext = 'content' in getargspec(request.urlopen).args
+        if VERIFY_SSL_CERTIFICATES == False and \
+           'content' in getargspec(request.urlopen).args:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+
         opener.addheaders = [(k,v) for k,v in headers.items()]
-        if len(files) == 0:
+        if force_form_post == False:
             data = urlencode(param_dict)
             if self.PY3:
                 data = data.encode('ascii')
             opener.data = data
-            resp = opener.open(self._asString(url),
-                               data=data)
+            request.install_opener(opener)
+            req = request.Request(self._asString(url),
+                                   data = data)
+            if hasContext and VERIFY_SSL_CERTIFICATES == False:
+                resp = request.urlopen(self._asString(url), data=data, context=ctx)
+            else:
+                resp = request.urlopen(self._asString(url), data=data)
         else:
             mpf = MultiPartForm(param_dict=param_dict,
                                 files=files)
@@ -430,7 +468,11 @@ class BaseWebOperations(BaseOperation):
             req.add_header('Content-type', mpf.get_content_type())
             req.add_header('Content-length', len(body))
             req.data = body
-            resp = request.urlopen(req)
+            if 'context' in getargspec(request.urlopen).args and \
+               VERIFY_SSL_CERTIFICATES == False:
+                resp = request.urlopen(req, context=ctx)
+            else:
+                resp = request.urlopen(req)
             del body, mpf
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
@@ -512,15 +554,37 @@ class BaseWebOperations(BaseOperation):
             proxy_support = request.ProxyHandler(proxies)
             handlers.append(proxy_support)
         opener = request.build_opener(*handlers)
+        request.install_opener(opener)
         opener.addheaders = headers
-        if param_dict is None:
-            resp = opener.open(self._asString(url), data=param_dict)
-        elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-            resp = opener.open(self._asString(url),
-                               data=urlencode(param_dict))
+        ctx = None
+        hasContext = False
+        if VERIFY_SSL_CERTIFICATES == False and \
+           'content' in getargspec(request.urlopen).args:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            hasContext = True
+        if hasContext == False:
+            if param_dict is None:
+                resp = request.urlopen(self._asString(url), data=param_dict)
+            elif len(str(urlencode(param_dict))) + len(url) >= 1999:
+                resp = request.urlopen(url=self._asString(url),
+                                       data=param_dict)
+            else:
+                format_url = self._asString(url) + "?%s" % urlencode(param_dict)
+                resp = request.urlopen(url=format_url)
         else:
-            format_url = self._asString(url) + "?%s" % urlencode(param_dict)
-            resp = opener.open(fullurl=format_url)
+            if param_dict is None:
+                resp = request.urlopen(self._asString(url), data=param_dict,
+                                       context=ctx)
+            elif len(str(urlencode(param_dict))) + len(url) >= 1999:
+                resp = request.urlopen(url=self._asString(url),
+                                       data=param_dict,
+                                       context=ctx)
+            else:
+                format_url = self._asString(url) + "?%s" % urlencode(param_dict)
+                resp = request.urlopen(url=format_url,
+                                       context=ctx)
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
         #  Get some headers from the response

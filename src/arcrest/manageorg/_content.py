@@ -1571,8 +1571,10 @@ class UserItem(BaseAGOLClass):
         files = {}
         params = {
             "f": "json",
-            "clearEmptyFields": clearEmptyFields
+
         }
+        if clearEmptyFields:
+            params["clearEmptyFields"] = clearEmptyFields
         if serviceUrl is not None:
             params['url'] = serviceUrl
         if text is not None:
@@ -1580,7 +1582,8 @@ class UserItem(BaseAGOLClass):
         if isinstance(itemParameters, ItemParameter) == False:
             raise AttributeError("itemParameters must be of type parameter.ItemParameter")
         keys_to_delete = ['id', 'owner', 'size', 'numComments',
-                          'numRatings', 'avgRating', 'numViews' ]
+                          'numRatings', 'avgRating', 'numViews' ,
+                          'overwrite']
         dictItem = itemParameters.value
         for key in keys_to_delete:
             if key in dictItem:
@@ -1628,7 +1631,8 @@ class UserItem(BaseAGOLClass):
                  files=files,
                  securityHandler=self._securityHandler,
                  proxy_url=self._proxy_url,
-                 proxy_port=self._proxy_port)
+                 proxy_port=self._proxy_port,
+                 force_form_post=True)
         self.__init()
         return self
     #----------------------------------------------------------------------
@@ -1761,49 +1765,50 @@ class UserItem(BaseAGOLClass):
                                   filePath=fp,
                                   overwrite=True,
                                   multipart=True)
-              res = usercontent.addByPart(filePath=fp, itemId=res['id'])
+              res = usercontent.addByPart(filePath=fp)
               res = usercontent.commit(itemId)
-              usercontent.updateItem(itemId=res['id'],
-                                     updateItemParameters=ip)
+              usercontent.updateItem(updateItemParameters=ip)
               # Item added and updated.
            Inputs:
               filePath - location of the file on disk
               itemId - empty item added to AGOL/Portal
               folder - folder id
         """
+        def read_in_chunks(file_object, chunk_size=10000000):
+            """Generate file chunks of 10MB"""
+            while True:
+                data = file_object.read(chunk_size)
+                if not data:
+                    break
+                yield data
         params = {
         "f" : "json",
         'itemType' : 'file'
         }
         url = '%s/addPart' % self.root
-
+        messages = []
+        files = {}
         with open(filePath, 'rb') as f:
-            mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-            size = 50000000
-            steps =  int(os.fstat(f.fileno()).st_size / size)
-            if os.fstat(f.fileno()).st_size % size > 0:
-                steps += 1
-            for i in range(steps):
-                files = {}
-                tempFile = os.path.join(os.environ['TEMP'], "split.part%s" % i)
-                if os.path.isfile(tempFile):
-                    os.remove(tempFile)
+            for part_num, piece in enumerate(read_in_chunks(f), start=1):
+                params['partNum'] = part_num
+                tempFile = os.path.join(os.environ['TEMP'], "split.part%s" % part_num)
+                files['file'] =  [tempFile, os.path.basename(filePath)]
                 with open(tempFile, 'wb') as writer:
-                    writer.write(mm.read(size))
-                    writer.flush()
-                    writer.close()
-                del writer
-                files['file'] =  tempFile
-                params['partNum'] = i + 1
+                    writer.write(piece)
+                    del writer
                 res = self._post(url=url,
                                  param_dict=params,
                                  files=files,
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
-                os.remove(tempFile)
-            del mm
-        return res
+                if os.path.isfile(tempFile):
+                    os.remove(tempFile)
+                del files
+                del tempFile
+                files = {}
+                messages.append(res)
+        return messages
 ########################################################################
 class User(BaseAGOLClass):
     """represents a single user on a portal or AGOL organization"""
@@ -2548,12 +2553,68 @@ class User(BaseAGOLClass):
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
+    def _addItemMultiPart(self,
+                          itemParameters,
+                          filePath):
+        """
+        The secret sauce behind the addByPart workflow
+        Inputs:
+           itemParatmers - ItemParamter class
+           filePath - full disk path location.
+        Output:
+           UserItem class
+        """
+        url = self._location + "/addItem"
+        params = {
+            "f": "json",
+            'multipart' : 'true',
+            "filename"	: itemParameters.title,
+        }
+        res = self._post(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler)
+        if 'id' in res:
+            itemID = res['id']
+            iUrl = "%s/items/%s" % (self.location, itemID)
+            ui = UserItem(url=iUrl,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+            res = ui.addByPart(filePath=filePath)
+            res = ui.commit(wait=True)
+            up = ItemParameter()
+            up.title = itemParameters.title
+            up.tags = itemParameters.tags
+            up.filename = os.path.basename(filePath)
+            up.type = itemParameters.type
+            ui.updateItem(itemParameters=up)
+
+            update_url = ui.root.replace('/rest/', '/') + "/update"
+
+            data = {'title': itemParameters.title,
+                   'tags': itemParameters.tags,
+                   'filename': os.path.basename(filePath),
+                   'type': itemParameters.type,
+                   'f': 'json'}
+            for k,v in itemParameters.value.items():
+                if k not in data.keys():
+                    if isinstance(v, bool):
+                        data[k] = json.dumps(v)
+                    else:
+                        data[k] = v
+            res = self._post(url=update_url,
+                             param_dict=data,
+                            securityHandler=self._securityHandler)
+            ui.refresh()
+            return ui
+        return None
     #----------------------------------------------------------------------
     def addItem(self,
                 itemParameters,
                 filePath=None,
                 overwrite=False,
                 folder=None,
+                dataURL=None,
                 url=None,
                 text=None,
                 relationshipType=None,
@@ -2576,6 +2637,11 @@ class User(BaseAGOLClass):
            filePath - if updating the item's content
            overwrite - if the item exists, it overwrites it
            folder - id of the folder to place the item
+           dataURL - The URL where the item can be downloaded. The resource
+                     will be downloaded and stored as a file type. Similar
+                     to uploading a file to be added, but instead of
+                     transferring the contents of the file, the URL of the
+                     data file is referenced and creates a file item.
            url - The URL of the item to be submitted. The URL can be a URL
                  to a service, a web mapping application, or any other
                  content available at that URL.
@@ -2599,11 +2665,17 @@ class User(BaseAGOLClass):
         }
         res = ""
         if itemParameters is not None:
-            params.update(itemParameters.value)
-        if itemParameters.overwrite is None:
+            for k,v in itemParameters.value.items():
+                if isinstance(v, bool):
+                    params[k] = json.dumps(v)
+                else:
+                    params[k] = v
+        if itemParameters.overwrite is not None:
             params['overwrite'] = json.dumps(overwrite)
         if itemParameters.overwrite != overwrite:
             params['overwrite'] = json.dumps(overwrite)
+        if dataURL is not None:
+            params['dataURL'] = dataURL
         if url is not None:
             params['url'] = url
         if text is not None:
@@ -2617,32 +2689,11 @@ class User(BaseAGOLClass):
         if serviceProxyParams is not None:
             params['serviceProxyParams'] = serviceProxyParams
         url = "%s/addItem" % self.location
-
         files = {}
         if multipart:
-            params['multipart'] = multipart
-            params["filename"] = os.path.basename(filePath)
-            params['itemType'] = 'file'
-            res = self._post(url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-            if 'id' in res.keys():
-                itemId = res['id']
-                iUrl = "%s/items/%s" % (self.location, itemId)
-                ui = UserItem(url=iUrl,
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)
-                res = ui.addByPart(filePath=filePath)
-                # need to pass 'type' on commit
-                res = ui.commit(wait=True, additionalParams=\
-                                  {'type' : itemParameters.type }
-                                  )
-                if itemParameters is not None:
-                    res = ui.updateItem(itemParameters=itemParameters)
-                return ui
+            res = self._addItemMultiPart(
+                itemParameters=itemParameters,
+                filePath=filePath)
         else:
             if filePath is not None and os.path.isfile(filePath):
                 files['file'] = filePath
@@ -2672,14 +2723,20 @@ class User(BaseAGOLClass):
                                  securityHandler=self._securityHandler,
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
-        if "id" not in res:
+        if (isinstance(res, dict) and \
+           "id" not in res):
             raise Exception("Cannot add the item: %s" % res)
-        itemId = res['id']
-
-        return UserItem(url="%s/items/%s" % (self.location, itemId),
-                      securityHandler=self._securityHandler,
-                      proxy_url=self._proxy_url,
-                      proxy_port=self._proxy_port)
+        elif (isinstance(res, (UserItem, Item)) and \
+              res.id is None):
+            raise Exception("Cannot add the item: %s" % str(res))
+        elif isinstance(res, (UserItem, Item)):
+            return res
+        else:
+            itemId = res['id']
+            return UserItem(url="%s/items/%s" % (self.location, itemId),
+                            securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
 ########################################################################
 class FeatureContent(BaseAGOLClass):
     """

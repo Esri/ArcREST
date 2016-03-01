@@ -18,7 +18,7 @@ from ..packages.six.moves.urllib import request
 from ..packages.six.moves.urllib_parse import urlencode, urlparse, urlunparse
 from ..packages.six.moves.http_cookiejar import CookieJar
 
-_defaultTokenExpiration = 15 #Minutes
+_defaultTokenExpiration = 60 #Minutes
 ########################################################################
 class CommunityMapsSecurityHandler(abstract.BaseSecurityHandler):
     """
@@ -1040,9 +1040,6 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
                 datetime.timedelta(seconds=1)
             self._referer_url = token_response['referer']
             return self._token
-            #{'token': u'', 'expires': 1434040404L, 'referer': u'http://www.esri.com/AGO/A4901C34-4DDA-4B63-8D7A-E5906A85D17C'}
-
-
         else:
             return {"error": "No valid token, please log in ArcMap"}
 
