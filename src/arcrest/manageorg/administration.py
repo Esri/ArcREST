@@ -9,6 +9,8 @@ import json
 from . import _community, _content, _portals, _oauth2
 from ..hostedservice import Services
 from ..manageags import AGSAdministration
+from ..packages.six.moves.urllib_parse import urlparse, urlunparse
+
 ########################################################################
 class Administration(BaseAGOLClass):
     """  Administers the AGOL/Portal Site """
@@ -48,10 +50,14 @@ class Administration(BaseAGOLClass):
         else:
             raise AttributeError("Security Handler is required for the administration function")
 
-        if self._url.lower().find("www.arcgis.com") > -1:
+        urlInfo = urlparse(self._url)
+        if str(urlInfo.netloc).lower() == "www.arcgis.com"> -1:
             portalSelf = self.portals.portalSelf
+            urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
+            self._url = urlunparse(urlInfo)
             self._url = "https://%s.%s/sharing" % (portalSelf.urlKey, portalSelf.customBaseUrl)
             del portalSelf
+
         if initialize:
             self.__init(url=url)
     #----------------------------------------------------------------------

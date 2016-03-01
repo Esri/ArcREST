@@ -185,6 +185,7 @@ class securityhandlerhelper(object):
                                                                                      token_url=self._token_url,
                                                                                      proxy_url=self._proxy_url,
                                                                                      proxy_port=self._proxy_port)
+                            self._org_url = self._securityHandler.org_url
                             self._message = "ArcGIS Online security handler created"
                         else:
                             self._securityHandler = security.PortalTokenSecurityHandler(username=self._username,
