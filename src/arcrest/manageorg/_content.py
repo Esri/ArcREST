@@ -244,6 +244,12 @@ class Item(BaseAGOLClass):
     _orgId = None
     _itemControl = None
     _sourceUrl = None
+    _itemType = None
+    _uploaded = None
+    _lastModified = None
+    _item = None
+    _privateUrl = None
+
     #----------------------------------------------------------------------
     def __init__(self,url,
                  securityHandler,
@@ -284,7 +290,36 @@ class Item(BaseAGOLClass):
         if self._orgId is None:
             self.__init()
         return self._orgId
-    _privateUrl = None
+
+    #----------------------------------------------------------------------
+    @property
+    def itemType(self):
+        '''gets the property value for itemType'''
+        if self._itemType is None:
+            self.__init()
+        return self._itemType
+    #----------------------------------------------------------------------
+    @property
+    def uploaded(self):
+        '''gets the property value for uploaded'''
+        if self._uploaded is None:
+            self.__init()
+        return self._uploaded
+    #----------------------------------------------------------------------
+    @property
+    def lastModified(self):
+        '''gets the property value for lastModified'''
+        if self._lastModified is None:
+            self.__init()
+        return self._lastModified
+    #----------------------------------------------------------------------
+    @property
+    def item(self):
+        '''gets the property value for item'''
+        if self._item is None:
+            self.__init()
+        return self._item
+    #----------------------------------------------------------------------
     @property
     def privateUrl(self):
         '''gets the property value for privateUrl'''

@@ -899,6 +899,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _serviceItemId = None
     _json = None
     _json_dict = None
+    _standardMaxRecordCount = None
+    _tileMaxRecordCount = None
+    _maxRecordCountFactor = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -973,6 +976,28 @@ class FeatureLayer(abstract.BaseAGOLClass):
                       ]
         for att in attributes:
             yield (att, getattr(self, att))
+    #----------------------------------------------------------------------
+    @property
+    def standardMaxRecordCount(self):
+        """ returns the standardMaxRecordCount for the feature layer"""
+        if self._standardMaxRecordCount is None:
+            self.__init()
+        return self._standardMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def tileMaxRecordCount(self):
+        """ returns the tileMaxRecordCount for the feature layer"""
+        if self._tileMaxRecordCount is None:
+            self.__init()
+        return self._tileMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCountFactor(self):
+        """ returns the maxRecordCountFactor for the feature layer"""
+        if self._maxRecordCountFactor is None:
+            self.__init()
+        return self._maxRecordCountFactor
+
     #----------------------------------------------------------------------
     @property
     def url(self):
