@@ -59,7 +59,7 @@ class Administration(BaseAGOLClass):
             del portalSelf
 
         if initialize:
-            self.__init(url=url)
+            self.__init(url=self._url)
     #----------------------------------------------------------------------
     def __init(self, url=None):
         """ initializes the site properties """

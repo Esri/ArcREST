@@ -981,6 +981,9 @@ class Item(BaseAGOLClass):
 class UserItem(BaseAGOLClass):
     """represents a single item on the site for a given user"""
     _url = None
+    _itemType = None
+    _uploaded = None
+    _lastModified = None
     _securityHandler = None
     _proxy_port = None
     _proxy_url = None
@@ -1074,6 +1077,27 @@ class UserItem(BaseAGOLClass):
     def refresh(self):
         """ refreshes the UserItem properties """
         self.__init()
+    #----------------------------------------------------------------------
+    @property
+    def itemType(self):
+        """gets the item type"""
+        if self._itemType is None:
+            self.__init()
+        return self._itemType
+    #----------------------------------------------------------------------
+    @property
+    def uploaded(self):
+        """gets the item type"""
+        if self._uploaded is None:
+            self.__init()
+        return self._uploaded
+    #----------------------------------------------------------------------
+    @property
+    def lastModified(self):
+        """gets the item type"""
+        if self._lastModified is None:
+            self.__init()
+        return self._lastModified
     #----------------------------------------------------------------------
     @property
     def itemControl(self):

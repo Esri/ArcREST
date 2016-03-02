@@ -590,12 +590,14 @@ class BaseWebOperations(BaseOperation):
         #  Get some headers from the response
         maintype = self._mainType(resp)
         contentDisposition = resp.headers.get('content-disposition')
+        contentMD5 = resp.headers.get('Content-MD5')
         contentEncoding = resp.headers.get('content-encoding')
         contentType = resp.headers.get('content-Type').split(';')[0].lower()
         contentLength = resp.headers.get('content-length')
         if maintype.lower() in ('image',
                                 'application/x-zip-compressed') or \
            contentType == 'application/x-zip-compressed' or \
+           contentMD5 is not None or\
            (contentDisposition is not None and \
             contentDisposition.lower().find('attachment;') > -1):
 
