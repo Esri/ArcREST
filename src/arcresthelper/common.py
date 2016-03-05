@@ -268,12 +268,13 @@ def local_time_to_online(dt=None):
         del utc_offset
 
 #----------------------------------------------------------------------
-def online_time_to_string(value, timeFormat):
+def online_time_to_string(value, timeFormat, utcOffset=0):
     """Converts AGOL timestamp to formatted string.
 
     Args:
         value (float): A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)
         timeFormat (str): Date/Time format string as parsed by :py:func:`datetime.strftime`.
+        utcOffset (int): Hours difference from UTC and desired output. Default is 0 (remain in UTC).
 
     Returns:
         str: A string representation of the timestamp.
@@ -281,18 +282,16 @@ def online_time_to_string(value, timeFormat):
     Examples:
         >>> arcresthelper.common.online_time_to_string(1457167261000.0, "%Y-%m-%d %H:%M:%S")
         '2016-03-05 00:41:01'
-        >>> arcresthelper.common.online_time_to_string(731392515000.0, '%m/%d/%Y %H:%M:%S')
-        '03/05/1993 20:35:15'
+        >>> arcresthelper.common.online_time_to_string(731392515000.0, '%m/%d/%Y %H:%M:%S', -8) # PST is UTC-8:00
+        '03/05/1993 12:35:15'
 
-    Note:
-        The output is given in UTC, which is why the examples given here don't match :py:func:`local_time_to_online` (PST is UTC-8:00).
     See Also:
        :py:func:`local_time_to_online` for converting a :py:class:`datetime.datetime` object to AGOL timestamp
 
     """
 
     try:
-        return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
+        return datetime.datetime.fromtimestamp(value/1000 + utcOffset*3600).strftime(timeFormat)
     except:
         line, filename, synerror = trace()
         raise ArcRestHelperError({
