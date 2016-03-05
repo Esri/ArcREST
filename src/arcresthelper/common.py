@@ -14,10 +14,11 @@ import gc
 import operator
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
+    """Determine information about where an error was thrown.
+
+    Returns:
+        tuple: line number, filename, error message
+
     """
     import traceback, inspect
     tb = sys.exc_info()[2]
@@ -31,9 +32,19 @@ def trace():
     return line, filename, synerror
 
 class ArcRestHelperError(Exception):
-    """ raised when error occurs in utility module functions """
+    """Raised when error occurs in utility module functions."""
     pass
 def merge_dicts(dicts, op=operator.add):
+    """Merge a list of dictionaries.
+
+    Args:
+        dicts (list): a list of dictionary objects
+        op (operator): an operator item used to merge the dictionaries. Defaults to :py:func:`operator.add`.
+
+    Returns:
+        dict: the merged dictionary
+
+    """
     a = None
     for b in dicts:
 
@@ -65,13 +76,37 @@ def merge_dicts(dicts, op=operator.add):
     #z.update(y)
     #return z
 #----------------------------------------------------------------------
-def noneToValue(value,newValue):
+def noneToValue(value, newValue):
+    """Convert ``None`` to a different value.
+
+    Args:
+        value: The value to convert. This can be anything.
+        newValue: The resultant value. This can be anything.
+
+    Returns:
+        newValue
+
+    """
     if value is None:
         return newValue
     else:
         return value
 #----------------------------------------------------------------------
 def getLayerIndex(url):
+    """Extract the layer index from a url.
+
+    Args:
+        url (str): The url to parse.
+
+    Returns:
+        int: The layer index.
+
+    Examples:
+        >>> url = "http://services.arcgis.com/<random>/arcgis/rest/services/test/FeatureServer/12"
+        >>> arcresthelper.common.getLayerIndex(url)
+        12
+
+    """
     urlInfo = None
     urlSplit = None
     inx = None
@@ -95,6 +130,20 @@ def getLayerIndex(url):
         gc.collect()
 #----------------------------------------------------------------------
 def getLayerName(url):
+    """Extract the layer name from a url.
+
+    Args:
+        url (str): The url to parse.
+
+    Returns:
+        str: The layer name.
+
+    Examples:
+        >>> url = "http://services.arcgis.com/<random>/arcgis/rest/services/test/FeatureServer/12"
+        >>> arcresthelper.common.getLayerIndex(url)
+        'test'
+
+    """
     urlInfo = None
     urlSplit = None
     try:
@@ -115,6 +164,22 @@ def getLayerName(url):
         gc.collect()
 #----------------------------------------------------------------------
 def random_string_generator(size=6, chars=string.ascii_uppercase):
+    """Generates a random string from a set of characters.
+
+    Args:
+        size (int): The length of the resultant string. Defaults to 6.
+        chars (str): The characters to be used by :py:func:`random.choice`. Defaults to :py:const:`string.ascii_uppercase`.
+
+    Returns:
+        str: The randomly generated string.
+
+    Examples:
+        >>> arcresthelper.common.random_string_generator()
+        'DCNYWU'
+        >>> arcresthelper.common.random_string_generator(12, "arcREST")
+        'cESaTTEacTES'
+
+    """
     try:
         return ''.join(random.choice(chars) for _ in range(size))
     except:
@@ -130,6 +195,19 @@ def random_string_generator(size=6, chars=string.ascii_uppercase):
         pass
 #----------------------------------------------------------------------
 def random_int_generator(maxrange):
+    """Generates a random integer from 0 to `maxrange`, inclusive.
+
+    Args:
+        maxrange (int): The upper range of integers to randomly choose.
+
+    Returns:
+        int: The randomly generated integer from :py:func:`random.randint`.
+
+    Examples:
+        >>> arcresthelper.common.random_int_generator(15)
+        9
+
+    """
     try:
         return random.randint(0,maxrange)
     except:
@@ -145,12 +223,23 @@ def random_int_generator(maxrange):
         pass
 #----------------------------------------------------------------------
 def local_time_to_online(dt=None):
-    """
-       converts datetime object to a UTC timestamp for AGOL
-       Inputs:
-          dt - datetime object
-       Output:
-          Long value
+    """Converts datetime object to a UTC timestamp for AGOL.
+
+    Args:
+        dt (datetime): The :py:class:`datetime.datetime` object to convert. Defaults to ``None``, i.e., :py:func:`datetime.datetime.now`.
+
+    Returns:
+        float: A UTC timestamp as understood by AGOL (time in ms since Unix epoch * 1000)
+
+    Examples:
+        >>> arcresthelper.common.local_time_to_online() # PST
+        1457167261000.0
+        >>> dt = datetime.datetime(1993, 3, 5, 12, 35, 15) # PST
+        >>> arcresthelper.common.local_time_to_online(dt)
+        731392515000.0
+    See Also:
+       :py:func:`online_time_to_string` for converting a UTC timestamp
+
     """
     is_dst = None
     utc_offset = None
@@ -179,15 +268,29 @@ def local_time_to_online(dt=None):
         del utc_offset
 
 #----------------------------------------------------------------------
-def online_time_to_string(value,timeFormat):
+def online_time_to_string(value, timeFormat):
+    """Converts AGOL timestamp to formatted string.
+
+    Args:
+        value (float): A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)
+        timeFormat (str): Date/Time format string as parsed by :py:func:`datetime.strftime`.
+
+    Returns:
+        str: A string representation of the timestamp.
+
+    Examples:
+        >>> arcresthelper.common.online_time_to_string(1457167261000.0, "%Y-%m-%d %H:%M:%S")
+        '2016-03-05 00:41:01'
+        >>> arcresthelper.common.online_time_to_string(731392515000.0, '%m/%d/%Y %H:%M:%S')
+        '03/05/1993 20:35:15'
+
+    Note:
+        The output is given in UTC, which is why the examples given here don't match :py:func:`local_time_to_online` (PST is UTC-8:00).
+    See Also:
+       :py:func:`local_time_to_online` for converting a :py:class:`datetime.datetime` object to AGOL timestamp
+
     """
-       Converts a timestamp to date/time string
-       Inputs:
-          value - timestamp as long
-          timeFormat - output date/time format
-       Output:
-          string
-    """
+
     try:
         return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
     except:
@@ -203,6 +306,14 @@ def online_time_to_string(value,timeFormat):
         pass
 #----------------------------------------------------------------------
 def is_number(s):
+    """Determines if the input is numeric
+
+    Args:
+        s: The value to check.
+    Returns:
+        bool: ``True`` if the input is numeric, ``False`` otherwise.
+
+    """
     try:
         float(s)
         return True
@@ -219,6 +330,14 @@ def is_number(s):
     return False
 #----------------------------------------------------------------------
 def init_config_json(config_file):
+    """Deserializes a JSON configuration file.
+
+    Args:
+        config_file (str): The path to the JSON file.
+    Returns:
+        dict: A dictionary object containing the JSON data. If ``config_file`` does not exist, returns ``None``.
+
+    """
     json_data = None
     try:
         if os.path.exists(config_file):
@@ -247,6 +366,13 @@ def init_config_json(config_file):
 
 #----------------------------------------------------------------------
 def write_config_json(config_file, data):
+    """Serializes an object to disk.
+
+    Args:
+        config_file (str): The path on disk to save the file.
+        data (object): The object to serialize.
+
+    """
     outfile = None
     try:
         with open(config_file, 'w') as outfile:
@@ -269,9 +395,15 @@ def write_config_json(config_file, data):
 
 #----------------------------------------------------------------------
 def unicode_convert(obj):
-    try:
-        """ converts unicode to anscii """
+    """Converts unicode objects to anscii.
 
+    Args:
+        obj (object): The object to convert.
+    Returns:
+        The object converted to anscii, if possible. For ``dict`` and ``list``, the object type is maintained.
+
+    """
+    try:
         if isinstance(obj, dict):
             return {unicode_convert(key): unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
@@ -282,10 +414,21 @@ def unicode_convert(obj):
             return obj
     except:
         return obj
-def find_replace_string(obj,find,replace):
+
+def find_replace_string(obj, find, replace):
+    """Performs a string.replace() on the input object.
+
+    Args:
+        obj (object): The object to find/replace. It will be cast to ``str``.
+        find (str): The string to search for.
+        replace (str): The string to replace with.
+    Returns:
+        str: The replaced string.
+
+    """
     try:
         strobj = str(obj)
-        newStr =  string.replace(strobj,find, replace)
+        newStr =  string.replace(strobj, find, replace)
         if newStr == strobj:
             return obj
         else:
@@ -302,9 +445,18 @@ def find_replace_string(obj,find,replace):
                                     )
     finally:
         pass
-def find_replace(obj,find,replace):
 
-    """ searchs an object and does a find and replace """
+def find_replace(obj, find, replace):
+    """ Searches an object and performs a find and replace.
+
+    Args:
+        obj (object): The object to iterate and find/replace.
+        find (str): The string to search for.
+        replace (str): The string to replace with.
+    Returns:
+        object: The object with replaced strings.
+
+    """
     try:
         if isinstance(obj, dict):
             return {find_replace(key,find,replace): find_replace(value,find,replace) for key, value in obj.items()}
@@ -332,13 +484,39 @@ def find_replace(obj,find,replace):
         pass
 #----------------------------------------------------------------------
 def chunklist(l, n):
-    """Yield successive n-sized chunks from l ."""
+    """Yield successive n-sized chunks from l.
+
+    Args:
+        l (object): The object to chunk.
+        n (int): The size of the chunks.
+    Yields:
+        The next chunk in the object.
+    Raises:
+        TypeError: if ``l`` has no :py:func:`len`.
+    Examples:
+        >>> for c in arcresthelper.common.chunklist(list(range(20)), 6):
+        ...     print(c)
+        [0, 1, 2, 3, 4, 5]
+        [6, 7, 8, 9, 10, 11]
+        [12, 13, 14, 15, 16, 17]
+        [18, 19]
+        >>> list(arcresthelper.common.chunklist(string.ascii_uppercase, 7))
+        ['ABCDEFG', 'HIJKLMN', 'OPQRSTU', 'VWXYZ']
+
+    """
     n = max(1, n)
     for i in range(0, len(l), n):
         yield l[i:i+n]
 #----------------------------------------------------------------------
 def init_log(log_file):
+    """ Creates log file on disk and "Tees" :py:class:`sys.stdout` to console and disk
 
+    Args:
+        log_file (str): The path on disk to append or create the log file.
+
+    Returns:
+        file: The opened log file.
+    """
     #Create the log file
     log = None
     try:
@@ -350,7 +528,14 @@ def init_log(log_file):
     except:
         pass
     return log
+
 def close_log(log_file):
+    """ Closes the open file and returns :py:class:`sys.stdout` to the default (i.e., console output).
+
+    Args:
+        log_file (file): The file object to close.
+
+    """
     sys.stdout = sys.__stdout__
     if log_file is not None:
         log_file.close()
@@ -358,12 +543,9 @@ def close_log(log_file):
 
 #----------------------------------------------------------------------
 class Tee(object):
-    """ Combines standard output with a file for logging"""
-
+    """Combines standard output with a file for logging."""
     def __init__(self, *files):
         self.files = files
     def write(self, obj):
         for f in self.files:
             f.write(obj)
-
-
