@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.ags.mapservice &mdash; src  documentation</title>
+    <title>arcrest.ags.mapservice &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.ags.mapservice</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -51,7 +60,7 @@
 <span class="kn">from</span> <span class="nn">..common.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">,</span> <span class="n">SpatialReference</span>
 <span class="kn">from</span> <span class="nn">..common.general</span> <span class="kn">import</span> <span class="n">Feature</span>
 
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="MapService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService">[docs]</a><span class="k">class</span> <span class="nc">MapService</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; contains information about a map service &quot;&quot;&quot;</span>
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
@@ -93,7 +102,7 @@
     <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_tileServers</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -112,25 +121,25 @@
         <span class="k">elif</span> <span class="n">securityHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Security Handler must type of security.AGSTokenSecurityHandler&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Security Handler must type of security.AGSTokenSecurityHandler&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">itemInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the item&#39;s info&quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/info/iteminfo&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/info/iteminfo&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.downloadThumbnail"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.downloadThumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">downloadThumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outPath</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;downloads the items&#39;s thumbnail&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/info/thumbnail&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/info/thumbnail&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
 
         <span class="p">}</span>
@@ -141,11 +150,11 @@
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.downloadMetadataFile"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.downloadMetadataFile">[docs]</a>    <span class="k">def</span> <span class="nf">downloadMetadataFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outPath</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;downloads the metadata file to a given path&quot;&quot;&quot;</span>
-        <span class="n">fileName</span> <span class="o">=</span> <span class="s">&quot;metadata.xml&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/info/metadata&quot;</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="s2">&quot;metadata.xml&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/info/metadata&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                          <span class="n">out_folder</span><span class="o">=</span><span class="n">outPath</span><span class="p">,</span>
@@ -154,24 +163,24 @@
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the object as as string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">json_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as a dictionary&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; populates all the properties for the map service &quot;&quot;&quot;</span>
 
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
@@ -179,39 +188,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;tables&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;tables&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">tbl</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-                    <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">tbl</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">tbl</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="n">TableLayer</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
                                    <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                    <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                     <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;layers&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;layers&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">lyr</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-                    <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">lyr</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lyr</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
                     <span class="n">layer_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getLayerType</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s">&quot;Feature Layer&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s2">&quot;Feature Layer&quot;</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">FeatureLayer</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
                                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                         <span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s">&quot;Raster Layer&quot;</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s2">&quot;Raster Layer&quot;</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">RasterLayer</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
                                         <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                         <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                         <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                         <span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s">&quot;Group Layer&quot;</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s2">&quot;Group Layer&quot;</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">GroupLayer</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
                                        <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -219,32 +228,32 @@
                                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">print</span> <span class="p">(</span><span class="s">&#39;Type </span><span class="si">%s</span><span class="s"> is not implemented&#39;</span> <span class="o">%</span> <span class="n">layer_type</span><span class="p">)</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="s1">&#39;Type </span><span class="si">%s</span><span class="s1"> is not implemented&#39;</span> <span class="o">%</span> <span class="n">layer_type</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s">&quot; is not implemented for mapservice.&quot;</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+                <span class="k">print</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">&quot; is not implemented for mapservice.&quot;</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the JSON response in key/value pairs&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">]</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tileServers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the tileServers for the service&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileServers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileServers</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">securityHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the security handler &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@securityHandler.setter</span>
     <span class="k">def</span> <span class="nf">securityHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sets the security handler &quot;&quot;&quot;</span>
@@ -256,7 +265,7 @@
         <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">maxExportTilesCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the maximum export tiles count &quot;&quot;&quot;</span>
@@ -269,282 +278,282 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasVersionedData</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasVersionedData</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tileInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns tile info for cached services &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileInfo</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the map service current version &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">serviceDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the serviceDescription of the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serviceDescription</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serviceDescription</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mapName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the map name value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapName</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapName</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the map service description &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">copyrightText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the copyright text &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copyrightText</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">supportsDynamicLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns boolean (True/False) if it support dynamic layers&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDynamicLayers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsDynamicLayers</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns all the layers in the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns all tables in the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the spatialreference information for the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatialReference</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spatialReference</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">singleFusedMapCache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns boolean for this property &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singleFusedMapCache</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singleFusedMapCache</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">initialExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the initial extent of the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialExtent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialExtent</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fullExtent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the full extent of the map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullExtent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullExtent</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">minScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the map service minimum scale &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minScale</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">maxScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the max scale for a map service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxScale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxScale</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the map service&#39;s measurement units &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">supportedImageFormatTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the supported image format types &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedImageFormatTypes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedImageFormatTypes</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">timeInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the timeInformation for a given service &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeInfo</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">documentInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the document information as a dictionary &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documentInfo</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the service&#39;s capabilities &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">supportedQueryFormats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the supported query formats &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedQueryFormats</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exportTilesAllowed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Boolean if export tiles is allowed &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exportTilesAllowed</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exportTilesAllowed</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">maxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the max number of records returned by a query/display ect. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCount</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">maxImageHeight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the max image height &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxImageHeight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxImageHeight</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">maxImageWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the max image width &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxImageWidth</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxImageWidth</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">supportedExtensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the supported extensions &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedExtensions</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedExtensions</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">allLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns all layers for the service &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/layers&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/layers&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
         <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;layers&quot;</span> <span class="p">:</span> <span class="p">[],</span>
-            <span class="s">&quot;tables&quot;</span> <span class="p">:</span> <span class="p">[]</span>
+            <span class="s2">&quot;layers&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;tables&quot;</span> <span class="p">:</span> <span class="p">[]</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;layers&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;layers&quot;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-                    <span class="n">return_dict</span><span class="p">[</span><span class="s">&#39;layers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">FeatureLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">val</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+                    <span class="n">return_dict</span><span class="p">[</span><span class="s1">&#39;layers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">FeatureLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                      <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                      <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                      <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
                     <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;tables&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;tables&quot;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-                    <span class="n">return_dict</span><span class="p">[</span><span class="s">&#39;tables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">TableLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">val</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+                    <span class="n">return_dict</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">TableLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                    <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                    <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
                     <span class="p">)</span>
             <span class="k">del</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
         <span class="k">return</span> <span class="n">return_dict</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.find"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">searchText</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span>
-             <span class="n">contains</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">searchFields</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
-             <span class="n">sr</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">layerDefs</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
-             <span class="n">returnGeometry</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">maxAllowableOffset</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
-             <span class="n">geometryPrecision</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dynamicLayers</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
-             <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">gdbVersion</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+             <span class="n">contains</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">searchFields</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+             <span class="n">sr</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">layerDefs</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+             <span class="n">returnGeometry</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">maxAllowableOffset</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+             <span class="n">geometryPrecision</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dynamicLayers</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+             <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">gdbVersion</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; performs the map service find operation &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/find&quot;</span>
-        <span class="c">#print url</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/find&quot;</span>
+        <span class="c1">#print url</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;searchText&quot;</span> <span class="p">:</span> <span class="n">searchText</span><span class="p">,</span>
-            <span class="s">&quot;contains&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">contains</span><span class="p">),</span>
-            <span class="s">&quot;searchFields&quot;</span><span class="p">:</span> <span class="n">searchFields</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;layerDefs&quot;</span> <span class="p">:</span> <span class="n">layerDefs</span><span class="p">,</span>
-            <span class="s">&quot;returnGeometry&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnGeometry</span><span class="p">),</span>
-            <span class="s">&quot;maxAllowableOffset&quot;</span> <span class="p">:</span> <span class="n">maxAllowableOffset</span><span class="p">,</span>
-            <span class="s">&quot;geometryPrecision&quot;</span> <span class="p">:</span> <span class="n">geometryPrecision</span><span class="p">,</span>
-            <span class="s">&quot;dynamicLayers&quot;</span> <span class="p">:</span> <span class="n">dynamicLayers</span><span class="p">,</span>
-            <span class="s">&quot;returnZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnZ</span><span class="p">),</span>
-            <span class="s">&quot;returnM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnM</span><span class="p">),</span>
-            <span class="s">&quot;gdbVersion&quot;</span> <span class="p">:</span> <span class="n">gdbVersion</span><span class="p">,</span>
-            <span class="s">&quot;layers&quot;</span> <span class="p">:</span> <span class="n">layers</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;searchText&quot;</span> <span class="p">:</span> <span class="n">searchText</span><span class="p">,</span>
+            <span class="s2">&quot;contains&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">contains</span><span class="p">),</span>
+            <span class="s2">&quot;searchFields&quot;</span><span class="p">:</span> <span class="n">searchFields</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;layerDefs&quot;</span> <span class="p">:</span> <span class="n">layerDefs</span><span class="p">,</span>
+            <span class="s2">&quot;returnGeometry&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnGeometry</span><span class="p">),</span>
+            <span class="s2">&quot;maxAllowableOffset&quot;</span> <span class="p">:</span> <span class="n">maxAllowableOffset</span><span class="p">,</span>
+            <span class="s2">&quot;geometryPrecision&quot;</span> <span class="p">:</span> <span class="n">geometryPrecision</span><span class="p">,</span>
+            <span class="s2">&quot;dynamicLayers&quot;</span> <span class="p">:</span> <span class="n">dynamicLayers</span><span class="p">,</span>
+            <span class="s2">&quot;returnZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnZ</span><span class="p">),</span>
+            <span class="s2">&quot;returnM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_boolean</span><span class="p">(</span><span class="n">returnM</span><span class="p">),</span>
+            <span class="s2">&quot;gdbVersion&quot;</span> <span class="p">:</span> <span class="n">gdbVersion</span><span class="p">,</span>
+            <span class="s2">&quot;layers&quot;</span> <span class="p">:</span> <span class="n">layers</span>
         <span class="p">}</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
         <span class="n">qResults</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;results&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]:</span>
             <span class="n">qResults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Feature</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">qResults</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_getLayerType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a layer type &quot;&quot;&quot;</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.getFeatureDynamicLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.getFeatureDynamicLayer">[docs]</a>    <span class="k">def</span> <span class="nf">getFeatureDynamicLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oid</span><span class="p">,</span> <span class="n">dynamicLayer</span><span class="p">,</span>
                                <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The feature resource represents a single feature in a dynamic</span>
 <span class="sd">            layer in a map service</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/dynamicLayer/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">oid</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/dynamicLayer/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">oid</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;returnZ&quot;</span><span class="p">:</span> <span class="n">returnZ</span><span class="p">,</span>
-            <span class="s">&quot;returnM&quot;</span> <span class="p">:</span> <span class="n">returnM</span><span class="p">,</span>
-            <span class="s">&quot;layer&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span>
-                <span class="s">&quot;source&quot;</span> <span class="p">:</span> <span class="n">dynamicLayer</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;returnZ&quot;</span><span class="p">:</span> <span class="n">returnZ</span><span class="p">,</span>
+            <span class="s2">&quot;returnM&quot;</span> <span class="p">:</span> <span class="n">returnM</span><span class="p">,</span>
+            <span class="s2">&quot;layer&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span>
+                <span class="s2">&quot;source&quot;</span> <span class="p">:</span> <span class="n">dynamicLayer</span><span class="o">.</span><span class="n">asDictionary</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">Feature</span><span class="p">(</span>
@@ -554,18 +563,18 @@
                                      <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                      <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.identify"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.identify">[docs]</a>    <span class="k">def</span> <span class="nf">identify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">geometry</span><span class="p">,</span>
                  <span class="n">mapExtent</span><span class="p">,</span>
                  <span class="n">imageDisplay</span><span class="p">,</span>
                  <span class="n">tolerance</span><span class="p">,</span>
-                 <span class="n">geometryType</span><span class="o">=</span><span class="s">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
+                 <span class="n">geometryType</span><span class="o">=</span><span class="s2">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
                  <span class="n">sr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">layerDefs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">time</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">layerTimeOptions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">layers</span><span class="o">=</span><span class="s">&quot;top&quot;</span><span class="p">,</span>
+                 <span class="n">layers</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
                  <span class="n">returnGeometry</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                  <span class="n">maxAllowableOffset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">geometryPrecision</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -684,48 +693,48 @@
 <span class="sd">            gdbVersion - Switch map layers to point to an alternate geodatabase version.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">params</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="s">&#39;json&#39;</span><span class="p">,</span>
-                 <span class="s">&#39;geometry&#39;</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
-                 <span class="s">&#39;geometryType&#39;</span><span class="p">:</span> <span class="n">geometryType</span><span class="p">,</span>
-                 <span class="s">&#39;tolerance&#39;</span><span class="p">:</span> <span class="n">tolerance</span><span class="p">,</span>
-                 <span class="s">&#39;mapExtent&#39;</span><span class="p">:</span> <span class="n">mapExtent</span><span class="p">,</span>
-                 <span class="s">&#39;imageDisplay&#39;</span><span class="p">:</span> <span class="n">imageDisplay</span>
+        <span class="n">params</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
+                 <span class="s1">&#39;geometryType&#39;</span><span class="p">:</span> <span class="n">geometryType</span><span class="p">,</span>
+                 <span class="s1">&#39;tolerance&#39;</span><span class="p">:</span> <span class="n">tolerance</span><span class="p">,</span>
+                 <span class="s1">&#39;mapExtent&#39;</span><span class="p">:</span> <span class="n">mapExtent</span><span class="p">,</span>
+                 <span class="s1">&#39;imageDisplay&#39;</span><span class="p">:</span> <span class="n">imageDisplay</span>
                  <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">layerDefs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;layerDefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerDefs</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layerDefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerDefs</span>
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layers</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layers</span>
         <span class="k">if</span> <span class="n">sr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
         <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span>
         <span class="k">if</span> <span class="n">layerTimeOptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;layerTimeOptions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerTimeOptions</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layerTimeOptions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerTimeOptions</span>
         <span class="k">if</span> <span class="n">maxAllowableOffset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;maxAllowableOffset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxAllowableOffset</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;maxAllowableOffset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxAllowableOffset</span>
         <span class="k">if</span> <span class="n">geometryPrecision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometryPrecision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometryPrecision</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometryPrecision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometryPrecision</span>
         <span class="k">if</span> <span class="n">dynamicLayers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;dynamicLayers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamicLayers</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dynamicLayers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamicLayers</span>
         <span class="k">if</span> <span class="n">gdbVersion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;gdbVersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdbVersion</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;gdbVersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdbVersion</span>
 
-        <span class="n">identifyURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/identify&quot;</span>
+        <span class="n">identifyURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/identify&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">identifyURL</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_convert_boolean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; converts a boolean value to json value &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&#39;true&#39;</span>
+            <span class="k">return</span> <span class="s1">&#39;true&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&#39;false&#39;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="MapService.generateKML"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.generateKML">[docs]</a>    <span class="k">def</span> <span class="nf">generateKML</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_location</span><span class="p">,</span> <span class="n">docName</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">layerOptions</span><span class="o">=</span><span class="s">&quot;composite&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;false&#39;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="MapService.generateKML"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.generateKML">[docs]</a>    <span class="k">def</span> <span class="nf">generateKML</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_location</span><span class="p">,</span> <span class="n">docName</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">layerOptions</span><span class="o">=</span><span class="s2">&quot;composite&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           The generateKml operation is performed on a map service resource.</span>
 <span class="sd">           The result of this operation is a KML document wrapped in a KMZ</span>
@@ -750,29 +759,29 @@
 <span class="sd">                             values: composite | separateImage |</span>
 <span class="sd">                                     nonComposite</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">kmlURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/generateKml&quot;</span>
-        <span class="n">params</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="s">&#39;json&#39;</span><span class="p">,</span>
-                 <span class="s">&#39;docName&#39;</span> <span class="p">:</span> <span class="n">docName</span><span class="p">,</span>
-                 <span class="s">&#39;layers&#39;</span> <span class="p">:</span> <span class="n">layers</span><span class="p">,</span>
-                 <span class="s">&#39;layerOptions&#39;</span><span class="p">:</span> <span class="n">layerOptions</span>
+        <span class="n">kmlURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/generateKml&quot;</span>
+        <span class="n">params</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;docName&#39;</span> <span class="p">:</span> <span class="n">docName</span><span class="p">,</span>
+                 <span class="s1">&#39;layers&#39;</span> <span class="p">:</span> <span class="n">layers</span><span class="p">,</span>
+                 <span class="s1">&#39;layerOptions&#39;</span><span class="p">:</span> <span class="n">layerOptions</span>
                  <span class="p">}</span>
         <span class="kn">import</span> <span class="nn">urllib</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">kmlURL</span> <span class="o">+</span> <span class="s">&quot;?</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">kmlURL</span> <span class="o">+</span> <span class="s2">&quot;?</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                          <span class="n">out_folder</span><span class="o">=</span><span class="n">save_location</span><span class="p">,</span>
-                         <span class="n">file_name</span><span class="o">=</span><span class="n">docName</span> <span class="o">+</span> <span class="s">&quot;.kmz&quot;</span><span class="p">,</span>
+                         <span class="n">file_name</span><span class="o">=</span><span class="n">docName</span> <span class="o">+</span> <span class="s2">&quot;.kmz&quot;</span><span class="p">,</span>
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span>
                          <span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.exportMap"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.exportMap">[docs]</a>    <span class="k">def</span> <span class="nf">exportMap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                   <span class="n">bbox</span><span class="p">,</span>
-                  <span class="n">size</span><span class="o">=</span><span class="s">&quot;600,550&quot;</span><span class="p">,</span>
+                  <span class="n">size</span><span class="o">=</span><span class="s2">&quot;600,550&quot;</span><span class="p">,</span>
                   <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                   <span class="n">imageSR</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                  <span class="n">image_format</span><span class="o">=</span><span class="s">&quot;png&quot;</span><span class="p">,</span>
+                  <span class="n">image_format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span>
                   <span class="n">layerDefFilter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                   <span class="n">layers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                   <span class="n">transparent</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
@@ -840,42 +849,42 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">):</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">asDictionary</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">vals</span><span class="p">[</span><span class="s">&#39;ymin&#39;</span><span class="p">],</span>
-                                              <span class="n">vals</span><span class="p">[</span><span class="s">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">vals</span><span class="p">[</span><span class="s">&#39;ymax&#39;</span><span class="p">])</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;bboxSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="s">&#39;spatialReference&#39;</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">vals</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">],</span>
+                                              <span class="n">vals</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">vals</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">])</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bboxSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="s1">&#39;spatialReference&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">dpi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dpi</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dpi</span>
             <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
             <span class="k">if</span> <span class="n">imageSR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
                <span class="nb">isinstance</span><span class="p">(</span><span class="n">imageSR</span><span class="p">,</span> <span class="n">SpatialReference</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;imageSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;wkid&#39;</span><span class="p">:</span> <span class="n">imageSR</span><span class="o">.</span><span class="n">wkid</span><span class="p">}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;imageSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wkid&#39;</span><span class="p">:</span> <span class="n">imageSR</span><span class="o">.</span><span class="n">wkid</span><span class="p">}</span>
             <span class="k">if</span> <span class="n">image_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_format</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_format</span>
             <span class="k">if</span> <span class="n">layerDefFilter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
                <span class="nb">isinstance</span><span class="p">(</span><span class="n">layerDefFilter</span><span class="p">,</span>
                           <span class="n">filters</span><span class="o">.</span><span class="n">LayerDefinitionFilter</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;layerDefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerDefFilter</span><span class="o">.</span><span class="n">filter</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layerDefs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerDefFilter</span><span class="o">.</span><span class="n">filter</span>
             <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layers</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layers</span>
             <span class="k">if</span> <span class="n">transparent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;transparent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transparent</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;transparent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transparent</span>
             <span class="k">if</span> <span class="n">timeFilter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
                <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeFilter</span><span class="p">,</span> <span class="n">filters</span><span class="o">.</span><span class="n">TimeFilter</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timeFilter</span><span class="o">.</span><span class="n">filter</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timeFilter</span><span class="o">.</span><span class="n">filter</span>
             <span class="k">if</span> <span class="n">layerTimeOptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;layerTimeOptions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerTimeOptions</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;layerTimeOptions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layerTimeOptions</span>
             <span class="k">if</span> <span class="n">dynamicLayers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
                <span class="nb">isinstance</span><span class="p">(</span><span class="n">dynamicLayers</span><span class="p">,</span> <span class="n">DynamicData</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;dynamicLayers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamicLayers</span><span class="o">.</span><span class="n">asDictionary</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dynamicLayers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamicLayers</span><span class="o">.</span><span class="n">asDictionary</span>
             <span class="k">if</span> <span class="n">mapScale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;mapScale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapScale</span>
-            <span class="n">exportURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/export&quot;</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;mapScale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapScale</span>
+            <span class="n">exportURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/export&quot;</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">exportURL</span><span class="p">,</span>
                                 <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                                 <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -883,12 +892,12 @@
                                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.estimateExportTilesSize"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.estimateExportTilesSize">[docs]</a>    <span class="k">def</span> <span class="nf">estimateExportTilesSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                 <span class="n">exportBy</span><span class="p">,</span>
                                 <span class="n">levels</span><span class="p">,</span>
                                 <span class="n">tilePackage</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                                <span class="n">exportExtent</span><span class="o">=</span><span class="s">&quot;DEFAULTEXTENT&quot;</span><span class="p">,</span>
+                                <span class="n">exportExtent</span><span class="o">=</span><span class="s2">&quot;DEFAULTEXTENT&quot;</span><span class="p">,</span>
                                 <span class="n">areaOfInterest</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                 <span class="n">async</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -941,21 +950,21 @@
 <span class="sd">         is set to False, the function will wait until the task completes.</span>
 <span class="sd">           Values: True | False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/estimateExportTilesSize&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/estimateExportTilesSize&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;levels&quot;</span> <span class="p">:</span> <span class="n">levels</span><span class="p">,</span>
-            <span class="s">&quot;exportBy&quot;</span> <span class="p">:</span> <span class="n">exportBy</span><span class="p">,</span>
-            <span class="s">&quot;tilePackage&quot;</span> <span class="p">:</span> <span class="n">tilePackage</span><span class="p">,</span>
-            <span class="s">&quot;exportExtent&quot;</span> <span class="p">:</span> <span class="n">exportExtent</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;levels&quot;</span> <span class="p">:</span> <span class="n">levels</span><span class="p">,</span>
+            <span class="s2">&quot;exportBy&quot;</span> <span class="p">:</span> <span class="n">exportBy</span><span class="p">,</span>
+            <span class="s2">&quot;tilePackage&quot;</span> <span class="p">:</span> <span class="n">tilePackage</span><span class="p">,</span>
+            <span class="s2">&quot;exportExtent&quot;</span> <span class="p">:</span> <span class="n">exportExtent</span>
         <span class="p">}</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&quot;levels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;levels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">areaOfInterest</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">areaOfInterest</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                <span class="n">template</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">areaOfInterest</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">]}</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;areaOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">areaOfInterest</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">]}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;areaOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;areaOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">areaOfInterest</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;areaOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">areaOfInterest</span>
         <span class="k">if</span> <span class="n">async</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                 <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
@@ -968,27 +977,27 @@
                                      <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                      <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                      <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-            <span class="n">jobUrl</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/jobs/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">exportJob</span><span class="p">[</span><span class="s">&#39;jobId&#39;</span><span class="p">])</span>
+            <span class="n">jobUrl</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jobs/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">exportJob</span><span class="p">[</span><span class="s1">&#39;jobId&#39;</span><span class="p">])</span>
             <span class="n">gpJob</span> <span class="o">=</span> <span class="n">GPJob</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">jobUrl</span><span class="p">,</span>
                           <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                           <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">jobStatus</span>
-            <span class="k">while</span> <span class="n">status</span> <span class="o">!=</span> <span class="s">&quot;esriJobSucceeded&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;esriJobFailed&#39;</span><span class="p">,</span>
-                              <span class="s">&#39;esriJobCancelling&#39;</span><span class="p">,</span>
-                              <span class="s">&#39;esriJobCancelled&#39;</span><span class="p">]:</span>
+            <span class="k">while</span> <span class="n">status</span> <span class="o">!=</span> <span class="s2">&quot;esriJobSucceeded&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;esriJobFailed&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;esriJobCancelling&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;esriJobCancelled&#39;</span><span class="p">]:</span>
                     <span class="k">return</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">messages</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
                     <span class="n">status</span> <span class="o">=</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">jobStatus</span>
             <span class="k">return</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">results</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="MapService.exportTiles"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.exportTiles">[docs]</a>    <span class="k">def</span> <span class="nf">exportTiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">levels</span><span class="p">,</span>
-                    <span class="n">exportBy</span><span class="o">=</span><span class="s">&quot;LevelID&quot;</span><span class="p">,</span>
+                    <span class="n">exportBy</span><span class="o">=</span><span class="s2">&quot;LevelID&quot;</span><span class="p">,</span>
                     <span class="n">tilePackage</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">exportExtent</span><span class="o">=</span><span class="s">&quot;DEFAULT&quot;</span><span class="p">,</span>
+                    <span class="n">exportExtent</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
                     <span class="n">optimizeTilesForSize</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                     <span class="n">compressionQuality</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="n">areaOfInterest</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -1072,19 +1081,19 @@
 <span class="sd">         manually.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;tilePackage&quot;</span> <span class="p">:</span> <span class="n">tilePackage</span><span class="p">,</span>
-            <span class="s">&quot;exportExtent&quot;</span> <span class="p">:</span> <span class="n">exportExtent</span><span class="p">,</span>
-            <span class="s">&quot;optimizeTilesForSize&quot;</span> <span class="p">:</span> <span class="n">optimizeTilesForSize</span><span class="p">,</span>
-            <span class="s">&quot;compressionQuality&quot;</span> <span class="p">:</span> <span class="n">compressionQuality</span><span class="p">,</span>
-            <span class="s">&quot;exportBy&quot;</span> <span class="p">:</span> <span class="n">exportBy</span><span class="p">,</span>
-            <span class="s">&quot;levels&quot;</span> <span class="p">:</span> <span class="n">levels</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tilePackage&quot;</span> <span class="p">:</span> <span class="n">tilePackage</span><span class="p">,</span>
+            <span class="s2">&quot;exportExtent&quot;</span> <span class="p">:</span> <span class="n">exportExtent</span><span class="p">,</span>
+            <span class="s2">&quot;optimizeTilesForSize&quot;</span> <span class="p">:</span> <span class="n">optimizeTilesForSize</span><span class="p">,</span>
+            <span class="s2">&quot;compressionQuality&quot;</span> <span class="p">:</span> <span class="n">compressionQuality</span><span class="p">,</span>
+            <span class="s2">&quot;exportBy&quot;</span> <span class="p">:</span> <span class="n">exportBy</span><span class="p">,</span>
+            <span class="s2">&quot;levels&quot;</span> <span class="p">:</span> <span class="n">levels</span>
         <span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/exportTiles&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/exportTiles&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">areaOfInterest</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
             <span class="n">geom</span> <span class="o">=</span> <span class="n">areaOfInterest</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">()</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">geom</span><span class="p">]}</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&quot;areaOfInterest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">geom</span><span class="p">]}</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;areaOfInterest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">if</span> <span class="n">async</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
@@ -1094,37 +1103,37 @@
                                      <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                      <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                      <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-            <span class="n">jobUrl</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/jobs/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">exportJob</span><span class="p">[</span><span class="s">&#39;jobId&#39;</span><span class="p">])</span>
+            <span class="n">jobUrl</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/jobs/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">exportJob</span><span class="p">[</span><span class="s1">&#39;jobId&#39;</span><span class="p">])</span>
             <span class="n">gpJob</span> <span class="o">=</span> <span class="n">GPJob</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">jobUrl</span><span class="p">,</span>
                           <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                           <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">jobStatus</span>
-            <span class="k">while</span> <span class="n">status</span> <span class="o">!=</span> <span class="s">&quot;esriJobSucceeded&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;esriJobFailed&#39;</span><span class="p">,</span>
-                                       <span class="s">&#39;esriJobCancelling&#39;</span><span class="p">,</span>
-                                       <span class="s">&#39;esriJobCancelled&#39;</span><span class="p">]:</span>
+            <span class="k">while</span> <span class="n">status</span> <span class="o">!=</span> <span class="s2">&quot;esriJobSucceeded&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;esriJobFailed&#39;</span><span class="p">,</span>
+                                       <span class="s1">&#39;esriJobCancelling&#39;</span><span class="p">,</span>
+                                       <span class="s1">&#39;esriJobCancelled&#39;</span><span class="p">]:</span>
                     <span class="k">return</span> <span class="bp">None</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
                     <span class="n">status</span> <span class="o">=</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">jobStatus</span>
             <span class="n">allResults</span> <span class="o">=</span> <span class="n">gpJob</span><span class="o">.</span><span class="n">results</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">allResults</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;out_service_url&quot;</span><span class="p">:</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;out_service_url&quot;</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
                     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+                        <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
                     <span class="p">}</span>
-                    <span class="n">gpRes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">],</span>
+                    <span class="n">gpRes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>
                                          <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">tilePackage</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
                         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gpRes</span><span class="p">[</span><span class="s">&#39;files&#39;</span><span class="p">]:</span>
-                            <span class="n">name</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
-                            <span class="n">dlURL</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gpRes</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]:</span>
+                            <span class="n">name</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                            <span class="n">dlURL</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
                             <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">dlURL</span><span class="p">,</span>
                                           <span class="n">out_folder</span><span class="o">=</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span>
@@ -1135,7 +1144,7 @@
                                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
                         <span class="k">return</span> <span class="n">files</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">gpRes</span><span class="p">[</span><span class="s">&#39;folders&#39;</span><span class="p">]</span>
+                        <span class="k">return</span> <span class="n">gpRes</span><span class="p">[</span><span class="s1">&#39;folders&#39;</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">None</span></div></div>
 </pre></div>
@@ -1144,15 +1153,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -1170,17 +1171,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

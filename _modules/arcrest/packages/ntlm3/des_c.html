@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.packages.ntlm3.des_c &mdash; src  documentation</title>
+    <title>arcrest.packages.ntlm3.des_c &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../../index.html" />
-    <link rel="up" title="Module code" href="../../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,21 +47,21 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.packages.ntlm3.des_c</h1><div class="highlight"><pre>
-<span class="c"># This file is part of &#39;NTLM Authorization Proxy Server&#39; http://sourceforge.net/projects/ntlmaps/</span>
-<span class="c"># Copyright 2001 Dmitry A. Rozmanov &lt;dima@xenon.spb.ru&gt;</span>
-<span class="c">#</span>
-<span class="c"># This library is free software: you can redistribute it and/or</span>
-<span class="c"># modify it under the terms of the GNU Lesser General Public</span>
-<span class="c"># License as published by the Free Software Foundation, either</span>
-<span class="c"># version 3 of the License, or (at your option) any later version.</span>
+<span></span><span class="c1"># This file is part of &#39;NTLM Authorization Proxy Server&#39; http://sourceforge.net/projects/ntlmaps/</span>
+<span class="c1"># Copyright 2001 Dmitry A. Rozmanov &lt;dima@xenon.spb.ru&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># This library is free software: you can redistribute it and/or</span>
+<span class="c1"># modify it under the terms of the GNU Lesser General Public</span>
+<span class="c1"># License as published by the Free Software Foundation, either</span>
+<span class="c1"># version 3 of the License, or (at your option) any later version.</span>
 
-<span class="c"># This library is distributed in the hope that it will be useful,</span>
-<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
-<span class="c"># Lesser General Public License for more details.</span>
+<span class="c1"># This library is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<span class="c1"># Lesser General Public License for more details.</span>
 
-<span class="c"># You should have received a copy of the GNU Lesser General Public</span>
-<span class="c"># License along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt; or &lt;http://www.gnu.org/licenses/lgpl.txt&gt;.</span>
+<span class="c1"># You should have received a copy of the GNU Lesser General Public</span>
+<span class="c1"># License along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt; or &lt;http://www.gnu.org/licenses/lgpl.txt&gt;.</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">six</span>
 
 <span class="kn">from</span> <span class="nn">.U32</span> <span class="kn">import</span> <span class="n">U32</span>
@@ -60,7 +69,7 @@
 
 
 <div class="viewcode-block" id="c2l"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.c2l">[docs]</a><span class="k">def</span> <span class="nf">c2l</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-    <span class="s">&quot;char[4] to unsigned long&quot;</span>
+    <span class="s2">&quot;char[4] to unsigned long&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">U32</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">|</span> <span class="p">(</span><span class="n">U32</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="o">|</span> <span class="p">(</span><span class="n">U32</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span>
@@ -69,7 +78,7 @@
 
 
 <div class="viewcode-block" id="l2c"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.l2c">[docs]</a><span class="k">def</span> <span class="nf">l2c</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
-    <span class="s">&quot;unsigned long to char[4]&quot;</span>
+    <span class="s2">&quot;unsigned long to char[4]&quot;</span>
     <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">l</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0xFF</span><span class="p">)))</span>
     <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">l</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0xFF</span><span class="p">)))</span>
@@ -80,7 +89,7 @@
 
 <div class="viewcode-block" id="D_ENCRYPT"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.D_ENCRYPT">[docs]</a><span class="k">def</span> <span class="nf">D_ENCRYPT</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
     <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span> <span class="o">=</span> <span class="n">tup</span>
-    <span class="c"># print &#39;LRS1&#39;, L, R, S, u, t, &#39;--&gt;&#39;,</span>
+    <span class="c1"># print &#39;LRS1&#39;, L, R, S, u, t, &#39;--&gt;&#39;,</span>
     <span class="n">u</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">^</span> <span class="n">s</span><span class="p">[</span><span class="n">S</span><span class="p">])</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">R</span> <span class="o">^</span> <span class="n">s</span><span class="p">[</span><span class="n">S</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">((</span><span class="n">t</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;&lt;</span> <span class="mi">28</span><span class="p">))</span>
@@ -92,12 +101,12 @@
              <span class="n">des_SPtrans</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="nb">int</span><span class="p">((</span><span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">))]</span> <span class="o">|</span>
              <span class="n">des_SPtrans</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="nb">int</span><span class="p">((</span><span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">))]</span> <span class="o">|</span>
              <span class="n">des_SPtrans</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="nb">int</span><span class="p">((</span><span class="n">u</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">))])</span>
-    <span class="c"># print &#39;LRS:&#39;, L, R, S, u, t</span>
+    <span class="c1"># print &#39;LRS:&#39;, L, R, S, u, t</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">),</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span></div>
 
 
 <div class="viewcode-block" id="PERM_OP"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.PERM_OP">[docs]</a><span class="k">def</span> <span class="nf">PERM_OP</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
-    <span class="s">&quot;tup - (a, b, t)&quot;</span>
+    <span class="s2">&quot;tup - (a, b, t)&quot;</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">tup</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="o">^</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">m</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">^</span> <span class="n">t</span>
@@ -106,7 +115,7 @@
 
 
 <div class="viewcode-block" id="HPERM_OP"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.HPERM_OP">[docs]</a><span class="k">def</span> <span class="nf">HPERM_OP</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
-    <span class="s">&quot;tup - (a, t)&quot;</span>
+    <span class="s2">&quot;tup - (a, t)&quot;</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">tup</span>
     <span class="n">t</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mi">16</span> <span class="o">-</span> <span class="n">n</span><span class="p">))</span> <span class="o">^</span> <span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">m</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">^</span> <span class="n">t</span> <span class="o">^</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">16</span> <span class="o">-</span> <span class="n">n</span><span class="p">))</span>
@@ -117,29 +126,29 @@
 
 
 <div class="viewcode-block" id="DES"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.DES">[docs]</a><span class="k">class</span> <span class="nc">DES</span><span class="p">:</span>
-    <span class="n">KeySched</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># des_key_schedule</span>
+    <span class="n">KeySched</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># des_key_schedule</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">KeySched</span> <span class="o">=</span> <span class="n">des_set_key</span><span class="p">(</span><span class="n">key_str</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DES.decrypt"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.DES.decrypt">[docs]</a>    <span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="c"># block - UChar[]</span>
+        <span class="c1"># block - UChar[]</span>
         <span class="n">block</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iterbytes</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
             <span class="n">block</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="c"># print block</span>
+        <span class="c1"># print block</span>
         <span class="n">block</span> <span class="o">=</span> <span class="n">des_ecb_encrypt</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KeySched</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">+</span> <span class="n">six</span><span class="o">.</span><span class="n">int2byte</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="DES.encrypt"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.DES.encrypt">[docs]</a>    <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">):</span>
-        <span class="c"># block - UChar[]</span>
+        <span class="c1"># block - UChar[]</span>
 
         <span class="n">block</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">plaintext</span><span class="p">:</span>
@@ -147,7 +156,7 @@
 
         <span class="n">block</span> <span class="o">=</span> <span class="n">des_ecb_encrypt</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">KeySched</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">+=</span> <span class="n">six</span><span class="o">.</span><span class="n">int2byte</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -156,13 +165,13 @@
 
 
 <div class="viewcode-block" id="des_encript"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.des_encript">[docs]</a><span class="k">def</span> <span class="nf">des_encript</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">encrypt</span><span class="p">):</span>
-    <span class="c"># input - U32[]</span>
-    <span class="c"># output - U32[]</span>
-    <span class="c"># ks - des_key_shedule - U32[2][16]</span>
-    <span class="c"># encrypt - int</span>
-    <span class="c"># l, r, t, u - U32</span>
-    <span class="c"># i - int</span>
-    <span class="c"># s - U32[]</span>
+    <span class="c1"># input - U32[]</span>
+    <span class="c1"># output - U32[]</span>
+    <span class="c1"># ks - des_key_shedule - U32[2][16]</span>
+    <span class="c1"># encrypt - int</span>
+    <span class="c1"># l, r, t, u - U32</span>
+    <span class="c1"># i - int</span>
+    <span class="c1"># s - U32[]</span>
 
     <span class="n">l</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">r</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -179,8 +188,8 @@
     <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;&gt;</span> <span class="mi">31</span><span class="p">)</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">t</span>
 
-    <span class="n">s</span> <span class="o">=</span> <span class="n">ks</span>  <span class="c"># ???????????????</span>
-    <span class="c"># print l, r</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">ks</span>  <span class="c1"># ???????????????</span>
+    <span class="c1"># print l, r</span>
     <span class="k">if</span> <span class="n">encrypt</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
             <span class="n">rtup</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">D_ENCRYPT</span><span class="p">((</span><span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">),</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
@@ -197,7 +206,7 @@
             <span class="n">rtup</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">D_ENCRYPT</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">rtup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">l</span> <span class="o">=</span> <span class="n">rtup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c"># print l, r</span>
+        <span class="c1"># print l, r</span>
     <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span><span class="p">)</span>
     <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span><span class="p">)</span>
 
@@ -214,39 +223,39 @@
 
 
 <div class="viewcode-block" id="des_ecb_encrypt"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.des_ecb_encrypt">[docs]</a><span class="k">def</span> <span class="nf">des_ecb_encrypt</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">encrypt</span><span class="p">):</span>
-    <span class="c"># input - des_cblock - UChar[8]</span>
-    <span class="c"># output - des_cblock - UChar[8]</span>
-    <span class="c"># ks - des_key_shedule - U32[2][16]</span>
-    <span class="c"># encrypt - int</span>
+    <span class="c1"># input - des_cblock - UChar[8]</span>
+    <span class="c1"># output - des_cblock - UChar[8]</span>
+    <span class="c1"># ks - des_key_shedule - U32[2][16]</span>
+    <span class="c1"># encrypt - int</span>
 
-    <span class="c"># print input</span>
+    <span class="c1"># print input</span>
     <span class="n">l0</span> <span class="o">=</span> <span class="n">c2l</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
     <span class="n">l1</span> <span class="o">=</span> <span class="n">c2l</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
     <span class="n">ll</span> <span class="o">=</span> <span class="p">[</span><span class="n">l0</span><span class="p">]</span>
     <span class="n">ll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span>
-    <span class="c"># print ll</span>
+    <span class="c1"># print ll</span>
     <span class="n">ll</span> <span class="o">=</span> <span class="n">des_encript</span><span class="p">(</span><span class="n">ll</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">encrypt</span><span class="p">)</span>
-    <span class="c"># print ll</span>
+    <span class="c1"># print ll</span>
     <span class="n">l0</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">l1</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">l2c</span><span class="p">(</span><span class="n">l0</span><span class="p">)</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="n">l2c</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span>
-    <span class="c"># print output</span>
+    <span class="c1"># print output</span>
     <span class="n">l0</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ll</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">U32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">U32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">U32</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">U32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
 <div class="viewcode-block" id="des_set_key"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.des_c.des_set_key">[docs]</a><span class="k">def</span> <span class="nf">des_set_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="c"># key - des_cblock - UChar[8]</span>
-    <span class="c"># schedule - des_key_schedule</span>
+    <span class="c1"># key - des_cblock - UChar[8]</span>
+    <span class="c1"># schedule - des_key_schedule</span>
 
-    <span class="c"># register unsigned long c,d,t,s;</span>
-    <span class="c"># register unsigned char *in;</span>
-    <span class="c"># register unsigned long *k;</span>
-    <span class="c"># register int i;</span>
+    <span class="c1"># register unsigned long c,d,t,s;</span>
+    <span class="c1"># register unsigned char *in;</span>
+    <span class="c1"># register unsigned long *k;</span>
+    <span class="c1"># register int i;</span>
 
-    <span class="c"># k = schedule</span>
-    <span class="c"># in = key</span>
+    <span class="c1"># k = schedule</span>
+    <span class="c1"># in = key</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">c2l</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
@@ -283,7 +292,7 @@
             <span class="n">des_skb</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="nb">int</span><span class="p">(((</span><span class="n">d</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x03</span><span class="p">))</span> <span class="o">|</span> <span class="p">((</span><span class="n">d</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x3c</span><span class="p">)))]</span> <span class="o">|</span> \
             <span class="n">des_skb</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="nb">int</span><span class="p">((</span><span class="n">d</span> <span class="o">&gt;&gt;</span> <span class="mi">15</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">))]</span> <span class="o">|</span> \
             <span class="n">des_skb</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="nb">int</span><span class="p">(((</span><span class="n">d</span> <span class="o">&gt;&gt;</span> <span class="mi">21</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x0f</span><span class="p">))</span> <span class="o">|</span> <span class="p">((</span><span class="n">d</span> <span class="o">&gt;&gt;</span> <span class="mi">22</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x30</span><span class="p">)))]</span>
-        <span class="c"># print s, t</span>
+        <span class="c1"># print s, t</span>
 
         <span class="n">k</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">t</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">s</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0x0000ffff</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0xffffffff</span><span class="p">))</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">((</span><span class="n">s</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">t</span> <span class="o">&amp;</span> <span class="n">U32</span><span class="p">(</span><span class="mh">0xffff0000</span><span class="p">)))</span>
@@ -299,15 +308,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
@@ -325,17 +326,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.common.geometry &mdash; src  documentation</title>
+    <title>arcrest.common.geometry &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.common.geometry</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="k">try</span><span class="p">:</span>
@@ -50,23 +59,23 @@
 
 
 <span class="kn">from</span> <span class="nn">.._abstract</span> <span class="kn">import</span> <span class="n">abstract</span>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_date_handler</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">local_time_to_online</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">obj</span>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="SpatialReference"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.SpatialReference">[docs]</a><span class="k">class</span> <span class="nc">SpatialReference</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; creates a spatial reference instance &quot;&quot;&quot;</span>
     <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="o">=</span> <span class="n">wkt</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get/set the wkid &quot;&quot;&quot;</span>
@@ -75,7 +84,7 @@
     <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get/set the wkid &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wkt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get/set the wkt &quot;&quot;&quot;</span>
@@ -88,19 +97,19 @@
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the wkid id for use in json calls&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the wkid id for use in json calls&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span></div>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span></div>
 
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Point"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.Point">[docs]</a><span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Point Geometry</span>
 <span class="sd">        Inputs:</span>
@@ -118,7 +127,7 @@
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_dict</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coord</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -137,25 +146,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">m</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the object as a string &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span>
                           <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="s2">&quot;esriGeometryPoint&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
@@ -165,28 +174,28 @@
                                <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Point as an ESRI arcpy.Point object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
-        <span class="c">#</span>
-        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;x&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
-                    <span class="s">&quot;y&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
-                    <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+        <span class="c1">#</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+                    <span class="s2">&quot;y&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
+                    <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
                     <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span>
         <span class="k">return</span> <span class="n">template</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a Point value as a list of [x,y,&lt;z&gt;,&lt;m&gt;] &quot;&quot;&quot;</span>
@@ -196,55 +205,55 @@
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">base</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the X coordinate &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@X.setter</span>
     <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;sets the X coordinate&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span>
                               <span class="nb">long</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the Y Coordinate &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@Y.setter</span>
     <span class="k">def</span> <span class="nf">Y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sets the Y coordinate &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span>
                               <span class="nb">long</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">Z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the Z Coordinate &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@Z.setter</span>
     <span class="k">def</span> <span class="nf">Z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sets the Z coordinate &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span>
                               <span class="nb">long</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; gets the wkid &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@wkid.setter</span>
     <span class="k">def</span> <span class="nf">wkid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sets the wkid &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span>
                               <span class="nb">long</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wkt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get/set the wkt &quot;&quot;&quot;</span>
@@ -253,7 +262,7 @@
     <span class="k">def</span> <span class="nf">wkt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get/set the wkt &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="o">=</span> <span class="n">wkt</span></div>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="MultiPoint"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.MultiPoint">[docs]</a><span class="k">class</span> <span class="nc">MultiPoint</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Implements the ArcGIS JSON MultiPoint Geometry Object &quot;&quot;&quot;</span>
     <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
@@ -264,7 +273,7 @@
     <span class="n">_points</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -275,7 +284,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="o">=</span> <span class="n">wkt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Multipoint</span><span class="p">):</span>
@@ -289,20 +298,20 @@
                           <span class="n">z</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">M</span><span class="p">))</span>
                 <span class="n">feature_geom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fPart</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">feature_geom</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="s2">&quot;esriGeometryMultipoint&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
@@ -312,31 +321,31 @@
                                <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Point as an ESRI arcpy.MultiPoint object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
-        <span class="c">#</span>
+        <span class="c1">#</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
-                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
-                <span class="s">&quot;points&quot;</span> <span class="p">:</span> <span class="p">[],</span>
-                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+                <span class="s2">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s2">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s2">&quot;points&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">:</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span></div>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Polyline"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.Polyline">[docs]</a><span class="k">class</span> <span class="nc">Polyline</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Implements the ArcGIS REST API Polyline Object</span>
 <span class="sd">        Inputs:</span>
@@ -353,7 +362,7 @@
     <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -364,7 +373,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="o">=</span> <span class="n">wkt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Polyline</span><span class="p">):</span>
@@ -388,20 +397,20 @@
                           <span class="n">z</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">pnt</span><span class="o">.</span><span class="n">M</span><span class="p">))</span>
                 <span class="n">feature_geom</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fPart</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">feature_geom</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
@@ -411,34 +420,34 @@
                                <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Polyline as an ESRI arcpy.Polyline object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
-                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
-                <span class="s">&quot;paths&quot;</span> <span class="p">:</span> <span class="p">[],</span>
-                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+                <span class="s2">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s2">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s2">&quot;paths&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paths</span><span class="p">:</span>
                 <span class="n">lpart</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
                     <span class="n">lpart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">lpart</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span></div>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Polygon"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.Polygon">[docs]</a><span class="k">class</span> <span class="nc">Polygon</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Implements the ArcGIS REST JSON for Polygon Object &quot;&quot;&quot;</span>
     <span class="n">_rings</span> <span class="o">=</span> <span class="bp">None</span>
@@ -449,19 +458,19 @@
     <span class="n">_geom</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_hasZ</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_hasM</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rings</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hasZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">hasM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="n">rings</span>
         <span class="k">elif</span> <span class="n">arcpyFound</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rings</span><span class="p">,</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Geometry</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToPointList</span><span class="p">(</span><span class="n">rings</span><span class="p">)</span>
-<span class="c">##            self._json = rings.JSON</span>
-<span class="c">##            self._dict = _unicode_convert(json.loads(self._json))</span>
+<span class="c1">##            self._json = rings.JSON</span>
+<span class="c1">##            self._dict = _unicode_convert(json.loads(self._json))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span> <span class="o">=</span> <span class="n">hasM</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span> <span class="o">=</span> <span class="n">hasZ</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__geomToPointList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geom</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; converts a geometry object to a common.Geometry object &quot;&quot;&quot;</span>
         <span class="n">sr</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">spatialReference</span>
@@ -476,41 +485,41 @@
             <span class="n">wkid</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">factoryCode</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">JSON</span><span class="p">)</span>
         <span class="n">top</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">gring</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s">&#39;rings&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">gring</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;rings&#39;</span><span class="p">]:</span>
             <span class="n">ring</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gring</span><span class="p">:</span>
                 <span class="n">ring</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="n">wkid</span><span class="p">,</span> <span class="n">wkt</span><span class="o">=</span><span class="n">wkt</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="bp">None</span><span class="p">))</span>
             <span class="n">top</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">top</span>
-        <span class="c">#if isinstance(geom, arcpy.Polygon):</span>
-            <span class="c">#feature_geom = []</span>
-            <span class="c">#fPart = []</span>
-            <span class="c">#for part in geom:</span>
-                <span class="c">#fPart = []</span>
-                <span class="c">#for pnt in part:</span>
-                    <span class="c">#if geom.spatialReference is None:</span>
-                        <span class="c">#wkid = self._wkid</span>
-                    <span class="c">#else:</span>
-                        <span class="c">#wkid = geom.spatialReference.factoryCode</span>
-                    <span class="c">#fPart.append(Point(coord=[pnt.X, pnt.Y],</span>
-                          <span class="c">#wkid=wkid,</span>
-                          <span class="c">#z=pnt.Z, m=pnt.M))</span>
-                <span class="c">#feature_geom.append(fPart)</span>
-            <span class="c">#return feature_geom</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="c1">#if isinstance(geom, arcpy.Polygon):</span>
+            <span class="c1">#feature_geom = []</span>
+            <span class="c1">#fPart = []</span>
+            <span class="c1">#for part in geom:</span>
+                <span class="c1">#fPart = []</span>
+                <span class="c1">#for pnt in part:</span>
+                    <span class="c1">#if geom.spatialReference is None:</span>
+                        <span class="c1">#wkid = self._wkid</span>
+                    <span class="c1">#else:</span>
+                        <span class="c1">#wkid = geom.spatialReference.factoryCode</span>
+                    <span class="c1">#fPart.append(Point(coord=[pnt.X, pnt.Y],</span>
+                          <span class="c1">#wkid=wkid,</span>
+                          <span class="c1">#z=pnt.Z, m=pnt.M))</span>
+                <span class="c1">#feature_geom.append(fPart)</span>
+            <span class="c1">#return feature_geom</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
@@ -520,24 +529,24 @@
                                <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Polyline as an ESRI arcpy.Polyline object &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ArcPy is required to use this function&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AsShape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the object as a python dictionary &quot;&quot;&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
-                <span class="s">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
-                <span class="s">&quot;rings&quot;</span> <span class="p">:</span> <span class="p">[],</span>
-                <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+                <span class="s2">&quot;hasM&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasM</span><span class="p">,</span>
+                <span class="s2">&quot;hasZ&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasZ</span><span class="p">,</span>
+                <span class="s2">&quot;rings&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rings</span><span class="p">:</span>
                 <span class="n">lpart</span> <span class="o">=</span> <span class="p">[]</span>
@@ -546,11 +555,11 @@
                         <span class="n">lpart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
                         <span class="n">lpart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">asList</span><span class="p">)</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;rings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;rings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">lpart</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span></div>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Envelope"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.geometry.Envelope">[docs]</a><span class="k">class</span> <span class="nc">Envelope</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">AbstractGeometry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">       An envelope is a rectangle defined by a range of values for each</span>
@@ -570,7 +579,7 @@
     <span class="n">_mmax</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_wkid</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_wkt</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">wkid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wkt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">zmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mmax</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
@@ -584,68 +593,68 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span> <span class="o">=</span> <span class="n">mmax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">=</span> <span class="n">wkid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="o">=</span> <span class="n">wkt</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatialReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the geometry spatial reference&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkt</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;wkid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">}</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the geometry type &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;esriGeometryEnvelope&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="s2">&quot;esriGeometryEnvelope&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the envelope as a dictionary &quot;&quot;&quot;</span>
         <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;xmin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span><span class="p">,</span>
-            <span class="s">&quot;ymin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span><span class="p">,</span>
-            <span class="s">&quot;xmax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span><span class="p">,</span>
-            <span class="s">&quot;ymax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span><span class="p">,</span>
-            <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+            <span class="s2">&quot;xmin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span><span class="p">,</span>
+            <span class="s2">&quot;ymin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span><span class="p">,</span>
+            <span class="s2">&quot;xmax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span><span class="p">,</span>
+            <span class="s2">&quot;ymax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span><span class="p">,</span>
+            <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;mmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;mmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span>
 
         <span class="k">return</span> <span class="n">template</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the envelope as a dictionary &quot;&quot;&quot;</span>
         <span class="n">template</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;xmin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span><span class="p">,</span>
-            <span class="s">&quot;ymin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span><span class="p">,</span>
-            <span class="s">&quot;xmax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span><span class="p">,</span>
-            <span class="s">&quot;ymax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span><span class="p">,</span>
-            <span class="s">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
+            <span class="s2">&quot;xmin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmin</span><span class="p">,</span>
+            <span class="s2">&quot;ymin&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymin</span><span class="p">,</span>
+            <span class="s2">&quot;xmax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xmax</span><span class="p">,</span>
+            <span class="s2">&quot;ymax&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ymax</span><span class="p">,</span>
+            <span class="s2">&quot;spatialReference&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatialReference</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmin</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zmax</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;mmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;mmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmax</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;mmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmin</span>
 
         <span class="k">return</span> <span class="n">template</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asJSON</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns a geometry as JSON &quot;&quot;&quot;</span>
@@ -655,16 +664,16 @@
                                <span class="n">default</span><span class="o">=</span><span class="n">_date_handler</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asArcPyObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the Envelope as an ESRI arcpy.Polygon object &quot;&quot;&quot;</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asDictionary</span>
         <span class="n">ring</span> <span class="o">=</span> <span class="p">[[</span>
-            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
-            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
-            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
-            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">)</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">),</span>
+            <span class="n">Point</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">)</span>
             <span class="p">]]</span>
         <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">rings</span><span class="o">=</span><span class="n">ring</span><span class="p">,</span>
                        <span class="n">wkid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wkid</span><span class="p">,</span>
@@ -677,15 +686,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -703,17 +704,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

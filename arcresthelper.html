@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcresthelper package &mdash; src  documentation</title>
+    <title>arcresthelper package &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,15 +23,31 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="index.html" />
+    <link rel="up" title="src" href="modules.html" />
     <link rel="next" title="arcresthelper.packages package" href="arcresthelper.packages.html" />
-    <link rel="prev" title="arcrest.webmap package" href="arcrest.webmap.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="prev" title="arcrest.webmap package" href="arcrest.webmap.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcresthelper.packages.html" title="arcresthelper.packages package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.webmap.html" title="arcrest.webmap package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">src</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -62,14 +78,14 @@
 <dt id="arcresthelper.common.ArcRestHelperError">
 <em class="property">exception </em><code class="descclassname">arcresthelper.common.</code><code class="descname">ArcRestHelperError</code><a class="reference internal" href="_modules/arcresthelper/common.html#ArcRestHelperError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.ArcRestHelperError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
-<p>raised when error occurs in utility module functions</p>
+<p>Raised when error occurs in utility module functions.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="arcresthelper.common.Tee">
 <em class="property">class </em><code class="descclassname">arcresthelper.common.</code><code class="descname">Tee</code><span class="sig-paren">(</span><em>*files</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#Tee"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.Tee" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Combines standard output with a file for logging</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Combines standard output with a file for logging.</p>
 <dl class="method">
 <dt id="arcresthelper.common.Tee.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#Tee.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.Tee.write" title="Permalink to this definition">¶</a></dt>
@@ -80,114 +96,422 @@
 <dl class="function">
 <dt id="arcresthelper.common.chunklist">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">chunklist</code><span class="sig-paren">(</span><em>l</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#chunklist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.chunklist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yield successive n-sized chunks from l .</p>
+<dd><p>Yield successive n-sized chunks from l.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><em>object</em></a>) &#8211; The object to chunk.</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The size of the chunks.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first">The next chunk in the object.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#TypeError" title="(in Python v3.4)"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> &#8211;
+if <code class="docutils literal"><span class="pre">l</span></code> has no <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#len" title="(in Python v3.4)"><code class="xref py py-func docutils literal"><span class="pre">len()</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">chunklist</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)),</span> <span class="mi">6</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 3, 4, 5]</span>
+<span class="go">[6, 7, 8, 9, 10, 11]</span>
+<span class="go">[12, 13, 14, 15, 16, 17]</span>
+<span class="go">[18, 19]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">chunklist</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="go">[&#39;ABCDEFG&#39;, &#39;HIJKLMN&#39;, &#39;OPQRSTU&#39;, &#39;VWXYZ&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.close_log">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">close_log</code><span class="sig-paren">(</span><em>log_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#close_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.close_log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Closes the open file and returns <code class="xref py py-class docutils literal"><span class="pre">sys.stdout</span></code> to the default (i.e., console output).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log_file</strong> (<em>file</em>) &#8211; The file object to close.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.find_replace">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">find_replace</code><span class="sig-paren">(</span><em>obj</em>, <em>find</em>, <em>replace</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#find_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.find_replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>searchs an object and does a find and replace</p>
+<dd><p>Searches an object and performs a find and replace.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><em>object</em></a>) &#8211; The object to iterate and find/replace.</li>
+<li><strong>find</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The string to search for.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The string to replace with.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The object with replaced strings.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)">object</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.find_replace_string">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">find_replace_string</code><span class="sig-paren">(</span><em>obj</em>, <em>find</em>, <em>replace</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#find_replace_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.find_replace_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Performs a string.replace() on the input object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><em>object</em></a>) &#8211; The object to find/replace. It will be cast to <code class="docutils literal"><span class="pre">str</span></code>.</li>
+<li><strong>find</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The string to search for.</li>
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The string to replace with.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The replaced string.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.getLayerIndex">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">getLayerIndex</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#getLayerIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.getLayerIndex" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract the layer index from a url.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The url to parse.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The layer index.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)">int</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">getLayerIndex</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.getLayerName">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">getLayerName</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#getLayerName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.getLayerName" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract the layer name from a url.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The url to parse.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The layer name.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">getLayerIndex</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="go">&#39;test&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.init_config_json">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">init_config_json</code><span class="sig-paren">(</span><em>config_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#init_config_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.init_config_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Deserializes a JSON configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config_file</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The path to the JSON file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary object containing the JSON data. If <code class="docutils literal"><span class="pre">config_file</span></code> does not exist, returns <code class="docutils literal"><span class="pre">None</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.init_log">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">init_log</code><span class="sig-paren">(</span><em>log_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#init_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.init_log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates log file on disk and &#8220;Tees&#8221; <code class="xref py py-class docutils literal"><span class="pre">sys.stdout</span></code> to console and disk</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log_file</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The path on disk to append or create the log file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The opened log file.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.is_number">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">is_number</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.is_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Determines if the input is numeric</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> &#8211; The value to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if the input is numeric, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.local_time_to_online">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">local_time_to_online</code><span class="sig-paren">(</span><em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#local_time_to_online"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.local_time_to_online" title="Permalink to this definition">¶</a></dt>
-<dd><p>converts datetime object to a UTC timestamp for AGOL
-Inputs:</p>
-<blockquote>
-<div>dt - datetime object</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>Long value</dd>
-</dl>
+<dd><p>Converts datetime object to a UTC timestamp for AGOL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#module-datetime" title="(in Python v3.4)"><em>datetime</em></a>) &#8211; The <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a> object to convert. Defaults to <code class="docutils literal"><span class="pre">None</span></code>, i.e., <code class="xref py py-func docutils literal"><span class="pre">datetime.datetime.now()</span></code>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A UTC timestamp as understood by AGOL (time in ms since Unix epoch * 1000)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#float" title="(in Python v3.4)">float</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">local_time_to_online</span><span class="p">()</span> <span class="c1"># PST</span>
+<span class="go">1457167261000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1993</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="c1"># PST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">local_time_to_online</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+<span class="go">731392515000.0</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.common.online_time_to_string" title="arcresthelper.common.online_time_to_string"><code class="xref py py-func docutils literal"><span class="pre">online_time_to_string()</span></code></a> for converting a UTC timestamp</p>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.merge_dicts">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>dicts</em>, <em>op=&lt;built-in function add&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.merge_dicts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Merge a list of dictionaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dicts</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; a list of dictionary objects</li>
+<li><strong>op</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/operator.html#module-operator" title="(in Python v3.4)"><em>operator</em></a>) &#8211; an operator item used to merge the dictionaries. Defaults to <a class="reference external" href="https://docs.python.org/3.4/library/operator.html#operator.add" title="(in Python v3.4)"><code class="xref py py-func docutils literal"><span class="pre">operator.add()</span></code></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the merged dictionary</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.noneToValue">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">noneToValue</code><span class="sig-paren">(</span><em>value</em>, <em>newValue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#noneToValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.noneToValue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convert <code class="docutils literal"><span class="pre">None</span></code> to a different value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> &#8211; The value to convert. This can be anything.</li>
+<li><strong>newValue</strong> &#8211; The resultant value. This can be anything.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">newValue</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.online_time_to_string">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.online_time_to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a timestamp to date/time string
-Inputs:</p>
-<blockquote>
-<div>value - timestamp as long
-timeFormat - output date/time format</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>string</dd>
-</dl>
+<dd><p>Converts AGOL timestamp to formatted string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#float" title="(in Python v3.4)"><em>float</em></a>) &#8211; A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)</li>
+<li><strong>timeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Date/Time format string as parsed by <code class="xref py py-func docutils literal"><span class="pre">datetime.strftime()</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A string representation of the timestamp.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">1457167261000.0</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+<span class="go">&#39;2016-03-05 00:41:01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">731392515000.0</span><span class="p">,</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">)</span>
+<span class="go">&#39;03/05/1993 20:35:15&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The output is given in UTC, which is why the examples given here don&#8217;t match <a class="reference internal" href="#arcresthelper.common.local_time_to_online" title="arcresthelper.common.local_time_to_online"><code class="xref py py-func docutils literal"><span class="pre">local_time_to_online()</span></code></a> (PST is UTC-8:00).</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.common.local_time_to_online" title="arcresthelper.common.local_time_to_online"><code class="xref py py-func docutils literal"><span class="pre">local_time_to_online()</span></code></a> for converting a <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a> object to AGOL timestamp</p>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.random_int_generator">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">random_int_generator</code><span class="sig-paren">(</span><em>maxrange</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#random_int_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.random_int_generator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generates a random integer from 0 to <cite>maxrange</cite>, inclusive.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>maxrange</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The upper range of integers to randomly choose.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The randomly generated integer from <a class="reference external" href="https://docs.python.org/3.4/library/random.html#random.randint" title="(in Python v3.4)"><code class="xref py py-func docutils literal"><span class="pre">random.randint()</span></code></a>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)">int</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">random_int_generator</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+<span class="go">9</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.random_string_generator">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">random_string_generator</code><span class="sig-paren">(</span><em>size=6</em>, <em>chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#random_string_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.random_string_generator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generates a random string from a set of characters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The length of the resultant string. Defaults to 6.</li>
+<li><strong>chars</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The characters to be used by <a class="reference external" href="https://docs.python.org/3.4/library/random.html#random.choice" title="(in Python v3.4)"><code class="xref py py-func docutils literal"><span class="pre">random.choice()</span></code></a>. Defaults to <code class="xref py py-const docutils literal"><span class="pre">string.ascii_uppercase</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The randomly generated string.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">random_string_generator</span><span class="p">()</span>
+<span class="go">&#39;DCNYWU&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">random_string_generator</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;arcREST&quot;</span><span class="p">)</span>
+<span class="go">&#39;cESaTTEacTES&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.trace">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determine information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.unicode_convert">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">unicode_convert</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#unicode_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.unicode_convert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Converts unicode objects to anscii.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><em>object</em></a>) &#8211; The object to convert.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The object converted to anscii, if possible. For <code class="docutils literal"><span class="pre">dict</span></code> and <code class="docutils literal"><span class="pre">list</span></code>, the object type is maintained.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.common.write_config_json">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">write_config_json</code><span class="sig-paren">(</span><em>config_file</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#write_config_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.write_config_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Serializes an object to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config_file</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The path on disk to save the file.</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><em>object</em></a>) &#8211; The object to serialize.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-arcresthelper.featureservicetools">
@@ -513,7 +837,7 @@ to the user</p>
 <dl class="class">
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper">
 <em class="property">class </em><code class="descclassname">arcresthelper.securityhandlerhelper.</code><code class="descname">securityhandlerhelper</code><span class="sig-paren">(</span><em>securityinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/securityhandlerhelper.html#securityhandlerhelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>A number of different security handlers are suppoted by ArcGIS, this
 function simplifies the creation of the handlers.  A dict with the
 type of handler and information to created it is required to generate
@@ -579,15 +903,13 @@ to the user</p>
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="arcrest.webmap.html" title="previous chapter">arcrest.webmap package</a></li>
-      <li>Next: <a href="arcresthelper.packages.html" title="next chapter">arcresthelper.packages package</a></li>
-  </ul></li>
-</ul>
-</div>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arcrest.webmap.html"
+                        title="previous chapter">arcrest.webmap package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arcresthelper.packages.html"
+                        title="next chapter">arcresthelper.packages package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -612,20 +934,28 @@ to the user</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/arcresthelper.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcresthelper.packages.html" title="arcresthelper.packages package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.webmap.html" title="arcrest.webmap package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

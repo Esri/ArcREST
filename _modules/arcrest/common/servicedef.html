@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.common.servicedef &mdash; src  documentation</title>
+    <title>arcrest.common.servicedef &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.common.servicedef</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">..packages</span> <span class="kn">import</span> <span class="n">six</span>
 
@@ -55,16 +64,16 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="n">arcpyFound</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="c">########################################################################</span>
+    <span class="c1">########################################################################</span>
 <div class="viewcode-block" id="MXDtoFeatureServiceDef"><a class="viewcode-back" href="../../../arcrest.common.html#arcrest.common.servicedef.MXDtoFeatureServiceDef">[docs]</a>    <span class="k">def</span> <span class="nf">MXDtoFeatureServiceDef</span><span class="p">(</span> <span class="n">mxd_path</span><span class="p">,</span>
                                 <span class="n">service_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                 <span class="n">tags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                 <span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                 <span class="n">folder_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                                <span class="n">capabilities</span> <span class="o">=</span><span class="s">&#39;Query,Create,Update,Delete,Uploads,Editing,Sync&#39;</span><span class="p">,</span>
+                                <span class="n">capabilities</span> <span class="o">=</span><span class="s1">&#39;Query,Create,Update,Delete,Uploads,Editing,Sync&#39;</span><span class="p">,</span>
                                 <span class="n">maxRecordCount</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-                                <span class="n">server_type</span><span class="o">=</span><span class="s">&#39;MY_HOSTED_SERVICES&#39;</span><span class="p">,</span>
-                                <span class="n">url</span><span class="o">=</span><span class="s">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
+                                <span class="n">server_type</span><span class="o">=</span><span class="s1">&#39;MY_HOSTED_SERVICES&#39;</span><span class="p">,</span>
+                                <span class="n">url</span><span class="o">=</span><span class="s1">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -88,16 +97,16 @@
             <span class="n">mxd_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sciptPath</span><span class="p">,</span><span class="n">mxd_path</span><span class="p">)</span>
 
         <span class="n">mxd</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">MapDocument</span><span class="p">(</span><span class="n">mxd_path</span><span class="p">)</span>
-        <span class="n">sddraftFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;draft&quot;</span>
-        <span class="n">sdFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;sd&quot;</span>
-        <span class="n">sddraft</span> <span class="o">=</span> <span class="n">sddraftFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">service_name</span> <span class="o">+</span> <span class="s">&quot;.sddraft&quot;</span>
-        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.sd&quot;</span> <span class="o">%</span> <span class="n">service_name</span>
+        <span class="n">sddraftFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;draft&quot;</span>
+        <span class="n">sdFolder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">scratchFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;sd&quot;</span>
+        <span class="n">sddraft</span> <span class="o">=</span> <span class="n">sddraftFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">service_name</span> <span class="o">+</span> <span class="s2">&quot;.sddraft&quot;</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdFolder</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.sd&quot;</span> <span class="o">%</span> <span class="n">service_name</span>
         <span class="n">mxd</span> <span class="o">=</span> <span class="n">_prep_mxd</span><span class="p">(</span><span class="n">mxd</span><span class="p">)</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">service_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">service_name</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">)</span>
+            <span class="n">service_name</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">tags</span> <span class="o">=</span> <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
@@ -112,9 +121,9 @@
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sddraft</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
 
-        <span class="n">res</span><span class="p">[</span><span class="s">&#39;service_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_name</span>
-        <span class="n">res</span><span class="p">[</span><span class="s">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tags</span>
-        <span class="n">res</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">res</span><span class="p">[</span><span class="s1">&#39;service_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_name</span>
+        <span class="n">res</span><span class="p">[</span><span class="s1">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="n">res</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
         <span class="n">analysis</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">CreateMapSDDraft</span><span class="p">(</span><span class="n">map_document</span><span class="o">=</span><span class="n">mxd</span><span class="p">,</span>
                                            <span class="n">out_sddraft</span><span class="o">=</span><span class="n">sddraft</span><span class="p">,</span>
                                            <span class="n">service_name</span><span class="o">=</span><span class="n">service_name</span><span class="p">,</span>
@@ -135,22 +144,22 @@
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sdFolder</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">analysis</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
-            <span class="c"># Stage the service</span>
+        <span class="k">if</span> <span class="n">analysis</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="c1"># Stage the service</span>
             <span class="n">arcpy</span><span class="o">.</span><span class="n">StageService_server</span><span class="p">(</span><span class="n">sddraft</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
-            <span class="n">res</span><span class="p">[</span><span class="s">&#39;servicedef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sd</span>
+            <span class="n">res</span><span class="p">[</span><span class="s1">&#39;servicedef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sd</span>
             <span class="k">return</span> <span class="n">res</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c"># If the sddraft analysis contained errors, display them and quit.</span>
-            <span class="k">print</span> <span class="p">(</span><span class="n">analysis</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">])</span>
+            <span class="c1"># If the sddraft analysis contained errors, display them and quit.</span>
+            <span class="k">print</span> <span class="p">(</span><span class="n">analysis</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">])</span>
             <span class="k">return</span> <span class="bp">None</span></div>
 
 
 
     <span class="k">def</span> <span class="nf">_modify_sddraft</span><span class="p">(</span><span class="n">sddraft</span><span class="p">,</span>
                         <span class="n">capabilities</span><span class="p">,</span>
-                        <span class="n">maxRecordCount</span><span class="o">=</span><span class="s">&#39;1000&#39;</span><span class="p">,</span>
-                        <span class="n">url</span><span class="o">=</span><span class="s">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
+                        <span class="n">maxRecordCount</span><span class="o">=</span><span class="s1">&#39;1000&#39;</span><span class="p">,</span>
+                        <span class="n">url</span><span class="o">=</span><span class="s1">&#39;http://www.arcgis.com&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; modifies the sddraft for agol publishing</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
@@ -158,88 +167,88 @@
         <span class="n">doc</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span>
 
         <span class="n">root_elem</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">root_elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s">&quot;SVCManifest&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Root tag is incorrect. Is {} a .sddraft file?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sddraft</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">root_elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;SVCManifest&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Root tag is incorrect. Is {} a .sddraft file?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sddraft</span><span class="p">))</span>
 
-        <span class="c"># The following 6 code pieces modify the SDDraft from a new MapService</span>
-        <span class="c"># with caching capabilities to a FeatureService with Query,Create,</span>
-        <span class="c"># Update,Delete,Uploads,Editing capabilities as well as the ability to set the max</span>
-        <span class="c"># records on the service.</span>
-        <span class="c"># The first two lines (commented out) are no longer necessary as the FS</span>
-        <span class="c"># is now being deleted and re-published, not truly overwritten as is the</span>
-        <span class="c"># case when publishing from Desktop.</span>
-        <span class="c"># The last three pieces change Map to Feature Service, disable caching</span>
-        <span class="c"># and set appropriate capabilities. You can customize the capabilities by</span>
-        <span class="c"># removing items.</span>
-        <span class="c"># Note you cannot disable Query from a Feature Service.</span>
+        <span class="c1"># The following 6 code pieces modify the SDDraft from a new MapService</span>
+        <span class="c1"># with caching capabilities to a FeatureService with Query,Create,</span>
+        <span class="c1"># Update,Delete,Uploads,Editing capabilities as well as the ability to set the max</span>
+        <span class="c1"># records on the service.</span>
+        <span class="c1"># The first two lines (commented out) are no longer necessary as the FS</span>
+        <span class="c1"># is now being deleted and re-published, not truly overwritten as is the</span>
+        <span class="c1"># case when publishing from Desktop.</span>
+        <span class="c1"># The last three pieces change Map to Feature Service, disable caching</span>
+        <span class="c1"># and set appropriate capabilities. You can customize the capabilities by</span>
+        <span class="c1"># removing items.</span>
+        <span class="c1"># Note you cannot disable Query from a Feature Service.</span>
 
-        <span class="c"># Change service type from map service to feature service</span>
-        <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Type&#39;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&quot;esriServiceDefinitionType_New&quot;</span><span class="p">:</span>
-                <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&#39;esriServiceDefinitionType_Replacement&#39;</span>
+        <span class="c1"># Change service type from map service to feature service</span>
+        <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;Type&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;esriServiceDefinitionType_New&quot;</span><span class="p">:</span>
+                <span class="n">desc</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;esriServiceDefinitionType_Replacement&#39;</span>
 
-        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/TypeName&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&quot;MapServer&quot;</span><span class="p">:</span>
-                <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;FeatureServer&quot;</span>
+        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./Configurations/SVCConfiguration/TypeName&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;MapServer&quot;</span><span class="p">:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;FeatureServer&quot;</span>
 
-        <span class="c">#Turn off caching</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/&quot;</span> <span class="o">+</span>
-                                <span class="s">&quot;ConfigurationProperties/PropertyArray/&quot;</span> <span class="o">+</span>
-                                <span class="s">&quot;PropertySetProperty&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;isCached&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;false&quot;</span>
-            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;maxRecordCount&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">maxRecordCount</span>
+        <span class="c1">#Turn off caching</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./Configurations/SVCConfiguration/Definition/&quot;</span> <span class="o">+</span>
+                                <span class="s2">&quot;ConfigurationProperties/PropertyArray/&quot;</span> <span class="o">+</span>
+                                <span class="s2">&quot;PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;isCached&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;maxRecordCount&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">maxRecordCount</span>
 
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/Extensions/SVCExtension&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;TypeName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;KmlServer&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Enabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;false&quot;</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./Configurations/SVCConfiguration/Definition/Extensions/SVCExtension&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;TypeName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;KmlServer&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Enabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
 
-        <span class="c"># Turn on feature access capabilities</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;WebCapabilities&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">capabilities</span>
+        <span class="c1"># Turn on feature access capabilities</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./Configurations/SVCConfiguration/Definition/Info/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;WebCapabilities&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">capabilities</span>
 
-        <span class="c"># Update url for portal</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./StagingSettings/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s">&#39;ServerConnectionString&#39;</span><span class="p">:</span>
-                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
-        <span class="c"># Update url for portal</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;./itemInfo/url&quot;</span><span class="p">):</span>
-            <span class="n">prop</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
-        <span class="c"># Add the namespaces which get stripped, back into the .SD</span>
-        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&quot;xmlns:typens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;http://www.esri.com/schemas/ArcGIS/10.2&#39;</span>
-        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&quot;xmlns:xs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;http://www.w3.org/2001/XMLSchema&#39;</span>
-        <span class="n">newSDdraft</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s">&quot;draft_mod.sddraft&quot;</span>
-        <span class="c"># Write the new draft to disk</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">newSDdraft</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">doc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="c1"># Update url for portal</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./StagingSettings/PropertyArray/PropertySetProperty&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;ServerConnectionString&#39;</span><span class="p">:</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
+        <span class="c1"># Update url for portal</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./itemInfo/url&quot;</span><span class="p">):</span>
+            <span class="n">prop</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;www.arcgis.com&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
+        <span class="c1"># Add the namespaces which get stripped, back into the .SD</span>
+        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;xmlns:typens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;http://www.esri.com/schemas/ArcGIS/10.2&#39;</span>
+        <span class="n">root_elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;xmlns:xs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;http://www.w3.org/2001/XMLSchema&#39;</span>
+        <span class="n">newSDdraft</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sddraft</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;draft_mod.sddraft&quot;</span>
+        <span class="c1"># Write the new draft to disk</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">newSDdraft</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">doc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">doc</span>
         <span class="k">return</span> <span class="n">newSDdraft</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_prep_mxd</span><span class="p">(</span><span class="n">mxd</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="sd">&quot;&quot;&quot; ensures the requires mxd properties are set to something &quot;&quot;&quot;</span>
         <span class="n">changed</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">credits</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">summary</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">mxd</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&quot;NA&quot;</span>
+        <span class="k">if</span> <span class="n">mxd</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">mxd</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;NA&quot;</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">if</span> <span class="n">changed</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
             <span class="n">mxd</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -250,15 +259,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -276,17 +277,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

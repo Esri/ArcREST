@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.packages.ntlm3.ntlm &mdash; src  documentation</title>
+    <title>arcrest.packages.ntlm3.ntlm &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../../index.html" />
-    <link rel="up" title="Module code" href="../../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,18 +47,18 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.packages.ntlm3.ntlm</h1><div class="highlight"><pre>
-<span class="c"># This library is free software: you can redistribute it and/or</span>
-<span class="c"># modify it under the terms of the GNU Lesser General Public</span>
-<span class="c"># License as published by the Free Software Foundation, either</span>
-<span class="c"># version 3 of the License, or (at your option) any later version.</span>
+<span></span><span class="c1"># This library is free software: you can redistribute it and/or</span>
+<span class="c1"># modify it under the terms of the GNU Lesser General Public</span>
+<span class="c1"># License as published by the Free Software Foundation, either</span>
+<span class="c1"># version 3 of the License, or (at your option) any later version.</span>
 
-<span class="c"># This library is distributed in the hope that it will be useful,</span>
-<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
-<span class="c"># Lesser General Public License for more details.</span>
+<span class="c1"># This library is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<span class="c1"># Lesser General Public License for more details.</span>
 
-<span class="c"># You should have received a copy of the GNU Lesser General Public</span>
-<span class="c"># License along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt; or &lt;http://www.gnu.org/licenses/lgpl.txt&gt;.</span>
+<span class="c1"># You should have received a copy of the GNU Lesser General Public</span>
+<span class="c1"># License along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt; or &lt;http://www.gnu.org/licenses/lgpl.txt&gt;.</span>
 
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">base64</span>
@@ -97,7 +106,7 @@
 <span class="n">NTLM_NegotiateKeyExchange</span> <span class="o">=</span> <span class="mh">0x40000000</span>
 <span class="n">NTLM_Negotiate56</span> <span class="o">=</span> <span class="mh">0x80000000</span>
 
-<span class="c"># we send these flags with our type 1 message</span>
+<span class="c1"># we send these flags with our type 1 message</span>
 <span class="n">NTLM_TYPE1_FLAGS</span> <span class="o">=</span> <span class="p">(</span><span class="n">NTLM_NegotiateUnicode</span> <span class="o">|</span>
                     <span class="n">NTLM_NegotiateOEM</span> <span class="o">|</span>
                     <span class="n">NTLM_RequestTarget</span> <span class="o">|</span>
@@ -120,38 +129,38 @@
                     <span class="n">NTLM_Negotiate128</span> <span class="o">|</span>
                     <span class="n">NTLM_Negotiate56</span><span class="p">)</span>
 
-<span class="c"># Indicates that this is the last AV_PAIR in the list. AvLen MUST be 0.</span>
-<span class="c"># This type of information MUST be present in the AV pair list.</span>
+<span class="c1"># Indicates that this is the last AV_PAIR in the list. AvLen MUST be 0.</span>
+<span class="c1"># This type of information MUST be present in the AV pair list.</span>
 <span class="n">NTLM_MsvAvEOL</span> <span class="o">=</span> <span class="mi">0</span>
 
-<span class="c"># The server&#39;s NetBIOS computer name. The name MUST be in Unicode, and is not null-terminated.</span>
-<span class="c"># This type of information MUST be present in the AV_pair list.</span>
+<span class="c1"># The server&#39;s NetBIOS computer name. The name MUST be in Unicode, and is not null-terminated.</span>
+<span class="c1"># This type of information MUST be present in the AV_pair list.</span>
 <span class="n">NTLM_MsvAvNbComputerName</span> <span class="o">=</span> <span class="mi">1</span>
 
-<span class="c"># The server&#39;s NetBIOS domain name. The name MUST be in Unicode, and is not null-terminated.</span>
-<span class="c"># This type of information MUST be present in the AV_pair list.</span>
+<span class="c1"># The server&#39;s NetBIOS domain name. The name MUST be in Unicode, and is not null-terminated.</span>
+<span class="c1"># This type of information MUST be present in the AV_pair list.</span>
 <span class="n">NTLM_MsvAvNbDomainName</span> <span class="o">=</span> <span class="mi">2</span>
 
-<span class="c"># The server&#39;s Active Directory DNS computer name. The name MUST be in Unicode, and is not null-terminated.</span>
+<span class="c1"># The server&#39;s Active Directory DNS computer name. The name MUST be in Unicode, and is not null-terminated.</span>
 <span class="n">NTLM_MsvAvDnsComputerName</span> <span class="o">=</span> <span class="mi">3</span>
 
-<span class="c"># The server&#39;s Active Directory DNS domain name. The name MUST be in Unicode, and is not null-terminated.</span>
+<span class="c1"># The server&#39;s Active Directory DNS domain name. The name MUST be in Unicode, and is not null-terminated.</span>
 <span class="n">NTLM_MsvAvDnsDomainName</span> <span class="o">=</span> <span class="mi">4</span>
 
-<span class="c"># The server&#39;s Active Directory (AD) DNS forest tree name. The name MUST be in Unicode, and is not null-terminated.</span>
+<span class="c1"># The server&#39;s Active Directory (AD) DNS forest tree name. The name MUST be in Unicode, and is not null-terminated.</span>
 <span class="n">NTLM_MsvAvDnsTreeName</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="c"># A field containing a 32-bit value indicating server or client configuration. 0x00000001: indicates to the</span>
-<span class="c"># client that the account authentication is constrained. 0x00000002: indicates that the client is providing message</span>
-<span class="c"># integrity in the MIC field (section 2.2.1.3) in the AUTHENTICATE_MESSAGE.</span>
+<span class="c1"># A field containing a 32-bit value indicating server or client configuration. 0x00000001: indicates to the</span>
+<span class="c1"># client that the account authentication is constrained. 0x00000002: indicates that the client is providing message</span>
+<span class="c1"># integrity in the MIC field (section 2.2.1.3) in the AUTHENTICATE_MESSAGE.</span>
 <span class="n">NTLM_MsvAvFlags</span> <span class="o">=</span> <span class="mi">6</span>
 
-<span class="c"># A FILETIME structure ([MS-DTYP] section 2.3.1) in little-endian byte order that contains the server local time.&lt;12&gt;</span>
+<span class="c1"># A FILETIME structure ([MS-DTYP] section 2.3.1) in little-endian byte order that contains the server local time.&lt;12&gt;</span>
 <span class="n">NTLM_MsvAvTimestamp</span> <span class="o">=</span> <span class="mi">7</span>
 
-<span class="c"># A Restriction_Encoding structure (section 2.2.2.2). The Value field contains a structure representing</span>
-<span class="c"># the integrity level of the security principal, as well as a MachineID created at computer startup</span>
-<span class="c"># to identify the calling machine. &lt;13&gt;</span>
+<span class="c1"># A Restriction_Encoding structure (section 2.2.2.2). The Value field contains a structure representing</span>
+<span class="c1"># the integrity level of the security principal, as well as a MachineID created at computer startup</span>
+<span class="c1"># to identify the calling machine. &lt;13&gt;</span>
 <span class="n">NTLM_MsAvRestrictions</span> <span class="o">=</span> <span class="mi">8</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -177,34 +186,34 @@
 
 <div class="viewcode-block" id="create_NTLM_NEGOTIATE_MESSAGE"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.create_NTLM_NEGOTIATE_MESSAGE">[docs]</a><span class="k">def</span> <span class="nf">create_NTLM_NEGOTIATE_MESSAGE</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">type1_flags</span><span class="o">=</span><span class="n">NTLM_TYPE1_FLAGS</span><span class="p">):</span>
     <span class="n">BODY_LENGTH</span> <span class="o">=</span> <span class="mi">40</span>
-    <span class="n">Payload_start</span> <span class="o">=</span> <span class="n">BODY_LENGTH</span>  <span class="c"># in bytes</span>
-    <span class="n">protocol</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;NTLMSSP</span><span class="se">\0</span><span class="s">&#39;</span>  <span class="c"># name</span>
+    <span class="n">Payload_start</span> <span class="o">=</span> <span class="n">BODY_LENGTH</span>  <span class="c1"># in bytes</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;NTLMSSP</span><span class="se">\0</span><span class="s1">&#39;</span>  <span class="c1"># name</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c"># type 1</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># type 1</span>
 
-    <span class="n">flags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">type1_flags</span><span class="p">)</span>
-    <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
-    <span class="n">user_parts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\\</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">DomainName</span> <span class="o">=</span> <span class="n">user_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">type1_flags</span><span class="p">)</span>
+    <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">user_parts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">DomainName</span> <span class="o">=</span> <span class="n">user_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
 
-    <span class="c"># TODO - this variable isn&#39;t used</span>
-    <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - this variable isn&#39;t used</span>
+    <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># noqa</span>
 
-    <span class="n">WorkstationLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
-    <span class="n">WorkstationMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
-    <span class="n">WorkstationBufferOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">WorkstationLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
+    <span class="n">WorkstationMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
+    <span class="n">WorkstationBufferOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">)</span>
-    <span class="n">DomainNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
-    <span class="n">DomainNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
-    <span class="n">DomainNameBufferOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">DomainNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
+    <span class="n">DomainNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
+    <span class="n">DomainNameBufferOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">)</span>
-    <span class="n">ProductMajorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="n">ProductMinorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">ProductBuild</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="mi">2600</span><span class="p">)</span>
-    <span class="n">VersionReserved1</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">VersionReserved2</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">VersionReserved3</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">NTLMRevisionCurrent</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="n">ProductMajorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">ProductMinorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ProductBuild</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="mi">2600</span><span class="p">)</span>
+    <span class="n">VersionReserved1</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">VersionReserved2</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">VersionReserved3</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">NTLMRevisionCurrent</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 
     <span class="n">msg1</span> <span class="o">=</span> <span class="n">protocol</span> <span class="o">+</span> <span class="nb">type</span> <span class="o">+</span> <span class="n">flags</span> <span class="o">+</span> \
         <span class="n">DomainNameLen</span> <span class="o">+</span> <span class="n">DomainNameMaxLen</span> <span class="o">+</span> <span class="n">DomainNameBufferOffset</span> <span class="o">+</span> \
@@ -212,7 +221,7 @@
         <span class="n">ProductMajorVersion</span> <span class="o">+</span> <span class="n">ProductMinorVersion</span> <span class="o">+</span> <span class="n">ProductBuild</span> <span class="o">+</span> \
         <span class="n">VersionReserved1</span> <span class="o">+</span> <span class="n">VersionReserved2</span> <span class="o">+</span> <span class="n">VersionReserved3</span> <span class="o">+</span> <span class="n">NTLMRevisionCurrent</span>
 
-    <span class="k">assert</span> <span class="n">BODY_LENGTH</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg1</span><span class="p">),</span> <span class="s">&quot;BODY_LENGTH: </span><span class="si">%d</span><span class="s"> != msg1: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">BODY_LENGTH</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg1</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">BODY_LENGTH</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg1</span><span class="p">),</span> <span class="s2">&quot;BODY_LENGTH: </span><span class="si">%d</span><span class="s2"> != msg1: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">BODY_LENGTH</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg1</span><span class="p">))</span>
 
     <span class="n">msg1</span> <span class="o">+=</span> <span class="n">Workstation</span> <span class="o">+</span> <span class="n">DomainName</span>
     <span class="n">msg1</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">msg1</span><span class="p">)</span>
@@ -220,49 +229,49 @@
 
 
 <div class="viewcode-block" id="parse_NTLM_CHALLENGE_MESSAGE"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.parse_NTLM_CHALLENGE_MESSAGE">[docs]</a><span class="k">def</span> <span class="nf">parse_NTLM_CHALLENGE_MESSAGE</span><span class="p">(</span><span class="n">msg2</span><span class="p">):</span>
-    <span class="s">&quot;&quot;</span>
+    <span class="s2">&quot;&quot;</span>
     <span class="n">msg2</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">msg2</span><span class="p">)</span>
 
-    <span class="c"># TODO - this variable isn&#39;t used</span>
-    <span class="n">Signature</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - this variable isn&#39;t used</span>
+    <span class="n">Signature</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>  <span class="c1"># noqa</span>
 
-    <span class="n">msg_type</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">msg_type</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">12</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">assert</span> <span class="p">(</span><span class="n">msg_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="c"># TODO - this variable isn&#39;t used</span>
-    <span class="n">TargetNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">14</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - this variable isn&#39;t used</span>
+    <span class="n">TargetNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">14</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># noqa</span>
 
-    <span class="n">TargetNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">16</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">TargetNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">20</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">TargetNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">16</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">TargetNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">20</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c"># TODO - this variable isn&#39;t used</span>
-    <span class="n">TargetName</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="n">TargetNameOffset</span><span class="p">:</span><span class="n">TargetNameOffset</span> <span class="o">+</span> <span class="n">TargetNameMaxLen</span><span class="p">]</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - this variable isn&#39;t used</span>
+    <span class="n">TargetName</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="n">TargetNameOffset</span><span class="p">:</span><span class="n">TargetNameOffset</span> <span class="o">+</span> <span class="n">TargetNameMaxLen</span><span class="p">]</span>  <span class="c1"># noqa</span>
 
-    <span class="n">NegotiateFlags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">NegotiateFlags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">ServerChallenge</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">24</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>
 
-    <span class="c"># TODO - this variable isn&#39;t used</span>
-    <span class="n">Reserved</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">32</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - this variable isn&#39;t used</span>
+    <span class="n">Reserved</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">32</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span>  <span class="c1"># noqa</span>
 
     <span class="k">if</span> <span class="n">NegotiateFlags</span> <span class="o">&amp;</span> <span class="n">NTLM_NegotiateTargetInfo</span><span class="p">:</span>
-        <span class="n">TargetInfoLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">40</span><span class="p">:</span><span class="mi">42</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">TargetInfoLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">40</span><span class="p">:</span><span class="mi">42</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c"># TODO - this variable isn&#39;t used</span>
-        <span class="n">TargetInfoMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">42</span><span class="p">:</span><span class="mi">44</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># noqa</span>
+        <span class="c1"># TODO - this variable isn&#39;t used</span>
+        <span class="n">TargetInfoMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">42</span><span class="p">:</span><span class="mi">44</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># noqa</span>
 
-        <span class="n">TargetInfoOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">44</span><span class="p">:</span><span class="mi">48</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">TargetInfoOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">msg2</span><span class="p">[</span><span class="mi">44</span><span class="p">:</span><span class="mi">48</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">TargetInfo</span> <span class="o">=</span> <span class="n">msg2</span><span class="p">[</span><span class="n">TargetInfoOffset</span><span class="p">:</span><span class="n">TargetInfoOffset</span> <span class="o">+</span> <span class="n">TargetInfoLen</span><span class="p">]</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">TimeStamp</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">8</span>
+        <span class="n">TimeStamp</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span>
         <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">TargetInfoLen</span><span class="p">):</span>
-            <span class="n">AvId</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">TargetInfo</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">AvLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">TargetInfo</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">AvId</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">TargetInfo</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">AvLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">TargetInfo</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">AvValue</span> <span class="o">=</span> <span class="n">TargetInfo</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">AvLen</span><span class="p">]</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">AvLen</span>
             <span class="k">if</span> <span class="n">AvId</span> <span class="o">==</span> <span class="n">NTLM_MsvAvTimestamp</span><span class="p">:</span>
-                <span class="c"># TODO - this variable isn&#39;t used</span>
-                <span class="n">TimeStamp</span> <span class="o">=</span> <span class="n">AvValue</span>  <span class="c"># noqa</span>
-                <span class="c"># ~ print AvId, AvValue.decode(&#39;utf-16&#39;)</span>
+                <span class="c1"># TODO - this variable isn&#39;t used</span>
+                <span class="n">TimeStamp</span> <span class="o">=</span> <span class="n">AvValue</span>  <span class="c1"># noqa</span>
+                <span class="c1"># ~ print AvId, AvValue.decode(&#39;utf-16&#39;)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">NegotiateFlags</span><span class="p">)</span></div>
 
 
@@ -271,75 +280,75 @@
     <span class="n">is_unicode</span> <span class="o">=</span> <span class="n">NegotiateFlags</span> <span class="o">&amp;</span> <span class="n">NTLM_NegotiateUnicode</span>
     <span class="n">is_NegotiateExtendedSecurity</span> <span class="o">=</span> <span class="n">NegotiateFlags</span> <span class="o">&amp;</span> <span class="n">NTLM_NegotiateExtendedSecurity</span>
 
-    <span class="n">flags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">NTLM_TYPE2_FLAGS</span><span class="p">)</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">NTLM_TYPE2_FLAGS</span><span class="p">)</span>
 
     <span class="n">BODY_LENGTH</span> <span class="o">=</span> <span class="mi">72</span>
-    <span class="n">Payload_start</span> <span class="o">=</span> <span class="n">BODY_LENGTH</span>  <span class="c"># in bytes</span>
+    <span class="n">Payload_start</span> <span class="o">=</span> <span class="n">BODY_LENGTH</span>  <span class="c1"># in bytes</span>
 
-    <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
-    <span class="n">DomainName</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
-    <span class="n">UserName</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
-    <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="n">b</span><span class="s">&quot;&quot;</span>
+    <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">DomainName</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">UserName</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="n">b</span><span class="s2">&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_unicode</span><span class="p">:</span>
-        <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16-le&#39;</span><span class="p">)</span>
-        <span class="n">DomainName</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16-le&#39;</span><span class="p">)</span>
-        <span class="n">UserName</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16-le&#39;</span><span class="p">)</span>
-        <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16-le&#39;</span><span class="p">)</span>
+        <span class="n">Workstation</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16-le&#39;</span><span class="p">)</span>
+        <span class="n">DomainName</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16-le&#39;</span><span class="p">)</span>
+        <span class="n">UserName</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16-le&#39;</span><span class="p">)</span>
+        <span class="n">EncryptedRandomSessionKey</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16-le&#39;</span><span class="p">)</span>
     <span class="n">LmChallengeResponse</span> <span class="o">=</span> <span class="n">calc_resp</span><span class="p">(</span><span class="n">create_LM_hashed_password_v1</span><span class="p">(</span><span class="n">password</span><span class="p">),</span> <span class="n">nonce</span><span class="p">)</span>
     <span class="n">NtChallengeResponse</span> <span class="o">=</span> <span class="n">calc_resp</span><span class="p">(</span><span class="n">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">password</span><span class="p">),</span> <span class="n">nonce</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">is_NegotiateExtendedSecurity</span><span class="p">:</span>
         <span class="n">pwhash</span> <span class="o">=</span> <span class="n">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">UserName</span><span class="p">,</span> <span class="n">DomainName</span><span class="p">)</span>
-        <span class="n">ClientChallenge</span> <span class="o">=</span> <span class="n">b</span><span class="s">&quot;&quot;</span>
+        <span class="n">ClientChallenge</span> <span class="o">=</span> <span class="n">b</span><span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
             <span class="n">ClientChallenge</span> <span class="o">+=</span> <span class="n">six</span><span class="o">.</span><span class="n">int2byte</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
 
         <span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">,</span> <span class="n">LmChallengeResponse</span><span class="p">)</span> <span class="o">=</span> <span class="n">ntlm2sr_calc_resp</span><span class="p">(</span><span class="n">pwhash</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span>
-                                                                       <span class="n">ClientChallenge</span><span class="p">)</span>  <span class="c"># =&#39;\x39 e3 f4 cd 59 c5 d8 60&#39;)</span>
-    <span class="n">Signature</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;NTLMSSP</span><span class="se">\0</span><span class="s">&#39;</span>
-    <span class="n">MessageType</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c"># type 3</span>
+                                                                       <span class="n">ClientChallenge</span><span class="p">)</span>  <span class="c1"># =&#39;\x39 e3 f4 cd 59 c5 d8 60&#39;)</span>
+    <span class="n">Signature</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;NTLMSSP</span><span class="se">\0</span><span class="s1">&#39;</span>
+    <span class="n">MessageType</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># type 3</span>
 
-    <span class="n">DomainNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
-    <span class="n">DomainNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
-    <span class="n">DomainNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">DomainNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
+    <span class="n">DomainNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">))</span>
+    <span class="n">DomainNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">DomainName</span><span class="p">)</span>
 
-    <span class="n">UserNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">UserName</span><span class="p">))</span>
-    <span class="n">UserNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">UserName</span><span class="p">))</span>
-    <span class="n">UserNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">UserNameLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">UserName</span><span class="p">))</span>
+    <span class="n">UserNameMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">UserName</span><span class="p">))</span>
+    <span class="n">UserNameOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">UserName</span><span class="p">)</span>
 
-    <span class="n">WorkstationLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
-    <span class="n">WorkstationMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
-    <span class="n">WorkstationOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">WorkstationLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
+    <span class="n">WorkstationMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">))</span>
+    <span class="n">WorkstationOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Workstation</span><span class="p">)</span>
 
-    <span class="n">LmChallengeResponseLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">LmChallengeResponse</span><span class="p">))</span>
-    <span class="n">LmChallengeResponseMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">LmChallengeResponse</span><span class="p">))</span>
-    <span class="n">LmChallengeResponseOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">LmChallengeResponseLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">LmChallengeResponse</span><span class="p">))</span>
+    <span class="n">LmChallengeResponseMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">LmChallengeResponse</span><span class="p">))</span>
+    <span class="n">LmChallengeResponseOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">LmChallengeResponse</span><span class="p">)</span>
 
-    <span class="n">NtChallengeResponseLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">))</span>
-    <span class="n">NtChallengeResponseMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">))</span>
-    <span class="n">NtChallengeResponseOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">NtChallengeResponseLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">))</span>
+    <span class="n">NtChallengeResponseMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">))</span>
+    <span class="n">NtChallengeResponseOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">)</span>
 
-    <span class="n">EncryptedRandomSessionKeyLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">EncryptedRandomSessionKey</span><span class="p">))</span>
-    <span class="n">EncryptedRandomSessionKeyMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">EncryptedRandomSessionKey</span><span class="p">))</span>
-    <span class="n">EncryptedRandomSessionKeyOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
+    <span class="n">EncryptedRandomSessionKeyLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">EncryptedRandomSessionKey</span><span class="p">))</span>
+    <span class="n">EncryptedRandomSessionKeyMaxLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">EncryptedRandomSessionKey</span><span class="p">))</span>
+    <span class="n">EncryptedRandomSessionKeyOffset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">Payload_start</span><span class="p">)</span>
     <span class="n">Payload_start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">EncryptedRandomSessionKey</span><span class="p">)</span>
     <span class="n">NegotiateFlags</span> <span class="o">=</span> <span class="n">flags</span>
 
-    <span class="n">ProductMajorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="n">ProductMinorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">ProductBuild</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="mi">2600</span><span class="p">)</span>
-    <span class="n">VersionReserved1</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">VersionReserved2</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">VersionReserved3</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">NTLMRevisionCurrent</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="n">ProductMajorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">ProductMinorVersion</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ProductBuild</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;H&#39;</span><span class="p">,</span> <span class="mi">2600</span><span class="p">)</span>
+    <span class="n">VersionReserved1</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">VersionReserved2</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">VersionReserved3</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">NTLMRevisionCurrent</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;B&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 
-    <span class="c"># TODO - This variable isn&#39;t used</span>
-    <span class="n">MIC</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s">&#39;&lt;IIII&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - This variable isn&#39;t used</span>
+    <span class="n">MIC</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;IIII&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># noqa</span>
 
     <span class="n">msg3</span> <span class="o">=</span> <span class="n">Signature</span> <span class="o">+</span> <span class="n">MessageType</span> <span class="o">+</span> \
         <span class="n">LmChallengeResponseLen</span> <span class="o">+</span> <span class="n">LmChallengeResponseMaxLen</span> <span class="o">+</span> <span class="n">LmChallengeResponseOffset</span> <span class="o">+</span> \
@@ -352,7 +361,7 @@
         <span class="n">ProductMajorVersion</span> <span class="o">+</span> <span class="n">ProductMinorVersion</span> <span class="o">+</span> <span class="n">ProductBuild</span> <span class="o">+</span> \
         <span class="n">VersionReserved1</span> <span class="o">+</span> <span class="n">VersionReserved2</span> <span class="o">+</span> <span class="n">VersionReserved3</span> <span class="o">+</span> <span class="n">NTLMRevisionCurrent</span>
 
-    <span class="k">assert</span> <span class="n">BODY_LENGTH</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg3</span><span class="p">),</span> <span class="s">&quot;BODY_LENGTH: </span><span class="si">%d</span><span class="s"> != msg3: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">BODY_LENGTH</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg3</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">BODY_LENGTH</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg3</span><span class="p">),</span> <span class="s2">&quot;BODY_LENGTH: </span><span class="si">%d</span><span class="s2"> != msg3: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">BODY_LENGTH</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg3</span><span class="p">))</span>
 
     <span class="n">Payload</span> <span class="o">=</span> <span class="n">DomainName</span> <span class="o">+</span> <span class="n">UserName</span> <span class="o">+</span> <span class="n">Workstation</span> <span class="o">+</span> <span class="n">LmChallengeResponse</span> <span class="o">+</span> <span class="n">NtChallengeResponse</span> <span class="o">+</span> <span class="n">EncryptedRandomSessionKey</span>
     <span class="n">msg3</span> <span class="o">+=</span> <span class="n">Payload</span>
@@ -370,10 +379,10 @@
 <span class="sd">        returns</span>
 <span class="sd">            24-byte buffer to contain the LM response upon return</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># padding with zeros to make the hash 21 bytes long</span>
-    <span class="n">password_hash</span> <span class="o">+=</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">21</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">password_hash</span><span class="p">))</span>
+    <span class="c1"># padding with zeros to make the hash 21 bytes long</span>
+    <span class="n">password_hash</span> <span class="o">+=</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">21</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">password_hash</span><span class="p">))</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
     <span class="n">dobj</span> <span class="o">=</span> <span class="n">des</span><span class="o">.</span><span class="n">DES</span><span class="p">(</span><span class="n">password_hash</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">+</span> <span class="n">dobj</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">server_challenge</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
 
@@ -385,25 +394,25 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-<div class="viewcode-block" id="ComputeResponse"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.ComputeResponse">[docs]</a><span class="k">def</span> <span class="nf">ComputeResponse</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">ResponseKeyLM</span><span class="p">,</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ServerName</span><span class="p">,</span> <span class="n">ClientChallenge</span><span class="o">=</span><span class="n">b</span><span class="s">&#39;</span><span class="se">\xaa</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
-                    <span class="n">Time</span><span class="o">=</span><span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">):</span>
+<div class="viewcode-block" id="ComputeResponse"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.ComputeResponse">[docs]</a><span class="k">def</span> <span class="nf">ComputeResponse</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">ResponseKeyLM</span><span class="p">,</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ServerName</span><span class="p">,</span> <span class="n">ClientChallenge</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\xaa</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+                    <span class="n">Time</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">):</span>
     <span class="n">LmChallengeResponse</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ResponseKeyLM</span><span class="p">,</span> <span class="n">ServerChallenge</span> <span class="o">+</span> <span class="n">ClientChallenge</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span> <span class="o">+</span> <span class="n">ClientChallenge</span>
 
-    <span class="n">Responserversion</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\x01</span><span class="s">&#39;</span>
-    <span class="n">HiResponserversion</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\x01</span><span class="s">&#39;</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">Responserversion</span> <span class="o">+</span> <span class="n">HiResponserversion</span> <span class="o">+</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">Time</span> <span class="o">+</span> <span class="n">ClientChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">ServerChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">4</span>
+    <span class="n">Responserversion</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span>
+    <span class="n">HiResponserversion</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">Responserversion</span> <span class="o">+</span> <span class="n">HiResponserversion</span> <span class="o">+</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">Time</span> <span class="o">+</span> <span class="n">ClientChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">ServerChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">4</span>
     <span class="n">NTProofStr</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">ServerChallenge</span> <span class="o">+</span> <span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
     <span class="n">NtChallengeResponse</span> <span class="o">=</span> <span class="n">NTProofStr</span> <span class="o">+</span> <span class="n">temp</span>
 
-    <span class="c"># TODO - This variable isn&#39;t used</span>
-    <span class="n">SessionBaseKey</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">NTProofStr</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>  <span class="c"># noqa</span>
+    <span class="c1"># TODO - This variable isn&#39;t used</span>
+    <span class="n">SessionBaseKey</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">NTProofStr</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>  <span class="c1"># noqa</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">,</span> <span class="n">LmChallengeResponse</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ntlm2sr_calc_resp"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.ntlm2sr_calc_resp">[docs]</a><span class="k">def</span> <span class="nf">ntlm2sr_calc_resp</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ClientChallenge</span><span class="o">=</span><span class="n">b</span><span class="s">&#39;</span><span class="se">\xaa</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">):</span>
+<div class="viewcode-block" id="ntlm2sr_calc_resp"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.ntlm2sr_calc_resp">[docs]</a><span class="k">def</span> <span class="nf">ntlm2sr_calc_resp</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ClientChallenge</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\xaa</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">):</span>
 
-    <span class="n">LmChallengeResponse</span> <span class="o">=</span> <span class="n">ClientChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="mi">16</span>
+    <span class="n">LmChallengeResponse</span> <span class="o">=</span> <span class="n">ClientChallenge</span> <span class="o">+</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">16</span>
     <span class="n">sess</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">ServerChallenge</span> <span class="o">+</span> <span class="n">ClientChallenge</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
     <span class="n">NtChallengeResponse</span> <span class="o">=</span> <span class="n">calc_resp</span><span class="p">(</span><span class="n">ResponseKeyNT</span><span class="p">,</span> <span class="n">sess</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">NtChallengeResponse</span><span class="p">,</span> <span class="n">LmChallengeResponse</span><span class="p">)</span></div>
@@ -412,19 +421,19 @@
 <div class="viewcode-block" id="create_LM_hashed_password_v1"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.create_LM_hashed_password_v1">[docs]</a><span class="k">def</span> <span class="nf">create_LM_hashed_password_v1</span><span class="p">(</span><span class="n">passwd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;create LanManager hashed password&quot;&quot;&quot;</span>
 
-    <span class="c"># if the passwd provided is already a hash, we just return the first half</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&#39;^[\w]{32}:[\w]{32}$&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">passwd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># if the passwd provided is already a hash, we just return the first half</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;^[\w]{32}:[\w]{32}$&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">passwd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="c"># fix the password length to 14 bytes</span>
+    <span class="c1"># fix the password length to 14 bytes</span>
     <span class="n">passwd</span> <span class="o">=</span> <span class="n">passwd</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-    <span class="n">lm_pw</span> <span class="o">=</span> <span class="n">passwd</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\0</span><span class="s">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">14</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">passwd</span><span class="p">))</span>
+    <span class="n">lm_pw</span> <span class="o">=</span> <span class="n">passwd</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">14</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">passwd</span><span class="p">))</span>
     <span class="n">lm_pw</span> <span class="o">=</span> <span class="n">passwd</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">14</span><span class="p">]</span>
 
-    <span class="c"># do hash</span>
-    <span class="n">magic_str</span> <span class="o">=</span> <span class="n">b</span><span class="s">&quot;KGS!@#$%&quot;</span>  <span class="c"># page 57 in [MS-NLMP]</span>
+    <span class="c1"># do hash</span>
+    <span class="n">magic_str</span> <span class="o">=</span> <span class="n">b</span><span class="s2">&quot;KGS!@#$%&quot;</span>  <span class="c1"># page 57 in [MS-NLMP]</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
     <span class="n">dobj</span> <span class="o">=</span> <span class="n">des</span><span class="o">.</span><span class="n">DES</span><span class="p">(</span><span class="n">lm_pw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">+</span> <span class="n">dobj</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">magic_str</span><span class="p">)</span>
 
@@ -435,39 +444,31 @@
 
 
 <div class="viewcode-block" id="create_NT_hashed_password_v1"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v1">[docs]</a><span class="k">def</span> <span class="nf">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">passwd</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="s">&quot;create NT hashed password&quot;</span>
-    <span class="c"># if the passwd provided is already a hash, we just return the second half</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&#39;^[\w]{32}:[\w]{32}$&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">passwd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="s2">&quot;create NT hashed password&quot;</span>
+    <span class="c1"># if the passwd provided is already a hash, we just return the second half</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;^[\w]{32}:[\w]{32}$&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">passwd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;md4&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16le&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;md4&#39;</span><span class="p">,</span> <span class="n">passwd</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16le&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">digest</span></div>
 
 
 <div class="viewcode-block" id="create_NT_hashed_password_v2"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.create_NT_hashed_password_v2">[docs]</a><span class="k">def</span> <span class="nf">create_NT_hashed_password_v2</span><span class="p">(</span><span class="n">passwd</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
-    <span class="s">&quot;create NT hashed password&quot;</span>
+    <span class="s2">&quot;create NT hashed password&quot;</span>
     <span class="n">digest</span> <span class="o">=</span> <span class="n">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">passwd</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">domain</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-16le&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span> <span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">domain</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16le&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="create_sessionbasekey"><a class="viewcode-back" href="../../../../arcrest.packages.ntlm3.html#arcrest.packages.ntlm3.ntlm.create_sessionbasekey">[docs]</a><span class="k">def</span> <span class="nf">create_sessionbasekey</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;md4&#39;</span><span class="p">,</span> <span class="n">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">password</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;md4&#39;</span><span class="p">,</span> <span class="n">create_NT_hashed_password_v1</span><span class="p">(</span><span class="n">password</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
 </pre></div>
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
@@ -485,17 +486,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>
