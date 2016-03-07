@@ -385,8 +385,8 @@ class featureservicetools(securityhandlerhelper):
                 if int(total) < int(chunksize):
                     return fl.addFeatures(fc=pathToFeatureClass,lowerCaseFieldNames=lowerCaseFieldNames)
                 else:
-                    newArr = chunklist(arr,chunksize+1)
-                    exprList = ["{0} >= {1} AND {0} < {2}".format(oidName, nArr[0][0], nArr[len(nArr)-1][0])
+                    newArr = chunklist(arr,chunksize)
+                    exprList = ["{0} >= {1} AND {0} <= {2}".format(oidName, nArr[0][0], nArr[len(nArr)-1][0])
                         for nArr in newArr]
                     for expr in exprList:
 
