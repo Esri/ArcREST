@@ -375,7 +375,8 @@ class featureservicetools(securityhandlerhelper):
                 arr = arcpy.da.FeatureClassToNumPyArray(pathToFeatureClass, (oidName))
                 syncSoFar = 0
                 messages = {'addResults':[],'errors':[]}
-                total = len(arr)#arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
+                total = len(arr)
+                errorCount = 0
                 if total == '0':
                     print ("0 features in %s" % pathToFeatureClass)
                     return "0 features in %s" % pathToFeatureClass
@@ -403,13 +404,14 @@ class featureservicetools(securityhandlerhelper):
                                     if 'success' in result:
                                         if result['success'] == False:
                                             if 'error' in result:
+                                                errorCount  = errorCount + 1
                                                 print ("\tError info: %s" % (result))
 
                                         else:
                                             featSucces = featSucces + 1
                                 syncSoFar = syncSoFar + featSucces
                                 print ("%s features added in this chunk" % (featSucces))
-                                print ("%s/%s features added" % (syncSoFar,total))
+                                print ("%s/%s features added, %s errors" % (syncSoFar,total,errorCount ))
                                 if 'addResults' in messages:
                                     messages['addResults'] = messages['addResults'] + results['addResults']
 
