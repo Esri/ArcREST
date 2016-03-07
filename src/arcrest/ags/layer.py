@@ -67,6 +67,9 @@ class FeatureLayer(BaseAGSServer):
     _json = None
     _advancedQueryCapabilities = None
     _indexes = None
+    _standardMaxRecordCount = None
+    _tileMaxRecordCount = None
+    _maxRecordCountFactor = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  initialize=False,
@@ -402,6 +405,27 @@ class FeatureLayer(BaseAGSServer):
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
+    #----------------------------------------------------------------------
+    @property
+    def standardMaxRecordCount(self):
+        """ returns the standardMaxRecordCount for the feature layer"""
+        if self._standardMaxRecordCount is None:
+            self.__init()
+        return self._standardMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def tileMaxRecordCount(self):
+        """ returns the tileMaxRecordCount for the feature layer"""
+        if self._tileMaxRecordCount is None:
+            self.__init()
+        return self._tileMaxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCountFactor(self):
+        """ returns the maxRecordCountFactor for the feature layer"""
+        if self._maxRecordCountFactor is None:
+            self.__init()
+        return self._maxRecordCountFactor
     #----------------------------------------------------------------------
     def addFeature(self, features,
                    gdbVersion=None,

@@ -1902,6 +1902,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                    updateFeatures=[],
                    deleteFeatures=None,
                    gdbVersion=None,
+                   useGlobalIds=False,
                    rollbackOnFailure=True):
         """
            This operation adds, updates, and deletes features to the
@@ -1914,6 +1915,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                objects
               deleteFeatures - string of OIDs to remove from service
               gdbVersion - Geodatabase version to apply the edits.
+              useGlobalIds - instead of referencing the default Object ID
+                              field, the service will look at a GUID field
+                              to track changes.  This means the GUIDs will
+                              be passed instead of OIDs for delete,
+                              update or add features.
               rollbackOnFailure - Optional parameter to specify if the
                                   edits should be applied only if all
                                   submitted edits succeed. If false, the
@@ -1926,8 +1932,12 @@ class FeatureLayer(abstract.BaseAGOLClass):
               dictionary of messages
         """
         editURL = self._url + "/applyEdits"
-        params = {"f": "json"
+        params = {"f": "json",
+                  "useGlobalIds" : userGlobalIds,
+                  "rollbackOnFailure" : rollbackOnFailure
                   }
+        if gdbVersion is not None:
+            params['gdbVersion'] = gdbVersion
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
