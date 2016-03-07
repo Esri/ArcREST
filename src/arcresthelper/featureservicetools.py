@@ -19,6 +19,7 @@ import json
 import os
 import common
 import gc
+
 try:
     import arcpy
     arcpyFound = True
@@ -350,6 +351,7 @@ class featureservicetools(securityhandlerhelper):
             del sublayer
 
             gc.collect()
+
     #----------------------------------------------------------------------
     def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0,lowerCaseFieldNames=False):
         if arcpyFound == False:
@@ -366,9 +368,14 @@ class featureservicetools(securityhandlerhelper):
                    securityHandler=self._securityHandler)
 
             if chunksize > 0:
+                fc = os.path.basename(pathToFeatureClass)
+                inDesc = arcpy.Describe(pathToFeatureClass)
+                oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
+
+                arr = arcpy.da.FeatureClassToNumPyArray(pathToFeatureClass, (oidName))
                 syncSoFar = 0
                 messages = {'addResults':[],'errors':[]}
-                total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
+                total = len(arr)#arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
                 if total == '0':
                     print ("0 features in %s" % pathToFeatureClass)
                     return "0 features in %s" % pathToFeatureClass
@@ -378,16 +385,9 @@ class featureservicetools(securityhandlerhelper):
                 if int(total) < int(chunksize):
                     return fl.addFeatures(fc=pathToFeatureClass,lowerCaseFieldNames=lowerCaseFieldNames)
                 else:
-                    inDesc = arcpy.Describe(pathToFeatureClass)
-                    oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
-                    fc = os.path.basename(pathToFeatureClass)
-                    sql = "{0} IN ((SELECT MIN({0}) FROM {1}), (SELECT MAX({0}) FROM {1}))".format(oidName, fc)
-                    minOID,maxOID = list(zip(*arcpy.da.SearchCursor(pathToFeatureClass, "OID@", sql)))[0]
-                    breaks = list(range(minOID,maxOID))[0:-1:chunksize]
-                    breaks.append(maxOID+1)
-                    exprList = ["{0} >= {1} AND {0} < {2}".format(oidName, breaks[b], breaks[b+1])
-                                for b in range(len(breaks)-1)]
-
+                    newArr = chunklist(arr,chunksize+1)
+                    exprList = ["{0} >= {1} AND {0} < {2}".format(oidName, nArr[0][0], nArr[len(nArr)-1][0])
+                        for nArr in newArr]
                     for expr in exprList:
 
                         UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
