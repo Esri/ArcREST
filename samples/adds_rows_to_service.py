@@ -43,10 +43,10 @@ def main():
     securityinfo['secret_id'] = None
 
 
-    itemId = "660c9dde3a24428e9143473f6ee7f77d"#<Item ID>
+    itemId = ""#<Item ID>
 
-    layerName = "Road Centerlines" #layer1
-    pathToFeatureClass = r"C:\temp\teodatabase.gdb\RoadCenterline"
+    layerName = "" #layer1
+    pathToFeatureClass = r""
     try:
 
         fst = featureservicetools.featureservicetools(securityinfo)
@@ -62,7 +62,7 @@ def main():
                     results =  fst.AddFeaturesToFeatureLayer(url=fs_url, pathToFeatureClass=pathToFeatureClass,
                                                       chunksize=2000)
                     if 'addResults' in results:
-                        print "%s features added" % len(results['addResults'])
+                        print "%s features processed" % len(results['addResults'])
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
         print "error on line: %s" % e[0]['line']

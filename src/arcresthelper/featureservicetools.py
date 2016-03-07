@@ -366,11 +366,14 @@ class featureservicetools(securityhandlerhelper):
                    securityHandler=self._securityHandler)
 
             if chunksize > 0:
-                messages = {'addResults':[]}
+                syncSoFar = 0
+                messages = {'addResults':[],'errors':[]}
                 total = arcpy.GetCount_management(pathToFeatureClass).getOutput(0)
                 if total == '0':
                     print ("0 features in %s" % pathToFeatureClass)
                     return "0 features in %s" % pathToFeatureClass
+                print ("%s features in layer" % (total))
+
                 arcpy.env.overwriteOutput = True
                 if int(total) < int(chunksize):
                     return fl.addFeatures(fc=pathToFeatureClass,lowerCaseFieldNames=lowerCaseFieldNames)
@@ -386,18 +389,33 @@ class featureservicetools(securityhandlerhelper):
                                 for b in range(len(breaks)-1)]
 
                     for expr in exprList:
+
                         UploadLayer = arcpy.MakeFeatureLayer_management(pathToFeatureClass, 'TEMPCOPY', expr).getOutput(0)
-                        result = fl.addFeatures(fc=UploadLayer,lowerCaseFieldNames=lowerCaseFieldNames)
-                        if messages is None:
-                            messages = result
-                        else:
-                            if result is not None and 'addResults' in result:
+                        #print(arcpy.GetCount_management(in_rows=UploadLayer).getOutput(0) + " features in the chunk")
+                        results = fl.addFeatures(fc=UploadLayer,lowerCaseFieldNames=lowerCaseFieldNames)
+                        chunkCount = arcpy.GetCount_management(in_rows=UploadLayer).getOutput(0)
+                        print(chunkCount + " features in the chunk")
+                        if chunkCount > 0:
+
+                            if results is not None and 'addResults' in results and results['addResults'] is not None:
+                                featSucces = 0
+                                for result in results['addResults']:
+                                    if 'success' in result:
+                                        if result['success'] == False:
+                                            if 'error' in result:
+                                                print ("\tError info: %s" % (result))
+
+                                        else:
+                                            featSucces = featSucces + 1
+                                syncSoFar = syncSoFar + featSucces
+                                print ("%s features added in this chunk" % (featSucces))
+                                print ("%s/%s features added" % (syncSoFar,total))
                                 if 'addResults' in messages:
-                                    messages['addResults'] = messages['addResults'] + result['addResults']
-                                    print ("%s/%s features added" % (len(messages['addResults']),total))
+                                    messages['addResults'] = messages['addResults'] + results['addResults']
+
                                 else:
-                                    messages['addResults'] = result['addResults']
-                                    print ("%s/%s features added" % (len(messages['addResults']),total))
+                                    messages['addResults'] = results['addResults']
+
                             else:
                                 messages['errors'] = result
                 return messages
