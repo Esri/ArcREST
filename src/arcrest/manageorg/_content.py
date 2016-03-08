@@ -2469,8 +2469,12 @@ class User(BaseAGOLClass):
                              securityHandler=self._securityHandler,
                              proxy_port=self._proxy_port,
                              proxy_url=self._proxy_url)
-        if 'id' in res:
-            url = "%s/%s" % (self.location, res['id'])
+        if 'id' in res or \
+           'serviceItemId' in res:
+            if 'id' in res:
+                url = "%s/items/%s" % (self.location, res['id'])
+            else:
+                url = "%s/items/%s" % (self.location, res['serviceItemId'])
             return UserItem(url=url,
                             securityHandler=self._securityHandler,
                             proxy_url=self._proxy_url,
