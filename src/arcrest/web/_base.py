@@ -27,7 +27,7 @@ except ImportError:
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
-
+from ..packages.six.moves.urllib.error import HTTPError
 ########################################################################
 __version__ = "3.5.3"
 ########################################################################
@@ -572,7 +572,27 @@ class BaseWebOperations(BaseOperation):
                                        data=param_dict)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
-                resp = request.urlopen(url=format_url)
+                try:
+                    resp = request.urlopen(url=format_url)
+                except HTTPError as err:
+                    if err.code == 403:
+                        if url.startswith('http://'):
+                            url = url.replace('http://', 'https://')
+                            return self._get(url,
+                                     param_dict,
+                                     securityHandler,
+                                     additional_headers,
+                                     handlers,
+                                     proxy_url,
+                                     proxy_port,
+                                     compress,
+                                     custom_handlers,
+                                     out_folder,
+                                     file_name)
+
+                    else:
+                        raise err
+
         else:
             if param_dict is None:
                 resp = request.urlopen(self._asString(url), data=param_dict,
