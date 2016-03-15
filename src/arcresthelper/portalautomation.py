@@ -9,16 +9,18 @@
 
 """
 from __future__ import print_function
+from __future__ import absolute_import
+
 
 import gc
 import sys, os, datetime
 import json
 import csv
 
-import publishingtools
-import orgtools
-import common
-from securityhandlerhelper import securityhandlerhelper
+from . import publishingtools
+from . import orgtools
+from . import common
+from .securityhandlerhelper import securityhandlerhelper
 
 try:
     import solutionreporttools

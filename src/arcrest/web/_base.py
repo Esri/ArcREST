@@ -44,7 +44,7 @@ class BaseOperation(object):
                 init = getattr(self, "_" + self.__class__.__name__ + "__init", None)
                 if init is not None and callable(init):
                     init()
-            except Exception,e:
+            except Exception as e:
                 pass
         """gets the error"""
         return self._error

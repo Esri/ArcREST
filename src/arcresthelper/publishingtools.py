@@ -1,13 +1,14 @@
 
 from __future__ import print_function
+from __future__ import absolute_import
 
-from securityhandlerhelper import securityhandlerhelper
+from .securityhandlerhelper import securityhandlerhelper
 import re as re
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
 import arcrest
 
-import arcresthelper.featureservicetools as featureservicetools
+from . import featureservicetools as featureservicetools
 
 from arcrest.hostedservice import AdminFeatureService
 import datetime, time
@@ -17,7 +18,7 @@ import arcresthelper.common as common
 import gc
 import sys
 
-from packages.six.moves import urllib_parse as urlparse
+from .packages.six.moves import urllib_parse as urlparse
 
 try:
     import pyparsing

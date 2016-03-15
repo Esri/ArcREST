@@ -3,6 +3,8 @@
    Python 2.x
    ArcREST 3.0.1
 """
+
+from __future__ import print_function
 from arcresthelper import securityhandlerhelper
 from arcrest.agol import FeatureService
 from arcrest.common.filters import LayerDefinitionFilter
@@ -28,7 +30,7 @@ if __name__ == "__main__":
 
     shh = securityhandlerhelper.securityhandlerhelper(securityinfo=securityinfo)
     if shh.valid == False:
-        print shh.message
+        print (shh.message)
     else:
         fs = FeatureService(
             url=url,
@@ -38,6 +40,6 @@ if __name__ == "__main__":
             initialize=True)
         ldf = LayerDefinitionFilter()
         ldf.addFilter(0, where="1=1")
-        print fs.query(layerDefsFilter=ldf,
-                       returnCountOnly=True)
+        print (fs.query(layerDefsFilter=ldf,
+                       returnCountOnly=True))
         # should see something like : {'layers': [{'count': 4, 'id': 0}]}
