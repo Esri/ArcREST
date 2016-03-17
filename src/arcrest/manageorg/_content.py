@@ -2631,7 +2631,7 @@ class User(BaseAGOLClass):
         params = {
             "f": "json",
             'multipart' : 'true',
-            "filename"	: itemParameters.title,
+            "filename"	: os.path.basename(filePath)
         }
         res = self._post(url=url,
                          param_dict=params,
