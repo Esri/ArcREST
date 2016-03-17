@@ -1,4 +1,6 @@
 """
+Handles all the security oeprations for the product logins.
+
 """
 from __future__ import print_function
 from __future__ import absolute_import
@@ -17,8 +19,9 @@ from .._abstract import abstract
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves.urllib_parse import urlencode, urlparse, urlunparse
 from ..packages.six.moves.http_cookiejar import CookieJar
+from ..constants import DEFAULT_TOKEN_EXPIRATION
 
-_defaultTokenExpiration = 60 #Minutes
+_defaultTokenExpiration = DEFAULT_TOKEN_EXPIRATION #Minutes
 ########################################################################
 class CommunityMapsSecurityHandler(abstract.BaseSecurityHandler):
     """

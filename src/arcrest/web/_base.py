@@ -24,7 +24,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from ..constants import VERIFY_SSL_CERTIFICATES
+from ..constants import VERIFY_SSL_CERTIFICATES, USER_AGENT
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
@@ -33,7 +33,6 @@ from ..packages.six.moves.urllib_parse import urlencode
 __version__ = "3.5.3"
 ########################################################################
 
-USER_AGENT = "python-requests/2.9.1"
 class BaseOperation(object):
     """base class for all objects"""
     _error = None
@@ -229,15 +228,15 @@ class BaseWebOperations(BaseOperation):
     @property
     def useragent(self):
         """gets/sets the user agent value"""
-        return self._useragent
+        return USER_AGENT
     #----------------------------------------------------------------------
     @useragent.setter
     def useragent(self, value):
         """gets/sets the user agent value"""
         if value is None:
-            self._useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+            USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
         elif self._useragent != value:
-            self._useragent = value
+            USER_AGENT = value
     #----------------------------------------------------------------------
     def _get_file_name(self, contentDisposition,
                        url, ext=".unknown"):
@@ -467,7 +466,7 @@ class BaseWebOperations(BaseOperation):
                                 files=files)
             req = request.Request(self._asString(url), headers=headers)
             body = mpf.make_result
-            req.add_header('User-agent', self.useragent)
+            req.add_header('User-agent', USER_AGENT)
             req.add_header('Content-type', mpf.get_content_type())
             req.add_header('Content-length', len(body))
             req.data = body
@@ -539,7 +538,7 @@ class BaseWebOperations(BaseOperation):
             headers.append(('Accept-encoding', 'gzip'))
         else:
             headers.append(('Accept-encoding', ''))
-        headers.append(('User-Agent', self.useragent))
+        headers.append(('User-Agent', USER_AGENT))
         if len(param_dict.keys()) == 0:
             param_dict = None
         if handlers is None:
