@@ -24,4 +24,4 @@
 """
 from __future__ import absolute_import
 from ._geoenrichment import GeoEnrichment
-__version__ = "3.5.3"
+__version__ = "3.5.4"

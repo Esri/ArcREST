@@ -3,7 +3,7 @@ This module contains system level constants that will carry throughout the
 project.
 """
 ########################################################################
-__version__ = "3.5.3"
+__version__ = "3.5.4"
 """
 VERIFY_SSL_CERTIFICATES is a system level setting that allows for the by-pass of
 less secure sites where the SSL certificates may be expired or invalid.
