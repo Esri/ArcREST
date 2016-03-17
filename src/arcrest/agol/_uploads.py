@@ -2,6 +2,7 @@
 handles the upload functions for all viable services
 """
 from __future__ import absolute_import
+from __future__ import division
 import os
 import mmap
 import json

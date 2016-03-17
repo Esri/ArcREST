@@ -24,14 +24,15 @@ try:
 except ImportError:
     from io import StringIO
 
+from ..constants import VERIFY_SSL_CERTIFICATES
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
-from ..packages.six.moves.urllib.error import HTTPError
+
 ########################################################################
 __version__ = "3.5.3"
 ########################################################################
-VERIFY_SSL_CERTIFICATES = True
+
 USER_AGENT = "python-requests/2.9.1"
 class BaseOperation(object):
     """base class for all objects"""
@@ -44,7 +45,7 @@ class BaseOperation(object):
                 init = getattr(self, "_" + self.__class__.__name__ + "__init", None)
                 if init is not None and callable(init):
                     init()
-            except Exception as e:
+            except Exception,e:
                 pass
         """gets the error"""
         return self._error
@@ -437,32 +438,34 @@ class BaseWebOperations(BaseOperation):
         for k,v in additional_headers.items():
             headers[k] = v
             del k,v
-        opener = request.build_opener(*handlers)
-        request.install_opener(opener)
-        hasContext = 'content' in getargspec(request.urlopen).args
+        hasContext = 'context' in getargspec(request.urlopen).args
         if VERIFY_SSL_CERTIFICATES == False and \
-           'content' in getargspec(request.urlopen).args:
+           hasContext:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
 
+        opener = request.build_opener(*handlers)
         opener.addheaders = [(k,v) for k,v in headers.items()]
+        request.install_opener(opener)
         if force_form_post == False:
             data = urlencode(param_dict)
             if self.PY3:
                 data = data.encode('ascii')
             opener.data = data
-            request.install_opener(opener)
             req = request.Request(self._asString(url),
-                                   data = data)
+                                  data = data,
+                                  headers=headers)
+            for k,v in headers.items():
+                req.add_header(k,v)
             if hasContext and VERIFY_SSL_CERTIFICATES == False:
-                resp = request.urlopen(self._asString(url), data=data, context=ctx)
+                resp = request.urlopen(req, context=ctx)
             else:
-                resp = request.urlopen(self._asString(url), data=data)
+                resp = request.urlopen(req)
         else:
             mpf = MultiPartForm(param_dict=param_dict,
                                 files=files)
-            req = request.Request(self._asString(url))
+            req = request.Request(self._asString(url), headers=headers)
             body = mpf.make_result
             req.add_header('User-agent', self.useragent)
             req.add_header('Content-type', mpf.get_content_type())
@@ -559,7 +562,7 @@ class BaseWebOperations(BaseOperation):
         ctx = None
         hasContext = False
         if VERIFY_SSL_CERTIFICATES == False and \
-           'content' in getargspec(request.urlopen).args:
+           'context' in getargspec(request.urlopen).args:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -572,27 +575,7 @@ class BaseWebOperations(BaseOperation):
                                        data=param_dict)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
-                try:
-                    resp = request.urlopen(url=format_url)
-                except HTTPError as err:
-                    if err.code == 403:
-                        if url.startswith('http://'):
-                            url = url.replace('http://', 'https://')
-                            return self._get(url,
-                                     param_dict,
-                                     securityHandler,
-                                     additional_headers,
-                                     handlers,
-                                     proxy_url,
-                                     proxy_port,
-                                     compress,
-                                     custom_handlers,
-                                     out_folder,
-                                     file_name)
-
-                    else:
-                        raise err
-
+                resp = request.urlopen(url=format_url)
         else:
             if param_dict is None:
                 resp = request.urlopen(self._asString(url), data=param_dict,

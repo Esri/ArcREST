@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import division
 import os
 import json
 import uuid
@@ -474,7 +475,7 @@ class FeatureLayer(BaseAGSServer):
         """
         l.sort()
         newn = int(1.0 * len(l) / n + 0.5)
-        for i in xrange(0, n-1):
+        for i in range(0, n-1):
             yield l[i*newn:i*newn+newn]
         yield l[n*newn-newn:]
     #----------------------------------------------------------------------

@@ -5,9 +5,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 import json
 from ._base import BaseOpenData
-from ._web import WebOperations
+from ..web._base import BaseWebOperations
 ########################################################################
-class OpenData(BaseOpenData, WebOperations):
+class OpenData(BaseOpenData, BaseWebOperations):
     """Represents an open data site
     Inputs:
        url - web address of the open data site
@@ -86,7 +86,7 @@ class OpenData(BaseOpenData, WebOperations):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
 ########################################################################
-class OpenDataItem(BaseOpenData, WebOperations):
+class OpenDataItem(BaseOpenData, BaseWebOperations):
     """represents a single data object"""
     _url = None
     _itemId = None
