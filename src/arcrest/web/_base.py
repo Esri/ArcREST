@@ -627,12 +627,25 @@ class BaseWebOperations(BaseOperation):
                 resp = request.urlopen(req,
                                        context=ctx)
             elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-                req = request.Request(self._asString(url),
-                                      data=param_dict,
-                                      headers=pass_headers)
-                resp = request.urlopen(req,
-                                       data=param_dict,
-                                       context=ctx)
+                return self._post(
+                    url=url,
+                    param_dict=param_dict,
+                    files=None,
+                    securityHandler=securityHandler,
+                    additional_headers=additional_headers,
+                    custom_handlers=custom_handlers,
+                    proxy_url=proxy_url,
+                    proxy_port=proxy_port,
+                    compress=compress,
+                    out_folder=out_folder,
+                    file_name=file_name,
+                    force_form_post=False)                
+                #req = request.Request(self._asString(url),
+                                      #data=param_dict,
+                                      #headers=pass_headers)
+                #resp = request.urlopen(req,
+                                       #data=param_dict,
+                                       #context=ctx)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
                 req = request.Request(format_url,
