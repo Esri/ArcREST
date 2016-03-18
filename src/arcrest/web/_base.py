@@ -610,11 +610,6 @@ class BaseWebOperations(BaseOperation):
                     out_folder=out_folder,
                     file_name=file_name,
                     force_form_post=False)
-                #req = request.Request(self._asString(url),
-                                      #data=urlencode(param_dict),
-                                      #headers=pass_headers)
-                #resp = request.urlopen(req,
-                                       #data=param_dict)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
                 req = request.Request(format_url,
@@ -639,7 +634,7 @@ class BaseWebOperations(BaseOperation):
                     compress=compress,
                     out_folder=out_folder,
                     file_name=file_name,
-                    force_form_post=False)                
+                    force_form_post=False)
                 #req = request.Request(self._asString(url),
                                       #data=param_dict,
                                       #headers=pass_headers)
