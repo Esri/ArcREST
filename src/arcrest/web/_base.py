@@ -527,7 +527,7 @@ class BaseWebOperations(BaseOperation):
     def _get(self, url,
              param_dict=None,
              securityHandler=None,
-             additional_headers=[],
+             additional_headers=None,
              handlers=[],
              proxy_url=None,
              proxy_port=None,
@@ -547,7 +547,10 @@ class BaseWebOperations(BaseOperation):
         self._last_method = "GET"
         CHUNK = 4056
         param_dict, handler, cj = self._processHandler(securityHandler, param_dict)
-        headers = [] + additional_headers
+        if additional_headers is not None:
+            headers = [] + additional_headers
+        else:
+            headers = []
         pass_headers = {}
         for h in headers:
             pass_headers[h[0]] = h[1]
@@ -591,30 +594,40 @@ class BaseWebOperations(BaseOperation):
 
             if param_dict is None:
                 req = request.Request(self._asString(url),
-                                      data=param_dict,
                                       headers=pass_headers)
-                resp = request.urlopen(req, data=param_dict)
+                resp = request.urlopen(req)
             elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-                req = request.Request(self._asString(url),
-                                      data=param_dict,
-                                      headers=pass_headers)
-                resp = request.urlopen(req,
-                                       data=param_dict)
+                return self._post(
+                    url=url,
+                    param_dict=param_dict,
+                    files=None,
+                    securityHandler=securityHandler,
+                    additional_headers=additional_headers,
+                    custom_handlers=custom_handlers,
+                    proxy_url=proxy_url,
+                    proxy_port=proxy_port,
+                    compress=compress,
+                    out_folder=out_folder,
+                    file_name=file_name,
+                    force_form_post=False)
+                #req = request.Request(self._asString(url),
+                                      #data=urlencode(param_dict),
+                                      #headers=pass_headers)
+                #resp = request.urlopen(req,
+                                       #data=param_dict)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
                 req = request.Request(format_url,
-                                      data=param_dict,
                                       headers=pass_headers)
                 resp = request.urlopen(req)
         else:
             if param_dict is None:
                 req = request.Request(self._asString(url),
-                                      data=param_dict,
                                       headers=pass_headers)
                 resp = request.urlopen(req,
                                        context=ctx)
             elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-                req = request.Request(format_url,
+                req = request.Request(self._asString(url),
                                       data=param_dict,
                                       headers=pass_headers)
                 resp = request.urlopen(req,
