@@ -1413,7 +1413,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params = {'f':'json'}
             parsed = urlparse.urlparse(attachURL)
 
-            files = {'attachment', file_path}
+            files = {'attachment': file_path}
             res = self._post(url=attachURL,
                              param_dict=params,
                              files=files,

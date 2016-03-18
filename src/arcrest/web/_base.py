@@ -44,7 +44,7 @@ class BaseOperation(object):
                 init = getattr(self, "_" + self.__class__.__name__ + "__init", None)
                 if init is not None and callable(init):
                     init()
-            except Exception,e:
+            except Exception as e:
                 pass
         """gets the error"""
         return self._error
@@ -77,7 +77,11 @@ class MultiPartForm(object):
     boundary = None
     form_data = ""
     #----------------------------------------------------------------------
-    def __init__(self, param_dict={}, files={}):
+    def __init__(self, param_dict=None, files=None):
+        if param_dict is None:
+            param_dict = {}
+        if files is None:
+            files = {}
         self.boundary = None
         self.files = []
         self.form_data = ""
@@ -233,6 +237,7 @@ class BaseWebOperations(BaseOperation):
     @useragent.setter
     def useragent(self, value):
         """gets/sets the user agent value"""
+        global USER_AGENT
         if value is None:
             USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
         elif self._useragent != value:
@@ -364,10 +369,10 @@ class BaseWebOperations(BaseOperation):
                 yield chunk
     #----------------------------------------------------------------------
     def _post(self, url,
-              param_dict={},
-              files={},
+              param_dict=None,
+              files=None,
               securityHandler=None,
-              additional_headers={},
+              additional_headers=None,
               custom_handlers=[],
               proxy_url=None,
               proxy_port=80,
@@ -406,6 +411,13 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary or string depending on web operation.
         """
+        if param_dict is None:
+            param_dict = {}
+        if files is None:
+            files = {}
+        if additional_headers is None:
+            additional_headers = {}
+
         if len(files) == 0 and force_form_post == False:
             self._last_method = "POST"
         elif len(files) == 0 and force_form_post == True:
@@ -513,7 +525,7 @@ class BaseWebOperations(BaseOperation):
             return value.encode('ascii')
     #----------------------------------------------------------------------
     def _get(self, url,
-             param_dict={},
+             param_dict=None,
              securityHandler=None,
              additional_headers=[],
              handlers=[],
@@ -530,15 +542,22 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary, string or None
         """
+        if param_dict is None:
+            param_dict = {}
         self._last_method = "GET"
         CHUNK = 4056
         param_dict, handler, cj = self._processHandler(securityHandler, param_dict)
         headers = [] + additional_headers
+        pass_headers = {}
+        for h in headers:
+            pass_headers[h[0]] = h[1]
+
         if compress:
-            headers.append(('Accept-encoding', 'gzip'))
+            pass_headers['Accept-encoding'] = 'gzip'
         else:
-            headers.append(('Accept-encoding', ''))
-        headers.append(('User-Agent', USER_AGENT))
+            pass_headers['Accept-encoding'] = ""
+        #headers.append(('User-Agent', USER_AGENT))
+        pass_headers['User-Agent'] = USER_AGENT
         if len(param_dict.keys()) == 0:
             param_dict = None
         if handlers is None:
@@ -556,8 +575,9 @@ class BaseWebOperations(BaseOperation):
             proxy_support = request.ProxyHandler(proxies)
             handlers.append(proxy_support)
         opener = request.build_opener(*handlers)
-        request.install_opener(opener)
+
         opener.addheaders = headers
+        request.install_opener(opener)
         ctx = None
         hasContext = False
         if VERIFY_SSL_CERTIFICATES == False and \
@@ -566,26 +586,45 @@ class BaseWebOperations(BaseOperation):
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
             hasContext = True
+
         if hasContext == False:
+
             if param_dict is None:
-                resp = request.urlopen(self._asString(url), data=param_dict)
+                req = request.Request(self._asString(url),
+                                      data=param_dict,
+                                      headers=pass_headers)
+                resp = request.urlopen(req, data=param_dict)
             elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-                resp = request.urlopen(url=self._asString(url),
+                req = request.Request(self._asString(url),
+                                      data=param_dict,
+                                      headers=pass_headers)
+                resp = request.urlopen(req,
                                        data=param_dict)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
-                resp = request.urlopen(url=format_url)
+                req = request.Request(format_url,
+                                      data=param_dict,
+                                      headers=pass_headers)
+                resp = request.urlopen(req)
         else:
             if param_dict is None:
-                resp = request.urlopen(self._asString(url), data=param_dict,
+                req = request.Request(self._asString(url),
+                                      data=param_dict,
+                                      headers=pass_headers)
+                resp = request.urlopen(req,
                                        context=ctx)
             elif len(str(urlencode(param_dict))) + len(url) >= 1999:
-                resp = request.urlopen(url=self._asString(url),
+                req = request.Request(format_url,
+                                      data=param_dict,
+                                      headers=pass_headers)
+                resp = request.urlopen(req,
                                        data=param_dict,
                                        context=ctx)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
-                resp = request.urlopen(url=format_url,
+                req = request.Request(format_url,
+                                      headers=pass_headers)
+                resp = request.urlopen(req,
                                        context=ctx)
         self._last_code = resp.getcode()
         self._last_url = resp.geturl()
