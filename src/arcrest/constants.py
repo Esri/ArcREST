@@ -10,7 +10,7 @@ less secure sites where the SSL certificates may be expired or invalid.
 True means all SSL certificates must be valid
 False means it will ignore all SSL invalid certificates (insecure)
 """
-VERIFY_SSL_CERTIFICATES = True
+VERIFY_SSL_CERTIFICATES = False
 """
 USER_AGENT identify the browser and operating system to the web server.
 """
