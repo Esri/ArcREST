@@ -1135,6 +1135,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
     _expires_in = None
     _proxy_url = None
     _proxy_port = None
+    _is_portal = None
     #----------------------------------------------------------------------
     def __init__(self,
                  username,
@@ -1207,12 +1208,6 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
         if referer_url is None:
             self._referer_url = parsed_url.netloc
 
-                #if referer_url is None or \
-            #referer_url.lower().find('www.arcgis.com') > -1:
-            #self._referer_url = "arcgis.com"
-        #else:
-            #self._referer_url = referer_url
-    _is_portal = None
     #----------------------------------------------------------------------
     @property
     def is_portal(self):
