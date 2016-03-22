@@ -1,5 +1,5 @@
 """
-Handles all the security oeprations for the product logins.
+Handles all the security operations for the product logins.
 
 """
 from __future__ import print_function
