@@ -10,7 +10,7 @@ from ..security import security
 from ..common import filters, geometry
 from ..common.geometry import Polygon, Envelope, SpatialReference
 from ..common.general import Feature
-
+from six.moves.urllib_parse import urlencode
 ########################################################################
 class MapService(BaseAGSServer):
     """ contains information about a map service """
@@ -711,17 +711,14 @@ class MapService(BaseAGSServer):
                                      nonComposite
         """
         kmlURL = self._url + "/generateKml"
-        params= {'f': 'json',
-                 'docName' : docName,
-                 'layers' : layers,
-                 'layerOptions': layerOptions
-                 }
-        import urllib
-        if len(params.keys()) > 0:
-            url = kmlURL + "?%s" % urllib.urlencode(params)
-        return self._get(url=url,
+        params= {
+            "f" : "json",
+            'docName' : docName,
+            'layers' : layers,
+            'layerOptions': layerOptions}
+        return self._get(url=kmlURL,
                          out_folder=save_location,
-                         file_name=docName + ".kmz",
+                         param_dict=params,
                          securityHandler=self._securityHandler,
                          proxy_url=self._proxy_url,
                          proxy_port=self._proxy_port
