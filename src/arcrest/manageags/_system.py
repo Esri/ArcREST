@@ -580,6 +580,8 @@ class ServerDirectory(BaseAGSServer):
     _cleanupMode = None
     _maxFileAge = None
     _description = None
+    _useLocalDir = None
+    _localDirectoryPath = None
     _virtualPath = None
     #----------------------------------------------------------------------
     def __init__(self, url,
@@ -662,6 +664,20 @@ class ServerDirectory(BaseAGSServer):
             self.__init()
         return self._description
     #----------------------------------------------------------------------
+    @property
+    def useLocalDir(self):
+        """gets the description value"""
+        if self._useLocalDir is None:
+            self.__init()
+        return self._useLocalDir
+    #----------------------------------------------------------------------
+    @property
+    def localDirectoryPath(self):
+        """gets the description value"""
+        if self._localDirectoryPath is None:
+            self.__init()
+        return self._localDirectoryPath
+    #----------------------------------------------------------------------    
     @property
     def virtualPath(self):
         """gets the virtualPath value"""

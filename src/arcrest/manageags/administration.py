@@ -1,5 +1,5 @@
 """
-   Adminstration.py allows users to control ArcGIS Server 10.1+
+   Administration.py allows users to control ArcGIS Server 10.1+
    through the Administration REST API
 
 """
@@ -16,6 +16,7 @@ import json
 from . import _machines, _clusters
 from . import _data, _info
 from . import _kml, _logs
+from . import _mode
 from . import _security, _services
 from . import _system
 from . import _uploads, _usagereports
@@ -437,6 +438,21 @@ class AGSAdministration(BaseAGSServer):
                              initialize=True)
         else:
             return None
+    #----------------------------------------------------------------------
+    @property
+    def mode(self):
+        """returns an object to work with the site mode"""
+        if self._resources is None:
+            self.__init()
+        if "mode" in self._resources:
+            url = self._url + "/mode"
+            return _mode.Mode(url=url,
+                              securityHandler=self._securityHandler,
+                              proxy_url=self._proxy_url,
+                              proxy_port=self._proxy_port,
+                              initialize=True)
+        else:
+            return None            
     #----------------------------------------------------------------------
     @property
     def security(self):
