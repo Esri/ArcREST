@@ -1,5 +1,5 @@
 """
-   Adminstration.py allows users to control ArcGIS Server 10.1+
+   Administration.py allows users to control ArcGIS Server 10.1+
    through the Administration REST API
 
 """
