@@ -212,7 +212,7 @@ class ConfigurationStore(BaseAGSServer):
                  initialize=False):
         """Constructor"""
         self._url = url
-        self.securityHandler = securityHandler
+        self._securityHandler = securityHandler
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
