@@ -167,7 +167,7 @@ class System(BaseAGSServer):
 
         return res
     #----------------------------------------------------------------------
-    def recover(self):
+    def recover(self,runAsync=False):
         """
         If the shared server directories for a site are unavailable, a site
         in read-only mode will operate in a degraded capacity that allows access
@@ -178,10 +178,14 @@ class System(BaseAGSServer):
         will copy the server directories from the local repository into the
         shared server directories location. The copied local repository will be
         from the machine in the site where the recover operation is performed.
+        Inputs:
+           runAsync - default False - Decides if this operation must run
+            asynchronously.
         """
         url = self._url + "/directories/recover"
         params = {
-            "f" : "json"
+            "f" : "json",
+            "runAsync" : runAsync
         }
 
         res = self._get(url=url,
@@ -415,6 +419,33 @@ class ConfigurationStore(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def recover(self,runAsync=False):
+        """
+        If the shared configuration store for a site is unavailable, a site
+        in read-only mode will operate in a degraded capacity that allows
+        access to the ArcGIS Server Administrator Directory. You can recover
+        a site if the shared configuration store is permanently lost. The
+        site must be in read-only mode, and the site configuration files
+        must have been copied to the local repository when switching site
+        modes. The recover operation will copy the configuration store from
+        the local repository into the shared configuration store location.
+        The copied local repository will be from the machine in the site
+        where the recover operation is performed.
+        Inputs:
+           runAsync - default False - Decides if this operation must run
+            asynchronously.
+        """
+        url = self._url + "/recover"
+        params = {
+            "f" : "json",
+            "runAsync" : runAsync
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
 ########################################################################
 class Jobs(BaseAGSServer):
     """
