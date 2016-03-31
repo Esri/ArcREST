@@ -24,7 +24,6 @@ try:
 except ImportError:
     from io import StringIO
 
-from ..constants import VERIFY_SSL_CERTIFICATES, USER_AGENT
 from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
@@ -202,6 +201,9 @@ class BaseWebOperations(BaseOperation):
     _last_code = None
     _last_method = None
     _useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+    _verify = None
+    def __init__(self, verify=False):
+        self._verify = verify
     #----------------------------------------------------------------------
     @property
     def last_method(self):
@@ -232,16 +234,15 @@ class BaseWebOperations(BaseOperation):
     @property
     def useragent(self):
         """gets/sets the user agent value"""
-        return USER_AGENT
+        return self._useragent
     #----------------------------------------------------------------------
     @useragent.setter
     def useragent(self, value):
         """gets/sets the user agent value"""
-        global USER_AGENT
         if value is None:
-            USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
+            self._useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
         elif self._useragent != value:
-            USER_AGENT = value
+            self._useragent = value
     #----------------------------------------------------------------------
     def _get_file_name(self, contentDisposition,
                        url, ext=".unknown"):
@@ -287,7 +288,7 @@ class BaseWebOperations(BaseOperation):
         CHUNK = 4056
         maintype = self._mainType(resp)
         contentDisposition = resp.headers.get('content-disposition')
-        contentEncoding = resp.headers.get('content-encoding')
+        #contentEncoding = resp.headers.get('content-encoding')
         contentType = resp.headers.get('content-type')
         contentLength = resp.headers.get('content-length')
         if maintype.lower() in ('image',
@@ -373,7 +374,7 @@ class BaseWebOperations(BaseOperation):
               files=None,
               securityHandler=None,
               additional_headers=None,
-              custom_handlers=[],
+              custom_handlers=None,
               proxy_url=None,
               proxy_port=80,
               compress=True,
@@ -417,7 +418,8 @@ class BaseWebOperations(BaseOperation):
             files = {}
         if additional_headers is None:
             additional_headers = {}
-
+        if custom_handlers is None:
+            custom_handlers = []
         if len(files) == 0 and force_form_post == False:
             self._last_method = "POST"
         elif len(files) == 0 and force_form_post == True:
@@ -427,7 +429,7 @@ class BaseWebOperations(BaseOperation):
             force_form_post = True
 
         headers = {
-            "User-Agent": USER_AGENT,
+            "User-Agent": self.useragent,
             'Accept': '*/*'
         }
         opener = None
@@ -450,7 +452,7 @@ class BaseWebOperations(BaseOperation):
             headers[k] = v
             del k,v
         hasContext = 'context' in getargspec(request.urlopen).args
-        if VERIFY_SSL_CERTIFICATES == False and \
+        if self._verify == False and \
            hasContext:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
@@ -469,7 +471,7 @@ class BaseWebOperations(BaseOperation):
                                   headers=headers)
             for k,v in headers.items():
                 req.add_header(k,v)
-            if hasContext and VERIFY_SSL_CERTIFICATES == False:
+            if hasContext and self._verify == False:
                 resp = request.urlopen(req, context=ctx)
             else:
                 resp = request.urlopen(req)
@@ -478,12 +480,12 @@ class BaseWebOperations(BaseOperation):
                                 files=files)
             req = request.Request(self._asString(url), headers=headers)
             body = mpf.make_result
-            req.add_header('User-agent', USER_AGENT)
+            req.add_header('User-agent', self.useragent)
             req.add_header('Content-type', mpf.get_content_type())
             req.add_header('Content-length', len(body))
             req.data = body
             if 'context' in getargspec(request.urlopen).args and \
-               VERIFY_SSL_CERTIFICATES == False:
+               self._verify == False:
                 resp = request.urlopen(req, context=ctx)
             else:
                 resp = request.urlopen(req)
@@ -528,11 +530,11 @@ class BaseWebOperations(BaseOperation):
              param_dict=None,
              securityHandler=None,
              additional_headers=None,
-             handlers=[],
+             handlers=None,
              proxy_url=None,
              proxy_port=None,
              compress=True,
-             custom_handlers=[],
+             custom_handlers=None,
              out_folder=None,
              file_name=None):
         """
@@ -542,6 +544,10 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary, string or None
         """
+        if custom_handlers is None:
+            custom_handlers = []
+        if handlers is None:
+            handlers = []
         if param_dict is None:
             param_dict = {}
         self._last_method = "GET"
@@ -560,7 +566,7 @@ class BaseWebOperations(BaseOperation):
         else:
             pass_headers['Accept-encoding'] = ""
         #headers.append(('User-Agent', USER_AGENT))
-        pass_headers['User-Agent'] = USER_AGENT
+        pass_headers['User-Agent'] = self.useragent
         if len(param_dict.keys()) == 0:
             param_dict = None
         if handlers is None:
@@ -583,7 +589,7 @@ class BaseWebOperations(BaseOperation):
         request.install_opener(opener)
         ctx = None
         hasContext = False
-        if VERIFY_SSL_CERTIFICATES == False and \
+        if self._verify == False and \
            'context' in getargspec(request.urlopen).args:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
@@ -635,12 +641,6 @@ class BaseWebOperations(BaseOperation):
                     out_folder=out_folder,
                     file_name=file_name,
                     force_form_post=False)
-                #req = request.Request(self._asString(url),
-                                      #data=param_dict,
-                                      #headers=pass_headers)
-                #resp = request.urlopen(req,
-                                       #data=param_dict,
-                                       #context=ctx)
             else:
                 format_url = self._asString(url) + "?%s" % urlencode(param_dict)
                 req = request.Request(format_url,
@@ -653,7 +653,7 @@ class BaseWebOperations(BaseOperation):
         maintype = self._mainType(resp)
         contentDisposition = resp.headers.get('content-disposition')
         contentMD5 = resp.headers.get('Content-MD5')
-        contentEncoding = resp.headers.get('content-encoding')
+        #contentEncoding = resp.headers.get('content-encoding')
         contentType = resp.headers.get('content-Type').split(';')[0].lower()
         contentLength = resp.headers.get('content-length')
         if maintype.lower() in ('image',
