@@ -97,6 +97,106 @@ class System(BaseAGSServer):
         return directs
     #----------------------------------------------------------------------
     @property
+    def directories(self):
+        """returns the dictionary with all the server directories properties"""
+        url = self._url + "/directories"
+        params = {
+            "f" : "json"
+        }
+        res = self._get(url=url,
+                        param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
+
+        return res
+    #----------------------------------------------------------------------
+    def registerDirectory(self,name,physicalPath,directoryType,cleanupMode,
+                          maxFileAge,description):
+        """
+        Registers a new server directory. While registering the server directory,
+        you can also specify the directory's cleanup parameters. You can also
+        register a directory by using its JSON representation as a value of the
+        directory parameter.
+        Inputs:
+            name - The name of the server directory.
+            physicalPath - The absolute physical path of the server directory.
+            directoryType - The type of server directory.
+            cleanupMode - Defines if files in the server directory needs to
+                            be cleaned up. Default: NONE
+            maxFileAge - Defines how long a file in the directory needs to be
+                            kept before it is deleted (in minutes).
+            description - An optional description for the server directory.
+        """
+        url = self._url + "/directories/register"
+        params = {
+            "f" : "json",
+            "name" : name,
+            "physicalPath" : physicalPath,
+            "directoryType" : directoryType,
+            "cleanupMode" : cleanupMode,
+            "maxFileAge" : maxFileAge,
+            "description" : description
+        }
+
+        res = self._post(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+
+        return res
+    #----------------------------------------------------------------------
+    def registerDirs(self,json_dirs):
+        """
+        Registers multiple new server directories.
+        Inputs:
+            json_dirs - Array of Server Directories in JSON format.
+        """
+        url = self._url + "/directories/registerDirs"
+        params = {
+            "f" : "json",
+            "directories" : json_dirs
+        }
+
+        res = self._post(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+
+        return res
+    #----------------------------------------------------------------------
+    def recover(self,runAsync=False):
+        """
+        If the shared server directories for a site are unavailable, a site
+        in read-only mode will operate in a degraded capacity that allows access
+        to the ArcGIS Server Administrator Directory. You can recover a site if
+        the shared server directories are permanently lost. The site must be in
+        read-only mode, and the site configuration files must have been copied
+        to the local repository when switching site modes. The recover operation
+        will copy the server directories from the local repository into the
+        shared server directories location. The copied local repository will be
+        from the machine in the site where the recover operation is performed.
+        Inputs:
+           runAsync - default False - Decides if this operation must run
+            asynchronously.
+        """
+        url = self._url + "/directories/recover"
+        params = {
+            "f" : "json",
+            "runAsync" : runAsync
+        }
+
+        res = self._get(url=url,
+                        param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_url=self._proxy_url,
+                        proxy_port=self._proxy_port)
+
+        return res
+    #----------------------------------------------------------------------
+    @property
     def licenses(self):
         """
         The licenses resource lists the current license level of ArcGIS for
@@ -203,6 +303,7 @@ class ConfigurationStore(BaseAGSServer):
     _type = None
     _connectionString = None
     _class = None
+    _localRepositoryPath = None
     _status = None
     #----------------------------------------------------------------------
     def __init__(self, url,
@@ -212,7 +313,7 @@ class ConfigurationStore(BaseAGSServer):
                  initialize=False):
         """Constructor"""
         self._url = url
-        self.securityHandler = securityHandler
+        self._securityHandler = securityHandler
         self._proxy_url = proxy_url
         self._proxy_port = proxy_port
         if initialize:
@@ -268,6 +369,13 @@ class ConfigurationStore(BaseAGSServer):
         return self._class
     #----------------------------------------------------------------------
     @property
+    def localRepositoryPath(self):
+        """gets the class value"""
+        if self._localRepositoryPath is None:
+            self.__init()
+        return self._localRepositoryPath        
+    #----------------------------------------------------------------------
+    @property
     def status(self):
         """gets the status value"""
         if self._status is None:
@@ -311,6 +419,33 @@ class ConfigurationStore(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def recover(self,runAsync=False):
+        """
+        If the shared configuration store for a site is unavailable, a site
+        in read-only mode will operate in a degraded capacity that allows
+        access to the ArcGIS Server Administrator Directory. You can recover
+        a site if the shared configuration store is permanently lost. The
+        site must be in read-only mode, and the site configuration files
+        must have been copied to the local repository when switching site
+        modes. The recover operation will copy the configuration store from
+        the local repository into the shared configuration store location.
+        The copied local repository will be from the machine in the site
+        where the recover operation is performed.
+        Inputs:
+           runAsync - default False - Decides if this operation must run
+            asynchronously.
+        """
+        url = self._url + "/recover"
+        params = {
+            "f" : "json",
+            "runAsync" : runAsync
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
 ########################################################################
 class Jobs(BaseAGSServer):
     """

@@ -5,8 +5,8 @@ import json
 ########################################################################
 class Machines(BaseAGSServer):
     """
-       his resource represents a collection of all the server machines that
-       have been registered with the site. It other words, it represents
+       This resource represents a collection of all the server machines that
+       have been registered with the site. In other words, it represents
        the total computing power of your site. A site will continue to run
        as long as there is one server machine online.
        For a server machine to start hosting GIS services, it must be
@@ -123,7 +123,7 @@ class Machines(BaseAGSServer):
            choose to join a site.
            Inputs:
               machineName - name of the server machine
-              adminURL - URL wher ethe Administrator API is running on the
+              adminURL - URL where the Administrator API is running on the
                          server machine.
                          Example: http://<machineName>:6080/arcgis/admin
            Output:
