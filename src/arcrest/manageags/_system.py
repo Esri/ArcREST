@@ -432,7 +432,23 @@ class System(BaseAGSServer):
                           param_dict=params,
                           securityHandler=self._securityHandler,
                           proxy_port=self._proxy_port,
-                          proxy_url=self._proxy_url)                                  
+                          proxy_url=self._proxy_url)
+    @property
+    #----------------------------------------------------------------------
+    def deployment(self):
+        """
+        Deployment configuration resource that can control
+        the load-balancing functionality between GIS server machines.
+        """
+        url = self._url + "/deployment"
+        params = {
+            "f" : "json"
+        }
+        return self._get(url=url,
+                        param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_port=self._proxy_port,
+                        proxy_url=self._proxy_url)                          
 ########################################################################
 class ConfigurationStore(BaseAGSServer):
     """"""
