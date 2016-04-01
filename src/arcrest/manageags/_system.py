@@ -268,7 +268,7 @@ class System(BaseAGSServer):
         and shared key.
 
         Inputs:
-           webAdaptorConfig - the sharedkey attribute must always be
+           webAdaptorConfig - the sharedKey attribute must always be
             present in this JSON
         """
         url = self._url + "/webadaptors/config/update"
@@ -281,6 +281,71 @@ class System(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def registerWebAdaptor(self, webAdaptorURL, machineName, machineIP,
+                           isAdminEnabled, description, httpPort, httpsPort):
+        """
+        You can use this operation to register the ArcGIS Web Adaptor
+        from your ArcGIS Server. By registering the Web Adaptor with the server, 
+        you are telling the server to trust requests (including security 
+        credentials) that have been submitted through this Web Adaptor. 
+
+        Inputs:
+           webAdaptorURL - The URL of the web adaptor through which ArcGIS
+                            resources will be accessed.
+           machineName - The machine name on which the web adaptor is installed.
+           machineIP - The local IP address of the machine on which the web
+                            adaptor is installed.
+           isAdminEnabled - A boolean flag to indicate if administrative access
+                            is allowed through the web adaptor. The default is
+                            false.
+           description - An optional description for the web adaptor.
+           httpPort - An optional parameter to indicate the HTTP port of the
+                            web adaptor. If this parameter is not provided, it
+                            is derived from the URL.
+           httpsPort - An optional parameter to indicate the HTTPS port of the web
+                            adaptor. If this parameter is not provided, it is
+                            derived from the URL.
+        """
+        url = self._url + "/webadaptors/register"
+        params = {
+            "f" : "json",
+            "webAdaptorURL" : webAdaptorURL,
+            "machineName" : machineName,
+            "machineIP" : machineIP,
+            "isAdminEnabled" : isAdminEnabled,
+            "description" : description,
+            "httpPort" : httpPort,
+            "httpsPort" :  httpsPort
+        }
+        return self._post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def unregisterWebAdaptor(self, webAdaptorID):
+        """
+        You can use this operation to unregister the ArcGIS Web Adaptor
+        from your ArcGIS Server. Once a Web Adaptor has been unregistered,
+        your ArcGIS Server will no longer trust the Web Adaptor and will not
+        accept any credentials from it. This operation is typically used when
+        you want to register a new Web Adaptor or when your old Web Adaptor
+        needs to be updated. After unregistering, the Web Adaptor can no
+        longer submit requests to the server.
+
+        Inputs:
+           webAdaptorID - id of the web adaptor
+        """
+        url = self._url + "/webadaptors/%s/unregister" % webAdaptorID
+        params = {
+            "f" : "json"
+        }
+        return self._post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)    
     #----------------------------------------------------------------------
     @property
     def configurationStore(self):
