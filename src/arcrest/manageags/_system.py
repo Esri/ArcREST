@@ -356,6 +356,83 @@ class System(BaseAGSServer):
                                   securityHandler=self._securityHandler,
                                   proxy_url=self._proxy_url,
                                   proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def clearRestCache(self):
+        """
+        This operation clears the cache on all REST handlers in the system.
+        While the server typically manages the REST cache for you, use this
+        operation to get explicit control over the cache.
+        Note: Invoking this operation will cause REST handlers to be
+        restarted on all server machines.
+        """
+        url = self._url + "/handlers/rest/cache/clear"
+        params = {
+            "f" : "json"
+        }
+        return self._post(url=url,
+                             param_dict=params,
+                             securityHandler=self._securityHandler,
+                             proxy_port=self._proxy_port,
+                             proxy_url=self._proxy_url)
+    @property
+    #----------------------------------------------------------------------
+    def servicesDirectory(self):
+        """
+        This resource lists properties related to the HTML view of the ArcGIS
+        REST API (also known as the Services Directory). You can edit these
+        properties if you want to disable the Services Directory or point its
+        previews at a locally-hosted JavaScript API or map viewer.
+        Returns a dictionary with the properties related to Services Directory.
+        """
+        url = self._url + "/handlers/rest/servicesdirectory"
+        params = {
+            "f" : "json"
+        }
+        return self._get(url=url,
+                        param_dict=params,
+                        securityHandler=self._securityHandler,
+                        proxy_port=self._proxy_port,
+                        proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def editServicesDirectory(self,params):
+        """
+        With this operation you can enable or disable the HTML view of ArcGIS
+        REST API (also known as the Services Directory). You can also adjust
+        the JavaScript and map viewer previews of services in the Services
+        Directory so that they work with your own locally hosted JavaScript
+        API and map viewer.
+        Note: When the Services Directory is disabled, the HTML view is not
+        accessible. However, the REST API is still available.
+
+        Inputs:
+            allowedOrigins - Comma-separated list of URLs of domains allowed
+                            to make requests. * can be used to denote all
+                            domains.
+            arcgis.com.map - URL of the map viewer application used for service
+                            previews. Defaults to the ArcGIS.com map viewer but
+                            could be used to point at your own Portal for
+                            ArcGIS map viewer.
+            arcgis.com.map.text - The text to use for the preview link that
+                            opens the map viewer.
+            jsapi.arcgis - The URL of the JavaScript API to use for service
+                            previews. Defaults to the online ArcGIS API for
+                            JavaScript, but could be pointed at your own
+                            locally-installed instance of the JavaScript API.
+            jsapi.arcgis.css - CSS file associated with the ArcGIS API for
+                            JavaScript. Defaults to the online Dojo tundra.css.
+            jsapi.arcgis.css2 - Additional CSS file associated with the ArcGIS
+                            API for JavaScript. Defaults to the online esri.css.
+            jsapi.arcgis.sdk - URL of the ArcGIS API for JavaScript help.
+            servicesDirEnabled - Flag to enable/disable the HTML view of the
+                            services directory. Values: true | false
+        """
+        url = self._url + "/handlers/rest/servicesdirectory/edit"
+        params["f"] = "json"
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)                                  
 ########################################################################
 class ConfigurationStore(BaseAGSServer):
     """"""
