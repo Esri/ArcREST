@@ -60,7 +60,7 @@ class orgtools(securityhandlerhelper):
                     if 'error' in res:
                         print (res)
                     else:
-                        print ("%s shared with %s" % (item.title,shareToGroupName))
+                        print ("'%s' shared with '%s'" % (item.title,shareToGroupName))
                     results.append(res)
             if not groups is None:
                 for groupId in groups:
@@ -78,11 +78,11 @@ class orgtools(securityhandlerhelper):
                                 res = item.shareItem(",".join(group_ids),everyone=False,org=False)
                                 if 'error' in res:
                                     print (res)
-                                elif 'notSharedWith' in res:
-                                    print ("%s shared with %s, not Shared With %s" % \
+                                elif res.get('notSharedWith', []):
+                                    print ("'%s' shared with '%s', not Shared With '%s'" % \
                                           (item.title,shareToGroupName,",".join(res['notSharedWith'])))
                                 else:
-                                    print ("%s shared with %s" % (item.title,shareToGroupName))
+                                    print ("'%s' shared with '%s'" % (item.title,shareToGroupName))
                                 results.append(res)
 
         except:
@@ -265,7 +265,7 @@ class orgtools(securityhandlerhelper):
             try:
                 groupExist = userCommunity.getGroupIDs(groupNames=title)
                 if len(groupExist) > 0:
-                    print ("Group %s already exist" % title)
+                    print ("Group '%s' already exists" % title)
                     return None
                 return userCommunity.createGroup(title=title,
                             tags=tags,
@@ -332,7 +332,7 @@ class orgtools(securityhandlerhelper):
                     else:
                         print (createResults)
                 else:
-                    print ("%s role already exist" % name)
+                    print ("'%s' role already exists" % name)
 
             except Exception as e:
                 print (e)
