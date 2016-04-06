@@ -249,20 +249,20 @@ class UsageReports(BaseAGSServer):
 
         params = {
             "f" : "json",
+            "usagereport": {
             "reportname" : reportname,
             "since" : since,
-
-            "metadata" : metadata
+            "metadata" : metadata}
         }
         if isinstance(queries, dict):
-            params["queries"] = [queries]
+            params["usagereport"]["queries"] = [queries]
         elif isinstance(queries, list):
-            params["queries"] = queries
+            params["usagereport"]["queries"] = queries
         if aggregationInterval is not None:
-            params['aggregationInterval'] = aggregationInterval
+            params["usagereport"]['aggregationInterval'] = aggregationInterval
         if since.lower() == "custom":
-            params['to'] = toValue
-            params['from'] = fromValue
+            params["usagereport"]['to'] = toValue
+            params["usagereport"]['from'] = fromValue
         res =  self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
