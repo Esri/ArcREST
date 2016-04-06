@@ -201,7 +201,7 @@ class BaseWebOperations(BaseOperation):
     _last_code = None
     _last_method = None
     _useragent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0"
-    _verify = None
+    _verify = False
     def __init__(self, verify=False):
         self._verify = verify
     #----------------------------------------------------------------------
@@ -420,6 +420,11 @@ class BaseWebOperations(BaseOperation):
             additional_headers = {}
         if custom_handlers is None:
             custom_handlers = []
+        if self._verify == False:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            custom_handlers.append(request.HTTPSHandler(context=ctx))
         if len(files) == 0 and force_form_post == False:
             self._last_method = "POST"
         elif len(files) == 0 and force_form_post == True:
@@ -574,6 +579,11 @@ class BaseWebOperations(BaseOperation):
         if handler is not None:
             handlers.append(handler)
         handlers.append(RedirectHandler())
+        if self._verify == False:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            handlers.append(request.HTTPSHandler(context=ctx))
         if cj is not None:
             handlers.append(request.HTTPCookieProcessor(cj))
         if proxy_url is not None:
