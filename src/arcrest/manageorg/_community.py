@@ -451,6 +451,9 @@ class Group(BaseAGOLClass):
     _userMembership = None
     _isInvitationOnly = None
     _thumbnail = None
+    _featuredItemsId = None
+    _isPublic = None
+    _isOrganization = None
     _tags = None
     _capabilities = None
     #----------------------------------------------------------------------
@@ -661,6 +664,30 @@ class Group(BaseAGOLClass):
         if self._thumbnail is None:
             self.__init()
         return self._thumbnail
+        
+    #----------------------------------------------------------------------
+    @property
+    def featuredItemsId(self):
+        '''gets the property value for featuredItemsId'''
+        if self._featuredItemsId is None:
+            self.__init()
+        return self._featuredItemsId
+        
+    #----------------------------------------------------------------------
+    @property
+    def isPublic(self):
+        '''gets the property value for isPublic'''
+        if self._isPublic is None:
+            self.__init()
+        return self._isPublic
+        
+    #----------------------------------------------------------------------
+    @property
+    def isOrganization(self):
+        '''gets the property value for isOrganization'''
+        if self._isOrganization is None:
+            self.__init()
+        return self._isOrganization
 
     #----------------------------------------------------------------------
     @property
