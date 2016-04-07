@@ -448,7 +448,30 @@ class System(BaseAGSServer):
                         param_dict=params,
                         securityHandler=self._securityHandler,
                         proxy_port=self._proxy_port,
-                        proxy_url=self._proxy_url)                          
+                        proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def updateDeploymentConfiguration(self,singleClusterMode):
+        """
+        Updates deployment configuration setting singleClusterMode property
+        either to true or false; this defines whether you will be able to
+        create new clusters and use load balancing. This property is added 
+        in ArcGIS Server 10.4.
+
+        Inputs:
+            singleClusterMode - true/false. To enable load balancing, set
+                                this property to false. Updating this property
+                                will restart all machines in the site.
+        """
+        url = self._url + "/deployment/update"
+        params = {
+            "f" : "json",
+            "deploymentConfig": singleClusterMode
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)                        
 ########################################################################
 class ConfigurationStore(BaseAGSServer):
     """"""
