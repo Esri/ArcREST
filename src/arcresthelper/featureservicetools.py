@@ -93,7 +93,6 @@ class featureservicetools(securityhandlerhelper):
                 allidlist = []
 
                 for row in cursor:
-
                     if (strFld):
                         idlist.append("'" + row[0] +"'")
                     else:
@@ -173,9 +172,7 @@ class featureservicetools(securityhandlerhelper):
                                         }
                                         )
         finally:
-
             gc.collect()
-
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
@@ -183,17 +180,13 @@ class featureservicetools(securityhandlerhelper):
         if definition is None:
             definition = collections.OrderedDict()
             definition['hasStaticData'] = False
-
-
             definition['allowGeometryUpdates'] = True
-
             definition['editorTrackingInfo'] = {}
             definition['editorTrackingInfo']['enableEditorTracking'] = False
             definition['editorTrackingInfo']['enableOwnershipAccessControl'] = False
             definition['editorTrackingInfo']['allowOthersToUpdate'] = True
             definition['editorTrackingInfo']['allowOthersToDelete'] = True
             definition['capabilities'] = "Query,Editing,Create,Update,Delete"
-
 
         existingDef = {}
 
@@ -209,7 +202,29 @@ class featureservicetools(securityhandlerhelper):
         print (enableResults)
         return existingDef
     #----------------------------------------------------------------------
+    def enableSync(self, url, definition = None):
+        """Enables Sync capability for an AGOL feature service"""
+        adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
+
+        cap = str(adminFS.capabilities)
+        existingDef = {}
+        enableResults = 'skipped'
+        if 'Sync' in cap:
+            return "Sync is already enabled"
+        else:
+            capItems = cap.split(',')
+            capItems.append('Sync')
+            existingDef['capabilities'] = ','.join(capItems)
+            enableResults = adminFS.updateDefinition(json_dict=existingDef)
+
+            if 'error' in enableResults:
+                return enableResults['error']
+        adminFS = None
+        del adminFS
+        return enableResults    
+    #----------------------------------------------------------------------
     def disableSync(self, url, definition = None):
+        """Disables Sync capability for an AGOL feature service"""
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 
         cap = str(adminFS.capabilities)
@@ -228,9 +243,8 @@ class featureservicetools(securityhandlerhelper):
                 return enableResults['error']
         adminFS = None
         del adminFS
-
-
         return enableResults
+    #----------------------------------------------------------------------        
     def GetFeatureService(self,itemId,returnURLOnly=False):
         admin = None
         item = None
@@ -240,7 +254,6 @@ class featureservicetools(securityhandlerhelper):
                 self._valid = self._securityHandler.valid
                 self._message = self._securityHandler.message
                 return None
-
 
             item = admin.content.getItem(itemId=itemId)
             if item.type == "Feature Service":
@@ -254,7 +267,6 @@ class featureservicetools(securityhandlerhelper):
                         fs = arcrest.ags.FeatureService(
                            url=item.url)
                     return fs
-
             return None
 
         except:
@@ -271,7 +283,6 @@ class featureservicetools(securityhandlerhelper):
             item = None
             del item
             del admin
-
             gc.collect()
     #----------------------------------------------------------------------
     def GetLayerFromFeatureServiceByURL(self,url,layerName="",returnURLOnly=False):
@@ -294,9 +305,7 @@ class featureservicetools(securityhandlerhelper):
                                         )
         finally:
             fs = None
-
             del fs
-
             gc.collect()
     #----------------------------------------------------------------------
     def GetLayerFromFeatureService(self,fs,layerName="",returnURLOnly=False):
@@ -345,14 +354,11 @@ class featureservicetools(securityhandlerhelper):
             table = None
             layer = None
             sublayer = None
-
             del layers
             del table
             del layer
             del sublayer
-
             gc.collect()
-
     #----------------------------------------------------------------------
     def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0,lowerCaseFieldNames=False):
         if arcpyFound == False:
@@ -407,7 +413,6 @@ class featureservicetools(securityhandlerhelper):
                                             if 'error' in result:
                                                 errorCount  = errorCount + 1
                                                 print ("\tError info: %s" % (result))
-
                                         else:
                                             featSucces = featSucces + 1
                                 syncSoFar = syncSoFar + featSucces
@@ -415,10 +420,8 @@ class featureservicetools(securityhandlerhelper):
                                 print ("%s/%s features added, %s errors" % (syncSoFar,total,errorCount ))
                                 if 'addResults' in messages:
                                     messages['addResults'] = messages['addResults'] + results['addResults']
-
                                 else:
                                     messages['addResults'] = results['addResults']
-
                             else:
                                 messages['errors'] = result
                 return messages
@@ -445,9 +448,7 @@ class featureservicetools(securityhandlerhelper):
                                         )
         finally:
             fl = None
-
             del fl
-
             gc.collect()
     #----------------------------------------------------------------------
     def DeleteFeaturesFromFeatureLayer(self,url,sql,chunksize=0):
@@ -467,7 +468,6 @@ class featureservicetools(securityhandlerhelper):
                     total = len(oids)
                     if total == 0:
                         return  {'success':True,'message': "No features matched the query"}
-
                     i = 0
                     print ("%s features to be deleted" % total)
                     while(i <= len(oids)):
@@ -495,7 +495,6 @@ class featureservicetools(securityhandlerhelper):
                             else:
                                 return results
                     return  {'success':True,'message': "%s deleted" % totalDeleted}
-
                 else:
                     print (qRes)
             else:
@@ -505,7 +504,6 @@ class featureservicetools(securityhandlerhelper):
                         return  {'success':True,'message': totalDeleted + len(results['deleteResults'])}
                     else:
                         return results
-
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -517,11 +515,8 @@ class featureservicetools(securityhandlerhelper):
                                         )
         finally:
             fl = None
-
             del fl
-
             gc.collect()
-
     #----------------------------------------------------------------------
     def QueryAllFeatures(self,url,sql,out_fields="*",chunksize=1000,saveLocation="",outName=""):
         fl = None
@@ -562,15 +557,12 @@ class featureservicetools(securityhandlerhelper):
 
                         else:
                             print (results)
-
                 if saveLocation == "" or outName == "":
                     return combinedResults
                 else:
                     return combinedResults.save(saveLocation=saveLocation, outName=outName)
-
             else:
                 print (qRes)
-
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
@@ -582,7 +574,5 @@ class featureservicetools(securityhandlerhelper):
                                         )
         finally:
             fl = None
-
             del fl
-
             gc.collect()
