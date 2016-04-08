@@ -1,1 +1,0 @@
-This folder shows some testing used to debug and create functions.

@@ -1,0 +1,4 @@
+
+
+class Envelope(object):
+    pass
