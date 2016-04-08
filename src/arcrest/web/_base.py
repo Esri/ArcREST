@@ -420,7 +420,8 @@ class BaseWebOperations(BaseOperation):
             additional_headers = {}
         if custom_handlers is None:
             custom_handlers = []
-        if self._verify == False:
+        if self._verify == False and \
+           sys.version_info[0:3] >= (2, 7, 9):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -458,7 +459,7 @@ class BaseWebOperations(BaseOperation):
             del k,v
         hasContext = 'context' in getargspec(request.urlopen).args
         if self._verify == False and \
-           hasContext:
+           sys.version_info[0:3] >= (2, 7, 9):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -579,7 +580,8 @@ class BaseWebOperations(BaseOperation):
         if handler is not None:
             handlers.append(handler)
         handlers.append(RedirectHandler())
-        if self._verify == False:
+        if self._verify == False and \
+           sys.version_info[0:3] >= (2, 7, 9):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE

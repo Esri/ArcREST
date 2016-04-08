@@ -53,16 +53,34 @@ def local_time_to_online(dt=None):
 
     return (time.mktime(dt.timetuple())  * 1000) + (utc_offset *1000)
 #----------------------------------------------------------------------
-def online_time_to_string(value,timeFormat):
+def online_time_to_string(value, timeFormat, utcOffset=0):
+    """Converts AGOL timestamp to formatted string.
+
+    Args:
+        value (float): A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)
+        timeFormat (str): Date/Time format string as parsed by :py:func:`datetime.strftime`.
+        utcOffset (int): Hours difference from UTC and desired output. Default is 0 (remain in UTC).
+
+    Returns:
+        str: A string representation of the timestamp.
+
+    Examples:
+        >>> rcrest.general.online_time_to_string(1457167261000.0, "%Y-%m-%d %H:%M:%S")
+        '2016-03-05 00:41:01'
+        >>> rcrest.general.online_time_to_string(731392515000.0, '%m/%d/%Y %H:%M:%S', -8) # PST is UTC-8:00
+        '03/05/1993 12:35:15'
+
+    See Also:
+       :py:func:`local_time_to_online` for converting a :py:class:`datetime.datetime` object to AGOL timestamp
+
     """
-       Converts a timestamp to date/time string
-       Inputs:
-          value - timestamp as long
-          timeFormat - output date/time format
-       Output:
-          string
-    """
-    return datetime.datetime.fromtimestamp(value /1000).strftime(timeFormat)
+
+    try:
+        return datetime.datetime.fromtimestamp(value/1000 + utcOffset*3600).strftime(timeFormat)
+    except:
+        return ""
+    finally:
+        pass
 #----------------------------------------------------------------------
 def timestamp_to_datetime(timestamp):
     """

@@ -10,7 +10,7 @@ from ..security import security
 from ..common import filters, geometry
 from ..common.geometry import Polygon, Envelope, SpatialReference
 from ..common.general import Feature
-from six.moves.urllib_parse import urlencode
+from ..packages.six.moves.urllib_parse import urlencode
 ########################################################################
 class MapService(BaseAGSServer):
     """ contains information about a map service """
