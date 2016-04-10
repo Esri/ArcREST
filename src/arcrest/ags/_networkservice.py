@@ -383,8 +383,17 @@ class NetworkLayer(BaseAGSServer):
         if self._serviceLimits is None:
             self.__init()
         return self._serviceLimits
-
-
+    #----------------------------------------------------------------------
+    def retrieveTravelModes(self):
+        """identify all the valid travel modes that have been defined on the
+        network dataset or in the portal if the GIS server is federated"""
+        url = self._url + "/retrieveTravelModes"
+        params = {"f":"json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
 ########################################################################
 class RouteNetworkLayer(NetworkLayer):
     """
@@ -512,17 +521,6 @@ class RouteNetworkLayer(NetworkLayer):
         if self._findBestSequence is None:
             self.__init()
         return self._findBestSequence
-    #----------------------------------------------------------------------
-    def retrieveTravelModes(self):
-        """identify all the valid travel modes that have been defined on the
-        network dataset or in the portal if the GIS server is federated"""
-        url = self._url + "/retrieveTravelModes"
-        params = {"f":"json"}
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def solve(self,stops,
               method="POST",
@@ -948,17 +946,6 @@ class ServiceAreaNetworkLayer(NetworkLayer):
             self.__init()
         return self._mergeSimilarPolygonRanges
     #----------------------------------------------------------------------
-    def retrieveTravelModes(self):
-        """identify all the valid travel modes that have been defined on the
-        network dataset or in the portal if the GIS server is federated"""
-        url = self._url + "/retrieveTravelModes"
-        params = {"f":"json"}
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
     def solveServiceArea(self,facilities,method="POST",
                          barriers=None,
                          polylineBarriers=None,
@@ -1346,17 +1333,6 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
         if self._timeOfDay is None:
             self.__init()
         return self._timeOfDay
-    #----------------------------------------------------------------------
-    def retrieveTravelModes(self):
-        """identify all the valid travel modes that have been defined on the
-        network dataset or in the portal if the GIS server is federated"""
-        url = self._url + "/retrieveTravelModes"
-        params = {"f":"json"}
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def solveClosestFacility(self,incidents,facilities,method="POST",
                              barriers=None,
