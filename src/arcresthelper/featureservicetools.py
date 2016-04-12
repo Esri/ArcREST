@@ -30,13 +30,21 @@ import traceback, inspect, sys
 import collections
 #----------------------------------------------------------------------
 def trace():
-    """Determine information about where an error was thrown.
+    """Determines information about where an error was thrown.
 
     Returns:
         tuple: line number, filename, error message
-
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'
+        
     """
-
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -193,23 +201,28 @@ class featureservicetools(securityhandlerhelper):
             url (str): The URL of the feature service.
             definition (dict): A dictionary containing valid definition values. Defaults to ``None``.
         Returns:
-            dict: The existing feature service definition capabilities.
-        Notes:
-            When ``definition`` is not provided (``None``), the following values are used by default:
-                hasStaticData = ``False``
-
-                allowGeometryUpdates = ``True``
-
-                enableEditorTracking = ``False``
-
-                enableOwnershipAccessControl = ``False``
-
-                allowOthersToUpdate = ``True``
-
-                allowOthersToDelete = ``True``
-
-                capabilities = ``"Query,Editing,Create,Update,Delete"``
-
+            dict: The existing feature service definition capabilities.            
+        
+        When ``definition`` is not provided (``None``), the following values are used by default: 
+        
+        +------------------------------+------------------------------------------+
+        |              Key             |                   Value                  |
+        +------------------------------+------------------------------------------+
+        | hasStaticData                | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | allowGeometryUpdates         | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | enableEditorTracking         | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | enableOwnershipAccessControl | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | allowOthersToUpdate          | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | allowOthersToDelete          | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | capabilities                 | ``"Query,Editing,Create,Update,Delete"`` |
+        +------------------------------+------------------------------------------+
+                
         """
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 

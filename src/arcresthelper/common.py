@@ -16,10 +16,19 @@ import gc
 import operator
 #----------------------------------------------------------------------
 def trace():
-    """Determine information about where an error was thrown.
+    """Determines information about where an error was thrown.
 
     Returns:
         tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'        
 
     """
     import traceback, inspect
@@ -37,7 +46,7 @@ class ArcRestHelperError(Exception):
     """Raised when error occurs in utility module functions."""
     pass
 def merge_dicts(dicts, op=operator.add):
-    """Merge a list of dictionaries.
+    """Merges a list of dictionaries.
 
     Args:
         dicts (list): a list of dictionary objects
@@ -79,12 +88,11 @@ def merge_dicts(dicts, op=operator.add):
     #return z
 #----------------------------------------------------------------------
 def noneToValue(value, newValue):
-    """Convert ``None`` to a different value.
+    """Converts ``None`` to a different value.
 
     Args:
         value: The value to convert. This can be anything.
         newValue: The resultant value. This can be anything.
-
     Returns:
         newValue
 
@@ -95,14 +103,12 @@ def noneToValue(value, newValue):
         return value
 #----------------------------------------------------------------------
 def getLayerIndex(url):
-    """Extract the layer index from a url.
+    """Extracts the layer index from a url.
 
     Args:
         url (str): The url to parse.
-
     Returns:
         int: The layer index.
-
     Examples:
         >>> url = "http://services.arcgis.com/<random>/arcgis/rest/services/test/FeatureServer/12"
         >>> arcresthelper.common.getLayerIndex(url)
@@ -132,14 +138,12 @@ def getLayerIndex(url):
         gc.collect()
 #----------------------------------------------------------------------
 def getLayerName(url):
-    """Extract the layer name from a url.
+    """Extracts the layer name from a url.
 
     Args:
         url (str): The url to parse.
-
     Returns:
         str: The layer name.
-
     Examples:
         >>> url = "http://services.arcgis.com/<random>/arcgis/rest/services/test/FeatureServer/12"
         >>> arcresthelper.common.getLayerIndex(url)
@@ -167,14 +171,12 @@ def getLayerName(url):
 #----------------------------------------------------------------------
 
 def getOrgId(url):
-    """Extract the org ID from a url.
+    """Extracts the org ID from a url.
 
     Args:
         url (str): The url to parse.
-
     Returns:
         str: The org ID.
-
     Examples:
         >>> url = "http://services.arcgis.com/<random>/arcgis/rest/services/test/FeatureServer/12"
         >>> arcresthelper.common.getLayerIndex(url)
@@ -206,16 +208,14 @@ def random_string_generator(size=6, chars=string.ascii_uppercase):
 
     Args:
         size (int): The length of the resultant string. Defaults to 6.
-        chars (str): The characters to be used by :py:func:`random.choice`. Defaults to :py:const:`string.ascii_uppercase`.
-
+        chars (str): The characters to be used by :py:func:`random.choice`. Defaults to :py:data:`string.ascii_uppercase`.
     Returns:
         str: The randomly generated string.
-
     Examples:
         >>> arcresthelper.common.random_string_generator()
         'DCNYWU'
-        >>> arcresthelper.common.random_string_generator(12, "arcREST")
-        'cESaTTEacTES'
+        >>> arcresthelper.common.random_string_generator(12, "ArcREST")
+        'cESATTEAcTES'
 
     """
     try:
@@ -237,10 +237,8 @@ def random_int_generator(maxrange):
 
     Args:
         maxrange (int): The upper range of integers to randomly choose.
-
     Returns:
         int: The randomly generated integer from :py:func:`random.randint`.
-
     Examples:
         >>> arcresthelper.common.random_int_generator(15)
         9
@@ -264,11 +262,9 @@ def local_time_to_online(dt=None):
     """Converts datetime object to a UTC timestamp for AGOL.
 
     Args:
-        dt (datetime): The :py:class:`datetime.datetime` object to convert. Defaults to ``None``, i.e., :py:func:`datetime.datetime.now`.
-
+        dt (datetime): The :py:class:`datetime.datetime` object to convert. Defaults to ``None``, i.e., :py:meth:`datetime.datetime.now`.
     Returns:
         float: A UTC timestamp as understood by AGOL (time in ms since Unix epoch * 1000)
-
     Examples:
         >>> arcresthelper.common.local_time_to_online() # PST
         1457167261000.0
@@ -311,18 +307,16 @@ def online_time_to_string(value, timeFormat, utcOffset=0):
 
     Args:
         value (float): A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)
-        timeFormat (str): Date/Time format string as parsed by :py:func:`datetime.strftime`.
+        timeFormat (str): A valid date formatting directive, as understood
+                by :py:meth:`datetime.datetime.strftime`.
         utcOffset (int): Hours difference from UTC and desired output. Default is 0 (remain in UTC).
-
     Returns:
         str: A string representation of the timestamp.
-
     Examples:
         >>> arcresthelper.common.online_time_to_string(1457167261000.0, "%Y-%m-%d %H:%M:%S")
         '2016-03-05 00:41:01'
         >>> arcresthelper.common.online_time_to_string(731392515000.0, '%m/%d/%Y %H:%M:%S', -8) # PST is UTC-8:00
         '03/05/1993 12:35:15'
-
     See Also:
        :py:func:`local_time_to_online` for converting a :py:class:`datetime.datetime` object to AGOL timestamp
 
@@ -484,7 +478,7 @@ def find_replace_string(obj, find, replace):
         pass
 
 def find_replace(obj, find, replace):
-    """ Searches an object and performs a find and replace.
+    """Searches an object and performs a find and replace.
 
     Args:
         obj (object): The object to iterate and find/replace.
@@ -529,7 +523,7 @@ def chunklist(l, n):
     Yields:
         The next chunk in the object.
     Raises:
-        TypeError: if ``l`` has no :py:func:`len`.
+        TypeError: If ``l`` has no :py:func:`len`.
     Examples:
         >>> for c in arcresthelper.common.chunklist(list(range(20)), 6):
         ...     print(c)
@@ -546,13 +540,13 @@ def chunklist(l, n):
         yield l[i:i+n]
 #----------------------------------------------------------------------
 def init_log(log_file):
-    """ Creates log file on disk and "Tees" :py:class:`sys.stdout` to console and disk
+    """Creates log file on disk and "Tees" :py:obj:`sys.stdout` to console and disk.
 
     Args:
         log_file (str): The path on disk to append or create the log file.
-
     Returns:
         file: The opened log file.
+        
     """
     #Create the log file
     log = None
@@ -567,7 +561,7 @@ def init_log(log_file):
     return log
 
 def close_log(log_file):
-    """ Closes the open file and returns :py:class:`sys.stdout` to the default (i.e., console output).
+    """Closes the open file and returns :py:class:`sys.stdout` to the default (i.e., console output).
 
     Args:
         log_file (file): The file object to close.
