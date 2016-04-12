@@ -1568,19 +1568,37 @@ class Portal(BaseAGOLClass):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def usage(self, startTime, endTime, **kwargs):
+    def usage(self, startTime, endTime, vars=None, period=None,
+              groupby=None, name=None, stype=None, etype=None,
+              appId=None, deviceId=None, username=None, appOrgId=None,
+              userOrgId=None, hostOrgId=None):
         """
         returns the usage statistics value
         """
+
         url = self.root + "/usage"
-        startTime = int(local_time_to_online(dt=startTime))
-        endTime = int(local_time_to_online(dt=endTime))
+        startTime = str(int(local_time_to_online(dt=startTime)))
+        endTime = str(int(local_time_to_online(dt=endTime)))
 
-        params = {key:item for key,item in kwargs.items()}
-        params['startTime'] = str(startTime)
-        params['endTime'] = str(endTime)
-        params['f'] = 'json'
+        params = {
+                    'f' : 'json',
+                    'startTime' : startTime,
+                    'endTime' : endTime,
+                    'vars' : vars,
+                    'period' : period,
+                    'groupby' : groupby,
+                    'name' : name,
+                    'stype' : stype,
+                    'etype' : etype,
+                    'appId' : appId,
+                    'deviceId' : deviceId,
+                    'username' : username,
+                    'appOrgId' : appOrgId,
+                    'userOrgId' : userOrgId,
+                    'hostOrgId' : hostOrgId,
+                 }
 
+        params = {key:item for key,item in params.items() if item is not None}
         return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
