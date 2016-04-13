@@ -1,7 +1,6 @@
 """
 """
 import json
-import tempfile
 from ._base import BaseService
 
 ########################################################################
@@ -38,10 +37,7 @@ class NetworkService(BaseService):
         params = {
             "f" : "json",
         }
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+        json_dict = self._con.get(path_or_url=self._url, params=params)
         self._json_dict = json_dict
         self._json = json.dumps(self._json_dict)
         attributes = [attr for attr in dir(self)
@@ -54,10 +50,8 @@ class NetworkService(BaseService):
                     self._routeLayers = []
                     for rl in v:
                         self._routeLayers.append(
-                            RouteNetworkLayer(url=self._url + "/%s" % rl,
-                                              securityHandler=self._securityHandler,
-                                              proxy_url=self._proxy_url,
-                                              proxy_port=self._proxy_port,
+                            RouteNetworkLayer(connection=self._con,
+                                              url=self._url + "/%s" % rl,
                                               initialize=False))
 
                 elif k == "serviceAreaLayers" and json_dict[k]:
@@ -65,9 +59,7 @@ class NetworkService(BaseService):
                     for sal in v:
                         self._serviceAreaLayers.append(
                             ServiceAreaNetworkLayer(url=self._url + "/%s" % sal,
-                                                    securityHandler=self._securityHandler,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
+                                                    connection=self._con,
                                                     initialize=False))
 
                 elif k == "closestFacilityLayers" and json_dict[k]:
@@ -75,10 +67,8 @@ class NetworkService(BaseService):
                     for cf in v:
                         self._closestFacilityLayers.append(
                             ClosestFacilityNetworkLayer(url=self._url + "/%s" % cf,
-                                                    securityHandler=self._securityHandler,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    initialize=False))
+                                                        connection=self._con,
+                                                        initialize=False))
                 else:
                     setattr(self, "_"+ k, v)
             else:

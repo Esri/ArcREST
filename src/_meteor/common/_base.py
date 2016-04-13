@@ -20,22 +20,26 @@
     un/munchify provide dictionary conversion; Munches can also be
     converted via AttrDict.to/fromDict().
 """
-import six
+from .packages import six
 import json
 
 __version__ = '4.0.0'
 
-__all__ = ('AttrDict')
+__all__ = ('BaseDict')
 
 
 ########################################################################
-class AttrDict(dict):
+class BaseDict(dict):
     """
     A dictionary that provides attribute-style access.
     """
     #----------------------------------------------------------------------
     def __str__(self):
-        return self.toJSON
+        p = {}
+        for k,v in six.iteritems(self):
+            if k[0] != "_":
+                p[k] = v
+        return json.dumps(p)
     #----------------------------------------------------------------------
     def __getattr__(self, k):
         """
@@ -105,7 +109,7 @@ class AttrDict(dict):
         """
         Transforms a dictionary into a AttrDict via copy.
         """
-        return self._dict_to_obj(d)
+        return Test._dict_to_obj(d)
     #----------------------------------------------------------------------
     @staticmethod
     def _dict_to_obj(x):
@@ -129,7 +133,3 @@ class AttrDict(dict):
             return type(x)(AttrDict._obj_to_dict(v) for v in x)
         else:
             return x
-    #----------------------------------------------------------------------
-    @property
-    def toJSON(self, **kwargs):
-        return json.dumps(self, **kwargs)

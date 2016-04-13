@@ -188,11 +188,11 @@ class LDAPSecurityHandler(object):
         >>> serverUrl="https://mysite.site.com/arcgis"
         >>> newSH = sh.portalServerHandler(serverUrl=serverUrl,
                                            username=None)
-        >>> agsAdmin = AGSAdministration(url=serverUrl, securityHandler=newSH)
+        >>> agsAdmin = AGSAdministration(url=serverUrl, securityhandler=newSH)
         >>> print agsAdmin.info
         >>> # access a secure service from portal handler
         >>> msUrl = "https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer"
-        >>> ms = arcrest.ags.MapService(url=msUrl, securityHandler=newSH)
+        >>> ms = arcrest.ags.MapService(url=msUrl, securityhandler=newSH)
         >>> print ms.mapName
         """
         url = self._org_url + "/info"
@@ -332,9 +332,7 @@ class PKISecurityHandler(object):
         }
         portal_info = self._con.post(url=url,
                                  param_dict=parameters,
-                                 securityHandler=self,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+                                 securityhandler=self)
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
                 self._username = portal_info['user']['username']
@@ -740,9 +738,7 @@ class OAuthSecurityHandler(object):
         }
         token = self._con.post(url=token_url,
                               param_dict=params,
-                              securityHandler=None,
-                              proxy_port=self._proxy_port,
-                              proxy_url=self._proxy_url)
+                              securityhandler=None)
 
         if 'access_token' in token:
             self._token = token['access_token']
@@ -817,9 +813,7 @@ class ArcGISTokenSecurityHandler(object):
         }
         portal_info = self._con.post(url=url,
                                  param_dict=parameters,
-                                 securityHandler=self,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+                                 securityhandler=self)
 
         if 'user' in portal_info:
             if 'username' in portal_info['user']:
@@ -938,9 +932,7 @@ class ArcGISTokenSecurityHandler(object):
 
         server_token = self._con.post(url=self._token_url,
                                      param_dict=query_dict,
-                                     securityHandler=None,
-                                     proxy_port=self._proxy_port,
-                                     proxy_url=self._proxy_url)
+                                     securityhandler=None)
         if 'error' in server_token:
             self._server_token = None
             self._server_token_created_on = None
@@ -1188,10 +1180,8 @@ class PortalTokenSecurityHandler(object):
 
         if token_url is None:
             results = self._con.get(url= self._surl + '/portals/info',
-                                param_dict={'f':'json'},
-                                securityHandler=None,
-                                proxy_port=self._proxy_port,
-                                proxy_url=self._proxy_url)
+                                    param_dict={'f':'json'},
+                                    securityhandler=None)
             if 'authInfo' in results and 'tokenServicesUrl' in results['authInfo']:
 
                 self._token_url = results['authInfo']['tokenServicesUrl']
@@ -1368,9 +1358,7 @@ class PortalTokenSecurityHandler(object):
 
         server_token = self._con.post(url=tokenUrl,
                                   param_dict=query_dict,
-                                  securityHandler=secHandler,
-                                  proxy_port=self._proxy_port,
-                                  proxy_url=self._proxy_url)
+                                  securityhandler=secHandler)
         if self.cookiejar is not None:
             if secHandler is not None:
                 secHandler._method = "TOKEN"
@@ -1413,9 +1401,7 @@ class PortalTokenSecurityHandler(object):
                 secHandler._method = "HANDLER"
         token = self._con.post(url=tokenUrl,
                            param_dict=query_dict,
-                           securityHandler=secHandler,
-                           proxy_port=self._proxy_port,
-                           proxy_url=self._proxy_url)
+                           securityhandler=secHandler)
         if self.cookiejar is not None:
             if secHandler is not None:
                 secHandler._method = "TOKEN"
@@ -1459,11 +1445,11 @@ class PortalTokenSecurityHandler(object):
         >>> serverUrl="https://mysite.site.com/arcgis"
         >>> newSH = sh.portalServerHandler(serverUrl=serverUrl,
                                            username=None)
-        >>> agsAdmin = AGSAdministration(url=serverUrl, securityHandler=newSH)
+        >>> agsAdmin = AGSAdministration(url=serverUrl, securityhandler=newSH)
         >>> print agsAdmin.info
         >>> # access a secure service from portal handler
         >>> msUrl = "https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer"
-        >>> ms = arcrest.ags.MapService(url=msUrl, securityHandler=newSH)
+        >>> ms = arcrest.ags.MapService(url=msUrl, securityhandler=newSH)
         >>> print ms.mapName
         """
 
@@ -1833,7 +1819,7 @@ class TokenSecurityHandler(object):
             #self._initURL(org_url=org_url,token_url=token_url)
 
             #from ..manageorg import Administration
-            #admin = Administration(securityHandler=self)
+            #admin = Administration(securityhandler=self)
             #portalSelf = admin.portals.portalSelf
             #urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
             #org_url = urlunparse(urlInfo)
@@ -1893,7 +1879,7 @@ class TokenSecurityHandler(object):
         #from ..manageorg import Administration
 
         #admin = Administration(url=self._org_url,
-                               #securityHandler=self)
+                               #securityhandler=self)
         #portal = admin.portals.portalSelf
 
         #self._is_portal = portal.isPortal
@@ -2050,7 +2036,7 @@ class TokenSecurityHandler(object):
         #self._token_created_on = datetime.datetime.now()
         #token = self._con.post(url=tokenUrl,
                               #param_dict=query_dict,
-                              #securityHandler=None,
+                              #securityhandler=None,
                               #proxy_port=self._proxy_port,
                               #proxy_url=self._proxy_url)
         #if 'error' in token:

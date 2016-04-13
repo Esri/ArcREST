@@ -94,7 +94,7 @@ class GPTask(BaseService):
             self.__init(self._con)
         if "parameters" in self._json_dict:
             for param in self.parameters:
-                if not isinstance(param['defaultValue'], BaseGPObject):
+                if isinstance(param['defaultValue'], (dict,str, list)):
                     if param['dataType'] == "GPFeatureRecordSetLayer":
                         param['defaultValue'] = GPFeatureRecordSetLayer.fromJSON(json.dumps(param))
                     elif param['dataType'] == "GPString":
@@ -153,7 +153,9 @@ class GPTask(BaseService):
         params['returnM'] = returnM
         if not inputs is None:
             for p in inputs:
-                if isinstance(p, BaseGPObject):
+                if isinstance(p, dict):
+                    params[p.paramName] = p
+                else:
                     params[p.paramName] = p.value
         if method.lower() == "get":
             res = self._con.get(path_or_url=url, params=params)
@@ -194,7 +196,9 @@ class GPTask(BaseService):
         params['returnZ'] = returnZ
         params['returnM'] = returnM
         for p in inputs:
-            if isinstance(p, BaseGPObject):
+            if isinstance(p, dict):
+                params[p.paramName] = p
+            else:
                 params[p.paramName] = p.value
             del p
         if method.lower() == "post":

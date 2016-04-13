@@ -163,26 +163,17 @@ class ImageService(BaseService):
             params['renderingRule'] = renderingRule
         params["f" ] = f
         if f == "json":
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_port=self._proxy_port,
-                                proxy_url=self._proxy_url)
+            return self._con.get(path_or_url=url,
+                                params=params)
         elif f == "image":
-            result = self._get(url=url,
-                               param_dict=params,
-                               securityHandler=self._securityHandler,
-                               proxy_url=self._proxy_url,
-                               proxy_port=self._proxy_port,
+            result = self._con.get(path_or_url=url,
+                               params=params,
                                out_folder=saveFolder,
                                file_name=saveFile)
             return result
         elif f == "kmz":
-            return self._get(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port,
+            return self._con.get(path_or_url=url,
+                             params=params,
                              out_folder=saveFolder,
                              file_name=saveFile)
     #----------------------------------------------------------------------
@@ -263,10 +254,7 @@ class ImageService(BaseService):
             params['returnDistinctValues'] = returnDistinctValues
 
         url = self._url + "/query"
-        return self._get(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url, params=params)
     #----------------------------------------------------------------------
     def addRasters(self,
             rasterType,
@@ -394,11 +382,8 @@ class ImageService(BaseService):
             params['itemIds'] = itemIds
         if not serviceUrl is None:
             params['serviceUrl'] = serviceUrl
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def colormap(self):
         """
@@ -411,10 +396,7 @@ class ImageService(BaseService):
             params = {
                 "f" : "json"
             }
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url,
+                                params=params)
         else:
             return None

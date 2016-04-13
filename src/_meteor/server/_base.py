@@ -1,12 +1,10 @@
 from __future__ import absolute_import
-from ..common._base import BaseDict
 import json
 ###########################################################################
-class BasePortal(object):
+class BaseServer(object):
     _url = None
     _con = None
     _json_dict = None
-    _json = None
     def __init__(self, connection, url, initialize=False):
         """constructor"""
         self._con = connection
@@ -18,22 +16,11 @@ class BasePortal(object):
     def __init(self, connection):
         """loads the properties"""
         params = {"f" : "json"}
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
         result = connection.get(path_or_url=self._url, params=params)
-        self._json_dict = result
-        self._json = json.dumps(result)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
         if isinstance(result, dict):
             self._json_dict = result
             for k,v in result.items():
-                if k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    setattr(self, k, v)
+                setattr(self, k, v)
                 del k,v
         else:
             raise RuntimeError("Could not connect to the service: %s" % result)
@@ -56,6 +43,6 @@ class BasePortal(object):
     #----------------------------------------------------------------------
     def __iter__(self):
         """creates iterable for classes properties"""
-        for k,v in self._json_dict.items():
+        for k,v in self.__dict__.items():
             yield k,v
 

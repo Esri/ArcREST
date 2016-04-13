@@ -67,7 +67,7 @@ class VectorTileService(BaseService):
         if out_folder is None:
             out_folder = tempfile.gettempdir()
         return self._con.get(path_or_url=url,
-                             params=params,
+                             params={},
                              out_folder=out_folder)
     #----------------------------------------------------------------------
     @property

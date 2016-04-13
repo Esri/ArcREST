@@ -9,9 +9,11 @@
 
 """
 import json
+import time
 from ..connection import SiteConnection
 import tempfile
 from ._base import BaseService
+from ..common.geometry import Polygon, SpatialReference
 from .geoprocessing import GPTask, GPService, GPJob
 class MapService(BaseService):
     """
@@ -575,7 +577,7 @@ class MapService(BaseService):
         if async == True:
             return self._con.get(path_or_url=url, params=params)
         else:
-            exportJob = self._get(path_or_url=url, params=params)
+            exportJob = self._con.get(path_or_url=url, params=params)
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
             gpJob = GPJob(url=jobUrl,
                           connection=self._con)
