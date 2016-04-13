@@ -457,7 +457,7 @@ class BaseWebOperations(BaseOperation):
         for k,v in additional_headers.items():
             headers[k] = v
             del k,v
-        hasContext = 'context' in getargspec(request.urlopen).args
+        hasContext = 'context' in self._has_context(request.urlopen)
         if self._verify == False and \
            sys.version_info[0:3] >= (2, 7, 9):
             ctx = ssl.create_default_context()
@@ -490,7 +490,7 @@ class BaseWebOperations(BaseOperation):
             req.add_header('Content-type', mpf.get_content_type())
             req.add_header('Content-length', len(body))
             req.data = body
-            if 'context' in getargspec(request.urlopen).args and \
+            if 'context' in self._has_context(request.urlopen) and \
                self._verify == False:
                 resp = request.urlopen(req, context=ctx)
             else:
@@ -531,6 +531,14 @@ class BaseWebOperations(BaseOperation):
                 return value.decode('utf-8')
         elif sys.version_info[0] == 2:
             return value.encode('ascii')
+    #----------------------------------------------------------------------
+    def _has_context(self, func):
+        if sys.version[0] == '2':
+            from inspect import getargspec
+            return getargspec(func).args
+        else:
+            from inspect import signature
+            return signature(func).parameters
     #----------------------------------------------------------------------
     def _get(self, url,
              param_dict=None,
@@ -602,7 +610,7 @@ class BaseWebOperations(BaseOperation):
         ctx = None
         hasContext = False
         if self._verify == False and \
-           'context' in getargspec(request.urlopen).args:
+           'context' in self._has_context(request.urlopen):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
