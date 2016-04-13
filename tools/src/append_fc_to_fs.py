@@ -171,7 +171,9 @@ def main(*argv):
             else:
                 outputPrinter(message="\tFeature Service with id %s was not found" % fsId,typeOfMessage='error')
                 arcpy.SetParameterAsText(9, "false")
-
+        else:
+            outputPrinter(message=fst.message, typeOfMessage="error")
+            arcpy.SetParameterAsText(9, "false")
     except arcpy.ExecuteError:
         line, filename, synerror = trace()
         outputPrinter(message="error on line: %s" % line,typeOfMessage='error')
