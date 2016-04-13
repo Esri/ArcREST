@@ -1,4 +1,3 @@
-
 """
    This sample shows how to loop through all users and their
    items
@@ -9,13 +8,28 @@
 from __future__ import print_function
 import arcrest
 from arcrest.security import AGOLTokenSecurityHandler
+from datetime import datetime as dt
+import numpy as np
 
 datetimeformat = '%m/%d/%Y %H:%M:%S'
+createUsage = True # to filter views by date
+
+# Start & end times to aggregate between
+start = dt(2015, 7, 1)
+end = dt(2015, 9, 1)
+params = {
+            "period": "1d",
+            "groupby": "name",
+            "vars": "num",
+            "etype": "svcusg",
+            "stype": "portal",
+         }
+
 if __name__ == "__main__":
     username = ""#Username
     password = ""#password
     proxy_port = None
-    proxy_url = None
+    proxy_url = None   
 
     agolSH = AGOLTokenSecurityHandler(username=username,
                                       password=password)
@@ -23,21 +37,35 @@ if __name__ == "__main__":
 
     admin = arcrest.manageorg.Administration(securityHandler=agolSH)
     content = admin.content
-   
-    commUsers = admin.portals.portalSelf.users(start=1, num=100)
-    commUsers = commUsers['users']
-    
+    portal = admin.portals.portalSelf
+    commUsers = portal.users(start=1, num=100)
+    commUsers = commUsers['users']    
     
     for commUser in commUsers:
         user = admin.content.users.user(commUser.username)
-        for userItem in user.items:
+        for userItem in user.items:                
+        
             msg = "Item: {0}".format(userItem.id)
             msg = msg +  "\n\tName: {0}".format(userItem.name)
             msg = msg +  "\n\tTitle: {0}".format(userItem.title)
             msg = msg +  "\n\tOwned by: {0}".format(commUser.username)
             msg = msg +  "\n\tCreated on: {0}".format(arcrest.general.online_time_to_string(userItem.modified,datetimeformat))
             msg = msg +  "\n\tLast modified on: {0}".format(arcrest.general.online_time_to_string(userItem.modified,datetimeformat))
-            msg = msg +  "\n\tNum Views: {0}".format(userItem.numViews)
-            msg = msg +  "\n\tModified: {0}".format(arcrest.general.online_time_to_string(userItem.modified,datetimeformat))
+            msg = msg +  "\n\tTotal Views: {0}".format(userItem.numViews)
+            
+            if createUsage:
+                params['name'] = item.id
+                usage = portal.usage(start, end, **params)
+                views = 0
+                for data in usage['data']:
+                    # Views per period are returned as a list of lists
+                    # Import to numpy for easy summing
+                    arr = np.array(data['num'], dtype=np.uint64)
+                    views = arr.sum(0)[1] # Sum "2nd column"
+                    # Alternatively, without numpy
+                    # views = sum(map(int, zip(*data['num'])[1]))
+                msg = msg +  "\n\tTimestamped Views: {0}".format(views)
+            
             msg = msg +  "\n----------------------------------------------------------"
             print (msg)
+            

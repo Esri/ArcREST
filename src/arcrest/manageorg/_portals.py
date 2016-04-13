@@ -1568,28 +1568,37 @@ class Portal(BaseAGOLClass):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
-    def usage(self,
-              startTime,
-              endTime,
-              vars,
-              period="1d",
-              groupby=None
-              ):
+    def usage(self, startTime, endTime, vars=None, period=None,
+              groupby=None, name=None, stype=None, etype=None,
+              appId=None, deviceId=None, username=None, appOrgId=None,
+              userOrgId=None, hostOrgId=None):
         """
         returns the usage statistics value
         """
+
         url = self.root + "/usage"
-        startTime = int(local_time_to_online(dt=startTime)/ 1000)
-        endTime = int(local_time_to_online(dt=endTime) /1000)
+        startTime = str(int(local_time_to_online(dt=startTime)))
+        endTime = str(int(local_time_to_online(dt=endTime)))
+
         params = {
-            "f" : "json",
-            "vars" : vars,
-            "startTime" : "%s000" % startTime,
-            "endTime" : "%s000" % endTime,
-            "period" : period
-        }
-        if not groupby is None:
-            params['groupby'] = groupby
+                    'f' : 'json',
+                    'startTime' : startTime,
+                    'endTime' : endTime,
+                    'vars' : vars,
+                    'period' : period,
+                    'groupby' : groupby,
+                    'name' : name,
+                    'stype' : stype,
+                    'etype' : etype,
+                    'appId' : appId,
+                    'deviceId' : deviceId,
+                    'username' : username,
+                    'appOrgId' : appOrgId,
+                    'userOrgId' : userOrgId,
+                    'hostOrgId' : hostOrgId,
+                 }
+
+        params = {key:item for key,item in params.items() if item is not None}
         return self._post(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,

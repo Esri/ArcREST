@@ -1,7 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
-
 from .securityhandlerhelper import securityhandlerhelper
 
 dateTimeFormat = '%Y-%m-%d %H:%M'
@@ -17,10 +16,20 @@ import gc
 
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
+    """Determines information about where an error was thrown.
+
+    Returns:
+        tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'
+        
     """
     import traceback, inspect, sys
     tb = sys.exc_info()[2]
@@ -36,17 +45,18 @@ def trace():
 class resetTools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
-    def removeUserData(self,users=None):
-        """
-            This function deletes content for the list of users,
-            if no users are specified, all users in the org are queried
-            and their content is deleted.
-
-            Inputs:
-            users - Comma delimited list of user names
-
-        """
-
+    def removeUserData(self, users=None):
+        """Removes users' content and data.
+        
+        Args:
+            users (str): A comma delimited list of user names.
+                Defaults to ``None``.
+        
+        Warning:
+            When ``users`` is not provided (``None``), all users
+            in the organization will have their data deleted!
+        
+        """ 
         admin = None
         portal = None
         user = None
@@ -126,18 +136,19 @@ class resetTools(securityhandlerhelper):
 
             gc.collect()
 
-
     #----------------------------------------------------------------------
-    def removeUserGroups(self,users=None):
-        """
-            This function deletes all groups for the list of users,
-            if no users are specified, all users in the org are queried
-            and their groups is deleted.
-
-            Inputs:
-            users - Comma delimted list of user names
-
-            """
+    def removeUserGroups(self, users=None):
+        """Removes users' groups.
+        
+        Args:
+            users (str): A comma delimited list of user names.
+                Defaults to ``None``.
+        
+        Warning:
+            When ``users`` is not provided (``None``), all users
+            in the organization will have their groups deleted!
+        
+        """ 
         admin = None
         userCommunity = None
         portal = None
@@ -202,4 +213,3 @@ class resetTools(securityhandlerhelper):
             del group
 
             gc.collect()
-

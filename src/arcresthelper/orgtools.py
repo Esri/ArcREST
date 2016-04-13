@@ -17,10 +17,20 @@ import gc
 
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
+    """Determines information about where an error was thrown.
+
+    Returns:
+        tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'  
+        
     """
     import traceback, inspect, sys
     tb = sys.exc_info()[2]
@@ -36,8 +46,17 @@ def trace():
 class orgtools(securityhandlerhelper):
 
     #----------------------------------------------------------------------
-    def shareItemsToGroup(self,shareToGroupName,items=None,groups=None):
-
+    def shareItemsToGroup(self, shareToGroupName, items=None, groups=None):
+        """Share already published items with a group(s).
+        
+        Args:
+            shareToGroupName (list): The name of the group(s) with which the item(s) will be shared.
+            items (list): The item(s) that will be shared, referenced by their ID. Defaults to ``None``.
+            groups (list): The group(s) whose content will be shared, referenced by their ID. Defaults to ``None``.            
+        Notes:
+            If you want to share with a single group, ``shareToGroupName`` can be passed as a ``str``.
+        
+        """
         admin = None
         userCommunity = None
         group_ids = None
@@ -116,8 +135,19 @@ class orgtools(securityhandlerhelper):
             del result
             gc.collect()
     #----------------------------------------------------------------------
-    def getGroupContentItems(self,groupName):
-
+    def getGroupContentItems(self, groupName):
+        """Gets all the items owned by a group(s).
+        
+        Args:
+            groupName (list): The name of the group(s) from which to get items.
+        Returns:
+            list: A list of items belonging to the group(s).
+        Notes:
+            If you want to get items from a single group, ``groupName`` can be passed as a :py:obj:`str`.
+        See Also:
+            :py:func:`getGroupContent` for retrieving all content, not just items.
+        
+        """
         admin = None
         userCommunity = None
         groupIds = None
@@ -174,8 +204,21 @@ class orgtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def getGroupContent(self,groupName,onlyInOrg,onlyInUser):
-
+    def getGroupContent(self, groupName, onlyInOrg=False, onlyInUser=False):
+        """Gets all the content from a group.
+        
+        Args:
+            groupName (str): The name of the group from which to get items.
+            onlyInOrg (bool): A boolean value to only return content belonging to the current org.
+                Defaults to ``False``.
+            onlyInUser (bool): A boolean value to only return content belonging to the current user
+                credentials. Defaults to ``False``.
+        Returns:
+            list: A list of content belonging to the group.        
+        See Also:
+            :py:func:`getGroupContentItems` for retrieving only items.
+            
+        """
         admin = None
         groups = None
         q = None
@@ -186,10 +229,10 @@ class orgtools(securityhandlerhelper):
 
             groups = admin.community.groups
             q = groupName
-            if onlyInOrg == True:
-                q = q + " orgid: %s" % admin.portals.portalSelf.id
-            if onlyInUser == True:
-                q = q + " owner: %s" % self._securityHandler.username
+            if onlyInOrg is True:
+                q += " orgid: %s" % admin.portals.portalSelf.id
+            if onlyInUser is True:
+                q += " owner: %s" % self._securityHandler.username
             results = groups.search(q = q)
             if 'total' in results and 'results' in results:
                 if results['total'] > 0:
@@ -222,10 +265,18 @@ class orgtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def getThumbnailForItem(self,itemId,fileName,filePath):
-
+    def getThumbnailForItem(self, itemId, fileName, filePath):
+        """Gets an item's thumbnail and saves it to disk.
+        
+        Args:
+            itemId (str): The item's ID.
+            fileName (str): The name of the output image.
+            fileName (str): The directory on disk where to save the thumbnail.
+        Returns:
+            dict: The result from :py:func:`arcrest.manageorg._content.UserItem.saveThumbnail`
+        
+        """
         admin = None
-
         item = None
 
         try:
@@ -257,6 +308,37 @@ class orgtools(securityhandlerhelper):
                     access="org", sortField="title",
                     sortOrder="asc", isViewOnly=False,
                     isInvitationOnly=False, thumbnail=None):
+        """Creates a new group.
+        
+        Args:
+            title (str): The name of the new group, limited to 250 characters.
+            tags (str): A comma delimited list of tag names.
+            description (str): A description of the group that can be any length.
+            snippet (str): Snippet or summary of the group that has a character limit of 250 characters.
+                Defaults to ``""``.
+            phone (str): Group contact information, limited to 250 characters. Defaults to ``""``.
+            access (str): Sets the access level for the group. Defaults to ``"org"``.
+            sortField (str): Sets sort field for group items. Defaults to ``"title"``.
+            sortOrder (str): Sets sort order for group items. Defaults to ``"asc"``.
+            isViewOnly (bool): A boolean value to create a view-only group with no sharing. Defaults to ``False``.
+            isInvitationOnly (bool): A boolean value to not accept join requests. Defaults to ``False``.
+            thumbnail (str): The full pathname to the group thumbnail to upload. Defaults to ``None``.
+        Returns:
+            If sucessful, the result from :py:func:`arcrest.manageorg._community.Community.createGroup`.
+            
+            If the group already exists or there is an error, ``None`` is returned.
+        
+        +------------+----------------------------------------------------------------+
+        | Parameters |                      Possible Values                           |
+        +------------+----------------------------------------------------------------+
+        | access     | ``private|org|public``                                         |
+        +------------+----------------------------------------------------------------+
+        | sortField  | ``title|owner|avgrating|numviews|created|modified``            |
+        +------------+----------------------------------------------------------------+
+        | sortOrder  | ``asc|desc``                                                   |
+        +------------+----------------------------------------------------------------+
+            
+        """
         admin = None
         userCommunity = None
         try:
@@ -303,10 +385,20 @@ class orgtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def createRole(self,
-                    name,
-                    description="",
-                    privileges=None):
+    def createRole(self, name, description="", privileges=None):
+        """Creates a new role.
+        
+        Args:
+            name (str): The name of the new role.
+            description (str): The description of the new role. Defaults to ``""``.
+            privileges (str): A comma delimited list of privileges to apply to the new role.
+                Defaults to ``None``.
+        Returns:
+            If ``privileges`` is ``None``, the result from :py:func:`arcrest.manageorg._portals.Portal.createRole`.
+            
+            If ``privileges`` were succesfully added, the result from :py:func:`arcrest.manageorg._portals.Roles.setPrivileges`.
+            
+        """
         admin = None
         portal = None
         setPrivResults = None

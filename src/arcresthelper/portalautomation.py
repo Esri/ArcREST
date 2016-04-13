@@ -1,16 +1,5 @@
-"""
-    @author: ArcGIS for Utilities
-    @contact: ArcGISTeamUtilities@esri.com
-    @company: Esri
-    @version: 1.2
-    @description: Used to create reports, maps and apps
-    @requirements: Python 2.7.x, ArcGIS 10.2
-    @copyright: Esri, 2015
-
-"""
 from __future__ import print_function
 from __future__ import absolute_import
-
 
 import gc
 import sys, os, datetime
@@ -32,10 +21,20 @@ except:
 
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
+    """Determines information about where an error was thrown.
+
+    Returns:
+        tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'  
+
     """
     import traceback, inspect
     tb = sys.exc_info()[2]
@@ -51,7 +50,13 @@ def trace():
 
 class portalautomation(securityhandlerhelper):
     _log = None
-    def setLog(self,log_file):
+    def setLog(self, log_file):
+        """
+
+        References:
+            :py:func:`arcresthelper.common.init_log`
+
+        """
         if log_file is None:
             log_file = "log.txt"
         self._log = common.init_log(log_file=log_file)
@@ -60,8 +65,17 @@ class portalautomation(securityhandlerhelper):
             common.close_log(log_file = self._log)
 
     #----------------------------------------------------------------------
-    def stageContent(self,configFiles,dateTimeFormat=None):
+    def stageContent(self, configFiles, dateTimeFormat=None):
+        """Parses a JSON configuration file to stage content.
 
+        Args:
+            configFiles (list): A list of JSON files on disk containing
+                configuration data for staging content.
+            dateTimeFormat (str): A valid date formatting directive, as understood
+                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,
+                ``'%Y-%m-%d %H:%M'``.
+
+        """
         results = None
         groups = None
         items = None
@@ -180,9 +194,17 @@ class portalautomation(securityhandlerhelper):
             gc.collect()
 
     #----------------------------------------------------------------------
-    def createRoles(self,configFiles,dateTimeFormat=None):
+    def createRoles(self, configFiles, dateTimeFormat=None):
+        """Parses a JSON configuration file to create roles.
 
+        Args:
+            configFiles (list): A list of JSON files on disk containing
+                configuration data for creating roles.
+            dateTimeFormat (str): A valid date formatting directive, as understood
+                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,
+                ``'%Y-%m-%d %H:%M'``.
 
+        """
         if dateTimeFormat is None:
             dateTimeFormat = '%Y-%m-%d %H:%M'
 
@@ -276,8 +298,17 @@ class portalautomation(securityhandlerhelper):
             gc.collect()
 
     #----------------------------------------------------------------------
+    def createGroups(self, configFiles, dateTimeFormat=None):
+        """Parses a JSON configuration file to create groups.
 
-    def createGroups(self,configFiles,dateTimeFormat=None):
+        Args:
+            configFiles (list): A list of JSON files on disk containing
+                configuration data for creating groups.
+            dateTimeFormat (str): A valid date formatting directive, as understood
+                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,
+                ``'%Y-%m-%d %H:%M'``.
+
+        """
         groupInfo = None
         groupFile = None
         iconPath = None
@@ -407,8 +438,21 @@ class portalautomation(securityhandlerhelper):
             del orgTools
 
             gc.collect()
+
     #----------------------------------------------------------------------
-    def publishfromconfig(self,configFiles,combinedApp=None,dateTimeFormat=None):
+    def publishfromconfig(self, configFiles, combinedApp=None, dateTimeFormat=None):
+        """Parses a JSON configuration file to publish data.
+
+        Args:
+            configFiles (list): A list of JSON files on disk containing
+                configuration data for publishing.
+            combinedApp (str): A JSON file on disk containing configuration data
+                for app publishing. Defaults to ``None``.
+            dateTimeFormat (str): A valid date formatting directive, as understood
+                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,
+                ``'%Y-%m-%d %H:%M'``.
+
+        """
         publishTools = None
         webmaps = None
         config = None
