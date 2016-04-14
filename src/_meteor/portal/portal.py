@@ -2,7 +2,10 @@
 """
 from __future__ import absolute_import
 from ._base import BasePortal
-from .administration import *
+from .administration import _community, _content
+from .administration import _content_constants, _oauth2
+from .administration import _marketplace, _parameters
+from .administration import _portals
 class Portal(BasePortal):
     """
     Class that allows users to manage, content, site or users on ArcGIS
@@ -62,10 +65,8 @@ class Portal(BasePortal):
             url = self._url
         else:
             url = self._url + "/oauth2"
-        return _oauth2.oauth2(oauth_url=url,
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)
+        return _oauth2.oauth2(oauth_url=ur,
+                              connection=self._con)
     #----------------------------------------------------------------------
     @property
     def community(self):
@@ -73,9 +74,7 @@ class Portal(BasePortal):
         operations.
         """
         return _community.Community(url=self._url + "/community",
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port)
+                                    connection=self._con)
     #----------------------------------------------------------------------
     @property
     def content(self):
@@ -170,8 +169,8 @@ class Portal(BasePortal):
         if not t is None:
             params['t'] = t
         if useSecurity and \
-           self._securityHandler is not None and \
-           self._securityHandler.method == "token":
+           self._con._securityhandler is not None and \
+           self._con._securityhandler.method == "token":
             params["token"] = self._securityHandler.token
         if sortField is not None:
             params['sortField'] = sortField

@@ -53,7 +53,8 @@ class Administration(BasePortal):
         params = {
             "f" : "json"
         }
-
+        if connection is None:
+            connection = self._con
         json_dict = connection.get(path_or_url=self._url,
                                  params=params)
         self._json_dict = json_dict
@@ -99,20 +100,26 @@ class Administration(BasePortal):
         url = "%s/portals" % self.root
         return _portals.Portals(url=url,
                                 connection=self._con)
-    ##----------------------------------------------------------------------
-    #@property
-    #def oauth2(self):
-        #"""
-        #returns the oauth2 class
-        #"""
-        #if self._url.endswith("/oauth2"):
-            #url = self._url
-        #else:
-            #url = self._url + "/oauth2"
-        #return _oauth2.oauth2(oauth_url=url,
-                              #securityHandler=self._securityHandler,
-                              #proxy_url=self._proxy_url,
-                              #proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def oauth2(self):
+        """
+        returns the oauth2 class
+        """
+        if self._url.endswith("/oauth2"):
+            url = self._url
+        else:
+            url = self._url + "/oauth2"
+        return _oauth2.oauth2(oauth_url=url,
+                              connection=self._con)
+    #----------------------------------------------------------------------
+    @property
+    def local_portal_admin(self):
+        """hooks into managing local portal sites"""
+        url = self._url.replace('/sharing/rest', '/portaladmin')
+        from ..manageportal import PortalAdministration
+        return PortalAdministration(admin_url=url, connection=self._con)
+
     #----------------------------------------------------------------------
     @property
     def community(self):

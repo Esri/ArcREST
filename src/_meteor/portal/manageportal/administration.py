@@ -23,29 +23,25 @@ class _log(BasePortal):
 
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+                 connection,
                  initialize=False):
         """Constructor"""
         if url.lower().endswith("/log") == False:
             url = url + "/log"
         self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        self._con = connection
         if initialize:
-            self.__init()
+            self.__init(connection)
     #----------------------------------------------------------------------
-    def __init(self):
+    def __init(self, connection=None):
         """ initializes the site properties """
         params = {
-            "f" : "json",
+            "f" : "json"
         }
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+        if connection is None:
+            connection = self._con
+        json_dict = connection.get(path_or_url=self._url,
+                                 params=params)
         self._json_dict = json_dict
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
@@ -55,13 +51,8 @@ class _log(BasePortal):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print( k, " - attribute not implemented in manageportal.administration.log class.")
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+                setattr(self, k, json_dict[k])
+            del k, v
     #----------------------------------------------------------------------
     @property
     def resources(self):
@@ -84,10 +75,7 @@ class _log(BasePortal):
         params = {
             "f" : "json",
         }
-        return self._get(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url, params=params)
     #----------------------------------------------------------------------
     def editLogSettings(self, logLocation, logLevel="WARNING", maxLogFileAge=90):
         """
@@ -108,11 +96,8 @@ class _log(BasePortal):
             "logLevel" : logLevel,
             "maxLogFileAge" : maxLogFileAge
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def query(self, logLevel="WARNING", source="ALL",
               startTime=None, endTime=None,
@@ -161,11 +146,8 @@ class _log(BasePortal):
         else:
             params['pageSize'] = 1000
         params['filter'] = filter_value
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def cleanLogs(self):
         """erases all the log data"""
@@ -173,11 +155,8 @@ class _log(BasePortal):
         params = {
             "f":"json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
 ########################################################################
 class _Security(BaseAGOLClass):
     """
@@ -194,33 +173,22 @@ class _Security(BaseAGOLClass):
     _resources = None
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+                 connection,
                  initialize=False):
         """Constructor"""
-        if securityHandler is None:
-            pass
-        elif isinstance(securityHandler, PortalTokenSecurityHandler) or \
-               isinstance(securityHandler, ArcGISTokenSecurityHandler) or \
-               isinstance(securityHandler, OAuthSecurityHandler):
-            self._securityHandler = securityHandler
-            self._referer_url = securityHandler.referer_url
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        self._con = connection
         self._url = url
         if initialize:
-            self.__init()
+            self.__init(connection)
     #----------------------------------------------------------------------
-    def __init(self):
+    def __init(self, connection=None):
         """ initializes the site properties """
         params = {
             "f" : "json",
         }
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+        if connection is None:
+            connection = self._con
+        json_dict = connection.get(path_or_url=self._url, params=params)
         self._json_dict = json_dict
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
@@ -230,13 +198,7 @@ class _Security(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print( k, " - attribute not implemented in manageportal.administration.log class.")
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+                setattr(self, k, v)
     #----------------------------------------------------------------------
     @property
     def resources(self):
@@ -287,11 +249,8 @@ class _Security(BaseAGOLClass):
         }
         if idpUsername is None:
             params['idpUsername'] = idpUsername
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
 
     #----------------------------------------------------------------------
     def updateSecurityConfiguration(self,
@@ -330,10 +289,7 @@ class _Security(BaseAGOLClass):
             "enableAutomaticAccountCreation": enableAutomaticAccountCreation,
             "disableServicesDirectory" : disableServicesDirectory
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def updateIdenityStore(self,
                            userPassword,
@@ -401,10 +357,7 @@ class _Security(BaseAGOLClass):
             "usernameAttribute" : usernameAttribute,
             "caseSensitive" : caseSensitive
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def updateTokenConfiguration(self, sharedKey):
         """
@@ -420,10 +373,7 @@ class _Security(BaseAGOLClass):
             "f" : "json",
             "tokenConfig" : {"sharedKey" : sharedKey}
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def tokenConfigurations(self):
@@ -436,11 +386,8 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def securityConfiguration(self):
@@ -458,11 +405,8 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def users(self):
@@ -471,13 +415,10 @@ class _Security(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
 ########################################################################
-class _System(BaseAGOLClass):
+class _System(BasePortal):
     """
        This resource is an umbrella for a collection of system-wide
        resources for your portal. This resource provides access to the
@@ -485,21 +426,15 @@ class _System(BaseAGOLClass):
        management server, indexing capabilities, license information, and
        the properties of your portal.
     """
-    _securityHandler = None
+    _con = None
     _url = None
-    _proxy_url = None
-    _proxy_port = None
+    _json = None
+    _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection):
         """Constructor"""
-        if securityHandler is not None:
-            self._securityHandler = securityHandler
-            self._referer_url = securityHandler.referer_url
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        self._con = connection
         self._url = url
     #----------------------------------------------------------------------
     @property
@@ -514,11 +449,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def webAdaptor(self, webAdaptorID):
         """
@@ -548,11 +480,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
 
     #----------------------------------------------------------------------
     def unregisterWebAdaptor(self, webAdaptorID):
@@ -571,11 +500,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def updateWebAdaptorsConfiguration(self, webAdaptorsConfig):
         """
@@ -592,11 +517,7 @@ class _System(BaseAGOLClass):
             "f" : "json",
             "webAdaptorsConfig" : webAdaptorsConfig
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def webAdaptorsConfiguration(self):
@@ -613,11 +534,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def directories(self):
@@ -648,11 +565,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def directory(self, directoryName):
         """
@@ -673,11 +587,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def editDirectory(self, directoryName, physicalPath, description):
         """
@@ -699,11 +610,7 @@ class _System(BaseAGOLClass):
             "physicalPath": physicalPath,
             "description" : description
         }
-        return self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def database(self):
@@ -720,11 +627,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def updateDatabaseAccount(self, username,
                               password):
@@ -747,11 +651,7 @@ class _System(BaseAGOLClass):
             "username" : username,
             "password" : password
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def indexer(self):
@@ -765,11 +665,8 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json",
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def indexerStatus(self):
@@ -786,11 +683,7 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url, params=params)
     #----------------------------------------------------------------------
     def reindex(self, mode, includes=""):
         """
@@ -815,11 +708,8 @@ class _System(BaseAGOLClass):
             "mode" : mode,
             "includes" : includes
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def updateIndexConfiguration(self,
                                  indexerHost="localhost",
@@ -843,11 +733,8 @@ class _System(BaseAGOLClass):
             "indexerHost": indexerHost,
             "indexerPort": indexerPort
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def licenses(self):
@@ -859,14 +746,11 @@ class _System(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
 
 ########################################################################
-class PortalAdministration(BaseAGOLClass):
+class PortalAdministration(BasePortal):
     """
     This is the root resource for administering your portal. Starting from
     this root, all of the portal's environment is organized into a
@@ -886,31 +770,22 @@ class PortalAdministration(BaseAGOLClass):
     _json_dict = None
     #----------------------------------------------------------------------
     def __init__(self, admin_url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+                 connection,
                  initalize=False):
         """Constructor"""
-        if securityHandler is not None:
-            self._securityHandler = securityHandler
-            self._referer_url = securityHandler.referer_url
-
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        self._con = connection
         self._url = admin_url
         if initalize:
-            self.__init()
+            self.__init(connection)
     #----------------------------------------------------------------------
-    def __init(self):
+    def __init(self, connection=None):
         """ initializes the site properties """
         params = {
             "f" : "json",
         }
-
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+        if connection is None:
+            connection = self._con
+        json_dict = connection.get(path_or_url=self._url, params=params)
         self._json_dict = json_dict
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
@@ -920,21 +795,7 @@ class PortalAdministration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print( k, " - attribute not implemented in manageportal.administration class.")
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """returns the raw key/values for the object"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
-
+                setattr(self, k,v)
     #----------------------------------------------------------------------
     @property
     def resources(self):
@@ -997,11 +858,8 @@ class PortalAdministration(BaseAGOLClass):
             "securityQuerstionIdx" : securityQuerstionIdx,
             "securityQuestionAns" : securityQuestionAns
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def system(self):
@@ -1010,9 +868,7 @@ class PortalAdministration(BaseAGOLClass):
         """
         url = self._url + "/system"
         return _System(url=url,
-                       securityHandler=self._securityHandler,
-                       proxy_url=self._proxy_url,
-                       proxy_port=self._proxy_port)
+                       connection=self._con)
     #----------------------------------------------------------------------
     @property
     def security(self):
@@ -1021,18 +877,14 @@ class PortalAdministration(BaseAGOLClass):
         """
         url = self._url + "/security"
         return _Security(url=url,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+                         connection=self._con)
     #----------------------------------------------------------------------
     @property
     def logs(self):
         """returns the portals log information"""
         url = self._url + "/logs"
         return _log(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+                    connection=self._con)
     #----------------------------------------------------------------------
     @property
     def root(self):

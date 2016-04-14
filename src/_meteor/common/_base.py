@@ -1,13 +1,13 @@
-""" AttrDict is a subclass of dict with attribute-style access.
+""" BaseDict is a subclass of dict with attribute-style access.
 
-    >>> b = AttrDict()
+    >>> b = BaseDict()
     >>> b.hello = 'world'
     >>> b.hello
     'world'
     >>> b['hello'] += "!"
     >>> b.hello
     'world!'
-    >>> b.foo = AttrDict(lol=True)
+    >>> b.foo = BaseDict(lol=True)
     >>> b.foo.lol
     True
     >>> b.foo is b['foo']
@@ -15,10 +15,10 @@
 
     It is safe to import * from this module:
 
-        __all__ = ('AttrDict', 'munchify','unmunchify')
+        __all__ = ('BaseDict', 'munchify','unmunchify')
 
     un/munchify provide dictionary conversion; Munches can also be
-    converted via AttrDict.to/fromDict().
+    converted via BaseDict.to/fromDict().
 """
 from .packages import six
 import json
@@ -56,7 +56,7 @@ class BaseDict(dict):
     #----------------------------------------------------------------------
     def __setattr__(self, k, v):
         """ Sets attribute k if it exists, otherwise sets key k. A KeyError
-            raised by set-item (only likely if you subclass AttrDict) will
+            raised by set-item (only likely if you subclass BaseDict) will
             propagate as an AttributeError instead.
         """
         try:
@@ -89,13 +89,13 @@ class BaseDict(dict):
     @property
     def toDict(self):
         """
-        Recursively converts a AttrDict back into a dictionary.
+        Recursively converts a BaseDict back into a dictionary.
         """
         return self._obj_to_dict(self)
     #----------------------------------------------------------------------
     def __repr__(self):
         """
-        String-form of a AttrDict.
+        String-form of a BaseDict.
         """
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
     #----------------------------------------------------------------------
@@ -107,29 +107,29 @@ class BaseDict(dict):
     @staticmethod
     def fromDict(d):
         """
-        Transforms a dictionary into a AttrDict via copy.
+        Transforms a dictionary into a BaseDict via copy.
         """
-        return Test._dict_to_obj(d)
+        return BaseDict._dict_to_obj(d)
     #----------------------------------------------------------------------
     @staticmethod
     def _dict_to_obj(x):
         """
-        Transforms a dictionary into a AttrDict via copy.
+        Transforms a dictionary into a BaseDict via copy.
         """
         if isinstance(x, dict):
-            return AttrDict((k, AttrDict._dict_to_obj(v)) for k, v in six.iteritems(x))
+            return BaseDict((k, BaseDict._dict_to_obj(v)) for k, v in six.iteritems(x))
         elif isinstance(x, (list, tuple)):
-            return type(x)(AttrDict._dict_to_obj(v) for v in x)
+            return type(x)(BaseDict._dict_to_obj(v) for v in x)
         else:
             return x
     #----------------------------------------------------------------------
     @staticmethod
     def _obj_to_dict(x):
-        """ Recursively converts a AttrDict into a dictionary.
+        """ Recursively converts a BaseDict into a dictionary.
         """
         if isinstance(x, dict):
-            return dict((k, AttrDict._obj_to_dict(v)) for k, v in six.iteritems(x))
+            return dict((k, BaseDict._obj_to_dict(v)) for k, v in six.iteritems(x))
         elif isinstance(x, (list, tuple)):
-            return type(x)(AttrDict._obj_to_dict(v) for v in x)
+            return type(x)(BaseDict._obj_to_dict(v) for v in x)
         else:
             return x

@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import six
 from .web._base import BaseWebOperations
+import json
+import copy
 ########################################################################
 class BaseSecurityHandler(BaseWebOperations):
     """ All Security Objects inherit from this class """

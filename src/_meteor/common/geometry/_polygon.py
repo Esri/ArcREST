@@ -182,7 +182,7 @@ class Polygon(AbstractGeometry):
             ox,oy = array[0]
             for x,y in array[1:]:
                 self._planear += (x*oy-y*ox)
-                self._perim += math.abs((x-ox)+(y-oy)*1j)
+                self._perim += abs((x-ox)+(y-oy)*1j)
                 ox,oy = x,y
     #----------------------------------------------------------------------
     def __str__(self):
