@@ -7,8 +7,8 @@ from .._base import BasePortal
 import json
 from . import _portals, _community, _content, _oauth2
 from ..hostedservice import Services
-#from ..manageags import AGSAdministration
-from six.moves.urllib_parse import urlparse, urlunparse
+from ...server import AGSAdministration
+from ...common.packages.six.moves.urllib_parse import urlparse, urlunparse
 
 ########################################################################
 class Administration(BasePortal):
@@ -37,13 +37,13 @@ class Administration(BasePortal):
         if url.lower().find("/rest") == -1:
             url = url + "/rest"
         self._url = url
-        #urlInfo = urlparse(self._url)
-        #if str(urlInfo.netloc).lower() == "www.arcgis.com" > -1:
-            #portalSelf = self.portals.portalSelf
-            #urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
-            #self._url = urlunparse(urlInfo)
-            #self._url = "https://%s.%s/sharing/rest" % (portalSelf.urlKey, portalSelf.customBaseUrl)
-            #del portalSelf
+        urlInfo = urlparse(self._url)
+        if str(urlInfo.netloc).lower() == "www.arcgis.com" > -1:
+            portalSelf = self.portals.portalSelf
+            urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf['urlKey'], portalSelf['curstomBaseUrl']))
+            self._url = urlunparse(urlInfo)
+            self._url = "https://%s.%s/sharing/rest" % (portalSelf['urlKey'], portalSelf['customBaseUrl'])
+            del portalSelf
 
         if initialize:
             self.__init(connection=connection)
@@ -229,79 +229,76 @@ class Administration(BasePortal):
         return self._con.get(path_or_url=url,
                         params=params)
 
-    ##----------------------------------------------------------------------
-    #def hostingServers(self):
-        #"""
-          #Returns the objects to manage site's hosted services. It returns
-          #AGSAdministration object if the site is Portal and it returns a
-          #hostedservice.Services object if it is AGOL.
+    #----------------------------------------------------------------------
+    def hostingServers(self):
+        """
+          Returns the objects to manage site's hosted services. It returns
+          AGSAdministration object if the site is Portal and it returns a
+          hostedservice.Services object if it is AGOL.
 
-        #"""
-        #portals = self.portals
-        #portal = portals.portalSelf
-        #urls = portal.urls
-        #if 'error' in urls:
-            #print( urls)
-            #return
+        """
+        portals = self.portals
+        portal = portals.portalSelf
+        urls = portal.urls
+        if 'error' in urls:
+            print( urls)
+            return
 
-        #services = []
-        #if urls != {}:
-            #if 'urls' in urls:
-                #if 'features' in urls['urls']:
-                    #if 'https' in urls['urls']['features']:
-                        #for https in urls['urls']['features']['https']:
-                            #if portal.isPortal == True:
+        services = []
+        if urls != {}:
+            if 'urls' in urls:
+                if 'features' in urls['urls']:
+                    if 'https' in urls['urls']['features']:
+                        for https in urls['urls']['features']['https']:
+                            if portals.is_portal == True:
 
-                                #url = "%s/admin" % https
-                                ##url = https
-                                #services.append(AGSAdministration(url=url,
-                                             #securityHandler=self._securityHandler,
-                                             #proxy_url=self._proxy_url,
-                                             #proxy_port=self._proxy_port))
+                                url = "%s/admin" % https
+                                services.append(AGSAdministration(url=url,
+                                                                  connection=self._con))
 
-                            #else:
-                                #url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
-                                #services.append(Services(url=url,
-                                             #securityHandler=self._securityHandler,
-                                             #proxy_url=self._proxy_url,
-                                             #proxy_port=self._proxy_port))
-                    #elif 'http' in urls['urls']['features']:
-                        #for http in urls['urls']['features']['http']:
+                            else:
+                                url = "https://%s/%s/ArcGIS/rest/admin" % (https, portal.portalId)
+                                services.append(Services(url=url,
+                                                         connection=self._con))
+                    elif 'http' in urls['urls']['features']:
+                        for http in urls['urls']['features']['http']:
 
-                            #if (portal.isPortal == True):
-                                #url = "%s/admin" % http
-                                #services.append(AGSAdministration(url=url,
-                                                                  #securityHandler=self._securityHandler,
-                                                                  #proxy_url=self._proxy_url,
-                                                                  #proxy_port=self._proxy_port,
-                                                                  #initialize=True))
+                            if (portal.isPortal == True):
+                                url = "%s/admin" % http
+                                services.append(AGSAdministration(url=url,
+                                                                  connection=self._con,
+                                                                  initialize=True))
 
-                            #else:
-                                #url = "http://%s/%s/ArcGIS/rest/admin" % (http, portal.portalId)
-                                #services.append(Services(url=url,
-                                                          #securityHandler=self._securityHandler,
-                                                          #proxy_url=self._proxy_url,
-                                                          #proxy_port=self._proxy_port))
+                            else:
+                                url = "http://%s/%s/ArcGIS/rest/admin" % (http, portal.portalId)
+                                services.append(Services(url=url,
+                                                         connection=self._con))
 
-                    #else:
-                        #print( "Publishing servers not found")
-                #else:
-                    #print ("Publishing servers not found")
-            #else:
-                #print( "Publishing servers not found")
-            #return services
-        #else:
-            #for server in portal.servers['servers']:
-                #url = server['adminUrl'] + "/admin"
-                #sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
-                                                   #serverUrl=url,
-                                                   #referer=server['name'].replace(":6080", ":6443")
-                                                   #)
-                #services.append(
-                    #AGSAdministration(url=url,
-                                      #securityHandler=sh,
-                                      #proxy_url=self._proxy_url,
-                                      #proxy_port=self._proxy_port,
-                                      #initialize=False)
-                    #)
-            #return services
+                    else:
+                        print( "Publishing servers not found")
+                else:
+                    print ("Publishing servers not found")
+            else:
+                print( "Publishing servers not found")
+            return services
+        else:
+            connection_p = None
+            def modify_connection(con, sh):
+                """internal function to copy connection and modify the
+                securityhandler."""
+                con._securityHandler = sh
+                return con
+            for server in portal.servers['servers']:
+                url = server['adminUrl'] + "/admin"
+                if connection_p is None:
+                    from ...common.security import PortalTokenSecurityHandler
+                    sh = PortalServerSecurityHandler(tokenHandler=self._con._securityHandler,
+                                                     serverUrl=url,
+                                                     referer=server['name'].replace(":6080", ":6443"))
+                    connection_p = modify_connection(con=self._con, sh=sh)
+                services.append(
+                    AGSAdministration(url=url,
+                                      connection=connection_p,
+                                      initialize=False)
+                    )
+            return services
