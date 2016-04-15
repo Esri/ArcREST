@@ -861,18 +861,20 @@ class OAuthSecurityHandler(abstract.BaseSecurityHandler):
                               securityHandler=None,
                               proxy_port=self._proxy_port,
                               proxy_url=self._proxy_url)
-
         if 'access_token' in token:
             self._token = token['access_token']
             self._expires_in = token['expires_in']
             self._token_created_on = datetime.datetime.now()
             self._token_expires_on = self._token_created_on + datetime.timedelta(seconds=int(token['expires_in']))
+            self._valid = True
+            self._message = "Token Generated"
         else:
             self._token = None
             self._expires_in = None
             self._token_created_on = None
             self._token_expires_on = None
-            #self._token_expires_on = None
+            self._valid = False
+            self._message = token
 ########################################################################
 class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
     """ handles ArcGIS Maps Token Base Security

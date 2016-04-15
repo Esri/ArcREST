@@ -30,12 +30,21 @@ import traceback, inspect, sys
 import collections
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
-    """
+    """Determines information about where an error was thrown.
 
+    Returns:
+        tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'
+        
+    """
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -48,7 +57,18 @@ def trace():
 
 class featureservicetools(securityhandlerhelper):
     #----------------------------------------------------------------------
-    def RemoveAndAddFeatures(self, url, pathToFeatureClass,id_field,chunksize=1000):
+    def RemoveAndAddFeatures(self, url, pathToFeatureClass, id_field, chunksize=1000):
+        """Deletes all features in a feature service and uploads features from a feature class on disk.
+
+        Args:
+            url (str): The URL of the feature service.
+            pathToFeatureClass (str): The path of the feature class on disk.
+            id_field (str): The name of the field in the feature class to use for chunking.
+            chunksize (int): The maximum amount of features to upload at a time. Defaults to 1000.
+        Raises:
+            ArcRestHelperError: if ``arcpy`` can't be found.
+
+        """
         fl = None
 
         try:
@@ -175,6 +195,35 @@ class featureservicetools(securityhandlerhelper):
             gc.collect()
     #----------------------------------------------------------------------
     def EnableEditingOnService(self, url, definition = None):
+        """Enables editing capabilities on a feature service.
+
+        Args:
+            url (str): The URL of the feature service.
+            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.
+        Returns:
+            dict: The existing feature service definition capabilities.            
+        
+        When ``definition`` is not provided (``None``), the following values are used by default: 
+        
+        +------------------------------+------------------------------------------+
+        |              Key             |                   Value                  |
+        +------------------------------+------------------------------------------+
+        | hasStaticData                | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | allowGeometryUpdates         | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | enableEditorTracking         | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | enableOwnershipAccessControl | ``False``                                |
+        +------------------------------+------------------------------------------+
+        | allowOthersToUpdate          | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | allowOthersToDelete          | ``True``                                 |
+        +------------------------------+------------------------------------------+
+        | capabilities                 | ``"Query,Editing,Create,Update,Delete"`` |
+        +------------------------------+------------------------------------------+
+                
+        """
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 
         if definition is None:
@@ -203,7 +252,15 @@ class featureservicetools(securityhandlerhelper):
         return existingDef
     #----------------------------------------------------------------------
     def enableSync(self, url, definition = None):
-        """Enables Sync capability for an AGOL feature service"""
+        """Enables Sync capability for an AGOL feature service.
+
+        Args:
+            url (str): The URL of the feature service.
+            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.
+        Returns:
+            dict: The result from :py:func:`arcrest.hostedservice.service.AdminFeatureService.updateDefinition`.
+
+        """
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 
         cap = str(adminFS.capabilities)
@@ -221,10 +278,18 @@ class featureservicetools(securityhandlerhelper):
                 return enableResults['error']
         adminFS = None
         del adminFS
-        return enableResults    
+        return enableResults
     #----------------------------------------------------------------------
     def disableSync(self, url, definition = None):
-        """Disables Sync capability for an AGOL feature service"""
+        """Disables Sync capabilities for an AGOL feature service.
+
+        Args:
+            url (str): The URL of the feature service.
+            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.
+        Returns:
+            dict: The result from :py:func:`arcrest.hostedservice.service.AdminFeatureService.updateDefinition`.
+
+        """
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 
         cap = str(adminFS.capabilities)
@@ -244,8 +309,19 @@ class featureservicetools(securityhandlerhelper):
         adminFS = None
         del adminFS
         return enableResults
-    #----------------------------------------------------------------------        
-    def GetFeatureService(self,itemId,returnURLOnly=False):
+    #----------------------------------------------------------------------
+    def GetFeatureService(self, itemId, returnURLOnly=False):
+        """Obtains a feature service by item ID.
+
+        Args:
+            itemId (int): The feature service's item ID.
+            returnURLOnly (bool): A boolean value to return the URL of the feature service. Defaults to ``False``.
+        Returns:
+            When ``returnURLOnly`` is ``True``, the URL of the feature service is returned.
+
+            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.
+
+        """
         admin = None
         item = None
         try:
@@ -285,7 +361,19 @@ class featureservicetools(securityhandlerhelper):
             del admin
             gc.collect()
     #----------------------------------------------------------------------
-    def GetLayerFromFeatureServiceByURL(self,url,layerName="",returnURLOnly=False):
+    def GetLayerFromFeatureServiceByURL(self, url, layerName="", returnURLOnly=False):
+        """Obtains a layer from a feature service by URL reference.
+
+        Args:
+            url (str): The URL of the feature service.
+            layerName (str): The name of the layer. Defaults to ``""``.
+            returnURLOnly (bool): A boolean value to return the URL of the layer. Defaults to ``False``.
+        Returns:
+            When ``returnURLOnly`` is ``True``, the URL of the layer is returned.
+
+            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.
+
+        """
         fs = None
         try:
             fs = arcrest.agol.FeatureService(
@@ -308,7 +396,19 @@ class featureservicetools(securityhandlerhelper):
             del fs
             gc.collect()
     #----------------------------------------------------------------------
-    def GetLayerFromFeatureService(self,fs,layerName="",returnURLOnly=False):
+    def GetLayerFromFeatureService(self, fs, layerName="", returnURLOnly=False):
+        """Obtains a layer from a feature service by feature service reference.
+
+        Args:
+            fs (FeatureService): The feature service from which to obtain the layer.
+            layerName (str): The name of the layer. Defaults to ``""``.
+            returnURLOnly (bool): A boolean value to return the URL of the layer. Defaults to ``False``.
+        Returns:
+            When ``returnURLOnly`` is ``True``, the URL of the layer is returned.
+
+            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.
+
+        """
         layers = None
         table = None
         layer = None
@@ -360,7 +460,23 @@ class featureservicetools(securityhandlerhelper):
             del sublayer
             gc.collect()
     #----------------------------------------------------------------------
-    def AddFeaturesToFeatureLayer(self,url,pathToFeatureClass,chunksize=0,lowerCaseFieldNames=False):
+    def AddFeaturesToFeatureLayer(self, url, pathToFeatureClass, chunksize=0, lowerCaseFieldNames=False):
+        """Appends local features to a hosted feature service layer.
+
+        Args:
+            url (str): The URL of the feature service layer.
+            pathToFeatureClass (str): The path of the feature class on disk.
+            chunksize (int): The maximum amount of features to upload at a time. Defaults to 0.
+            lowerCaseFieldNames (bool): A boolean value indicating if field names should be converted
+                to lowercase before uploading. Defaults to ``False``.
+        Returns:
+            The result from :py:func:`arcrest.agol.services.FeatureLayer.addFeatures`.
+        Raises:
+            ArcRestHelperError: if ``arcpy`` can't be found.
+        Notes:
+            If publishing to a PostgreSQL database, it is suggested to to set ``lowerCaseFieldNames`` to ``True``.
+
+        """
         if arcpyFound == False:
             raise common.ArcRestHelperError({
                 "function": "AddFeaturesToFeatureLayer",
@@ -451,7 +567,20 @@ class featureservicetools(securityhandlerhelper):
             del fl
             gc.collect()
     #----------------------------------------------------------------------
-    def DeleteFeaturesFromFeatureLayer(self,url,sql,chunksize=0):
+    def DeleteFeaturesFromFeatureLayer(self, url, sql, chunksize=0):
+        """Removes features from a hosted feature service layer by SQL query.
+
+        Args:
+            url (str): The URL of the feature service layer.
+            sql (str): The SQL query to apply against the feature service.
+                Those features that satisfy the query will be deleted.
+            chunksize (int): The maximum amount of features to remove at a time. Defaults to 0.
+        Returns:
+            The result from :py:func:`arcrest.agol.services.FeatureLayer.deleteFeatures`.
+        Notes:
+            If you want to delete all features, it is suggested to use the SQL query ``"1=1"``.
+
+        """
         fl = None
         try:
             fl = FeatureLayer(
@@ -518,7 +647,25 @@ class featureservicetools(securityhandlerhelper):
             del fl
             gc.collect()
     #----------------------------------------------------------------------
-    def QueryAllFeatures(self,url,sql,out_fields="*",chunksize=1000,saveLocation="",outName=""):
+    def QueryAllFeatures(self, url, sql, out_fields="*", chunksize=1000, savePath=None):
+        """Performs an SQL query against a hosted feature service layer.
+
+        Args:
+            url (str): The URL of the feature service layer.
+            sql (str): The SQL query to apply against the feature service.
+                Those features that satisfy the query will be returned.
+            out_fields (str): A comma delimited list of field names to return.
+                Defaults to ``"*"``, i.e., return all fields
+            chunksize (int): The maximum amount of features to query at a time. Defaults to 1000.
+            savePath (str): The full path on disk where the features will be saved. Defaults to ``None``.
+        Returns:
+            When ``savePath`` is not provided (``None``), the result from
+                :py:func:`arcrest.agol.services.FeatureLayer.query`.
+
+            When ``savePath`` is provided, the result from
+                :py:func:`arcrest.common.general.FeatureSet.save`.
+
+        """
         fl = None
         try:
             fl = FeatureLayer(url=url, securityHandler=self._securityHandler)
@@ -557,10 +704,10 @@ class featureservicetools(securityhandlerhelper):
 
                         else:
                             print (results)
-                if saveLocation == "" or outName == "":
+                if savePath is None or savePath == '':
                     return combinedResults
                 else:
-                    return combinedResults.save(saveLocation=saveLocation, outName=outName)
+                    return combinedResults.save(*os.path.split(savePath))
             else:
                 print (qRes)
         except:
