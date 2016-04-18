@@ -34,10 +34,20 @@ def lineno():
     return inspect.currentframe().f_back.f_lineno
 #----------------------------------------------------------------------
 def trace():
-    """
-        trace finds the line, the filename
-        and error message and returns it
-        to the user
+    """Determines information about where an error was thrown.
+
+    Returns:
+        tuple: line number, filename, error message
+    Examples:
+        >>> try:
+        ...     1/0
+        ... except:
+        ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
+        ...        
+        Error on 'line 1234'
+        in file 'C:\\foo\\baz.py'
+        with error 'ZeroDivisionError: integer division or modulo by zero'
+
     """
     import traceback, inspect, sys
     tb = sys.exc_info()[2]
@@ -52,25 +62,32 @@ def trace():
 
 
 class publishingtools(securityhandlerhelper):
-    def getItemID(self,userContent,title=None, name=None, itemType=None):
-        """
-           This function retrieves the item ID if the item exist
+    #----------------------------------------------------------------------
+    def getItemID(self, userContent, title=None, name=None, itemType=None):
+        """Gets the ID of an item by a combination of title, name, and type.
+        
+        Args:
+            userContent (list): A list of user content.
+            title (str): The title of the item. Defaults to ``None``.
+            name (str): The name of the item. Defaults to ``None``.
+            itemType (str): The type of the item. Defaults to ``None``.
+        Returns:
+            str: The item's ID. If the item does not exist, ``None``.        
+        Raises:
+            AttributeError: If both ``title`` and ``name`` are not specified (``None``).
+        See Also:
+            :py:func:`getItem`
 
-           Inputs:
-              name - the name of the item
-            userContent - a list of user contnet
-           Output:
-              string - ID of item, none if item does not exist
         """
         itemID = None
-        if name == None and title == None:
+        if name is None and title is None:
             raise AttributeError('Name or Title needs to be specified')
         for item in userContent:
-            if title is None and not name is None:
+            if title is None and name is not None:
                 if item.name == name and (itemType is None or item.type == itemType):
                     return item.id
 
-            elif not title is None and name is None:
+            elif title is not None and name is None:
                 if item.title == title and (itemType is None or item.type == itemType):
                     return item.id
 
@@ -78,25 +95,32 @@ class publishingtools(securityhandlerhelper):
                 if item.name == name and item.title == title and (itemType is None or item.type == itemType):
                     return item.id
         return None
-    def getItem(self,userContent,title=None, name=None, itemType=None):
-        """
-           This function retrieves the item ID if the item exist
+    #----------------------------------------------------------------------    
+    def getItem(self, userContent, title=None, name=None, itemType=None):
+        """Gets an item by a combination of title, name, and type.
+        
+        Args:
+            userContent (list): A list of user content.
+            title (str): The title of the item. Defaults to ``None``.
+            name (str): The name of the item. Defaults to ``None``.
+            itemType (str): The type of the item. Defaults to ``None``.
+        Returns:
+            str: The item's ID. If the item does not exist, ``None``.        
+        Raises:
+            AttributeError: If both ``title`` and ``name`` are not specified (``None``).
+        See Also:
+            :py:func:`getItemID`
 
-           Inputs:
-              name - the name of the item
-            userContent - a list of user contnet
-           Output:
-              string - ID of item, none if item does not exist
         """
         itemID = None
-        if name == None and title == None:
+        if name is None and title is None:
             raise AttributeError('Name or Title needs to be specified')
         for item in userContent:
-            if title is None and not name is None:
+            if title is None and name is not None:
                 if item.name == name and (itemType is None or item.type == itemType):
                     return item
 
-            elif not title is None and name is None:
+            elif title is not None and name is None:
                 if item.title == title and (itemType is None or item.type == itemType):
                     return item
 
@@ -106,22 +130,23 @@ class publishingtools(securityhandlerhelper):
         return None
     #----------------------------------------------------------------------
     def folderExist(self, name, folders):
+        """Determines if a folder exists, case insensitively.
+        
+        Args:
+            name (str): The name of the folder to check.
+            folders (list): A list of folder dicts to check against. The dicts must contain
+                the key:value pair ``title``.
+        Returns:
+            bool: ``True`` if the folder exists in the list, ``False`` otherwise.
+          
         """
-           Determines if a folder exist
-
-           Inputs:
-             name - the name of the folder
-             folders - list of folders
-           Output:
-              boolean - true/false if the folder exist
-        """
-        if not name == None and not name == '':
+        if name is not None and name != '':
 
             folderID = None
 
             for folder in folders:
                 if folder['title'].lower() == name.lower():
-                    return True;
+                    return True
 
             del folders
 
@@ -129,9 +154,17 @@ class publishingtools(securityhandlerhelper):
 
         else:
             return False
-
     #----------------------------------------------------------------------
-    def publishItems(self,items_info):
+    def publishItems(self, items_info):
+        """Publishes a list of items.
+        
+        Args:
+            items_info (list): A list of JSON configuration items to publish.
+        
+        Returns:
+            list: A list of results from :py:meth:`arcrest.manageorg._content.User.addItem`.
+            
+        """
         if self.securityhandler is None:
             print ("Security handler required")
             return
@@ -151,7 +184,7 @@ class publishingtools(securityhandlerhelper):
 
                 itemInfo['ItemInfo']  = self._publishItems(config=item_info)
 
-                if not itemInfo['ItemInfo'] is None and 'name' in itemInfo['ItemInfo']:
+                if itemInfo['ItemInfo'] is not None and 'name' in itemInfo['ItemInfo']:
                     print ("%s created" % itemInfo['ItemInfo']['name'])
                     item_results.append(itemInfo)
                 else:
@@ -183,7 +216,7 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
      #----------------------------------------------------------------------
-    def _publishItems(self,config):
+    def _publishItems(self, config):
         name = None
         tags = None
         description = None
@@ -412,10 +445,17 @@ class publishingtools(securityhandlerhelper):
             del updateParams
 
             gc.collect()
-
-
     #----------------------------------------------------------------------
-    def publishMap(self,maps_info,fsInfo=None,itInfo=None):
+    def publishMap(self, maps_info, fsInfo=None, itInfo=None):
+        """Publishes a list of maps.
+        
+        Args:
+            maps_info (list): A list of JSON configuration maps to publish.
+        
+        Returns:
+            list: A list of results from :py:meth:`arcrest.manageorg._content.UserItem.updateItem`.
+            
+        """
         if self.securityhandler is None:
             print ("Security handler required")
             return
@@ -515,7 +555,7 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def _publishMap(self,config,replaceInfo=None,operationalLayers=None,tableLayers=None):
+    def _publishMap(self, config, replaceInfo=None, operationalLayers=None, tableLayers=None):
         name = None
         tags = None
         description = None
@@ -1058,9 +1098,17 @@ class publishingtools(securityhandlerhelper):
             del updateParams
 
             gc.collect()
-
     #----------------------------------------------------------------------
-    def publishCombinedWebMap(self,maps_info,webmaps):
+    def publishCombinedWebMap(self, maps_info, webmaps):
+        """Publishes a combination of web maps.
+        
+        Args:
+            maps_info (list): A list of JSON configuration combined web maps to publish.
+        
+        Returns:
+            list: A list of results from :py:meth:`arcrest.manageorg._content.UserItem.updateItem`.
+            
+        """
         if self.securityhandler is None:
             print ("Security handler required")
             return
@@ -1161,13 +1209,13 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def publishFsFromMXD(self,fs_config):
-        """
-            publishs a feature service from a mxd
-            Inputs:
-                feature_service_config: Json file with list of feature service publishing details
-            Output:
-                feature service item information
+    def publishFsFromMXD(self, fs_config):
+        """Publishes the layers in a MXD to a feauture service.
+        
+        Args:
+            fs_config (list): A list of JSON configuration feature service details to publish.
+        Returns:
+            dict: A dictionary of results objects.
 
         """
         fs = None
@@ -1236,13 +1284,13 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def publishFeatureCollections(self,configs):
-        """
-            publishs a feature service from a mxd
-            Inputs:
-                feature_service_config: Json file with list of feature service publishing details
-            Output:
-                feature service item information
+    def publishFeatureCollections(self, configs):
+        """Publishes feature collections to a feature service.
+        
+        Args:
+            configs (list): A list of JSON configuration feature service details to publish.
+        Returns:
+            dict: A dictionary of results objects.
 
         """
         if self.securityhandler is None:
@@ -1294,9 +1342,8 @@ class publishingtools(securityhandlerhelper):
             del config
 
             gc.collect()
-
     #----------------------------------------------------------------------
-    def _publishFSFromMXD(self,config,url='http://www.arcgis.com'):
+    def _publishFSFromMXD(self, config, url='http://www.arcgis.com'):
         mxd = None
         q = None
         everyone = None
@@ -1839,7 +1886,7 @@ class publishingtools(securityhandlerhelper):
             del enableResults
             gc.collect()
     #----------------------------------------------------------------------
-    def _publishAppLogic(self,appDet,map_info=None,fsInfo=None):
+    def _publishAppLogic(self, appDet, map_info=None, fsInfo=None):
         itemInfo = None
         replaceInfo = None
         replaceItem = None
@@ -1954,7 +2001,17 @@ class publishingtools(securityhandlerhelper):
             del itemId
             gc.collect()
     #----------------------------------------------------------------------
-    def publishApp(self,app_info,map_info=None,fsInfo=None):
+    def publishApp(self, app_info, map_info=None, fsInfo=None):
+        """Publishes apps to AGOL/Portal
+        
+        Args:
+            app_info (list): A list of JSON configuration apps to publish.
+            map_info (list): Defaults to ``None``.
+            fsInfo (list): Defaults to ``None``.
+        Returns:
+            dict: A dictionary of results objects.
+            
+        """
         if self.securityhandler is None:
             print ("Security handler required")
             return
@@ -2289,7 +2346,7 @@ class publishingtools(securityhandlerhelper):
 
             gc.collect()
     #----------------------------------------------------------------------
-    def _publishDashboard(self,config, replaceInfo):
+    def _publishDashboard(self, config, replaceInfo):
         resultApp = None
         tags = None
         description = None
@@ -2671,7 +2728,15 @@ class publishingtools(securityhandlerhelper):
             del updateResults
             gc.collect()
     #----------------------------------------------------------------------
-    def updateFeatureService(self,efs_config):
+    def updateFeatureService(self, efs_config):
+        """Updates a feature service.
+        
+        Args:
+            efs_config (list): A list of JSON configuration feature service details to update.
+        Returns:
+            dict: A dictionary of results objects.
+        
+        """
         if self.securityhandler is None:
             print ("Security handler required")
             return
