@@ -183,10 +183,9 @@ class Services(BaseAGSServer):
         }
         type_services = []
         folders = self.folders
-        folders.append("")
         baseURL = self._url
         for folder in folders:
-            if folder == "":
+            if folder == "/":
                 url = baseURL
             else:
                 url = baseURL + "/%s" % folder
@@ -196,10 +195,10 @@ class Services(BaseAGSServer):
                                proxy_port=self._proxy_port)
             if res.has_key("services"):
                 for service in res['services']:
-                    #if service_type == "*":
-                        #service['URL'] = url + "/%s.%s" % (service['serviceName'],
-                                                           #service_type)
-                        #type_services.append(service)
+                    if service_type == "*":
+                        service['URL'] = url + "/%s.%s" % (service['serviceName'],
+                                                           service['type'])
+                        type_services.append(service)
                     if service['type'].lower() in lower_types:
                         service['URL'] = url + "/%s.%s" % (service['serviceName'],
                                                            service_type)
