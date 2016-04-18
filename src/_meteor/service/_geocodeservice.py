@@ -1,9 +1,8 @@
 from __future__ import absolute_import
-from ._base import BaseService
 from ..common.geometry import Point
 import json
 ########################################################################
-class GeocodeService(BaseService):
+class GeocodeService(object):
     """
     Geocoding is the process of assigning a location, usually in the form
     of coordinate values (points), to an address by comparing the
@@ -15,8 +14,146 @@ class GeocodeService(BaseService):
     distinguishes a place.
     """
     _url = None
-    _json_dict = None
     _con = None
+    _json = None
+    _json_dict = None
+
+    _candidateFields = None
+    _intersectionCandidateFields = None
+    _capabilities = None
+    _spatialReference = None
+    _singleLineAddressField = None
+    _addressFields = None
+    _currentVersion = None
+    _locatorProperties = None
+    _serviceDescription = None
+    _countries = None
+    _categories = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._con = connection
+        if initialize:
+            self.__init(connection)
+    #----------------------------------------------------------------------
+    def __init(self, connection=None):
+        """loads the properties"""
+        params = {"f" : "json"}
+        missing = {}
+        if connection is None:
+            connection = self._con
+        result = connection.get(path_or_url=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        if isinstance(result, dict):
+            self._json_dict = result
+            for k,v in result.items():
+                if k in ['tables', 'layers']:
+                    setattr(self, "_"+k, v)
+                elif k in attributes:
+                    setattr(self, "_" + k, v)
+                else:
+                    missing[k] = v
+                    setattr(self, k, v)
+                del k,v
+        else:
+            raise RuntimeError("Could not connect to the service: %s" % result)
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
+    #----------------------------------------------------------------------
+    def __str__(self):
+        """returns object as string"""
+        if self._json is None:
+            self.__init()
+        return self._json
+    #----------------------------------------------------------------------
+    def __iter__(self):
+        """
+        returns key/value pair
+        """
+        attributes = json.loads(str(self))
+        for att in attributes.keys():
+            yield [att, getattr(self, att)]
+    #----------------------------------------------------------------------
+    @property
+    def countries(self):
+        """returns the countries property"""
+        if self._countries is None:
+            self.__init()
+        return self._countries
+    #----------------------------------------------------------------------
+    @property
+    def categories(self):
+        """returns the categories property"""
+        if self._categories is None:
+            self.__init()
+        return self._categories
+    #----------------------------------------------------------------------
+    @property
+    def candidateFields(self):
+        """get candidate fields"""
+        if self._candidateFields is None:
+            self.__init()
+        return self._candidateFields
+    #----------------------------------------------------------------------
+    @property
+    def intersectionCandidateFields(self):
+        """gets the intersectionCandidateFields value"""
+        if self._intersectionCandidateFields is None:
+            self.__init()
+        return self._intersectionCandidateFields
+    #----------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """gets the capabilities value"""
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """gets the spatialReference for the service"""
+        if self._spatialReference is None:
+            self.__init()
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def singleLineAddressField(self):
+        """returns single line support field"""
+        if self._singleLineAddressField is None:
+            self.__init()
+        return self._singleLineAddressField
+    #----------------------------------------------------------------------
+    @property
+    def addressFields(self):
+        """gets the address fields"""
+        if self._addressFields is None:
+            self.__init()
+        return self._addressFields
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """gets the current version"""
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def locatorProperties(self):
+        """gets the locator properties"""
+        if self._locatorProperties is None:
+            self.__init()
+        return self._locatorProperties
+    #----------------------------------------------------------------------
+    @property
+    def serviceDescription(self):
+        """gets the service description"""
+        if self._serviceDescription is None:
+            self.__init()
+        return self._serviceDescription
     #----------------------------------------------------------------------
     def find(self,
              text,
@@ -81,42 +218,44 @@ class GeocodeService(BaseService):
             results, in a database for example, you need to set this
             parameter to true.
         """
-
-        url = self._url + "/find"
-        params = {
-            "f" : "json",
-            "text" : text,
-            #"token" : self._securityHandler.token
-        }
-        if not magicKey is None:
-            params['magicKey'] = magicKey
-        if not sourceCountry is None:
-            params['sourceCountry'] = sourceCountry
-        if not bbox is None:
-            params['bbox'] = bbox
-        if not location is None:
-            if isinstance(location, Point):
-                params['location'] = location.as_dict
-            elif isinstance(location, list):
-                params['location'] = "%s,%s" % (location[0], location[1])
-            elif isinstance(location, dict):
-                params['location'] = location
-            if not distance is None:
-                params['distance'] = distance
-        if not outSR is None:
-            params['outSR'] = outSR
-        if not category is None:
-            params['category'] = category
-        if outFields is None:
-            params['outFields'] = "*"
+        from .. import Connection
+        if isinstance(self._con, Connection): pass
+        if isinstance(self._con.security_method.lower() != "anonymous"):
+            url = self._url + "/find"
+            params = {
+                "f" : "json",
+                "text" : text,
+                #"token" : self._securityHandler.token
+            }
+            if not magicKey is None:
+                params['magicKey'] = magicKey
+            if not sourceCountry is None:
+                params['sourceCountry'] = sourceCountry
+            if not bbox is None:
+                params['bbox'] = bbox
+            if not location is None:
+                if isinstance(location, Point):
+                    params['location'] = location.asDictionary
+                if isinstance(location, list):
+                    params['location'] = "%s,%s" % (location[0], location[1])
+                if not distance is None:
+                    params['distance'] = distance
+            if not outSR is None:
+                params['outSR'] = outSR
+            if not category is None:
+                params['category'] = category
+            if outFields is None:
+                params['outFields'] = "*"
+            else:
+                params['outFields'] = outFields
+            if not maxLocations is None:
+                params['maxLocations'] = maxLocations
+            if not forStorage is None:
+                params['forStorage'] = forStorage
+            return self._con.post(path_or_url=url,
+                                  postdata=params)
         else:
-            params['outFields'] = outFields
-        if not maxLocations is None:
-            params['maxLocations'] = maxLocations
-        if not forStorage is None:
-            params['forStorage'] = forStorage
-        return self._con.post(url=url,
-                             postdata=params)
+            raise Exception("This function works on the ArcGIS Online World Geocoder")
     #----------------------------------------------------------------------
     def findAddressCandidates(self,
                               addressDict=None,
@@ -269,11 +408,9 @@ class GeocodeService(BaseService):
             params['searchExtent'] = searchExtent
         if isinstance(location, Point):
             params['location'] = location.as_dict
-        elif isinstance(location, dict):
-            params['location'] = location
         elif isinstance(location, list):
             params['location'] = "%s,%s" % (location[0], location[1])
-        return self._con.post(path_of_url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def geocodeAddresses(self,
@@ -360,11 +497,9 @@ class GeocodeService(BaseService):
         }
         url = self._url + "/reverseGeocode"
         if isinstance(location, Point):
-            params['location'] = location.as_dict
+            params['location'] = location.asDictionary
         elif isinstance(location, list):
             params['location'] = "%s,%s" % (location[0], location[1])
-        elif isinstance(location, dict):
-            params['location'] = location
         else:
             raise Exception("Invalid location")
         return self._con.post(path_or_url=url,
@@ -438,11 +573,9 @@ class GeocodeService(BaseService):
         }
         url = self._url + "/suggest"
         if isinstance(location, Point):
-            params['location'] = location.as_dict
+            params['location'] = location.asDictionary
         elif isinstance(location, list):
             params['location'] = "%s,%s" % (location[0], location[1])
-        elif isinstance(location, dict):
-            params['location'] = location
         else:
             raise Exception("Invalid location, please try again")
         if not category is None:
@@ -451,4 +584,4 @@ class GeocodeService(BaseService):
            isinstance(distance, (int, float)):
             params['distance'] = distance
         return self._con.post(path_or_url=url,
-                             postdata=params)
+                              postdata=params)

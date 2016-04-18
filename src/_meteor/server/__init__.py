@@ -2,9 +2,9 @@
 Server Control Package
 """
 from __future__ import absolute_import
-from .catalog import Catalog
+from .server.ags import Catalog as AGSCatalog
 from .manage import AGSAdministration
 from .manage._services import Services
 
-__all__ = ['AGSAdministration', 'Catalog']
+__all__ = ['AGSAdministration', 'AGSCatalog']
 __version__ = "4.0.0"

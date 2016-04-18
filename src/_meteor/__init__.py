@@ -8,7 +8,7 @@ from .service import geoprocessing, GlobeService
 from .service import ImageService, MobileService, NetworkService
 from .service import SceneService, VectorTileService
 from .portal import Portal
-from .server.catalog import Server
+from .server.catalog import AGSCatalog
 
 
 __version__ = "4.0.0"

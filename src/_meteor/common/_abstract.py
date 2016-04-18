@@ -1,10 +1,10 @@
 from collections import OrderedDict
 import six
-from .web._base import BaseWebOperations
+#from .web._base import BaseWebOperations
 import json
 import copy
 ########################################################################
-class BaseSecurityHandler(BaseWebOperations):
+class BaseSecurityHandler(object):
     """ All Security Objects inherit from this class """
     _token = None
     _valid = True

@@ -21,6 +21,161 @@ class VectorTileService(BaseService):
     """
     _con = None
     _url = None
+    _json = None
+    _json_dict = None
+    _tileInfo = None
+    _tiles = None
+    _name = None
+    _tileMap = None
+    _maxScale = None
+    _capabilities = None
+    _defaultStyles = None
+    _currentVersion = None
+    _resourceInfo = None
+    _initialExtent = None
+    _maxzoom = None
+    _fullExtent = None
+    _minScale = None
+    _type = None
+    _exportTilesAllowed = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._con = connection
+
+        if initialize:
+            self.__init(connection)
+    #----------------------------------------------------------------------
+    def __init(self, connection=None):
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+        missing = {}
+        if connection is None:
+            connection = self._con
+        self._url = self._url.replace(' ','+')
+
+        json_dict = connection.get(url_or_path=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.items():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                missing[k] = v
+                setattr(self, k, v)
+            del k,v
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
+    #--------------------------------------------------------------------------
+    @property
+    def tileInfo(self):
+        """gets the value tileInfo"""
+        if self._tileInfo is None:
+            self.__init()
+        return self._tileInfo
+    #--------------------------------------------------------------------------
+    @property
+    def tiles(self):
+        """gets the value tiles"""
+        if self._tiles is None:
+            self.__init()
+        return self._tiles
+    #--------------------------------------------------------------------------
+    @property
+    def name(self):
+        """gets the value name"""
+        if self._name is None:
+            self.__init()
+        return self._name
+    #--------------------------------------------------------------------------
+    @property
+    def tileMap(self):
+        """gets the value tileMap"""
+        if self._tileMap is None:
+            self.__init()
+        return self._tileMap
+    #--------------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """gets the value maxScale"""
+        if self._maxScale is None:
+            self.__init()
+        return self._maxScale
+    #--------------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """gets the value capabilities"""
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    #--------------------------------------------------------------------------
+    @property
+    def defaultStyles(self):
+        """gets the value defaultStyles"""
+        if self._defaultStyles is None:
+            self.__init()
+        return self._defaultStyles
+    #--------------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """gets the value currentVersion"""
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #--------------------------------------------------------------------------
+    @property
+    def resourceInfo(self):
+        """gets the value resourceInfo"""
+        if self._resourceInfo is None:
+            self.__init()
+        return self._resourceInfo
+    #--------------------------------------------------------------------------
+    @property
+    def initialExtent(self):
+        """gets the value initialExtent"""
+        if self._initialExtent is None:
+            self.__init()
+        return self._initialExtent
+    #--------------------------------------------------------------------------
+    @property
+    def maxzoom(self):
+        """gets the value maxzoom"""
+        if self._maxzoom is None:
+            self.__init()
+        return self._maxzoom
+    #--------------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        """gets the value fullExtent"""
+        if self._fullExtent is None:
+            self.__init()
+        return self._fullExtent
+    #--------------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """gets the value minScale"""
+        if self._minScale is None:
+            self.__init()
+        return self._minScale
+    #--------------------------------------------------------------------------
+    @property
+    def type(self):
+        """gets the value type"""
+        if self._type is None:
+            self.__init()
+        return self._type
+    #--------------------------------------------------------------------------
+    @property
+    def exportTilesAllowed(self):
+        """gets the value exportTilesAllowed"""
+        if self._exportTilesAllowed is None:
+            self.__init()
+        return self._exportTilesAllowed
     #----------------------------------------------------------------------
     @property
     def styles(self):

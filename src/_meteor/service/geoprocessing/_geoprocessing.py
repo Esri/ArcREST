@@ -51,12 +51,31 @@ class GPService(BaseService):
     _con = None
     _url = None
     _json_dict = None
+    _resultMapServerName = None
+    _tasks = None
+    _executionType = None
+    _currentVersion = None
+    _maximumRecords = None
+    _serviceDescription = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._con = connection
+
+        if initialize:
+            self.__init(connection)
     #----------------------------------------------------------------------
     def __init(self, connection):
         """loads the properties"""
         params = {"f" : "json"}
+        missing = {}
         self._tasks = []
         result = connection.get(path_or_url=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
         if isinstance(result, dict):
             self._json_dict = result
             for k,v in result.items():
@@ -67,11 +86,16 @@ class GPService(BaseService):
                                 connection=self._con,
                                 url=self._url + "/%s" % t,
                                 initialize=False))
+                elif k in attributes:
+                    setattr(self, "_" + k, v)
                 else:
+                    missing[k] = v
                     setattr(self, k, v)
                 del k,v
         else:
             raise RuntimeError("Could not connect to the service: %s" % result)
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
     #----------------------------------------------------------------------
     @property
     def tasks(self):
@@ -79,6 +103,47 @@ class GPService(BaseService):
         if self._tasks is None:
             self.__init(self._con)
         return self._tasks
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def resultMapServerName(self):
+        """ returns the result mapserver name """
+        if self._resultMapServerName is None:
+            self.__init()
+        return self._resultMapServerName
+    #----------------------------------------------------------------------
+    @property
+    def tasks(self):
+        """ returns the tasks in the GP service """
+        if self._tasks is None:
+            self.__init()
+        return self._tasks
+    #----------------------------------------------------------------------
+    @property
+    def executionType(self):
+        """ returns the execution type """
+        if self._executionType is None:
+            self.__init()
+        return self._executionType
+    #----------------------------------------------------------------------
+    @property
+    def maximumRecords(self):
+        """ the maximum number of rows returned from service """
+        if self._maximumRecords is None:
+            self.__init()
+        return self._maximumRecords
+    #----------------------------------------------------------------------
+    @property
+    def serviceDescription(self):
+        """ returns the service description """
+        if self._serviceDescription is None:
+            self.__init()
+        return self._serviceDescription
 ########################################################################
 class GPTask(BaseService):
     """ This is the GP task that performs the operation """
@@ -86,6 +151,93 @@ class GPTask(BaseService):
     _con = None
     _json_dict = None
     _parameters = None
+    _category = None
+    _displayName = None
+    _name = None
+    _parameters = None
+    _executionType = None
+    _helpUrl = None
+    _description = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._con = connection
+        if initialize:
+            self.__init(connection)
+    #----------------------------------------------------------------------
+    def __init(self, connection):
+        """loads the properties"""
+        params = {"f" : "json"}
+        missing = {}
+        self._tasks = []
+        result = connection.get(path_or_url=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        if isinstance(result, dict):
+            self._json_dict = result
+            for k,v in result.items():
+                if k == "tasks":
+                    for t in v:
+                        self._tasks.append(
+                            GPTask(
+                                connection=self._con,
+                                url=self._url + "/%s" % t,
+                                initialize=False))
+                elif k in attributes:
+                    setattr(self, "_" + k, v)
+                else:
+                    missing[k] = v
+                    setattr(self, k, v)
+                del k,v
+        else:
+            raise RuntimeError("Could not connect to the service: %s" % result)
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
+    #----------------------------------------------------------------------
+    @property
+    def executionType(self):
+        """ returns the execution type """
+        if self._executionType is None:
+            self.__init()
+        return self._executionType
+    #----------------------------------------------------------------------
+    @property
+    def helpUrl(self):
+        """ returns the help url """
+        if self._helpUrl is None:
+            self.__init()
+        return self._helpUrl
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """ returns the description of the service """
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def category(self):
+        """ returns the category """
+        if self._category is None:
+            self.__init()
+        return self._category
+    #----------------------------------------------------------------------
+    @property
+    def displayName(self):
+        """ returns the tools display name """
+        if self._displayName is None:
+            self.__init()
+        return self._displayName
+    #----------------------------------------------------------------------
+    @property
+    def name(self):
+        """ returns the name of the service """
+        if self._name is None:
+            self.__init()
+        return self._name
     #----------------------------------------------------------------------
     @property
     def parameters(self):
@@ -216,18 +368,39 @@ class GPJob(BaseService):
     _url = None
     _results = None
     _messages = None
+    _jobStatus = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url,
+                 initialize=False):
+        """Constructor"""
+        self._url = url
+        self._con = connection
+        if initialize:
+            self.__init(connection)
+    #----------------------------------------------------------------------
     def __init(self, connection=None):
-        params = {"f" : "json"}
-        self._json_dict = {}
-        result = self._con.get(path_or_url=self._url, params=params)
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k == "messages":
-                    self._messages = v
-                else:
-                    setattr(self, k, v)
-                del k,v
+        """ initializes all the properties """
+        params = {
+            "f" : "json"
+        }
+        missing = {}
+        if connection is None:
+            connection = self._con
+        self._url = self._url.replace(' ','+')
+
+        json_dict = connection.get(url_or_path=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.items():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                missing[k] = v
+                setattr(self, k, v)
+            del k,v
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
     #----------------------------------------------------------------------
     def cancelJob(self):
         """ cancels the job """
@@ -258,9 +431,8 @@ class GPJob(BaseService):
     @property
     def results(self):
         """ returns the results """
-        self._results = {}
         self.__init()
-        for k,v in self.results.items():
+        for k,v in self._results.items():
             param = self._get_json(v['paramUrl'])
             if param['dataType'] == "GPFeatureRecordSetLayer":
                 self._results[k] = GPFeatureRecordSetLayer.fromJSON(json.dumps(param))
@@ -291,10 +463,23 @@ class GPJob(BaseService):
         return self._results
     #----------------------------------------------------------------------
     @property
+    def jobStatus(self):
+        """ returns the job status """
+        self.__init()
+        return self._jobStatus
+    #----------------------------------------------------------------------
+    @property
+    def jobId(self):
+        """ returns the job ID """
+        if self._jobId is None:
+            self.__init()
+        return self._jobId
+    #----------------------------------------------------------------------
+    @property
     def inputs(self):
         """ returns the inputs of a service """
         self.__init()
-        return self.inputs
+        return self._inputs
     #----------------------------------------------------------------------
     def getParameterValue(self, parameterName):
         """ gets a parameter value """

@@ -2,8 +2,8 @@
 
 .. module:: _mapservice.py
    :platform: Windows, Linux
-   :synopsis: Represents functions/classes used to control Feature Services
-              and Feature Layer
+   :synopsis: Represents functions/classes used to control Map Services
+              and map service layer
 
 .. moduleauthor:: Esri
 
@@ -18,10 +18,278 @@ from .geoprocessing import GPTask, GPService, GPJob
 class MapService(BaseService):
     """
     """
-    def __init__(self, connection, url):
-        self._url = url
+    _con = None
+    _json_dict = None
+    _json = None
+    _url = None
+    _tileInfo = None
+    _currentVersion = None
+    _serviceDescription = None
+    _mapName = None
+    _description = None
+    _copyrightText = None
+    _supportsDynamicLayers = None
+    _layers = None
+    _tables = None
+    _spatialReference = None
+    _singleFusedMapCache = None
+    _initialExtent = None
+    _fullExtent = None
+    _minScale = None
+    _maxScale = None
+    _units = None
+    _supportedImageFormatTypes = None
+    _documentInfo = None
+    _capabilities = None
+    _supportedQueryFormats = None
+    _exportTilesAllowed = None
+    _maxRecordCount = None
+    _maxImageHeight = None
+    _maxImageWidth = None
+    _supportedExtensions = None
+    _timeInfo = None
+    _maxExportTilesCount = None
+    _hasVersionedData = None
+    _tileServers = None
+    _supportsDynamicLayers = None
+    _initialExtent = None
+    _documentInfo = None
+    _spatialReference = None
+    _description = None
+    _layers = None
+    _tables = None
+    _supportedImageFormatTypes = None
+    _capabilities = None
+    _mapName = None
+    _currentVersion = None
+    _units = None
+    _supportedQueryFormats = None
+    _maxRecordCount = None
+    _exportTilesAllowed = None
+    _maxImageHeight = None
+    _supportedExtensions = None
+    _fullExtent = None
+    _singleFusedMapCache = None
+    _maxImageWidth = None
+    _maxScale = None
+    _copyrightText = None
+    _minScale = None
+    _serviceDescription = None
+    #----------------------------------------------------------------------
+    def __init__(self, connection, url, initialize=False):
+        """constructor"""
         self._con = connection
-        super(MapService, self).__init__(connection, url)
+        self._url = url
+        self._json_dict = None
+        if initialize:
+            self.__init(connection)
+    #----------------------------------------------------------------------
+    def __init(self, connection=None):
+        """loads the properties"""
+        params = {"f" : "json"}
+        missing = {}
+        if connection is None:
+            connection = self._con
+        result = connection.get(path_or_url=self._url, params=params)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        if isinstance(result, dict):
+            self._json_dict = result
+            for k,v in result.items():
+                if k in attributes:
+                    setattr(self, "_" + k, v)
+                else:
+                    missing[k] = v
+                    setattr(self, k, v)
+                del k,v
+        else:
+            raise RuntimeError("Could not connect to the service: %s" % result)
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
+    #----------------------------------------------------------------------
+    @property
+    def supportsDynamicLayers(self):
+        """gets the supportsDynamicLayers value"""
+        if self._supportsDynamicLayers is None:
+            self.__init()
+        return self._supportsDynamicLayers
+    #----------------------------------------------------------------------
+    @property
+    def initialExtent(self):
+        """gets the initialExtent value"""
+        if self._initialExtent is None:
+            self.__init()
+        return self._initialExtent
+    #----------------------------------------------------------------------
+    @property
+    def documentInfo(self):
+        """gets the documentInfo value"""
+        if self._documentInfo is None:
+            self.__init()
+        return self._documentInfo
+    #----------------------------------------------------------------------
+    @property
+    def spatialReference(self):
+        """gets the spatialReference value"""
+        if self._spatialReference is None:
+            self.__init()
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """gets the description value"""
+        if self._description is None:
+            self.__init()
+        return self._description
+    #----------------------------------------------------------------------
+    @property
+    def layers(self):
+        """gets the layers value"""
+        if self._layers is None:
+            self.__init()
+        return self._layers
+    #----------------------------------------------------------------------
+    @property
+    def tables(self):
+        """gets the tables value"""
+        if self._tables is None:
+            self.__init()
+        return self._tables
+    #----------------------------------------------------------------------
+    @property
+    def supportedImageFormatTypes(self):
+        """gets the supportedImageFormatTypes value"""
+        if self._supportedImageFormatTypes is None:
+            self.__init()
+        return self._supportedImageFormatTypes
+    #----------------------------------------------------------------------
+    @property
+    def capabilities(self):
+        """gets the capabilities value"""
+        if self._capabilities is None:
+            self.__init()
+        return self._capabilities
+    #----------------------------------------------------------------------
+    @property
+    def mapName(self):
+        """gets the mapName value"""
+        if self._mapName is None:
+            self.__init()
+        return self._mapName
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """gets the currentVersion value"""
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        """gets the units value"""
+        if self._units is None:
+            self.__init()
+        return self._units
+    #----------------------------------------------------------------------
+    @property
+    def supportedQueryFormats(self):
+        """gets the supportedQueryFormats value"""
+        if self._supportedQueryFormats is None:
+            self.__init()
+        return self._supportedQueryFormats
+    #----------------------------------------------------------------------
+    @property
+    def maxRecordCount(self):
+        """gets the maxRecordCount value"""
+        if self._maxRecordCount is None:
+            self.__init()
+        return self._maxRecordCount
+    #----------------------------------------------------------------------
+    @property
+    def exportTilesAllowed(self):
+        """gets the exportTilesAllowed value"""
+        if self._exportTilesAllowed is None:
+            self.__init()
+        return self._exportTilesAllowed
+    #----------------------------------------------------------------------
+    @property
+    def maxImageHeight(self):
+        """gets the maxImageHeight value"""
+        if self._maxImageHeight is None:
+            self.__init()
+        return self._maxImageHeight
+    #----------------------------------------------------------------------
+    @property
+    def supportedExtensions(self):
+        """gets the supportedExtensions value"""
+        if self._supportedExtensions is None:
+            self.__init()
+        return self._supportedExtensions
+    #----------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        """gets the fullExtent value"""
+        if self._fullExtent is None:
+            self.__init()
+        return self._fullExtent
+    #----------------------------------------------------------------------
+    @property
+    def singleFusedMapCache(self):
+        """gets the singleFusedMapCache value"""
+        if self._singleFusedMapCache is None:
+            self.__init()
+        return self._singleFusedMapCache
+    #----------------------------------------------------------------------
+    @property
+    def maxImageWidth(self):
+        """gets the maxImageWidth value"""
+        if self._maxImageWidth is None:
+            self.__init()
+        return self._maxImageWidth
+    #----------------------------------------------------------------------
+    @property
+    def maxScale(self):
+        """gets the maxScale value"""
+        if self._maxScale is None:
+            self.__init()
+        return self._maxScale
+    #----------------------------------------------------------------------
+    @property
+    def copyrightText(self):
+        """gets the copyrightText value"""
+        if self._copyrightText is None:
+            self.__init()
+        return self._copyrightText
+    #----------------------------------------------------------------------
+    @property
+    def minScale(self):
+        """gets the minScale value"""
+        if self._minScale is None:
+            self.__init()
+        return self._minScale
+    #----------------------------------------------------------------------
+    @property
+    def serviceDescription(self):
+        """gets the serviceDescription value"""
+        if self._serviceDescription is None:
+            self.__init()
+        return self._serviceDescription
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """gets the tileServers value"""
+        if self._tileServers is None:
+            self.__init()
+        return self._tileServers
+    #----------------------------------------------------------------------
+    @property
+    def kml(self):
+        url = "{url}/kml/mapImage.kmz".format(url=self._url)
+        return self._con.get(path_or_url=url, params={"f" : 'json'},
+                             file_name="mapImage.kmz",
+                             out_folder=tempfile.gettempdir())
+    #----------------------------------------------------------------------
     @property
     def itemInfo(self):
         """returns the service's item's infomation"""
@@ -270,7 +538,7 @@ class MapService(BaseService):
             'layerOptions': layerOptions}
         return self._con.get(path_or_url=kmlURL,
                              out_folder=save_location,
-                             param_dict=params)
+                             params=params)
     #----------------------------------------------------------------------
     def exportMap(self,
                   bbox,
@@ -460,6 +728,7 @@ class MapService(BaseService):
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
             gpJob = GPJob(connection=self._con,
                           url=jobUrl)
+
             status = gpJob.jobStatus
             while status != "esriJobSucceeded":
                 if status in ['esriJobFailed',
@@ -593,11 +862,11 @@ class MapService(BaseService):
             allResults = gpJob.results
             for k,v in allResults.items():
                 if k == "out_service_url":
-                    value = v['value']
+                    value = v.value
                     params = {
                         "f" : "json"
                     }
-                    gpRes = self._con.get(path_or_url=v['value'],
+                    gpRes = self._con.get(path_or_url=v.value,
                                       params=params)
                     if tilePackage == True:
                         files = []
@@ -605,10 +874,10 @@ class MapService(BaseService):
                             name = f['name']
                             dlURL = f['url']
                             files.append(
-                                self._con.get(url=dlURL,
-                                          out_folder=tempfile.gettempdir(),
-                                          file_name=name,
-                                          params=params))
+                                self._con.get(path_or_url=dlURL,
+                                              out_folder=tempfile.gettempdir(),
+                                              file_name=name,
+                                              params=params))
                         return files
                     else:
                         return gpRes['folders']
