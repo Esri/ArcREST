@@ -1280,6 +1280,11 @@ class User(BaseAGOLClass):
     _availableCredits = None
     _firstName = None
     _lastName = None
+    _clientApps = None
+    _accountId = None
+    _privacy = None
+    _defaultGroupId = None
+    _organization = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1534,6 +1539,41 @@ class User(BaseAGOLClass):
         if self._thumbnail is None:
             self.__init()
         return self._thumbnail
+    #----------------------------------------------------------------------
+    @property
+    def clientApps(self):
+        '''gets clientApps value'''
+        if self._clientApps is None:
+            self.__init()
+        return self._clientApps
+    #----------------------------------------------------------------------
+    @property
+    def accountId(self):
+        '''gets accountId value'''
+        if self._accountId is None:
+            self.__init()
+        return self._accountId
+    #----------------------------------------------------------------------
+    @property
+    def privacy(self):
+        '''gets privacy value'''
+        if self._privacy is None:
+            self.__init()
+        return self._privacy
+    #----------------------------------------------------------------------
+    @property
+    def defaultGroupId(self):
+        '''gets defaultGroupId value'''
+        if self._defaultGroupId is None:
+            self.__init()
+        return self._defaultGroupId
+    #----------------------------------------------------------------------
+    @property
+    def organization(self):
+        '''gets organization value'''
+        if self._organization is None:
+            self.__init()
+        return self._organization        
     #----------------------------------------------------------------------
     @property
     def orgId(self):
