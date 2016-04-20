@@ -4,7 +4,8 @@ import json
 import time
 import tempfile
 from .._abstract.abstract import BaseAGSServer, DynamicData, BaseSecurityHandler
-from .layer import FeatureLayer, TableLayer, RasterLayer, GroupLayer
+from .layer import FeatureLayer, TableLayer, RasterLayer, GroupLayer, SchematicsLayer
+from ._schematicsservice import SchematicsService
 from ._geoprocessing import GPJob
 from ..security import security
 from ..common import filters, geometry
@@ -178,6 +179,13 @@ class MapService(BaseAGSServer):
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
                         )
+                    elif layer_type == "Schematics Layer":
+                        self._layers.append(
+                            SchematicsLayer(url,
+                                            securityHandler=self._securityHandler,
+                                            proxy_port=self._proxy_port,
+                                            proxy_url=self._proxy_url)
+                        )    
                     else:
                         print ('Type %s is not implemented' % layer_type)
             elif k in attributes:
@@ -411,6 +419,27 @@ class MapService(BaseAGSServer):
         if self._supportedExtensions is None:
             self.__init()
         return self._supportedExtensions
+    #----------------------------------------------------------------------
+    def getExtensions(self):
+        """returns objects for all map service extensions"""
+        extensions = []
+        if isinstance(self.supportedExtensions, list):
+            for ext in self.supportedExtensions:
+                extensionURL = self._url + "/exts/%s" % ext
+                if ext == "SchematicsServer":
+                    extensions.append(SchematicsService(url=extensionURL,
+                                                        securityHandler=self._securityHandler,
+                                                        proxy_url=self._proxy_url,
+                                                        proxy_port=self._proxy_port))
+            return extensions
+        else:
+            extensionURL = self._url + "/exts/%s" % self.supportedExtensions
+            if self.supportedExtensions == "SchematicsServer":
+                extensions.append(SchematicsService(url=extensionURL,
+                                                    securityHandler=self._securityHandler,
+                                                    proxy_url=self._proxy_url,
+                                                    proxy_port=self._proxy_port))
+            return extensions
     #----------------------------------------------------------------------
     @property
     def allLayers(self):
