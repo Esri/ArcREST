@@ -1683,8 +1683,7 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         self._parsed_org_url = urlunparse((parsed_url[0],parsed_url[1],"","","",""))
 
         if referer_url is None:
-
-            self._referer_url = parsed_url.netloc
+            self._referer_url = parsed_url.netloc.split(":")[0]
 
     _is_portal = None
     #----------------------------------------------------------------------
@@ -1789,9 +1788,15 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ returns the token for the site """
         if self._token is None or \
            datetime.datetime.now() >= self._token_expires_on:
-            result = self._generateForTokenSecurity(username=self._username,
+            if self._referer_url is None:
+                result = self._generateForTokenSecurity(username=self._username,
                                                     password=self._password,
                                                     tokenUrl=self._token_url)
+            else:
+                result = self._generateForTokenSecurity(username=self._username,
+                                                        password=self._password,
+                                                        tokenUrl=self._token_url,
+                                                        client="referer")
             if 'error' in result:
                 self._valid = False
                 self._message = result
@@ -1898,13 +1903,17 @@ class PortalTokenSecurityHandler(abstract.BaseSecurityHandler):
     def _generateForTokenSecurity(self,
                                   username, password,
                                   tokenUrl,
-                                  expiration=None):
+                                  expiration=None,
+                                  client='requestip'):
         """ generates a token for a feature service """
+
         query_dict = {'username': username,
                       'password': password,
                       'expiration':str(_defaultTokenExpiration),
-                      'client': 'requestip',
+                      'client': client,
                       'f': 'json'}
+        if client == "referer":
+            query_dict['referer'] = self._referer_url
         if expiration is not None:
             query_dict['expiration'] = expiration
 

@@ -188,24 +188,38 @@ class GeometryFilter(BaseFilter):
     @geometry.setter
     def geometry(self, geometry):
         """ sets the geometry value """
-
+     
         if isinstance(geometry, AbstractGeometry):
             self._geomObject = geometry
             self._geomType = geometry.type
-        elif arcpyFound and isinstance(geometry, arcpy.Polygon):
-            self._geomObject = Polygon(geometry, wkid=geometry.spatialReference.factoryCode)
-            self._geomType = "esriGeometryPolygon"
-        elif arcpyFound and isinstance(geometry, arcpy.Point):
-            self._geomObject = Point(geometry, wkid=geometry.spatialReference.factoryCode)
-            self._geomType = "esriGeometryPoint"
-        elif arcpyFound and isinstance(geometry, arcpy.Polyline):
-            self._geomObject = Polyline(geometry, wkid=geometry.spatialReference.factoryCode)
-            self._geomType = "esriGeometryPolyline"
-        elif arcpyFound and isinstance(geometry, arcpy.Multipoint):
-            self._geomObject = MultiPoint(geometry, wkid=geometry.spatialReference.factoryCode)
-            self._geomType = "esriGeometryMultipoint"
+        elif arcpyFound :
+            wkid = None
+            wkt = None
+            if hasattr(geometry, 'spatialReference' and \
+                       geometry.spatialReference is not None):
+                if hasattr(geometry.spatialReference, 'factoryCode' and \
+                            geometry.spatialReference.factoryCode is not None):
+                    wkid = geometry.spatialReference.factoryCode
+                else:
+                    wkt = geometry.spatialReference.exportToString()
+                    
+            if isinstance(geometry, arcpy.Polygon):
+                
+                self._geomObject = Polygon(geometry, wkid=wkid, wkt=wkt)
+                self._geomType = "esriGeometryPolygon"
+            elif isinstance(geometry, arcpy.Point):
+                self._geomObject = Point(geometry, wkid=wkid, wkt=wkt)
+                self._geomType = "esriGeometryPoint"
+            elif isinstance(geometry, arcpy.Polyline):
+                self._geomObject = Polyline(geometry, wkid=wkid, wkt=wkt)
+                self._geomType = "esriGeometryPolyline"
+            elif isinstance(geometry, arcpy.Multipoint):
+                self._geomObject = MultiPoint(geometry, wkid=wkid, wkt=wkt)
+                self._geomType = "esriGeometryMultipoint"
+            else:
+                raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")
         else:
-            raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")
+            raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")        
     #----------------------------------------------------------------------
     @property
     def filter(self):
