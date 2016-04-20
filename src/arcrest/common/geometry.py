@@ -419,6 +419,7 @@ class Polygon(abstract.AbstractGeometry):
 ##            self._json = rings.JSON
 ##            self._dict = _unicode_convert(json.loads(self._json))
         self._wkid = wkid
+        self._wkt = wkt
         self._hasM = hasM
         self._hasZ = hasZ
     #----------------------------------------------------------------------
