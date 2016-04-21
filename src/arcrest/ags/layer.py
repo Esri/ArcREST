@@ -1172,6 +1172,10 @@ class GroupLayer(FeatureLayer):
             else:
                 print("%s - attribute not implemented in GroupLayer." % k)
 ########################################################################
+class SchematicsLayer(FeatureLayer):
+    """ represents a Schematics Layer  """
+    pass
+########################################################################
 class TableLayer(FeatureLayer):
     """Table object is exactly like FeatureLayer object"""
     pass
