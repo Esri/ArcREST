@@ -105,7 +105,9 @@ class securityhandlerhelper(object):
     _secret_id = None
     _is_portal = False
     _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI', "ArcGIS"]
-
+    _valid = None
+    _message = None
+    
     #----------------------------------------------------------------------
     def __init__(self, securityinfo):
         """Constructor"""
