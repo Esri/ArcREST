@@ -440,7 +440,8 @@ class _connection(object):
              securityhandler=None,
              compress=True,
              out_folder=None,
-             file_name=None):
+             file_name=None,
+             additional_headers=None):
         """
         Performs a GET operation
         """
@@ -448,6 +449,12 @@ class _connection(object):
             out_folder = tempfile.gettempdir()
         if compress:
             self._headers['Accept-Encoding'] = 'gzip'
+        elif compress == False:
+            if 'Accept-Encoding' in self._headers:
+                self._headers['Accept-Encoding'] = ''
+        if isinstance(additional_headers, dict):
+            for k,v in additional_headers.items():
+                self._headers[k] = v
         if param_dict is None:
             param_dict = {}
         if self._opener is None:
@@ -482,7 +489,8 @@ class _connection(object):
               files=None,
               compress=True,
               out_folder=None,
-              file_name=None):
+              file_name=None,
+              additional_headers=None):
         """
         Performs a POST operation
         """
@@ -490,6 +498,12 @@ class _connection(object):
             out_folder = tempfile.gettempdir()
         if compress:
             self._headers['Accept-Encoding'] = 'gzip'
+        elif compress == False:
+            if 'Accept-Encoding' in self._headers:
+                self._headers['Accept-Encoding'] = ''
+        if isinstance(additional_headers, dict):
+            for k,v in additional_headers.items():
+                self._headers[k] = v
         if param_dict is None:
             param_dict = {}
         if files is None:
@@ -519,5 +533,6 @@ class _connection(object):
                                   headers=self.headers)
         response = self._opener.open(req)
         return_value = self._process_response(resp=response,
-                                              out_folder=out_folder)
+                                              out_folder=out_folder,
+                                              file_name=file_name)
         return return_value

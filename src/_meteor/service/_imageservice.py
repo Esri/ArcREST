@@ -73,74 +73,25 @@ class ImageService(BaseService):
     _securityHandler = None
     _hasMultidimensions = None
     #----------------------------------------------------------------------
-    def __init__(self, connection, url, initialize=False):
-        """constructor"""
-        self._con = connection
-        self._url = url
-        self._json_dict = None
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """loads the properties"""
-        params = {"f" : "json"}
-        missing = {}
-        if connection is None:
-            connection = self._con
-        result = connection.get(path_or_url=self._url, params=params)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    missing[k] = v
-                    setattr(self, k, v)
-                del k,v
-        else:
-            raise RuntimeError("Could not connect to the service: %s" % result)
-        if len(missing.keys()) > 0:
-            self.__dict__.update(missing)
-    #----------------------------------------------------------------------
     @property
     def hasMultidimensions(self):
         """returns the hasMultidimensions property"""
         if self._hasMultidimensions is None:
-            self.__init()
+            self.init()
         return self._hasMultidimensions
-    #----------------------------------------------------------------------
-    @property
-    def securityHandler(self):
-        """ gets the security handler """
-        return self._securityHandler
-    #----------------------------------------------------------------------
-    @securityHandler.setter
-    def securityHandler(self, value):
-        """ sets the security handler """
-        if isinstance(value, BaseSecurityHandler):
-            if isinstance(value, (AGSTokenSecurityHandler,
-                                  PortalServerSecurityHandler)):
-                self._securityHandler = value
-            else:
-                pass
-        elif value is None:
-            self._securityHandler = None
     #----------------------------------------------------------------------
     @property
     def tileInfo(self):
         """ returns the tile information """
         if self._tileInfo is None:
-            self.__init()
+            self.init()
         return self._tileInfo
     #----------------------------------------------------------------------
     @property
     def singleFusedMapCache(self):
         """ returns the single fused map cache info """
         if self._singleFusedMapCache is None:
-            self.__init()
+            self.init()
         return self._singleFusedMapCache
 
 
@@ -148,271 +99,271 @@ class ImageService(BaseService):
     def maxDownloadSizeLimit(self):
         """ reutrns the max download size """
         if self._maxDownloadSizeLimit is None:
-            self.__init()
+            self.init()
         return self._maxDownloadSizeLimit
     @property
     def meanValues(self):
         if self._meanValues is None:
-            self.__init()
+            self.init()
         return self._meanValues
     @property
     def initialExtent(self):
         if self._initialExtent is None:
-            self.__init()
+            self.init()
         return self._initialExtent
     @property
     def pixelSizeY(self):
         if self._pixelSizeY is None:
-            self.__init()
+            self.init()
         return self._pixelSizeY
     @property
     def pixelSizeX(self):
         if self._pixelSizeX is None:
-            self.__init()
+            self.init()
         return self._pixelSizeX
     @property
     def hasColormap(self):
         if self._hasColormap is None:
-            self.__init()
+            self.init()
         return self._hasColormap
     @property
     def defaultMosaicMethod(self):
         if self._defaultMosaicMethod  is None:
-            self.__init()
+            self.init()
         return self._defaultMosaicMethod
     @property
     def spatialReference(self):
         if self._spatialReference is None:
-            self.__init()
+            self.init()
         return self._spatialReference
     @property
     def allowedMosaicMethods(self):
         if self._allowedMosaicMethods is None:
-            self.__init()
+            self.init()
         return self._allowedMosaicMethods
     @property
     def editFieldsInfo(self):
         if self._editFieldsInfo is None:
-            self.__init()
+            self.init()
         return self._editFieldsInfo
     @property
     def pixelType(self):
         if self._pixelType is None:
-            self.__init()
+            self.init()
         return self._pixelType
     @property
     def minScale(self):
         if self._minScale is None:
-            self.__init()
+            self.init()
         return self._minScale
     @property
     def allowRasterFunction(self):
         if self._allowRasterFunction is None:
-            self.__init()
+            self.init()
         return self._allowRasterFunction
     @property
     def fields(self):
         if self._fields is None:
-            self.__init()
+            self.init()
         return self._fields
     @property
     def copyrightText(self):
         if self._copyrightText is None:
-            self.__init()
+            self.init()
         return self._copyrightText
     @property
     def maxValues(self):
         if self._maxValues is None:
-            self.__init()
+            self.init()
         return self._maxValues
     @property
     def defaultResamplingMethod(self):
         if self._defaultResamplingMethod is None:
-            self.__init()
+            self.init()
         return self._defaultResamplingMethod
     @property
     def sortValue(self):
         if self._sortValue is None:
-            self.__init()
+            self.init()
         return self._sortValue
     @property
     def maxScale(self):
         if self._maxScale is None:
-            self.__init()
+            self.init()
         return self._maxScale
     @property
     def minPixelSize(self):
         if self._minPixelSize is None:
-            self.__init()
+            self.init()
         return self._minPixelSize
     @property
     def maxImageWidth(self):
         if self._maxImageWidth is None:
-            self.__init()
+            self.init()
         return self._maxImageWidth
     @property
     def sortField(self):
         if self._sortField is None:
-            self.__init()
+            self.init()
         return self._sortField
     @property
     def supportsStatistics(self):
         if self._supportsStatistics is None:
-            self.__init()
+            self.init()
         return self._supportsStatistics
     @property
     def name(self):
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
     @property
     def mensurationCapabilities(self):
         if self._mensurationCapabilities is None:
-            self.__init()
+            self.init()
         return self._mensurationCapabilities
     @property
     def rasterTypeInfos(self):
         if self._rasterTypeInfos is None:
-            self.__init()
+            self.init()
         return self._rasterTypeInfos
     @property
     def maxPixelSize(self):
         if self._maxPixelSize is None:
-            self.__init()
+            self.init()
         return self._maxPixelSize
     @property
     def objectIdField(self):
         if self._objectIdField is None:
-            self.__init()
+            self.init()
         return self._objectIdField
     @property
     def fullExtent(self):
         if self._fullExtent is None:
-            self.__init()
+            self.init()
         return self._fullExtent
     @property
     def extent(self):
         if self._extent is None:
-            self.__init()
+            self.init()
         return self._extent
     @property
     def defaultCompressionQuality(self):
         if self._defaultCompressionQuality is None:
-            self.__init()
+            self.init()
         return self._defaultCompressionQuality
     @property
     def rasterFunctionInfos(self):
         if self._rasterFunctionInfos is None:
-            self.__init()
+            self.init()
         return self._rasterFunctionInfos
     @property
     def maxImageHeight(self):
         if self._maxImageHeight is None:
-            self.__init()
+            self.init()
         return self._maxImageHeight
     @property
     def exportTilesAllowed(self):
         if self._exportTilesAllowed is None:
-            self.__init()
+            self.init()
         return self._exportTilesAllowed
     @property
     def mosaicOperator(self):
         if self._mosaicOperator is None:
-            self.__init()
+            self.init()
         return self._mosaicOperator
     @property
     def maxMosaicImageCount(self):
         if self._maxMosaicImageCount is None:
-            self.__init()
+            self.init()
         return self._maxMosaicImageCount
     @property
     def maxRecordCount(self):
         if self._maxRecordCount is None:
-            self.__init()
+            self.init()
         return self._maxRecordCount
     @property
     def serviceDescription(self):
         if self._serviceDescription is None:
-            self.__init()
+            self.init()
         return self._serviceDescription
     @property
     def useStandardizedQueries(self):
         if self._useStandardizedQueries is None:
-            self.__init()
+            self.init()
         return self._useStandardizedQueries
     @property
     def bandCount(self):
         if self._bandCount is None:
-            self.__init()
+            self.init()
         return self._bandCount
     @property
     def hasHistograms(self):
         if self._hasHistograms is None:
-            self.__init()
+            self.init()
         return self._hasHistograms
     @property
     def hasRasterAttributeTable(self):
         if self._hasRasterAttributeTable is None:
-            self.__init()
+            self.init()
         return self._hasRasterAttributeTable
     @property
     def currentVersion(self):
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     @property
     def ownershipBasedAccessControlForRasters(self):
         if self._ownershipBasedAccessControlForRasters is None:
-            self.__init()
+            self.init()
         return self._ownershipBasedAccessControlForRasters
     @property
     def minValues(self):
         if self._minValues is None:
-            self.__init()
+            self.init()
         return self._minValues
     @property
     def capabilities(self):
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     @property
     def maxDownloadImageCount(self):
         if self._maxDownloadImageCount is None:
-            self.__init()
+            self.init()
         return self._maxDownloadImageCount
     @property
     def allowComputeTiePoints(self):
         if self._allowComputeTiePoints is None:
-            self.__init()
+            self.init()
         return self._allowComputeTiePoints
     @property
     def description(self):
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     @property
     def serviceDataType(self):
         if self._serviceDataType is None:
-            self.__init()
+            self.init()
         return self._serviceDataType
     @property
     def stdvValues(self):
         if self._stdvValues is None:
-            self.__init()
+            self.init()
         return self._stdvValues
     @property
     def supportsAdvancedQueries(self):
         if self._supportsAdvancedQueries is None:
-            self.__init()
+            self.init()
         return self._supportsAdvancedQueries
     #----------------------------------------------------------------------
     def exportImage(self,
                     bbox,
                     imageSR,
                     bboxSR,
-                    size=[400,400],
+                    size=None,
                     time=None,
-                    format="jpgpng",
+                    export_format="jpgpng",
                     pixelType="UNKNOWN",
                     noData=None,
                     noDataInterpretation="esriNoDataMatchAny",
@@ -449,7 +400,7 @@ class ImageService(BaseService):
                   pixels. If size is not specified, an image with a default
                   size of 400 * 400 will be exported.
            time - The time instant or the time extent of the exported image.
-           format - The format of the exported image. The default format is
+           export_format - The format of the exported image. The default format is
                     jpgpng.
                     Values: jpgpng | png | png8 | png24 | jpg | bmp | gif |
                             tiff | png32
@@ -499,6 +450,8 @@ class ImageService(BaseService):
             "compressionQuality" : compressionQuality,
 
         }
+        if size is None:
+            size = [400,400]
         url = self._url + "/exportImage"
         __allowedFormat = ["jpgpng", "png",
                            "png8", "png24",
@@ -527,8 +480,8 @@ class ImageService(BaseService):
         ]
         if isinstance(moasiacRule, dict):
             params["moasiacRule"] = moasiacRule
-        if format in __allowedFormat:
-            params['format'] = format
+        if export_format in __allowedFormat:
+            params['format'] = export_format
         if isinstance(time, datetime.datetime):
             params['time'] = local_time_to_online(time)
         if interpolation is not None and \
@@ -625,6 +578,10 @@ class ImageService(BaseService):
                   "returnIdsOnly" : returnIDsOnly,
                   "returnCountOnly" : returnCountOnly,
                   }
+        if not groupByFieldsForStatistics is None:
+            params['groupByFieldsForStatistics'] = groupByFieldsForStatistics
+        if not outStatistics is None:
+            params['outStatistics'] = outStatistics
         if not timeFilter is None and \
            isinstance(timeFilter, dict):
             params['time'] = timeFilter

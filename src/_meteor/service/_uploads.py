@@ -3,10 +3,9 @@ Controls the Uploads of file to AGS/AGO
 """
 from __future__ import absolute_import
 from ..common.packages.six.moves.urllib_parse import urlparse, urlencode
-from ._base import BaseService
 import os
 ########################################################################
-class Uploads(BaseService):
+class Uploads(object):
     """
     The uploads resource is the parent resource for upload related
     operations and resources. This resource is available only if the

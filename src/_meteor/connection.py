@@ -9,6 +9,7 @@ from .common.web._con import _connection
 from .common.security import AGOLTokenSecurityHandler, AGSTokenSecurityHandler
 from .common.security import PortalTokenSecurityHandler, PKISecurityHandler
 from .common.security import LDAPSecurityHandler, NTLMSecurityHandler, hasNTLM
+from collections import OrderedDict
 from six.moves.urllib_parse import urlparse
 import logging
 _log = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ class SiteConnection(object):
                  verify_certificates=False,
                  **kwargs):
         """ The PortalConnection constructor. Requires URL and optionally username/password. """
+        self._expiration = expiration
         self._ops = _connection(verify=verify_certificates)
         self._username = username
         self._password = password
@@ -71,7 +73,10 @@ class SiteConnection(object):
         self._ensure_ascii = ensure_ascii
         self._token = None
         self._token_url = token_url
-        self._referer = urlparse(baseurl).netloc
+        if referer:
+            self._referer = referer
+        else:
+            self._referer = urlparse(baseurl).netloc
         self._useragent = 'ArcREST/' + __version__
         if proxy_host and proxy_port:
             purl = "%s:%s" % (proxy_host, proxy_port)
@@ -129,8 +134,8 @@ class SiteConnection(object):
             self._securityHandler = PKISecurityHandler(connection=self._ops,
                                                        org_url=self._baseurl,
                                                        keyfile=self._key_file,
-                                                      certificatefile=self._cert_file,
-                                                      referer_url=self._referer)
+                                                       certificatefile=self._cert_file,
+                                                       referer_url=self._referer)
         elif self._security_method == "LDAP":
             self._securityHandler = LDAPSecurityHandler(connection=self._ops,
                                                         org_url=self._baseurl,
@@ -154,7 +159,7 @@ class SiteConnection(object):
         self._logged_in = False
         self._token = None
         self._handler = None
-        self._ops = _base.BaseWebOperations()
+        self._ops = _connection(verify=False)
     #----------------------------------------------------------------------
     def is_logged_in(self):
         """ Returns true if logged into the portal. """
@@ -165,15 +170,22 @@ class SiteConnection(object):
             try_json=True, is_retry=False,
             use_ordered_dict=False,
             out_folder=None, file_name=None, **kwargs):
-        """"""
+        """
+        Performs a GET web operation.
+        Inputs:
+         path_or_url - this can be either a full url or part of a url. If
+          part of a url is given without the scheme, then the baseURL used
+          on object creation will be used.
+         params - parameters to be past
+        """
+        add_header = None
         if self._securityHandler is None:
             self.login()
-        #out_folder = None
-        #file_name = None
-        custom_handlers = None
         if params is None:
-            if 'params_dict' in kwargs:
-                params = kwargs['params_dict']
+            if "params" in kwargs:
+                params = kwargs['params']
+            elif "param_dict" in kwargs:
+                params = kwargs['param_dict']
             else:
                 params = {}
         if try_json:
@@ -195,29 +207,42 @@ class SiteConnection(object):
         if "file_name" in kwargs:
             file_name = kwargs['file_name']
         if "additional_headers" in kwargs:
-            for k, v in kwargs['additional_headers'].items():
-                self._con.add_header(k,v)
-                del k,v
-        return self._ops.get(url=url,
-                              param_dict=params,
-                              securityhandler=self._securityHandler,
-                              compress=compress,
-                              out_folder=out_folder,
-                              file_name=file_name)
+            add_header = kwargs['additional_headers']
+        res = self._ops.get(url=url,
+                            param_dict=params,
+                            securityhandler=self._securityHandler,
+                            compress=compress,
+                            out_folder=out_folder,
+                            file_name=file_name,
+                            additional_headers=add_header)
+        if use_ordered_dict:
+            if isinstance(res, dict):
+                items = []
+                for k,v in res.items():
+                    items.append((k,v))
+                return OrderedDict(items)
+            else:
+                return res
+        else:
+            return res
     #----------------------------------------------------------------------
-    def post(self, path_or_url, postdata=None, files=None, ssl=False, compress=True,
-             is_retry=False, use_ordered_dict=False, **kwargs):
+    def post(self, path_or_url, postdata=None,
+             files=None, ssl=False, compress=True,
+             is_retry=False, use_ordered_dict=False,
+             out_folder=None, file_name=None,
+             **kwargs):
         """"""
+        add_headers = None
         if self._securityHandler is None:
             self.login()
-        out_folder = None
-        file_name = None
         if postdata is None:
             params = {}
+            if "params" in kwargs:
+                params = kwargs['params']
+            elif "param_dict" in kwargs:
+                params = kwargs['param_dict']
         else:
             params = postdata
-        if "params" in kwargs:
-            params = kwargs['params']
         if files is None:
             files = {}
         if path_or_url.find("http://") > -1 or \
@@ -234,16 +259,25 @@ class SiteConnection(object):
         if "file_name" in kwargs:
             file_name = kwargs['file_name']
         if "additional_headers" in kwargs:
-            for k, v in kwargs['additional_headers'].items():
-                self._con.add_header(k,v)
-                del k,v
-        return self._ops.post(url=url,
-                               param_dict=params,
-                               files=files,
-                               securityhandler=self._securityHandler,
-                               compress=compress,
-                               out_folder=out_folder,
-                               file_name=file_name)
+            add_headers = kwargs['additional_headers']
+        res = self._ops.post(url=url,
+                             param_dict=params,
+                             files=files,
+                             securityhandler=self._securityHandler,
+                             compress=compress,
+                             out_folder=out_folder,
+                             file_name=file_name,
+                             additional_headers=add_headers)
+        if use_ordered_dict:
+            if isinstance(res, dict):
+                items = []
+                for k,v in res.items():
+                    items.append((k,v))
+                return OrderedDict(items)
+            else:
+                return res
+        else:
+            return res
     #----------------------------------------------------------------------
     @property
     def token(self):

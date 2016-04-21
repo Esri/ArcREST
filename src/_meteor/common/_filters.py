@@ -2,11 +2,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 import json
 from .geometry import Polygon, Polyline, Point, MultiPoint
-try:
-    import arcpy
-    arcpyFound = True
-except:
-    arcpyFound = False
 ########################################################################
 class StatisticFilter(object):
     """

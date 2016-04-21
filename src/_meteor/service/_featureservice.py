@@ -48,189 +48,189 @@ class FeatureService(BaseService):
     _copyrightText = None
     _syncEnabled = None
     _serviceItemId = None
-    #----------------------------------------------------------------------
-    def __init__(self, connection, url, initialize=False):
-        """constructor"""
-        self._con = connection
-        self._url = url
-        self._json_dict = None
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """loads the properties"""
-        params = {"f" : "json"}
-        missing = {}
-        if connection is None:
-            connection = self._con
-        result = connection.get(path_or_url=self._url, params=params)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k in ['tables', 'layers']:
-                    setattr(self, "_"+k, v)
-                elif k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    missing[k] = v
-                    setattr(self, k, v)
-                del k,v
-        else:
-            raise RuntimeError("Could not connect to the service: %s" % result)
-        if len(missing.keys()) > 0:
-            self.__dict__.update(missing)
+    ##----------------------------------------------------------------------
+    #def __init__(self, connection, url, initialize=False):
+        #"""constructor"""
+        #self._con = connection
+        #self._url = url
+        #self._json_dict = None
+        #if initialize:
+            #self.init(connection)
+    ##----------------------------------------------------------------------
+    #def __init(self, connection=None):
+        #"""loads the properties"""
+        #params = {"f" : "json"}
+        #missing = {}
+        #if connection is None:
+            #connection = self._con
+        #result = connection.get(path_or_url=self._url, params=params)
+        #attributes = [attr for attr in dir(self)
+                      #if not attr.startswith('__') and \
+                      #not attr.startswith('_')]
+        #if isinstance(result, dict):
+            #self._json_dict = result
+            #for k,v in result.items():
+                #if k in ['tables', 'layers']:
+                    #setattr(self, "_"+k, v)
+                #elif k in attributes:
+                    #setattr(self, "_" + k, v)
+                #else:
+                    #missing[k] = v
+                    #setattr(self, k, v)
+                #del k,v
+        #else:
+            #raise RuntimeError("Could not connect to the service: %s" % result)
+        #if len(missing.keys()) > 0:
+            #self.__dict__.update(missing)
     #----------------------------------------------------------------------
     @property
     def initialExtent(self):
         """gets the initialExtent value"""
         if self._initialExtent is None:
-            self.__init()
+            self.init()
         return self._initialExtent
     #--------------------------------------------------------------------------
     @property
     def supportsApplyEditsWithGlobalIds(self):
         """gets the supportsApplyEditsWithGlobalIds value"""
         if self._supportsApplyEditsWithGlobalIds is None:
-            self.__init()
+            self.init()
         return self._supportsApplyEditsWithGlobalIds
     #--------------------------------------------------------------------------
     @property
     def spatialReference(self):
         """gets the spatialReference value"""
         if self._spatialReference is None:
-            self.__init()
+            self.init()
         return self._spatialReference
     #--------------------------------------------------------------------------
     @property
     def capabilities(self):
         """gets the capabilities value"""
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     #--------------------------------------------------------------------------
     @property
     def currentVersion(self):
         """gets the currentVersion value"""
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #--------------------------------------------------------------------------
     @property
     def hasStaticData(self):
         """gets the hasStaticData value"""
         if self._hasStaticData is None:
-            self.__init()
+            self.init()
         return self._hasStaticData
     #--------------------------------------------------------------------------
     @property
     def units(self):
         """gets the units value"""
         if self._units is None:
-            self.__init()
+            self.init()
         return self._units
     #--------------------------------------------------------------------------
     @property
     def xssPreventionInfo(self):
         """gets the xssPreventionInfo value"""
         if self._xssPreventionInfo is None:
-            self.__init()
+            self.init()
         return self._xssPreventionInfo
     #--------------------------------------------------------------------------
     @property
     def supportedQueryFormats(self):
         """gets the supportedQueryFormats value"""
         if self._supportedQueryFormats is None:
-            self.__init()
+            self.init()
         return self._supportedQueryFormats
     #--------------------------------------------------------------------------
     @property
     def maxRecordCount(self):
         """gets the maxRecordCount value"""
         if self._maxRecordCount is None:
-            self.__init()
+            self.init()
         return self._maxRecordCount
     #--------------------------------------------------------------------------
     @property
     def allowGeometryUpdates(self):
         """gets the allowGeometryUpdates value"""
         if self._allowGeometryUpdates is None:
-            self.__init()
+            self.init()
         return self._allowGeometryUpdates
     #--------------------------------------------------------------------------
     @property
     def description(self):
         """gets the description value"""
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #--------------------------------------------------------------------------
     @property
     def hasVersionedData(self):
         """gets the hasVersionedData value"""
         if self._hasVersionedData is None:
-            self.__init()
+            self.init()
         return self._hasVersionedData
     #--------------------------------------------------------------------------
     @property
     def fullExtent(self):
         """gets the fullExtent value"""
         if self._fullExtent is None:
-            self.__init()
+            self.init()
         return self._fullExtent
     #--------------------------------------------------------------------------
     @property
     def serviceDescription(self):
         """gets the serviceDescription value"""
         if self._serviceDescription is None:
-            self.__init()
+            self.init()
         return self._serviceDescription
     #--------------------------------------------------------------------------
     @property
     def editorTrackingInfo(self):
         """gets the editorTrackingInfo value"""
         if self._editorTrackingInfo is None:
-            self.__init()
+            self.init()
         return self._editorTrackingInfo
     #--------------------------------------------------------------------------
     @property
     def supportsDisconnectedEditing(self):
         """gets the supportsDisconnectedEditing value"""
         if self._supportsDisconnectedEditing is None:
-            self.__init()
+            self.init()
         return self._supportsDisconnectedEditing
     #--------------------------------------------------------------------------
     @property
     def copyrightText(self):
         """gets the copyrightText value"""
         if self._copyrightText is None:
-            self.__init()
+            self.init()
         return self._copyrightText
     #--------------------------------------------------------------------------
     @property
     def syncEnabled(self):
         """gets the syncEnabled value"""
         if self._syncEnabled is None:
-            self.__init()
+            self.init()
         return self._syncEnabled
     #--------------------------------------------------------------------------
     @property
     def serviceItemId(self):
         """gets the serviceItemId value"""
         if self._serviceItemId is None:
-            self.__init()
+            self.init()
         return self._serviceItemId
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the services properties"""
-        self.__init(connection=self._con)
+        self.init(connection=self._con)
     #----------------------------------------------------------------------
     def __str__(self):
         """object as string"""
         if self._json_dict is None:
-            self.__init(connection=self._con)
+            self.init(connection=self._con)
         return json.dumps(self._json_dict)
     #----------------------------------------------------------------------
     def __repr__(self):
@@ -248,7 +248,7 @@ class FeatureService(BaseService):
         """ repopulates the properties of the service """
         self._tables = None
         self._layers = None
-        self.__init()
+        self.init()
     #----------------------------------------------------------------------
     @property
     def uploads(self):
@@ -265,34 +265,63 @@ class FeatureService(BaseService):
         self._layers = []
         self._tables = []
         if self._json_dict is None:
-            self.__init(connection=self._con)
+            self.init(connection=self._con)
         json_dict = self._json_dict
         if isinstance(json_dict, dict) and \
            json_dict.has_key("layers"):
             for l in json_dict['layers']:
                 self._layers.append(FeatureLayer(connection=self._con,
-                                                 url=self._url + "/%s" % l['id']))
+                                                 url=self._url + "/%s" % l['id'],
+                                                 initialize=True))
                 del l
         if isinstance(json_dict, dict) and \
            json_dict.has_key("tables"):
             for l in json_dict['tables']:
                 self._tables.append(TableLayer(connection=self._con,
-                                               url=self._url + "/%s" % l['id']))
+                                               url=self._url + "/%s" % l['id'],
+                                               initialize=True))
                 del l
     #----------------------------------------------------------------------
     @property
     def layers(self):
-        """ returns a list of layer objects """
+        """gets the layers value"""
+        lyrs = []
         if self._layers is None:
-            self._load_layers()
-        return self._layers
+            self.init()
+        for layer in self._layers:
+            if "id" in layer:
+                layer_id = layer['id']
+                url = "{url}/{id}".format(url=self._url, id=layer_id)
+                layer_type = self._get_layer_type(layer_id=layer['id'])
+                if layer_type == "Feature Layer":
+                    lyrs.append(FeatureLayer(url=url,connection=self._con))
+                elif layer_type == "Raster Layer":
+                    lyrs.append(RasterLayer(url=url,connection=self._con))
+                elif layer_type == "Group Layer":
+                    lyrs.append(GroupLayer(url=url,connection=self._con))
+            del layer
+        return lyrs
     #----------------------------------------------------------------------
     @property
     def tables(self):
-        """ returns the tables  """
+        """gets the tables value"""
+        lyrs = []
         if self._tables is None:
-            self._load_layers()
-        return self._tables
+            self.init()
+        for layer in self._tables:
+            url = "{url}/{id}".format(url=self._url, id=layer['id'])
+            layer_type = self._get_layer_type(layer_id=layer['id'])
+            if layer_type == "Table Layer":
+                lyrs.append(TableLayer(url=url, connection=self._con))
+            elif layer_type == "Group Layer":
+                lyrs.append(GroupLayer(url=url, connection=self._con))
+        return lyrs
+    #----------------------------------------------------------------------
+    def _get_layer_type(self, layer_id):
+        url = "{url}/{id}".format(url=self._url, id=layer_id)
+        params = {"f": "json"}
+        res = self._con.get(path_or_url=url, params=params)
+        return res['type']
     #----------------------------------------------------------------------
     def query(self,
               layerDefsFilter=None,
@@ -645,18 +674,36 @@ class FeatureService(BaseService):
         TODO: implement synchronize replica
         http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#//02r3000000vv000000
         """
+        url = "{url}/synchronizeReplica".format(url=self._url)
         params = {
             "f" : "json",
             "replicaID" : replicaID,
-            "transportType" : transportType,
-            "dataFormat" : dataFormat,
-            "rollbackOnFailure" : rollbackOnFailure,
-            "async" : async,
-            "returnIdsForAdds": returnIdsForAdds,
-            "syncDirection" : syncDirection,
-            "returnAttachmentDatabyURL" : returnAttachmentDatabyURL
         }
-        return
+        if not transportType is None:
+            params['transportType'] = transportType
+        if not edits is None:
+            params['edits'] = edits
+        if not replicaServerGen is None:
+            params['replicaServerGen'] = replicaServerGen
+        if not returnIdsForAdds is None:
+            params['returnIdsForAdds'] = returnIdsForAdds
+        if not returnAttachmentDatabyURL is None:
+            params['returnAttachmentDatabyURL'] = returnAttachmentDatabyURL
+        if not async is None:
+            params['async'] = async
+        if not syncDirection is None:
+            params['syncDirection'] = syncDirection
+        if not syncLayers is None:
+            params['syncLayers'] = syncLayers
+        if not editsUploadFormat is None:
+            params['editsUploadFormat'] = editsUploadFormat
+        if not editsUploadID is None:
+            params['editsUploadID'] = editsUploadID
+        if not dataFormat is None:
+            params['dataFormat'] = dataFormat
+        if not rollbackOnFailure is None:
+            params['rollbackOnFailure'] = rollbackOnFailure
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def replicaStatus(self, url):
         """gets the replica status when exported async set to True"""
@@ -718,364 +765,364 @@ class FeatureLayer(BaseService):
     _minScale = None
     _maxRecordCountFactor = None
     _serviceItemId = None
-    #----------------------------------------------------------------------
-    def __init__(self, connection, url, initialize=False):
-        """constructor"""
-        self._con = connection
-        self._url = url
-        self._json_dict = None
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """loads the properties"""
-        params = {"f" : "json"}
-        missing = {}
-        if connection is None:
-            connection = self._con
-        result = connection.get(path_or_url=self._url, params=params)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    missing[k] = v
-                    setattr(self, k, v)
-                del k,v
-        else:
-            raise RuntimeError("Could not connect to the service: %s" % result)
-        self.__dict__.update(missing)
+    ##----------------------------------------------------------------------
+    #def __init__(self, connection, url, initialize=False):
+        #"""constructor"""
+        #self._con = connection
+        #self._url = url
+        #self._json_dict = None
+        #if initialize:
+            #self.init(connection)
+    ##----------------------------------------------------------------------
+    #def __init(self, connection=None):
+        #"""loads the properties"""
+        #params = {"f" : "json"}
+        #missing = {}
+        #if connection is None:
+            #connection = self._con
+        #result = connection.get(path_or_url=self._url, params=params)
+        #attributes = [attr for attr in dir(self)
+                      #if not attr.startswith('__') and \
+                      #not attr.startswith('_')]
+        #if isinstance(result, dict):
+            #self._json_dict = result
+            #for k,v in result.items():
+                #if k in attributes:
+                    #setattr(self, "_" + k, v)
+                #else:
+                    #missing[k] = v
+                    #setattr(self, k, v)
+                #del k,v
+        #else:
+            #raise RuntimeError("Could not connect to the service: %s" % result)
+        #self.__dict__.update(missing)
     #----------------------------------------------------------------------
     @property
     def supportsCalculate(self):
         """gets the supportsCalculate value"""
         if self._supportsCalculate is None:
-            self.__init()
+            self.init()
         return self._supportsCalculate
     #----------------------------------------------------------------------
     @property
     def editingInfo(self):
         """gets the editingInfo value"""
         if self._editingInfo is None:
-            self.__init()
+            self.init()
         return self._editingInfo
     #----------------------------------------------------------------------
     @property
     def typeIdField(self):
         """gets the typeIdField value"""
         if self._typeIdField is None:
-            self.__init()
+            self.init()
         return self._typeIdField
     #----------------------------------------------------------------------
     @property
     def supportsValidateSql(self):
         """gets the supportsValidateSql value"""
         if self._supportsValidateSql is None:
-            self.__init()
+            self.init()
         return self._supportsValidateSql
     #----------------------------------------------------------------------
     @property
     def advancedQueryCapabilities(self):
         """gets the advancedQueryCapabilities value"""
         if self._advancedQueryCapabilities is None:
-            self.__init()
+            self.init()
         return self._advancedQueryCapabilities
     #----------------------------------------------------------------------
     @property
     def supportsCoordinatesQuantization(self):
         """gets the supportsCoordinatesQuantization value"""
         if self._supportsCoordinatesQuantization is None:
-            self.__init()
+            self.init()
         return self._supportsCoordinatesQuantization
     #----------------------------------------------------------------------
     @property
     def supportsRollbackOnFailureParameter(self):
         """gets the supportsRollbackOnFailureParameter value"""
         if self._supportsRollbackOnFailureParameter is None:
-            self.__init()
+            self.init()
         return self._supportsRollbackOnFailureParameter
     #----------------------------------------------------------------------
     @property
     def allowGeometryUpdates(self):
         """gets the allowGeometryUpdates value"""
         if self._allowGeometryUpdates is None:
-            self.__init()
+            self.init()
         return self._allowGeometryUpdates
     #----------------------------------------------------------------------
     @property
     def globalIdField(self):
         """gets the globalIdField value"""
         if self._globalIdField is None:
-            self.__init()
+            self.init()
         return self._globalIdField
     #----------------------------------------------------------------------
     @property
     def supportsAdvancedQueries(self):
         """gets the supportsAdvancedQueries value"""
         if self._supportsAdvancedQueries is None:
-            self.__init()
+            self.init()
         return self._supportsAdvancedQueries
     #----------------------------------------------------------------------
     @property
     def id(self):
         """gets the id value"""
         if self._id is None:
-            self.__init()
+            self.init()
         return self._id
     #----------------------------------------------------------------------
     @property
     def relationships(self):
         """gets the relationships value"""
         if self._relationships is None:
-            self.__init()
+            self.init()
         return self._relationships
     #----------------------------------------------------------------------
     @property
     def drawingInfo(self):
         """gets the drawingInfo value"""
         if self._drawingInfo is None:
-            self.__init()
+            self.init()
         return self._drawingInfo
     #----------------------------------------------------------------------
     @property
     def capabilities(self):
         """gets the capabilities value"""
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     #----------------------------------------------------------------------
     @property
     def indexes(self):
         """gets the indexes value"""
         if self._indexes is None:
-            self.__init()
+            self.init()
         return self._indexes
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         """gets the currentVersion value"""
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def geometryType(self):
         """gets the geometryType value"""
         if self._geometryType is None:
-            self.__init()
+            self.init()
         return self._geometryType
     #----------------------------------------------------------------------
     @property
     def hasStaticData(self):
         """gets the hasStaticData value"""
         if self._hasStaticData is None:
-            self.__init()
+            self.init()
         return self._hasStaticData
     #----------------------------------------------------------------------
     @property
     def type(self):
         """gets the type value"""
         if self._type is None:
-            self.__init()
+            self.init()
         return self._type
     #----------------------------------------------------------------------
     @property
     def useStandardizedQueries(self):
         """gets the useStandardizedQueries value"""
         if self._useStandardizedQueries is None:
-            self.__init()
+            self.init()
         return self._useStandardizedQueries
     #----------------------------------------------------------------------
     @property
     def supportedQueryFormats(self):
         """gets the supportedQueryFormats value"""
         if self._supportedQueryFormats is None:
-            self.__init()
+            self.init()
         return self._supportedQueryFormats
     #----------------------------------------------------------------------
     @property
     def isDataVersioned(self):
         """gets the isDataVersioned value"""
         if self._isDataVersioned is None:
-            self.__init()
+            self.init()
         return self._isDataVersioned
     #----------------------------------------------------------------------
     @property
     def supportsAttachmentsByUploadId(self):
         """gets the supportsAttachmentsByUploadId value"""
         if self._supportsAttachmentsByUploadId is None:
-            self.__init()
+            self.init()
         return self._supportsAttachmentsByUploadId
     #----------------------------------------------------------------------
     @property
     def supportsApplyEditsWithGlobalIds(self):
         """gets the supportsApplyEditsWithGlobalIds value"""
         if self._supportsApplyEditsWithGlobalIds is None:
-            self.__init()
+            self.init()
         return self._supportsApplyEditsWithGlobalIds
     #----------------------------------------------------------------------
     @property
     def description(self):
         """gets the description value"""
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def standardMaxRecordCount(self):
         """gets the standardMaxRecordCount value"""
         if self._standardMaxRecordCount is None:
-            self.__init()
+            self.init()
         return self._standardMaxRecordCount
     #----------------------------------------------------------------------
     @property
     def defaultVisibility(self):
         """gets the defaultVisibility value"""
         if self._defaultVisibility is None:
-            self.__init()
+            self.init()
         return self._defaultVisibility
     #----------------------------------------------------------------------
     @property
     def extent(self):
         """gets the extent value"""
         if self._extent is None:
-            self.__init()
+            self.init()
         return self._extent
     #----------------------------------------------------------------------
     @property
     def objectIdField(self):
         """gets the objectIdField value"""
         if self._objectIdField is None:
-            self.__init()
+            self.init()
         return self._objectIdField
     #----------------------------------------------------------------------
     @property
     def tileMaxRecordCount(self):
         """gets the tileMaxRecordCount value"""
         if self._tileMaxRecordCount is None:
-            self.__init()
+            self.init()
         return self._tileMaxRecordCount
     #----------------------------------------------------------------------
     @property
     def htmlPopupType(self):
         """gets the htmlPopupType value"""
         if self._htmlPopupType is None:
-            self.__init()
+            self.init()
         return self._htmlPopupType
     #----------------------------------------------------------------------
     @property
     def types(self):
         """gets the types value"""
         if self._types is None:
-            self.__init()
+            self.init()
         return self._types
     #----------------------------------------------------------------------
     @property
     def hasM(self):
         """gets the hasM value"""
         if self._hasM is None:
-            self.__init()
+            self.init()
         return self._hasM
     #----------------------------------------------------------------------
     @property
     def displayField(self):
         """gets the displayField value"""
         if self._displayField is None:
-            self.__init()
+            self.init()
         return self._displayField
     #----------------------------------------------------------------------
     @property
     def name(self):
         """gets the name value"""
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
     #----------------------------------------------------------------------
     @property
     def templates(self):
         """gets the templates value"""
         if self._templates is None:
-            self.__init()
+            self.init()
         return self._templates
     #----------------------------------------------------------------------
     @property
     def supportsStatistics(self):
         """gets the supportsStatistics value"""
         if self._supportsStatistics is None:
-            self.__init()
+            self.init()
         return self._supportsStatistics
     #----------------------------------------------------------------------
     @property
     def hasAttachments(self):
         """gets the hasAttachments value"""
         if self._hasAttachments is None:
-            self.__init()
+            self.init()
         return self._hasAttachments
     #----------------------------------------------------------------------
     @property
     def fields(self):
         """gets the fields value"""
         if self._fields is None:
-            self.__init()
+            self.init()
         return self._fields
     #----------------------------------------------------------------------
     @property
     def maxScale(self):
         """gets the maxScale value"""
         if self._maxScale is None:
-            self.__init()
+            self.init()
         return self._maxScale
     #----------------------------------------------------------------------
     @property
     def copyrightText(self):
         """gets the copyrightText value"""
         if self._copyrightText is None:
-            self.__init()
+            self.init()
         return self._copyrightText
     #----------------------------------------------------------------------
     @property
     def hasZ(self):
         """gets the hasZ value"""
         if self._hasZ is None:
-            self.__init()
+            self.init()
         return self._hasZ
     #----------------------------------------------------------------------
     @property
     def maxRecordCount(self):
         """gets the maxRecordCount value"""
         if self._maxRecordCount is None:
-            self.__init()
+            self.init()
         return self._maxRecordCount
     #----------------------------------------------------------------------
     @property
     def minScale(self):
         """gets the minScale value"""
         if self._minScale is None:
-            self.__init()
+            self.init()
         return self._minScale
     #----------------------------------------------------------------------
     @property
     def maxRecordCountFactor(self):
         """gets the maxRecordCountFactor value"""
         if self._maxRecordCountFactor is None:
-            self.__init()
+            self.init()
         return self._maxRecordCountFactor
     #----------------------------------------------------------------------
     @property
     def serviceItemId(self):
         """gets the serviceItemId value"""
         if self._serviceItemId is None:
-            self.__init()
+            self.init()
         return self._serviceItemId
     #----------------------------------------------------------------------
     def refresh(self):
         """refreshes all the properties of the service"""
         self._json_dict = None
-        self.__init(self._con)
+        self.init(self._con)
     #----------------------------------------------------------------------
     def addAttachment(self, oid, file_path):
         """ Adds an attachment to a feature service
@@ -1476,6 +1523,10 @@ class FeatureLayer(BaseService):
         params = {
             "f": "json",
         }
+        if not rollbackOnFailure is None:
+            params['rollbackOnFailure'] = rollbackOnFailure
+        if not gdbVersion is None:
+            params['gdbVersion'] = gdbVersion
         if geometryFilter is not None and \
            isinstance(geometryFilter, dict):
             gfilter = geometryFilter
@@ -1657,37 +1708,13 @@ class TiledService(object):
     _con = None
     _url = None
     _json_dict = None
-    #----------------------------------------------------------------------
-    def __init__(self, connection, url, initialize=False):
-        """constructor"""
-        self._con = connection
-        self._url = url
-        self._json_dict = None
-        if initialize:
-            self.__init(connection)
-        self.__init(connection)
-    def __init(self, connection=None):
-        """loads the properties"""
-        params = {"f" : "json"}
-        missing = {}
-        if connection is None:
-            connection = self._con
-        result = connection.get(path_or_url=self._url, params=params)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k in ['tables', 'layers']:
-                    setattr(self, "_"+k, v)
-                elif k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    missing[k] = v
-                    setattr(self, k, v)
-                del k,v
-        else:
-            raise RuntimeError("Could not connect to the service: %s" % result)
-        if len(missing.keys()) > 0:
-            self.__dict__.update(missing)
+########################################################################
+class SchematicLayer(FeatureLayer):
+    pass
+########################################################################
+class RasterLayer(FeatureLayer):
+    pass
+########################################################################
+class GroupLayer(FeatureLayer):
+    pass
+########################################################################

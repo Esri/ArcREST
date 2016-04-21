@@ -13,6 +13,8 @@ from ._geocodeservice import GeocodeService
 from ._geodataservice import GeoDataService
 from ._mobileservice import MobileService
 from ._sceneservice import SceneService
+from ._featureservice import TableLayer, TiledService
+from ._featureservice import RasterLayer, SchematicLayer
 from . import geoprocessing
 
 __version__ = "4.0.0"

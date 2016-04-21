@@ -18,6 +18,7 @@ class BasePortal(object):
     def __init(self, connection):
         """loads the properties"""
         params = {"f" : "json"}
+        missing = {}
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
@@ -33,10 +34,13 @@ class BasePortal(object):
                 if k in attributes:
                     setattr(self, "_" + k, v)
                 else:
+                    missing[k] = v
                     setattr(self, k, v)
                 del k,v
         else:
             raise RuntimeError("Could not connect to the service: %s" % result)
+        if len(missing.keys()) > 0:
+            self.__dict__.update(missing)
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the services properties"""

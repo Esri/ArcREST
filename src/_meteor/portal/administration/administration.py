@@ -7,6 +7,7 @@ from .._base import BasePortal
 import json
 from . import _portals, _community, _content, _oauth2
 from ..hostedservice import Services
+from ..enrichment import GeoEnrichment
 from ...server import AGSAdministration
 from ...common.packages.six.moves.urllib_parse import urlparse, urlunparse
 
@@ -85,6 +86,11 @@ class Administration(BasePortal):
     def tokenURL(self):
         """gets the token url"""
         return self._url + "/generateToken"
+    #----------------------------------------------------------------------
+    @property
+    def geoenrichment(self):
+        """returns a reference to the geoenrichment tools"""
+        return None
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):

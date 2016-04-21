@@ -8,13 +8,15 @@
 .. moduleauthor:: Esri
 
 """
-import json
 import time
 from ..connection import SiteConnection
 import tempfile
 from ._base import BaseService
 from ..common.geometry import Polygon, SpatialReference
 from .geoprocessing import GPTask, GPService, GPJob
+from ._featureservice import FeatureLayer, TableLayer, SchematicLayer
+from ._featureservice import GroupLayer, RasterLayer
+from ._schematicservice import SchematicsService
 class MapService(BaseService):
     """
     """
@@ -76,211 +78,209 @@ class MapService(BaseService):
     _minScale = None
     _serviceDescription = None
     #----------------------------------------------------------------------
-    def __init__(self, connection, url, initialize=False):
-        """constructor"""
-        self._con = connection
-        self._url = url
-        self._json_dict = None
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """loads the properties"""
-        params = {"f" : "json"}
-        missing = {}
-        if connection is None:
-            connection = self._con
-        result = connection.get(path_or_url=self._url, params=params)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        if isinstance(result, dict):
-            self._json_dict = result
-            for k,v in result.items():
-                if k in attributes:
-                    setattr(self, "_" + k, v)
-                else:
-                    missing[k] = v
-                    setattr(self, k, v)
-                del k,v
-        else:
-            raise RuntimeError("Could not connect to the service: %s" % result)
-        if len(missing.keys()) > 0:
-            self.__dict__.update(missing)
-    #----------------------------------------------------------------------
     @property
     def supportsDynamicLayers(self):
         """gets the supportsDynamicLayers value"""
         if self._supportsDynamicLayers is None:
-            self.__init()
+            self.init()
         return self._supportsDynamicLayers
     #----------------------------------------------------------------------
     @property
     def initialExtent(self):
         """gets the initialExtent value"""
         if self._initialExtent is None:
-            self.__init()
+            self.init()
         return self._initialExtent
     #----------------------------------------------------------------------
     @property
     def documentInfo(self):
         """gets the documentInfo value"""
         if self._documentInfo is None:
-            self.__init()
+            self.init()
         return self._documentInfo
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
         """gets the spatialReference value"""
         if self._spatialReference is None:
-            self.__init()
+            self.init()
         return self._spatialReference
     #----------------------------------------------------------------------
     @property
     def description(self):
         """gets the description value"""
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
+    #----------------------------------------------------------------------
+    def _get_layer_type(self, layer_id):
+        url = "{url}/{id}".format(url=self._url, id=layer_id)
+        params = {"f": "json"}
+        res = self._con.get(path_or_url=url, params=params)
+        return res['type']
     #----------------------------------------------------------------------
     @property
     def layers(self):
         """gets the layers value"""
+        lyrs = []
         if self._layers is None:
-            self.__init()
-        return self._layers
+            self.init()
+        for layer in self._layers:
+            if "id" in layer:
+                layer_id = layer['id']
+                url = "{url}/{id}".format(url=self._url, id=layer_id)
+                layer_type = self._get_layer_type(layer_id=layer['id'])
+                if layer_type == "Feature Layer":
+                    lyrs.append(FeatureLayer(url=url,connection=self._con))
+                elif layer_type == "Raster Layer":
+                    lyrs.append(RasterLayer(url=url,connection=self._con))
+                elif layer_type == "Group Layer":
+                    lyrs.append(GroupLayer(url=url,connection=self._con))
+            del layer
+        return lyrs
     #----------------------------------------------------------------------
     @property
     def tables(self):
         """gets the tables value"""
+        lyrs = []
         if self._tables is None:
-            self.__init()
-        return self._tables
+            self.init()
+        for layer in self._tables:
+            layer_id = layer['id']
+            layer_type = self._get_layer_type(layer_id=layer_id)
+            url = "{url}/{id}".format(url=self._url, id=layer_id)
+            if layer_type == "Table Layer":
+                lyrs.append(TableLayer(url=url, connection=self._con))
+            elif layer_type == "Group Layer":
+                lyrs.append(GroupLayer(url=url, connection=self._con))
+        return lyrs
     #----------------------------------------------------------------------
     @property
     def supportedImageFormatTypes(self):
         """gets the supportedImageFormatTypes value"""
         if self._supportedImageFormatTypes is None:
-            self.__init()
+            self.init()
         return self._supportedImageFormatTypes
     #----------------------------------------------------------------------
     @property
     def capabilities(self):
         """gets the capabilities value"""
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     #----------------------------------------------------------------------
     @property
     def mapName(self):
         """gets the mapName value"""
         if self._mapName is None:
-            self.__init()
+            self.init()
         return self._mapName
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         """gets the currentVersion value"""
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def units(self):
         """gets the units value"""
         if self._units is None:
-            self.__init()
+            self.init()
         return self._units
     #----------------------------------------------------------------------
     @property
     def supportedQueryFormats(self):
         """gets the supportedQueryFormats value"""
         if self._supportedQueryFormats is None:
-            self.__init()
+            self.init()
         return self._supportedQueryFormats
     #----------------------------------------------------------------------
     @property
     def maxRecordCount(self):
         """gets the maxRecordCount value"""
         if self._maxRecordCount is None:
-            self.__init()
+            self.init()
         return self._maxRecordCount
     #----------------------------------------------------------------------
     @property
     def exportTilesAllowed(self):
         """gets the exportTilesAllowed value"""
         if self._exportTilesAllowed is None:
-            self.__init()
+            self.init()
         return self._exportTilesAllowed
     #----------------------------------------------------------------------
     @property
     def maxImageHeight(self):
         """gets the maxImageHeight value"""
         if self._maxImageHeight is None:
-            self.__init()
+            self.init()
         return self._maxImageHeight
     #----------------------------------------------------------------------
     @property
     def supportedExtensions(self):
         """gets the supportedExtensions value"""
         if self._supportedExtensions is None:
-            self.__init()
+            self.init()
         return self._supportedExtensions
     #----------------------------------------------------------------------
     @property
     def fullExtent(self):
         """gets the fullExtent value"""
         if self._fullExtent is None:
-            self.__init()
+            self.init()
         return self._fullExtent
     #----------------------------------------------------------------------
     @property
     def singleFusedMapCache(self):
         """gets the singleFusedMapCache value"""
         if self._singleFusedMapCache is None:
-            self.__init()
+            self.init()
         return self._singleFusedMapCache
     #----------------------------------------------------------------------
     @property
     def maxImageWidth(self):
         """gets the maxImageWidth value"""
         if self._maxImageWidth is None:
-            self.__init()
+            self.init()
         return self._maxImageWidth
     #----------------------------------------------------------------------
     @property
     def maxScale(self):
         """gets the maxScale value"""
         if self._maxScale is None:
-            self.__init()
+            self.init()
         return self._maxScale
     #----------------------------------------------------------------------
     @property
     def copyrightText(self):
         """gets the copyrightText value"""
         if self._copyrightText is None:
-            self.__init()
+            self.init()
         return self._copyrightText
     #----------------------------------------------------------------------
     @property
     def minScale(self):
         """gets the minScale value"""
         if self._minScale is None:
-            self.__init()
+            self.init()
         return self._minScale
     #----------------------------------------------------------------------
     @property
     def serviceDescription(self):
         """gets the serviceDescription value"""
         if self._serviceDescription is None:
-            self.__init()
+            self.init()
         return self._serviceDescription
+    #----------------------------------------------------------------------
+
     #----------------------------------------------------------------------
     @property
     def tileServers(self):
         """gets the tileServers value"""
         if self._tileServers is None:
-            self.__init()
+            self.init()
         return self._tileServers
     #----------------------------------------------------------------------
     @property
@@ -326,7 +326,7 @@ class MapService(BaseService):
                  geometryType="esriGeometryPoint",
                  sr=None,
                  layerDefs=None,
-                 time=None,
+                 time_value=None,
                  layerTimeOptions=None,
                  layers="top",
                  returnGeometry=True,
@@ -378,7 +378,7 @@ class MapService(BaseService):
                         those layers. Definition expression for a layer that is
                         published with the service will be always honored.
 
-            time - The time instant or the time extent of the features to be
+            time_value - The time instant or the time extent of the features to be
             identified.
 
             layerTimeOptions - The time options per layer. Users can indicate
@@ -454,15 +454,21 @@ class MapService(BaseService):
                  'mapExtent': mapExtent,
                  'imageDisplay': imageDisplay
                  }
+        if not returnGeometry is None:
+            params['returnGeometry'] = returnGeometry
+        if returnZ:
+            params['returnZ'] = returnZ
 
+        if returnM:
+            params['returnM'] = returnM
         if layerDefs is not None:
             params['layerDefs'] = layerDefs
         if layers is not None:
             params['layers'] = layers
         if sr is not None:
             params['sr'] = sr
-        if time is not None:
-            params['time'] = time
+        if time_value is not None:
+            params['time'] = time_value
         if layerTimeOptions is not None:
             params['layerTimeOptions'] = layerTimeOptions
         if maxAllowableOffset is not None:
@@ -866,7 +872,7 @@ class MapService(BaseService):
                     params = {
                         "f" : "json"
                     }
-                    gpRes = self._con.get(path_or_url=v.value,
+                    gpRes = self._con.get(path_or_url=value,
                                       params=params)
                     if tilePackage == True:
                         files = []
