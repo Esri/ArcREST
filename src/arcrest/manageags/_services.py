@@ -6,6 +6,7 @@ from .parameters import Extension
 import os
 import json
 import tempfile
+import xml.etree.ElementTree as ET
 ########################################################################
 class Services(BaseAGSServer):
     """ returns information about the services on AGS """
@@ -1027,23 +1028,29 @@ class AGSService(BaseAGSServer):
         along with other supplementary files that make up the service.
 
         Inputs:
-           fileType - this can be json or xml.  json return the
-            manifest.json file.  xml returns the manifest.xml file.
+           fileType - this can be json or xml. json returns the
+            manifest.json file. xml returns the manifest.xml file. These
+            files are stored at \arcgisserver\directories\arcgissystem\
+            arcgisinput\%servicename%.%servicetype%\extracted folder.
 
-
+        Outputs:
+            Python dictionary if fileType is json and Python object of
+            xml.etree.ElementTree.ElementTree type if fileType is xml.
         """
 
         url = self._url + "/iteminfo/manifest/manifest.%s" % fileType
-        params = {
-        }
+        params = {}
         f = self._get(url=url,
                       param_dict=params,
                       securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port,
-                     out_folder=tempfile.gettempdir(),
-                     file_name=os.path.basename(url))
-        return open(f, 'r').read()
+                      proxy_url=self._proxy_url,
+                      proxy_port=self._proxy_port,
+                      out_folder=tempfile.gettempdir(),
+                      file_name=os.path.basename(url))
+        if fileType == 'json':
+            return f
+        if fileType == 'xml':
+            return ET.ElementTree(ET.fromstring(f))
     #----------------------------------------------------------------------
     def addPermission(self, principal, isAllowed=True):
         """
