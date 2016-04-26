@@ -4,13 +4,14 @@ from arcrest.manageags import AGSAdministration
 if __name__ == "__main__":
     username = ""
     password = ""
-    url = "http://s0000055:6080/arcgis"
+    url = ""
 
     sh = AGSTokenSecurityHandler(username=username,
                                  password=password,
-                                 token_url='http://s0000055:6080/arcgis/admin/generateToken',
+                                 token_url=url + '/tokens/',
                                  proxy_url=None,
                                  proxy_port=None)
+
     ags = AGSAdministration(url=url,
                             securityHandler=sh,
                             proxy_url=None,
