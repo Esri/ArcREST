@@ -48,16 +48,17 @@
             
   <h1>Source code for arcresthelper.securityhandlerhelper</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
 
 <span class="kn">from</span> <span class="nn">arcrest</span> <span class="kn">import</span> <span class="n">security</span>
 <span class="kn">import</span> <span class="nn">arcrest</span>
 <span class="kn">from</span> <span class="nn">arcrest.manageags</span> <span class="kn">import</span> <span class="n">AGSAdministration</span>
 <span class="kn">from</span> <span class="nn">arcrest.manageorg</span> <span class="kn">import</span> <span class="n">Administration</span>
-<span class="kn">from</span> <span class="nn">packages</span> <span class="kn">import</span> <span class="n">six</span>
-<span class="kn">import</span> <span class="nn">packages.six.moves.urllib</span> <span class="kn">as</span> <span class="nn">urllib</span>
-<span class="kn">from</span> <span class="nn">packages.six.moves.urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+<span class="kn">from</span> <span class="nn">.packages</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">.packages.six.moves.urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="c1">########################################################################</span>
@@ -66,10 +67,20 @@
     <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="o">.</span><span class="n">f_lineno</span></div>
 <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.securityhandlerhelper.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
+    <span class="sd">&quot;&quot;&quot;Determines information about where an error was thrown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     1/0</span>
+<span class="sd">        ... except:</span>
+<span class="sd">        ...     print(&quot;Error on &#39;{}&#39;\\nin file &#39;{}&#39;\\nwith error &#39;{}&#39;&quot;.format(*trace()))</span>
+<span class="sd">        ...        </span>
+<span class="sd">        Error on &#39;line 1234&#39;</span>
+<span class="sd">        in file &#39;C:\\foo\\baz.py&#39;</span>
+<span class="sd">        with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span><span class="o">,</span> <span class="nn">sys</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
@@ -83,11 +94,49 @@
     <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span></div>
 
 <div class="viewcode-block" id="securityhandlerhelper"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.securityhandlerhelper.securityhandlerhelper">[docs]</a><span class="k">class</span> <span class="nc">securityhandlerhelper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A number of different security handlers are suppoted by ArcGIS, this</span>
-<span class="sd">        function simplifies the creation of the handlers.  A dict with the</span>
-<span class="sd">        type of handler and information to created it is required to generate</span>
-<span class="sd">        the handlers</span>
+    <span class="sd">&quot;&quot;&quot;A number of different security handlers are suppoted by ArcGIS; this</span>
+<span class="sd">    function simplifies the creation of the handlers.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        securityinfo (dict): A ``dict`` with the type of handler and</span>
+<span class="sd">            information to be created.  </span>
+<span class="sd">            </span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    |       Key       |          Description          |       Required?         |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | security_type   | security type used to connect | See Values *            |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | username        | username for log in           | ``LDAP|NTLM`` **        |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | password        | password for log in           | ``LDAP|NTLM`` **        |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | proxy_url       | url for proxy server          | Optional                |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | proxy_port      | port for proxy server         | Optional                |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | token_url       | url for token server          | Optional                |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | referer_url     | url for referer               | Optional                |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | certificatefile |                               | ``PKI``                 |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | keyfile         |                               | ``PKI``                 |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | client_id       |                               | ``OAuth``               |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | secret_id       |                               | ``OAuth``               |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | \* Values: ``ArcGIS|Portal|LDAP|NTLM|PKI|OAuth`` (defaults to ``Portal``) |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    | \*\* Also required for ``ArcGIS|Portal`` unless using anonymous logins    |</span>
+<span class="sd">    +-----------------+-------------------------------+-------------------------+</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; securityinfo = {&#39;username&#39; : &#39;secret&#39;, &#39;password&#39; : &#39;really_secret&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; shh = arcresthelper.securityhandlerhelper.securityhandlerhelper(securityinfo)</span>
+<span class="sd">        &gt;&gt;&gt; print(shh._org_url)</span>
+<span class="sd">        http://myorg.maps.arcgis.com</span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_org_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
@@ -105,34 +154,12 @@
     <span class="n">_secret_id</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_is_portal</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">_supported_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LDAP&#39;</span><span class="p">,</span> <span class="s1">&#39;NTLM&#39;</span><span class="p">,</span> <span class="s1">&#39;OAuth&#39;</span><span class="p">,</span> <span class="s1">&#39;Portal&#39;</span><span class="p">,</span> <span class="s1">&#39;PKI&#39;</span><span class="p">,</span> <span class="s2">&quot;ArcGIS&quot;</span><span class="p">]</span>
-
+    <span class="n">_valid</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_message</span> <span class="o">=</span> <span class="bp">None</span>
+    
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">securityinfo</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Constructor</span>
-<span class="sd">            A number of different security handlers are suppoted by ArcGIS, this</span>
-<span class="sd">            function simplifies the creation of the handlers.  A dict with the</span>
-<span class="sd">            type of handler and information to created it is required to generate</span>
-<span class="sd">            the handlers</span>
-
-<span class="sd">           Inputs:</span>
-<span class="sd">              securityinfo - The dict with details to create the handler.  The</span>
-<span class="sd">                        valid parameters are:</span>
-<span class="sd">                            - security_type: Required, valid values are Portal,</span>
-<span class="sd">                                NTLM, PKI, OAUTH, LDAP</span>
-<span class="sd">                            - proxy_url: Optional, url for proxy server</span>
-<span class="sd">                            - proxy_port: Optional, port for proxy server</span>
-<span class="sd">                            - referer_url: Optional, url for referer</span>
-<span class="sd">                            - token_url: Optional, url for token server</span>
-<span class="sd">                            - username: Optional, Username for log in, not</span>
-<span class="sd">                                required for all security types</span>
-<span class="sd">                            - password: Optional, Password for log in, not</span>
-<span class="sd">                                required for all security types</span>
-<span class="sd">                            - certificatefile: Only required for PKI</span>
-<span class="sd">                            - keyfile: Only required for PKI</span>
-<span class="sd">                            - client_id: Only required for OAuth</span>
-<span class="sd">                            - secret_id: Only required for OAuth</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">securityinfo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">securityinfo</span><span class="p">,</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
@@ -372,6 +399,7 @@
 
     <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="securityhandlerhelper.dispose"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.securityhandlerhelper.securityhandlerhelper.dispose">[docs]</a>    <span class="k">def</span> <span class="nf">dispose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Disposes the :py:class:`securityhandlerhelper` object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_org_url</span> <span class="o">=</span> <span class="bp">None</span>
@@ -394,27 +422,42 @@
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns any messages &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Any messages generated by the object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@message.setter</span>
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns any messages &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Any messages generated by the object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">message</span>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns boolean wether handler is valid &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: ``True`` if the object is valid, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@valid.setter</span>
     <span class="k">def</span> <span class="nf">valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">valid</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns boolean wether handler is valid &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: ``True`` if the object is valid, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="n">valid</span>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">securityhandler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the security hanlder &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            securityhandlerhelper: The security handler object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span></div>
     <span class="c1">#@property</span>
     <span class="c1">#def is_portal(self):</span>

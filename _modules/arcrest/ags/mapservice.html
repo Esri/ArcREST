@@ -53,13 +53,14 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">.._abstract.abstract</span> <span class="kn">import</span> <span class="n">BaseAGSServer</span><span class="p">,</span> <span class="n">DynamicData</span><span class="p">,</span> <span class="n">BaseSecurityHandler</span>
-<span class="kn">from</span> <span class="nn">.layer</span> <span class="kn">import</span> <span class="n">FeatureLayer</span><span class="p">,</span> <span class="n">TableLayer</span><span class="p">,</span> <span class="n">RasterLayer</span><span class="p">,</span> <span class="n">GroupLayer</span>
+<span class="kn">from</span> <span class="nn">.layer</span> <span class="kn">import</span> <span class="n">FeatureLayer</span><span class="p">,</span> <span class="n">TableLayer</span><span class="p">,</span> <span class="n">RasterLayer</span><span class="p">,</span> <span class="n">GroupLayer</span><span class="p">,</span> <span class="n">SchematicsLayer</span>
+<span class="kn">from</span> <span class="nn">._schematicsservice</span> <span class="kn">import</span> <span class="n">SchematicsService</span>
 <span class="kn">from</span> <span class="nn">._geoprocessing</span> <span class="kn">import</span> <span class="n">GPJob</span>
 <span class="kn">from</span> <span class="nn">..security</span> <span class="kn">import</span> <span class="n">security</span>
 <span class="kn">from</span> <span class="nn">..common</span> <span class="kn">import</span> <span class="n">filters</span><span class="p">,</span> <span class="n">geometry</span>
 <span class="kn">from</span> <span class="nn">..common.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">,</span> <span class="n">SpatialReference</span>
 <span class="kn">from</span> <span class="nn">..common.general</span> <span class="kn">import</span> <span class="n">Feature</span>
-
+<span class="kn">from</span> <span class="nn">..packages.six.moves.urllib_parse</span> <span class="kn">import</span> <span class="n">urlencode</span>
 <span class="c1">########################################################################</span>
 <div class="viewcode-block" id="MapService"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService">[docs]</a><span class="k">class</span> <span class="nc">MapService</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; contains information about a map service &quot;&quot;&quot;</span>
@@ -227,6 +228,13 @@
                                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
                         <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">layer_type</span> <span class="o">==</span> <span class="s2">&quot;Schematics Layer&quot;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">SchematicsLayer</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+                                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
+                                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
+                                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
+                        <span class="p">)</span>    
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">print</span> <span class="p">(</span><span class="s1">&#39;Type </span><span class="si">%s</span><span class="s1"> is not implemented&#39;</span> <span class="o">%</span> <span class="n">layer_type</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
@@ -460,6 +468,27 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedExtensions</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportedExtensions</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="MapService.getExtensions"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.mapservice.MapService.getExtensions">[docs]</a>    <span class="k">def</span> <span class="nf">getExtensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns objects for all map service extensions&quot;&quot;&quot;</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supportedExtensions</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supportedExtensions</span><span class="p">:</span>
+                <span class="n">extensionURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/exts/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ext</span>
+                <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;SchematicsServer&quot;</span><span class="p">:</span>
+                    <span class="n">extensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SchematicsService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">extensionURL</span><span class="p">,</span>
+                                                        <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
+                                                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                                                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">extensions</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extensionURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/exts/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">supportedExtensions</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">supportedExtensions</span> <span class="o">==</span> <span class="s2">&quot;SchematicsServer&quot;</span><span class="p">:</span>
+                <span class="n">extensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SchematicsService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">extensionURL</span><span class="p">,</span>
+                                                    <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
+                                                    <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
+                                                    <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">extensions</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">allLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -760,17 +789,14 @@
 <span class="sd">                                     nonComposite</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kmlURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/generateKml&quot;</span>
-        <span class="n">params</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;docName&#39;</span> <span class="p">:</span> <span class="n">docName</span><span class="p">,</span>
-                 <span class="s1">&#39;layers&#39;</span> <span class="p">:</span> <span class="n">layers</span><span class="p">,</span>
-                 <span class="s1">&#39;layerOptions&#39;</span><span class="p">:</span> <span class="n">layerOptions</span>
-                 <span class="p">}</span>
-        <span class="kn">import</span> <span class="nn">urllib</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">kmlURL</span> <span class="o">+</span> <span class="s2">&quot;?</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;docName&#39;</span> <span class="p">:</span> <span class="n">docName</span><span class="p">,</span>
+            <span class="s1">&#39;layers&#39;</span> <span class="p">:</span> <span class="n">layers</span><span class="p">,</span>
+            <span class="s1">&#39;layerOptions&#39;</span><span class="p">:</span> <span class="n">layerOptions</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">kmlURL</span><span class="p">,</span>
                          <span class="n">out_folder</span><span class="o">=</span><span class="n">save_location</span><span class="p">,</span>
-                         <span class="n">file_name</span><span class="o">=</span><span class="n">docName</span> <span class="o">+</span> <span class="s2">&quot;.kmz&quot;</span><span class="p">,</span>
+                         <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span>

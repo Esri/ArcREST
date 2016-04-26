@@ -54,9 +54,9 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseOpenData</span>
-<span class="kn">from</span> <span class="nn">._web</span> <span class="kn">import</span> <span class="n">WebOperations</span>
+<span class="kn">from</span> <span class="nn">..web._base</span> <span class="kn">import</span> <span class="n">BaseWebOperations</span>
 <span class="c1">########################################################################</span>
-<div class="viewcode-block" id="OpenData"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData">[docs]</a><span class="k">class</span> <span class="nc">OpenData</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">WebOperations</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenData"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData">[docs]</a><span class="k">class</span> <span class="nc">OpenData</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">BaseWebOperations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents an open data site</span>
 <span class="sd">    Inputs:</span>
 <span class="sd">       url - web address of the open data site</span>
@@ -135,7 +135,7 @@
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div></div>
 <span class="c1">########################################################################</span>
-<div class="viewcode-block" id="OpenDataItem"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem">[docs]</a><span class="k">class</span> <span class="nc">OpenDataItem</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">WebOperations</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenDataItem"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem">[docs]</a><span class="k">class</span> <span class="nc">OpenDataItem</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">BaseWebOperations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;represents a single data object&quot;&quot;&quot;</span>
     <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_itemId</span> <span class="o">=</span> <span class="bp">None</span>

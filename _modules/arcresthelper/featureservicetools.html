@@ -49,8 +49,9 @@
   <h1>Source code for arcresthelper.featureservicetools</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
+<span class="kn">from</span> <span class="nn">.securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
 
 <span class="n">dateTimeFormat</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span>
 <span class="kn">import</span> <span class="nn">arcrest</span>
@@ -66,8 +67,9 @@
 <span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">import</span> <span class="nn">gc</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">arcpy</span>
     <span class="n">arcpyFound</span> <span class="o">=</span> <span class="bp">True</span>
@@ -77,12 +79,21 @@
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Determines information about where an error was thrown.</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     1/0</span>
+<span class="sd">        ... except:</span>
+<span class="sd">        ...     print(&quot;Error on &#39;{}&#39;\\nin file &#39;{}&#39;\\nwith error &#39;{}&#39;&quot;.format(*trace()))</span>
+<span class="sd">        ...        </span>
+<span class="sd">        Error on &#39;line 1234&#39;</span>
+<span class="sd">        in file &#39;C:\\foo\\baz.py&#39;</span>
+<span class="sd">        with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">tbinfo</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
@@ -95,7 +106,18 @@
 
 <div class="viewcode-block" id="featureservicetools"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools">[docs]</a><span class="k">class</span> <span class="nc">featureservicetools</span><span class="p">(</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.RemoveAndAddFeatures"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.RemoveAndAddFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveAndAddFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pathToFeatureClass</span><span class="p">,</span><span class="n">id_field</span><span class="p">,</span><span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.RemoveAndAddFeatures"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.RemoveAndAddFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveAndAddFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pathToFeatureClass</span><span class="p">,</span> <span class="n">id_field</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes all features in a feature service and uploads features from a feature class on disk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service.</span>
+<span class="sd">            pathToFeatureClass (str): The path of the feature class on disk.</span>
+<span class="sd">            id_field (str): The name of the field in the feature class to use for chunking.</span>
+<span class="sd">            chunksize (int): The maximum amount of features to upload at a time. Defaults to 1000.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ArcRestHelperError: if ``arcpy`` can&#39;t be found.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -140,7 +162,6 @@
                 <span class="n">allidlist</span> <span class="o">=</span> <span class="p">[]</span>
 
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="p">:</span>
-
                     <span class="k">if</span> <span class="p">(</span><span class="n">strFld</span><span class="p">):</span>
                         <span class="n">idlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -220,27 +241,50 @@
                                         <span class="p">}</span>
                                         <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
-
     <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="featureservicetools.EnableEditingOnService"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.EnableEditingOnService">[docs]</a>    <span class="k">def</span> <span class="nf">EnableEditingOnService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enables editing capabilities on a feature service.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service.</span>
+<span class="sd">            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: The existing feature service definition capabilities.            </span>
+<span class="sd">        </span>
+<span class="sd">        When ``definition`` is not provided (``None``), the following values are used by default: </span>
+<span class="sd">        </span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        |              Key             |                   Value                  |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | hasStaticData                | ``False``                                |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | allowGeometryUpdates         | ``True``                                 |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | enableEditorTracking         | ``False``                                |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | enableOwnershipAccessControl | ``False``                                |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | allowOthersToUpdate          | ``True``                                 |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | allowOthersToDelete          | ``True``                                 |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">        | capabilities                 | ``&quot;Query,Editing,Create,Update,Delete&quot;`` |</span>
+<span class="sd">        +------------------------------+------------------------------------------+</span>
+<span class="sd">                </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">adminFS</span> <span class="o">=</span> <span class="n">AdminFeatureService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">definition</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">definition</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;hasStaticData&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-
-
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;allowGeometryUpdates&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;editorTrackingInfo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;editorTrackingInfo&#39;</span><span class="p">][</span><span class="s1">&#39;enableEditorTracking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;editorTrackingInfo&#39;</span><span class="p">][</span><span class="s1">&#39;enableOwnershipAccessControl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;editorTrackingInfo&#39;</span><span class="p">][</span><span class="s1">&#39;allowOthersToUpdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;editorTrackingInfo&#39;</span><span class="p">][</span><span class="s1">&#39;allowOthersToDelete&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">definition</span><span class="p">[</span><span class="s1">&#39;capabilities&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Query,Editing,Create,Update,Delete&quot;</span>
-
 
         <span class="n">existingDef</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -256,7 +300,45 @@
         <span class="k">print</span> <span class="p">(</span><span class="n">enableResults</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">existingDef</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="featureservicetools.enableSync"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.enableSync">[docs]</a>    <span class="k">def</span> <span class="nf">enableSync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enables Sync capability for an AGOL feature service.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service.</span>
+<span class="sd">            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: The result from :py:func:`arcrest.hostedservice.service.AdminFeatureService.updateDefinition`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adminFS</span> <span class="o">=</span> <span class="n">AdminFeatureService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
+
+        <span class="n">cap</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">adminFS</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+        <span class="n">existingDef</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">enableResults</span> <span class="o">=</span> <span class="s1">&#39;skipped&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;Sync&#39;</span> <span class="ow">in</span> <span class="n">cap</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Sync is already enabled&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">capItems</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">capItems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Sync&#39;</span><span class="p">)</span>
+            <span class="n">existingDef</span><span class="p">[</span><span class="s1">&#39;capabilities&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">capItems</span><span class="p">)</span>
+            <span class="n">enableResults</span> <span class="o">=</span> <span class="n">adminFS</span><span class="o">.</span><span class="n">updateDefinition</span><span class="p">(</span><span class="n">json_dict</span><span class="o">=</span><span class="n">existingDef</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">enableResults</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">enableResults</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span>
+        <span class="n">adminFS</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">del</span> <span class="n">adminFS</span>
+        <span class="k">return</span> <span class="n">enableResults</span></div>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="featureservicetools.disableSync"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.disableSync">[docs]</a>    <span class="k">def</span> <span class="nf">disableSync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">definition</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Disables Sync capabilities for an AGOL feature service.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service.</span>
+<span class="sd">            definition (dict): A dictionary containing valid definition values. Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: The result from :py:func:`arcrest.hostedservice.service.AdminFeatureService.updateDefinition`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">adminFS</span> <span class="o">=</span> <span class="n">AdminFeatureService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
 
         <span class="n">cap</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">adminFS</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
@@ -275,10 +357,20 @@
                 <span class="k">return</span> <span class="n">enableResults</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span>
         <span class="n">adminFS</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">del</span> <span class="n">adminFS</span>
-
-
         <span class="k">return</span> <span class="n">enableResults</span></div>
-<div class="viewcode-block" id="featureservicetools.GetFeatureService"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">GetFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">itemId</span><span class="p">,</span><span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="featureservicetools.GetFeatureService"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">GetFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itemId</span><span class="p">,</span> <span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtains a feature service by item ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            itemId (int): The feature service&#39;s item ID.</span>
+<span class="sd">            returnURLOnly (bool): A boolean value to return the URL of the feature service. Defaults to ``False``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            When ``returnURLOnly`` is ``True``, the URL of the feature service is returned.</span>
+
+<span class="sd">            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -287,7 +379,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">valid</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">message</span>
                 <span class="k">return</span> <span class="bp">None</span>
-
 
             <span class="n">item</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">itemId</span><span class="o">=</span><span class="n">itemId</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;Feature Service&quot;</span><span class="p">:</span>
@@ -301,7 +392,6 @@
                         <span class="n">fs</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">ags</span><span class="o">.</span><span class="n">FeatureService</span><span class="p">(</span>
                            <span class="n">url</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">fs</span>
-
             <span class="k">return</span> <span class="bp">None</span>
 
         <span class="k">except</span><span class="p">:</span>
@@ -318,10 +408,21 @@
             <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">del</span> <span class="n">item</span>
             <span class="k">del</span> <span class="n">admin</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.GetLayerFromFeatureServiceByURL"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureServiceByURL">[docs]</a>    <span class="k">def</span> <span class="nf">GetLayerFromFeatureServiceByURL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">url</span><span class="p">,</span><span class="n">layerName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.GetLayerFromFeatureServiceByURL"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureServiceByURL">[docs]</a>    <span class="k">def</span> <span class="nf">GetLayerFromFeatureServiceByURL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">layerName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtains a layer from a feature service by URL reference.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service.</span>
+<span class="sd">            layerName (str): The name of the layer. Defaults to ``&quot;&quot;``.</span>
+<span class="sd">            returnURLOnly (bool): A boolean value to return the URL of the layer. Defaults to ``False``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            When ``returnURLOnly`` is ``True``, the URL of the layer is returned.</span>
+
+<span class="sd">            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fs</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">fs</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">agol</span><span class="o">.</span><span class="n">FeatureService</span><span class="p">(</span>
@@ -341,12 +442,22 @@
                                         <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">fs</span> <span class="o">=</span> <span class="bp">None</span>
-
             <span class="k">del</span> <span class="n">fs</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.GetLayerFromFeatureService"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">GetLayerFromFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fs</span><span class="p">,</span><span class="n">layerName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.GetLayerFromFeatureService"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureService">[docs]</a>    <span class="k">def</span> <span class="nf">GetLayerFromFeatureService</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">layerName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">returnURLOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtains a layer from a feature service by feature service reference.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fs (FeatureService): The feature service from which to obtain the layer.</span>
+<span class="sd">            layerName (str): The name of the layer. Defaults to ``&quot;&quot;``.</span>
+<span class="sd">            returnURLOnly (bool): A boolean value to return the URL of the layer. Defaults to ``False``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            When ``returnURLOnly`` is ``True``, the URL of the layer is returned.</span>
+
+<span class="sd">            When ``False``, the result from :py:func:`arcrest.agol.services.FeatureService` or :py:func:`arcrest.ags.services.FeatureService`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">layer</span> <span class="o">=</span> <span class="bp">None</span>
@@ -392,15 +503,29 @@
             <span class="n">table</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="n">layer</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="n">sublayer</span> <span class="o">=</span> <span class="bp">None</span>
-
             <span class="k">del</span> <span class="n">layers</span>
             <span class="k">del</span> <span class="n">table</span>
             <span class="k">del</span> <span class="n">layer</span>
             <span class="k">del</span> <span class="n">sublayer</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.AddFeaturesToFeatureLayer"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.AddFeaturesToFeatureLayer">[docs]</a>    <span class="k">def</span> <span class="nf">AddFeaturesToFeatureLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">url</span><span class="p">,</span><span class="n">pathToFeatureClass</span><span class="p">,</span><span class="n">chunksize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">lowerCaseFieldNames</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.AddFeaturesToFeatureLayer"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.AddFeaturesToFeatureLayer">[docs]</a>    <span class="k">def</span> <span class="nf">AddFeaturesToFeatureLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pathToFeatureClass</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lowerCaseFieldNames</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Appends local features to a hosted feature service layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service layer.</span>
+<span class="sd">            pathToFeatureClass (str): The path of the feature class on disk.</span>
+<span class="sd">            chunksize (int): The maximum amount of features to upload at a time. Defaults to 0.</span>
+<span class="sd">            lowerCaseFieldNames (bool): A boolean value indicating if field names should be converted</span>
+<span class="sd">                to lowercase before uploading. Defaults to ``False``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The result from :py:func:`arcrest.agol.services.FeatureLayer.addFeatures`.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ArcRestHelperError: if ``arcpy`` can&#39;t be found.</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            If publishing to a PostgreSQL database, it is suggested to to set ``lowerCaseFieldNames`` to ``True``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">arcpyFound</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
                 <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;AddFeaturesToFeatureLayer&quot;</span><span class="p">,</span>
@@ -415,38 +540,53 @@
                    <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">chunksize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">messages</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;addResults&#39;</span><span class="p">:[]}</span>
-                <span class="n">total</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">GetCount_management</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">)</span><span class="o">.</span><span class="n">getOutput</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">fc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">)</span>
+                <span class="n">inDesc</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Describe</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">)</span>
+                <span class="n">oidName</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AddFieldDelimiters</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">,</span><span class="n">inDesc</span><span class="o">.</span><span class="n">oidFieldName</span><span class="p">)</span>
+
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">FeatureClassToNumPyArray</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">,</span> <span class="p">(</span><span class="n">oidName</span><span class="p">))</span>
+                <span class="n">syncSoFar</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">messages</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;addResults&#39;</span><span class="p">:[],</span><span class="s1">&#39;errors&#39;</span><span class="p">:[]}</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+                <span class="n">errorCount</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">if</span> <span class="n">total</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
                     <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;0 features in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pathToFeatureClass</span><span class="p">)</span>
                     <span class="k">return</span> <span class="s2">&quot;0 features in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pathToFeatureClass</span>
+                <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> features in layer&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">total</span><span class="p">))</span>
+
                 <span class="n">arcpy</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">overwriteOutput</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunksize</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">fl</span><span class="o">.</span><span class="n">addFeatures</span><span class="p">(</span><span class="n">fc</span><span class="o">=</span><span class="n">pathToFeatureClass</span><span class="p">,</span><span class="n">lowerCaseFieldNames</span><span class="o">=</span><span class="n">lowerCaseFieldNames</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">inDesc</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">Describe</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">)</span>
-                    <span class="n">oidName</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">AddFieldDelimiters</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">,</span><span class="n">inDesc</span><span class="o">.</span><span class="n">oidFieldName</span><span class="p">)</span>
-                    <span class="n">fc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">)</span>
-                    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;{0} IN ((SELECT MIN({0}) FROM {1}), (SELECT MAX({0}) FROM {1}))&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oidName</span><span class="p">,</span> <span class="n">fc</span><span class="p">)</span>
-                    <span class="n">minOID</span><span class="p">,</span><span class="n">maxOID</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">,</span> <span class="s2">&quot;OID@&quot;</span><span class="p">,</span> <span class="n">sql</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">breaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">minOID</span><span class="p">,</span><span class="n">maxOID</span><span class="p">))[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">chunksize</span><span class="p">]</span>
-                    <span class="n">breaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maxOID</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="n">exprList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;{0} &gt;= {1} AND {0} &lt; {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oidName</span><span class="p">,</span> <span class="n">breaks</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">breaks</span><span class="p">[</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-                                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">breaks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
-
+                    <span class="n">newArr</span> <span class="o">=</span> <span class="n">chunklist</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="n">chunksize</span><span class="p">)</span>
+                    <span class="n">exprList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;{0} &gt;= {1} AND {0} &lt;= {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">oidName</span><span class="p">,</span> <span class="n">nArr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">nArr</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">nArr</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">nArr</span> <span class="ow">in</span> <span class="n">newArr</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">exprList</span><span class="p">:</span>
+
                         <span class="n">UploadLayer</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">MakeFeatureLayer_management</span><span class="p">(</span><span class="n">pathToFeatureClass</span><span class="p">,</span> <span class="s1">&#39;TEMPCOPY&#39;</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span><span class="o">.</span><span class="n">getOutput</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                        <span class="n">result</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">addFeatures</span><span class="p">(</span><span class="n">fc</span><span class="o">=</span><span class="n">UploadLayer</span><span class="p">,</span><span class="n">lowerCaseFieldNames</span><span class="o">=</span><span class="n">lowerCaseFieldNames</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                            <span class="n">messages</span> <span class="o">=</span> <span class="n">result</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s1">&#39;addResults&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="c1">#print(arcpy.GetCount_management(in_rows=UploadLayer).getOutput(0) + &quot; features in the chunk&quot;)</span>
+                        <span class="n">results</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">addFeatures</span><span class="p">(</span><span class="n">fc</span><span class="o">=</span><span class="n">UploadLayer</span><span class="p">,</span><span class="n">lowerCaseFieldNames</span><span class="o">=</span><span class="n">lowerCaseFieldNames</span><span class="p">)</span>
+                        <span class="n">chunkCount</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">GetCount_management</span><span class="p">(</span><span class="n">in_rows</span><span class="o">=</span><span class="n">UploadLayer</span><span class="p">)</span><span class="o">.</span><span class="n">getOutput</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span><span class="n">chunkCount</span> <span class="o">+</span> <span class="s2">&quot; features in the chunk&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">chunkCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                            <span class="k">if</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s1">&#39;addResults&#39;</span> <span class="ow">in</span> <span class="n">results</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="n">featSucces</span> <span class="o">=</span> <span class="mi">0</span>
+                                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]:</span>
+                                    <span class="k">if</span> <span class="s1">&#39;success&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                                        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                                            <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                                                <span class="n">errorCount</span>  <span class="o">=</span> <span class="n">errorCount</span> <span class="o">+</span> <span class="mi">1</span>
+                                                <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Error info: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">result</span><span class="p">))</span>
+                                        <span class="k">else</span><span class="p">:</span>
+                                            <span class="n">featSucces</span> <span class="o">=</span> <span class="n">featSucces</span> <span class="o">+</span> <span class="mi">1</span>
+                                <span class="n">syncSoFar</span> <span class="o">=</span> <span class="n">syncSoFar</span> <span class="o">+</span> <span class="n">featSucces</span>
+                                <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> features added in this chunk&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">featSucces</span><span class="p">))</span>
+                                <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2"> features added, </span><span class="si">%s</span><span class="s2"> errors&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">syncSoFar</span><span class="p">,</span><span class="n">total</span><span class="p">,</span><span class="n">errorCount</span> <span class="p">))</span>
                                 <span class="k">if</span> <span class="s1">&#39;addResults&#39;</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
-                                    <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span>
-                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2"> features added&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]),</span><span class="n">total</span><span class="p">))</span>
+                                    <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span>
                                 <span class="k">else</span><span class="p">:</span>
-                                    <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span>
-                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2"> features added&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]),</span><span class="n">total</span><span class="p">))</span>
+                                    <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;addResults&#39;</span><span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">messages</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
                 <span class="k">return</span> <span class="n">messages</span>
@@ -473,12 +613,23 @@
                                         <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
-
             <span class="k">del</span> <span class="n">fl</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.DeleteFeaturesFromFeatureLayer"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.DeleteFeaturesFromFeatureLayer">[docs]</a>    <span class="k">def</span> <span class="nf">DeleteFeaturesFromFeatureLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">url</span><span class="p">,</span><span class="n">sql</span><span class="p">,</span><span class="n">chunksize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.DeleteFeaturesFromFeatureLayer"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.DeleteFeaturesFromFeatureLayer">[docs]</a>    <span class="k">def</span> <span class="nf">DeleteFeaturesFromFeatureLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes features from a hosted feature service layer by SQL query.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service layer.</span>
+<span class="sd">            sql (str): The SQL query to apply against the feature service.</span>
+<span class="sd">                Those features that satisfy the query will be deleted.</span>
+<span class="sd">            chunksize (int): The maximum amount of features to remove at a time. Defaults to 0.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The result from :py:func:`arcrest.agol.services.FeatureLayer.deleteFeatures`.</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            If you want to delete all features, it is suggested to use the SQL query ``&quot;1=1&quot;``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">fl</span> <span class="o">=</span> <span class="n">FeatureLayer</span><span class="p">(</span>
@@ -495,7 +646,6 @@
                     <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">oids</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="k">return</span>  <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;No features matched the query&quot;</span><span class="p">}</span>
-
                     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> features to be deleted&quot;</span> <span class="o">%</span> <span class="n">total</span><span class="p">)</span>
                     <span class="k">while</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">oids</span><span class="p">)):</span>
@@ -523,7 +673,6 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">return</span> <span class="n">results</span>
                     <span class="k">return</span>  <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> deleted&quot;</span> <span class="o">%</span> <span class="n">totalDeleted</span><span class="p">}</span>
-
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">print</span> <span class="p">(</span><span class="n">qRes</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -533,7 +682,6 @@
                         <span class="k">return</span>  <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">totalDeleted</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;deleteResults&#39;</span><span class="p">])}</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">results</span>
-
         <span class="k">except</span><span class="p">:</span>
             <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
@@ -545,13 +693,28 @@
                                         <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
-
             <span class="k">del</span> <span class="n">fl</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
-
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="featureservicetools.QueryAllFeatures"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.QueryAllFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">QueryAllFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">url</span><span class="p">,</span><span class="n">sql</span><span class="p">,</span><span class="n">out_fields</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span><span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">saveLocation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">outName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="featureservicetools.QueryAllFeatures"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.featureservicetools.featureservicetools.QueryAllFeatures">[docs]</a>    <span class="k">def</span> <span class="nf">QueryAllFeatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">out_fields</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">savePath</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs an SQL query against a hosted feature service layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): The URL of the feature service layer.</span>
+<span class="sd">            sql (str): The SQL query to apply against the feature service.</span>
+<span class="sd">                Those features that satisfy the query will be returned.</span>
+<span class="sd">            out_fields (str): A comma delimited list of field names to return.</span>
+<span class="sd">                Defaults to ``&quot;*&quot;``, i.e., return all fields</span>
+<span class="sd">            chunksize (int): The maximum amount of features to query at a time. Defaults to 1000.</span>
+<span class="sd">            savePath (str): The full path on disk where the features will be saved. Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            When ``savePath`` is not provided (``None``), the result from</span>
+<span class="sd">                :py:func:`arcrest.agol.services.FeatureLayer.query`.</span>
+
+<span class="sd">            When ``savePath`` is provided, the result from</span>
+<span class="sd">                :py:func:`arcrest.common.general.FeatureSet.save`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">fl</span> <span class="o">=</span> <span class="n">FeatureLayer</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span>
@@ -590,15 +753,12 @@
 
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">print</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">saveLocation</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">outName</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">savePath</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">savePath</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">combinedResults</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">combinedResults</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">saveLocation</span><span class="o">=</span><span class="n">saveLocation</span><span class="p">,</span> <span class="n">outName</span><span class="o">=</span><span class="n">outName</span><span class="p">)</span>
-
+                    <span class="k">return</span> <span class="n">combinedResults</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">savePath</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span> <span class="p">(</span><span class="n">qRes</span><span class="p">)</span>
-
         <span class="k">except</span><span class="p">:</span>
             <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">common</span><span class="o">.</span><span class="n">ArcRestHelperError</span><span class="p">({</span>
@@ -610,9 +770,7 @@
                                         <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">fl</span> <span class="o">=</span> <span class="bp">None</span>
-
             <span class="k">del</span> <span class="n">fl</span>
-
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
 </pre></div>
 

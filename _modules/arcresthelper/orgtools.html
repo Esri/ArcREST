@@ -49,8 +49,9 @@
   <h1>Source code for arcresthelper.orgtools</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
+<span class="kn">from</span> <span class="nn">.securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
 
 <span class="n">dateTimeFormat</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span>
 <span class="kn">import</span> <span class="nn">arcrest</span>
@@ -60,15 +61,25 @@
 <span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">import</span> <span class="nn">gc</span>
 
 <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
+    <span class="sd">&quot;&quot;&quot;Determines information about where an error was thrown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     1/0</span>
+<span class="sd">        ... except:</span>
+<span class="sd">        ...     print(&quot;Error on &#39;{}&#39;\\nin file &#39;{}&#39;\\nwith error &#39;{}&#39;&quot;.format(*trace()))</span>
+<span class="sd">        ...        </span>
+<span class="sd">        Error on &#39;line 1234&#39;</span>
+<span class="sd">        in file &#39;C:\\foo\\baz.py&#39;</span>
+<span class="sd">        with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;  </span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span><span class="o">,</span> <span class="nn">sys</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
@@ -84,8 +95,17 @@
 <div class="viewcode-block" id="orgtools"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools">[docs]</a><span class="k">class</span> <span class="nc">orgtools</span><span class="p">(</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
 
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="orgtools.shareItemsToGroup"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.shareItemsToGroup">[docs]</a>    <span class="k">def</span> <span class="nf">shareItemsToGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">,</span><span class="n">items</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">groups</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-
+<div class="viewcode-block" id="orgtools.shareItemsToGroup"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.shareItemsToGroup">[docs]</a>    <span class="k">def</span> <span class="nf">shareItemsToGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shareToGroupName</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Share already published items with a group(s).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            shareToGroupName (list): The name of the group(s) with which the item(s) will be shared.</span>
+<span class="sd">            items (list): The item(s) that will be shared, referenced by their ID. Defaults to ``None``.</span>
+<span class="sd">            groups (list): The group(s) whose content will be shared, referenced by their ID. Defaults to ``None``.            </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            If you want to share with a single group, ``shareToGroupName`` can be passed as a ``str``.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">group_ids</span> <span class="o">=</span> <span class="bp">None</span>
@@ -108,7 +128,7 @@
                     <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
                         <span class="k">print</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> shared with </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
+                        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; shared with &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
                     <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">groups</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">groupId</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
@@ -126,11 +146,11 @@
                                 <span class="n">res</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">shareItem</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group_ids</span><span class="p">),</span><span class="n">everyone</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">org</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
                                     <span class="k">print</span> <span class="p">(</span><span class="n">res</span><span class="p">)</span>
-                                <span class="k">elif</span> <span class="s1">&#39;notSharedWith&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
-                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> shared with </span><span class="si">%s</span><span class="s2">, not Shared With </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                                <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;notSharedWith&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; shared with &#39;</span><span class="si">%s</span><span class="s2">&#39;, not Shared With &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> \
                                           <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">,</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;notSharedWith&#39;</span><span class="p">])))</span>
                                 <span class="k">else</span><span class="p">:</span>
-                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> shared with </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
+                                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; shared with &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">,</span><span class="n">shareToGroupName</span><span class="p">))</span>
                                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>
@@ -164,8 +184,19 @@
             <span class="k">del</span> <span class="n">result</span>
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="orgtools.getGroupContentItems"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContentItems">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContentItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">groupName</span><span class="p">):</span>
-
+<div class="viewcode-block" id="orgtools.getGroupContentItems"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContentItems">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContentItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets all the items owned by a group(s).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            groupName (list): The name of the group(s) from which to get items.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of items belonging to the group(s).</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            If you want to get items from a single group, ``groupName`` can be passed as a :py:obj:`str`.</span>
+<span class="sd">        See Also:</span>
+<span class="sd">            :py:func:`getGroupContent` for retrieving all content, not just items.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">groupIds</span> <span class="o">=</span> <span class="bp">None</span>
@@ -222,8 +253,21 @@
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="orgtools.getGroupContent"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContent">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">groupName</span><span class="p">,</span><span class="n">onlyInOrg</span><span class="p">,</span><span class="n">onlyInUser</span><span class="p">):</span>
-
+<div class="viewcode-block" id="orgtools.getGroupContent"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getGroupContent">[docs]</a>    <span class="k">def</span> <span class="nf">getGroupContent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupName</span><span class="p">,</span> <span class="n">onlyInOrg</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">onlyInUser</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets all the content from a group.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            groupName (str): The name of the group from which to get items.</span>
+<span class="sd">            onlyInOrg (bool): A boolean value to only return content belonging to the current org.</span>
+<span class="sd">                Defaults to ``False``.</span>
+<span class="sd">            onlyInUser (bool): A boolean value to only return content belonging to the current user</span>
+<span class="sd">                credentials. Defaults to ``False``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of content belonging to the group.        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            :py:func:`getGroupContentItems` for retrieving only items.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">groups</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">q</span> <span class="o">=</span> <span class="bp">None</span>
@@ -234,10 +278,10 @@
 
             <span class="n">groups</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">community</span><span class="o">.</span><span class="n">groups</span>
             <span class="n">q</span> <span class="o">=</span> <span class="n">groupName</span>
-            <span class="k">if</span> <span class="n">onlyInOrg</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">+</span> <span class="s2">&quot; orgid: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">admin</span><span class="o">.</span><span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span><span class="o">.</span><span class="n">id</span>
-            <span class="k">if</span> <span class="n">onlyInUser</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">q</span> <span class="o">=</span> <span class="n">q</span> <span class="o">+</span> <span class="s2">&quot; owner: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">username</span>
+            <span class="k">if</span> <span class="n">onlyInOrg</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">q</span> <span class="o">+=</span> <span class="s2">&quot; orgid: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">admin</span><span class="o">.</span><span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">if</span> <span class="n">onlyInUser</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">q</span> <span class="o">+=</span> <span class="s2">&quot; owner: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">username</span>
             <span class="n">results</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="p">)</span>
             <span class="k">if</span> <span class="s1">&#39;total&#39;</span> <span class="ow">in</span> <span class="n">results</span> <span class="ow">and</span> <span class="s1">&#39;results&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -270,10 +314,18 @@
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="orgtools.getThumbnailForItem"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getThumbnailForItem">[docs]</a>    <span class="k">def</span> <span class="nf">getThumbnailForItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">itemId</span><span class="p">,</span><span class="n">fileName</span><span class="p">,</span><span class="n">filePath</span><span class="p">):</span>
-
+<div class="viewcode-block" id="orgtools.getThumbnailForItem"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.getThumbnailForItem">[docs]</a>    <span class="k">def</span> <span class="nf">getThumbnailForItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itemId</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">filePath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets an item&#39;s thumbnail and saves it to disk.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            itemId (str): The item&#39;s ID.</span>
+<span class="sd">            fileName (str): The name of the output image.</span>
+<span class="sd">            fileName (str): The directory on disk where to save the thumbnail.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: The result from :py:func:`arcrest.manageorg._content.UserItem.saveThumbnail`</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
-
         <span class="n">item</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -305,6 +357,37 @@
                     <span class="n">access</span><span class="o">=</span><span class="s2">&quot;org&quot;</span><span class="p">,</span> <span class="n">sortField</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">,</span>
                     <span class="n">sortOrder</span><span class="o">=</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span> <span class="n">isViewOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                     <span class="n">isInvitationOnly</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new group.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            title (str): The name of the new group, limited to 250 characters.</span>
+<span class="sd">            tags (str): A comma delimited list of tag names.</span>
+<span class="sd">            description (str): A description of the group that can be any length.</span>
+<span class="sd">            snippet (str): Snippet or summary of the group that has a character limit of 250 characters.</span>
+<span class="sd">                Defaults to ``&quot;&quot;``.</span>
+<span class="sd">            phone (str): Group contact information, limited to 250 characters. Defaults to ``&quot;&quot;``.</span>
+<span class="sd">            access (str): Sets the access level for the group. Defaults to ``&quot;org&quot;``.</span>
+<span class="sd">            sortField (str): Sets sort field for group items. Defaults to ``&quot;title&quot;``.</span>
+<span class="sd">            sortOrder (str): Sets sort order for group items. Defaults to ``&quot;asc&quot;``.</span>
+<span class="sd">            isViewOnly (bool): A boolean value to create a view-only group with no sharing. Defaults to ``False``.</span>
+<span class="sd">            isInvitationOnly (bool): A boolean value to not accept join requests. Defaults to ``False``.</span>
+<span class="sd">            thumbnail (str): The full pathname to the group thumbnail to upload. Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            If sucessful, the result from :py:func:`arcrest.manageorg._community.Community.createGroup`.</span>
+<span class="sd">            </span>
+<span class="sd">            If the group already exists or there is an error, ``None`` is returned.</span>
+<span class="sd">        </span>
+<span class="sd">        +------------+----------------------------------------------------------------+</span>
+<span class="sd">        | Parameters |                      Possible Values                           |</span>
+<span class="sd">        +------------+----------------------------------------------------------------+</span>
+<span class="sd">        | access     | ``private|org|public``                                         |</span>
+<span class="sd">        +------------+----------------------------------------------------------------+</span>
+<span class="sd">        | sortField  | ``title|owner|avgrating|numviews|created|modified``            |</span>
+<span class="sd">        +------------+----------------------------------------------------------------+</span>
+<span class="sd">        | sortOrder  | ``asc|desc``                                                   |</span>
+<span class="sd">        +------------+----------------------------------------------------------------+</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -313,7 +396,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">groupExist</span> <span class="o">=</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">getGroupIDs</span><span class="p">(</span><span class="n">groupNames</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groupExist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Group </span><span class="si">%s</span><span class="s2"> already exist&quot;</span> <span class="o">%</span> <span class="n">title</span><span class="p">)</span>
+                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Group &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists&quot;</span> <span class="o">%</span> <span class="n">title</span><span class="p">)</span>
                     <span class="k">return</span> <span class="bp">None</span>
                 <span class="k">return</span> <span class="n">userCommunity</span><span class="o">.</span><span class="n">createGroup</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
                             <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
@@ -351,10 +434,20 @@
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="orgtools.createRole"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.createRole">[docs]</a>    <span class="k">def</span> <span class="nf">createRole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                    <span class="n">name</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                    <span class="n">privileges</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="orgtools.createRole"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.orgtools.orgtools.createRole">[docs]</a>    <span class="k">def</span> <span class="nf">createRole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">privileges</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new role.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): The name of the new role.</span>
+<span class="sd">            description (str): The description of the new role. Defaults to ``&quot;&quot;``.</span>
+<span class="sd">            privileges (str): A comma delimited list of privileges to apply to the new role.</span>
+<span class="sd">                Defaults to ``None``.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            If ``privileges`` is ``None``, the result from :py:func:`arcrest.manageorg._portals.Portal.createRole`.</span>
+<span class="sd">            </span>
+<span class="sd">            If ``privileges`` were succesfully added, the result from :py:func:`arcrest.manageorg._portals.Roles.setPrivileges`.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">portal</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">setPrivResults</span> <span class="o">=</span> <span class="bp">None</span>
@@ -380,7 +473,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">print</span> <span class="p">(</span><span class="n">createResults</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> role already exist&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; role already exists&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">print</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span>

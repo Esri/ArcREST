@@ -47,27 +47,18 @@
           <div class="body" role="main">
             
   <h1>Source code for arcresthelper.portalautomation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @author: ArcGIS for Utilities</span>
-<span class="sd">    @contact: ArcGISTeamUtilities@esri.com</span>
-<span class="sd">    @company: Esri</span>
-<span class="sd">    @version: 1.2</span>
-<span class="sd">    @description: Used to create reports, maps and apps</span>
-<span class="sd">    @requirements: Python 2.7.x, ArcGIS 10.2</span>
-<span class="sd">    @copyright: Esri, 2015</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">gc</span>
 <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 
-<span class="kn">import</span> <span class="nn">publishingtools</span>
-<span class="kn">import</span> <span class="nn">orgtools</span>
-<span class="kn">import</span> <span class="nn">common</span>
-<span class="kn">from</span> <span class="nn">securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">publishingtools</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">orgtools</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">solutionreporttools</span>
@@ -79,10 +70,20 @@
 
 <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
+    <span class="sd">&quot;&quot;&quot;Determines information about where an error was thrown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     1/0</span>
+<span class="sd">        ... except:</span>
+<span class="sd">        ...     print(&quot;Error on &#39;{}&#39;\\nin file &#39;{}&#39;\\nwith error &#39;{}&#39;&quot;.format(*trace()))</span>
+<span class="sd">        ...        </span>
+<span class="sd">        Error on &#39;line 1234&#39;</span>
+<span class="sd">        in file &#39;C:\\foo\\baz.py&#39;</span>
+<span class="sd">        with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;  </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
@@ -98,7 +99,13 @@
 
 <div class="viewcode-block" id="portalautomation"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation">[docs]</a><span class="k">class</span> <span class="nc">portalautomation</span><span class="p">(</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
     <span class="n">_log</span> <span class="o">=</span> <span class="bp">None</span>
-<div class="viewcode-block" id="portalautomation.setLog"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.setLog">[docs]</a>    <span class="k">def</span> <span class="nf">setLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">log_file</span><span class="p">):</span>
+<div class="viewcode-block" id="portalautomation.setLog"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.setLog">[docs]</a>    <span class="k">def</span> <span class="nf">setLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        References:</span>
+<span class="sd">            :py:func:`arcresthelper.common.init_log`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">log_file</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">log_file</span> <span class="o">=</span> <span class="s2">&quot;log.txt&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">init_log</span><span class="p">(</span><span class="n">log_file</span><span class="o">=</span><span class="n">log_file</span><span class="p">)</span></div>
@@ -107,8 +114,17 @@
             <span class="n">common</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="n">log_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">)</span>
 
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="portalautomation.stageContent"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.stageContent">[docs]</a>    <span class="k">def</span> <span class="nf">stageContent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFiles</span><span class="p">,</span><span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="portalautomation.stageContent"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.stageContent">[docs]</a>    <span class="k">def</span> <span class="nf">stageContent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configFiles</span><span class="p">,</span> <span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses a JSON configuration file to stage content.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            configFiles (list): A list of JSON files on disk containing</span>
+<span class="sd">                configuration data for staging content.</span>
+<span class="sd">            dateTimeFormat (str): A valid date formatting directive, as understood</span>
+<span class="sd">                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,</span>
+<span class="sd">                ``&#39;%Y-%m-%d %H:%M&#39;``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">groups</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">None</span>
@@ -227,9 +243,17 @@
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="portalautomation.createRoles"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.createRoles">[docs]</a>    <span class="k">def</span> <span class="nf">createRoles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFiles</span><span class="p">,</span><span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="portalautomation.createRoles"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.createRoles">[docs]</a>    <span class="k">def</span> <span class="nf">createRoles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configFiles</span><span class="p">,</span> <span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses a JSON configuration file to create roles.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            configFiles (list): A list of JSON files on disk containing</span>
+<span class="sd">                configuration data for creating roles.</span>
+<span class="sd">            dateTimeFormat (str): A valid date formatting directive, as understood</span>
+<span class="sd">                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,</span>
+<span class="sd">                ``&#39;%Y-%m-%d %H:%M&#39;``.</span>
 
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dateTimeFormat</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">dateTimeFormat</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span>
 
@@ -323,8 +347,17 @@
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
     <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="portalautomation.createGroups"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.createGroups">[docs]</a>    <span class="k">def</span> <span class="nf">createGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configFiles</span><span class="p">,</span> <span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses a JSON configuration file to create groups.</span>
 
-<div class="viewcode-block" id="portalautomation.createGroups"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.createGroups">[docs]</a>    <span class="k">def</span> <span class="nf">createGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFiles</span><span class="p">,</span><span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="sd">        Args:</span>
+<span class="sd">            configFiles (list): A list of JSON files on disk containing</span>
+<span class="sd">                configuration data for creating groups.</span>
+<span class="sd">            dateTimeFormat (str): A valid date formatting directive, as understood</span>
+<span class="sd">                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,</span>
+<span class="sd">                ``&#39;%Y-%m-%d %H:%M&#39;``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">groupInfo</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">groupFile</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">iconPath</span> <span class="o">=</span> <span class="bp">None</span>
@@ -454,8 +487,21 @@
             <span class="k">del</span> <span class="n">orgTools</span>
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="portalautomation.publishfromconfig"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.publishfromconfig">[docs]</a>    <span class="k">def</span> <span class="nf">publishfromconfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFiles</span><span class="p">,</span><span class="n">combinedApp</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="portalautomation.publishfromconfig"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.portalautomation.portalautomation.publishfromconfig">[docs]</a>    <span class="k">def</span> <span class="nf">publishfromconfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configFiles</span><span class="p">,</span> <span class="n">combinedApp</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dateTimeFormat</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses a JSON configuration file to publish data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            configFiles (list): A list of JSON files on disk containing</span>
+<span class="sd">                configuration data for publishing.</span>
+<span class="sd">            combinedApp (str): A JSON file on disk containing configuration data</span>
+<span class="sd">                for app publishing. Defaults to ``None``.</span>
+<span class="sd">            dateTimeFormat (str): A valid date formatting directive, as understood</span>
+<span class="sd">                by :py:meth:`datetime.datetime.strftime`. Defaults to ``None``, i.e.,</span>
+<span class="sd">                ``&#39;%Y-%m-%d %H:%M&#39;``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">publishTools</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">webmaps</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">None</span>

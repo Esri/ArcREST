@@ -22,6 +22,18 @@ Subpackages
     arcrest.web
     arcrest.webmap
 
+Submodules
+----------
+
+arcrest.constants module
+------------------------
+
+.. automodule:: arcrest.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Module contents
 ---------------
 

@@ -242,6 +242,30 @@ if <code class="docutils literal"><span class="pre">l</span></code> has no <a cl
 </dd></dl>
 
 <dl class="function">
+<dt id="arcresthelper.common.getOrgId">
+<code class="descclassname">arcresthelper.common.</code><code class="descname">getOrgId</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#getOrgId"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.getOrgId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the org ID from a url.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The url to parse.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The org ID.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">getLayerIndex</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="go">&#39;&lt;random&gt;&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="arcresthelper.common.init_config_json">
 <code class="descclassname">arcresthelper.common.</code><code class="descname">init_config_json</code><span class="sig-paren">(</span><em>config_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#init_config_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.init_config_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserializes a JSON configuration file.</p>
@@ -372,7 +396,7 @@ if <code class="docutils literal"><span class="pre">l</span></code> has no <a cl
 
 <dl class="function">
 <dt id="arcresthelper.common.online_time_to_string">
-<code class="descclassname">arcresthelper.common.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.online_time_to_string" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">arcresthelper.common.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em>, <em>utcOffset=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/common.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.common.online_time_to_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts AGOL timestamp to formatted string.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -381,6 +405,7 @@ if <code class="docutils literal"><span class="pre">l</span></code> has no <a cl
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#float" title="(in Python v3.4)"><em>float</em></a>) &#8211; A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)</li>
 <li><strong>timeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Date/Time format string as parsed by <code class="xref py py-func docutils literal"><span class="pre">datetime.strftime()</span></code>.</li>
+<li><strong>utcOffset</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; Hours difference from UTC and desired output. Default is 0 (remain in UTC).</li>
 </ul>
 </td>
 </tr>
@@ -395,13 +420,9 @@ if <code class="docutils literal"><span class="pre">l</span></code> has no <a cl
 <p class="rubric">Examples</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">1457167261000.0</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
 <span class="go">&#39;2016-03-05 00:41:01&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">731392515000.0</span><span class="p">,</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">)</span>
-<span class="go">&#39;03/05/1993 20:35:15&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arcresthelper</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">731392515000.0</span><span class="p">,</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># PST is UTC-8:00</span>
+<span class="go">&#39;03/05/1993 12:35:15&#39;</span>
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The output is given in UTC, which is why the examples given here don&#8217;t match <a class="reference internal" href="#arcresthelper.common.local_time_to_online" title="arcresthelper.common.local_time_to_online"><code class="xref py py-func docutils literal"><span class="pre">local_time_to_online()</span></code></a> (PST is UTC-8:00).</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -523,56 +544,323 @@ if <code class="docutils literal"><span class="pre">l</span></code> has no <a cl
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.AddFeaturesToFeatureLayer">
 <code class="descname">AddFeaturesToFeatureLayer</code><span class="sig-paren">(</span><em>url</em>, <em>pathToFeatureClass</em>, <em>chunksize=0</em>, <em>lowerCaseFieldNames=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.AddFeaturesToFeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.AddFeaturesToFeatureLayer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Appends local features to a hosted feature service layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service layer.</li>
+<li><strong>pathToFeatureClass</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The path of the feature class on disk.</li>
+<li><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The maximum amount of features to upload at a time. Defaults to 0.</li>
+<li><strong>lowerCaseFieldNames</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value indicating if field names should be converted
+to lowercase before uploading. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result from <a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureLayer.addFeatures" title="arcrest.agol.services.FeatureLayer.addFeatures"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureLayer.addFeatures()</span></code></a>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ArcRestHelperError</span></code> &#8211;
+if <code class="docutils literal"><span class="pre">arcpy</span></code> can&#8217;t be found.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">If publishing to a PostgreSQL database, it is suggested to to set <code class="docutils literal"><span class="pre">lowerCaseFieldNames</span></code> to <code class="docutils literal"><span class="pre">True</span></code>.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.DeleteFeaturesFromFeatureLayer">
 <code class="descname">DeleteFeaturesFromFeatureLayer</code><span class="sig-paren">(</span><em>url</em>, <em>sql</em>, <em>chunksize=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.DeleteFeaturesFromFeatureLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.DeleteFeaturesFromFeatureLayer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Removes features from a hosted feature service layer by SQL query.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service layer.</li>
+<li><strong>sql</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The SQL query to apply against the feature service.
+Those features that satisfy the query will be deleted.</li>
+<li><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The maximum amount of features to remove at a time. Defaults to 0.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The result from <a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureLayer.deleteFeatures" title="arcrest.agol.services.FeatureLayer.deleteFeatures"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureLayer.deleteFeatures()</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">If you want to delete all features, it is suggested to use the SQL query <code class="docutils literal"><span class="pre">&quot;1=1&quot;</span></code>.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.EnableEditingOnService">
 <code class="descname">EnableEditingOnService</code><span class="sig-paren">(</span><em>url</em>, <em>definition=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.EnableEditingOnService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.EnableEditingOnService" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Enables editing capabilities on a feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service.</li>
+<li><strong>definition</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)"><em>dict</em></a>) &#8211; A dictionary containing valid definition values. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The existing feature service definition capabilities.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>When <code class="docutils literal"><span class="pre">definition</span></code> is not provided (<code class="docutils literal"><span class="pre">None</span></code>), the following values are used by default:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Value</td>
+</tr>
+<tr class="row-even"><td>hasStaticData</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+</tr>
+<tr class="row-odd"><td>allowGeometryUpdates</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+</tr>
+<tr class="row-even"><td>enableEditorTracking</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+</tr>
+<tr class="row-odd"><td>enableOwnershipAccessControl</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+</tr>
+<tr class="row-even"><td>allowOthersToUpdate</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+</tr>
+<tr class="row-odd"><td>allowOthersToDelete</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+</tr>
+<tr class="row-even"><td>capabilities</td>
+<td><code class="docutils literal"><span class="pre">&quot;Query,Editing,Create,Update,Delete&quot;</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.GetFeatureService">
 <code class="descname">GetFeatureService</code><span class="sig-paren">(</span><em>itemId</em>, <em>returnURLOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.GetFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.GetFeatureService" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtains a feature service by item ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>itemId</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The feature service&#8217;s item ID.</li>
+<li><strong>returnURLOnly</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to return the URL of the feature service. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>When <code class="docutils literal"><span class="pre">returnURLOnly</span></code> is <code class="docutils literal"><span class="pre">True</span></code>, the URL of the feature service is returned.</p>
+<p>When <code class="docutils literal"><span class="pre">False</span></code>, the result from <a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureService" title="arcrest.agol.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureService()</span></code></a> or <a class="reference internal" href="arcrest.ags.html#arcrest.ags.services.FeatureService" title="arcrest.ags.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.ags.services.FeatureService()</span></code></a>.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureService">
 <code class="descname">GetLayerFromFeatureService</code><span class="sig-paren">(</span><em>fs</em>, <em>layerName=''</em>, <em>returnURLOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.GetLayerFromFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureService" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtains a layer from a feature service by feature service reference.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fs</strong> (<a class="reference internal" href="arcrest.ags.html#arcrest.ags.featureservice.FeatureService" title="arcrest.ags.featureservice.FeatureService"><em>FeatureService</em></a>) &#8211; The feature service from which to obtain the layer.</li>
+<li><strong>layerName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the layer. Defaults to <code class="docutils literal"><span class="pre">&quot;&quot;</span></code>.</li>
+<li><strong>returnURLOnly</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to return the URL of the layer. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>When <code class="docutils literal"><span class="pre">returnURLOnly</span></code> is <code class="docutils literal"><span class="pre">True</span></code>, the URL of the layer is returned.</p>
+<p>When <code class="docutils literal"><span class="pre">False</span></code>, the result from <a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureService" title="arcrest.agol.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureService()</span></code></a> or <a class="reference internal" href="arcrest.ags.html#arcrest.ags.services.FeatureService" title="arcrest.ags.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.ags.services.FeatureService()</span></code></a>.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureServiceByURL">
 <code class="descname">GetLayerFromFeatureServiceByURL</code><span class="sig-paren">(</span><em>url</em>, <em>layerName=''</em>, <em>returnURLOnly=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.GetLayerFromFeatureServiceByURL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.GetLayerFromFeatureServiceByURL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Obtains a layer from a feature service by URL reference.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service.</li>
+<li><strong>layerName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the layer. Defaults to <code class="docutils literal"><span class="pre">&quot;&quot;</span></code>.</li>
+<li><strong>returnURLOnly</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to return the URL of the layer. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>When <code class="docutils literal"><span class="pre">returnURLOnly</span></code> is <code class="docutils literal"><span class="pre">True</span></code>, the URL of the layer is returned.</p>
+<p>When <code class="docutils literal"><span class="pre">False</span></code>, the result from <a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureService" title="arcrest.agol.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureService()</span></code></a> or <a class="reference internal" href="arcrest.ags.html#arcrest.ags.services.FeatureService" title="arcrest.ags.services.FeatureService"><code class="xref py py-func docutils literal"><span class="pre">arcrest.ags.services.FeatureService()</span></code></a>.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.QueryAllFeatures">
-<code class="descname">QueryAllFeatures</code><span class="sig-paren">(</span><em>url</em>, <em>sql</em>, <em>out_fields='*'</em>, <em>chunksize=1000</em>, <em>saveLocation=''</em>, <em>outName=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.QueryAllFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.QueryAllFeatures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">QueryAllFeatures</code><span class="sig-paren">(</span><em>url</em>, <em>sql</em>, <em>out_fields='*'</em>, <em>chunksize=1000</em>, <em>savePath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.QueryAllFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.QueryAllFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an SQL query against a hosted feature service layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service layer.</li>
+<li><strong>sql</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The SQL query to apply against the feature service.
+Those features that satisfy the query will be returned.</li>
+<li><strong>out_fields</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A comma delimited list of field names to return.
+Defaults to <code class="docutils literal"><span class="pre">&quot;*&quot;</span></code>, i.e., return all fields</li>
+<li><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The maximum amount of features to query at a time. Defaults to 1000.</li>
+<li><strong>savePath</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The full path on disk where the features will be saved. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>When <code class="docutils literal"><span class="pre">savePath</span></code> is not provided (<code class="docutils literal"><span class="pre">None</span></code>), the result from</dt>
+<dd><p class="first last"><a class="reference internal" href="arcrest.agol.html#arcrest.agol.services.FeatureLayer.query" title="arcrest.agol.services.FeatureLayer.query"><code class="xref py py-func docutils literal"><span class="pre">arcrest.agol.services.FeatureLayer.query()</span></code></a>.</p>
+</dd>
+<dt>When <code class="docutils literal"><span class="pre">savePath</span></code> is provided, the result from</dt>
+<dd><p class="first last"><a class="reference internal" href="arcrest.common.html#arcrest.common.general.FeatureSet.save" title="arcrest.common.general.FeatureSet.save"><code class="xref py py-func docutils literal"><span class="pre">arcrest.common.general.FeatureSet.save()</span></code></a>.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.RemoveAndAddFeatures">
 <code class="descname">RemoveAndAddFeatures</code><span class="sig-paren">(</span><em>url</em>, <em>pathToFeatureClass</em>, <em>id_field</em>, <em>chunksize=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.RemoveAndAddFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.RemoveAndAddFeatures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Deletes all features in a feature service and uploads features from a feature class on disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service.</li>
+<li><strong>pathToFeatureClass</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The path of the feature class on disk.</li>
+<li><strong>id_field</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the field in the feature class to use for chunking.</li>
+<li><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; The maximum amount of features to upload at a time. Defaults to 1000.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ArcRestHelperError</span></code> &#8211;
+if <code class="docutils literal"><span class="pre">arcpy</span></code> can&#8217;t be found.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.featureservicetools.featureservicetools.disableSync">
 <code class="descname">disableSync</code><span class="sig-paren">(</span><em>url</em>, <em>definition=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.disableSync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.disableSync" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Disables Sync capabilities for an AGOL feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service.</li>
+<li><strong>definition</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)"><em>dict</em></a>) &#8211; A dictionary containing valid definition values. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result from <a class="reference internal" href="arcrest.hostedservice.html#arcrest.hostedservice.service.AdminFeatureService.updateDefinition" title="arcrest.hostedservice.service.AdminFeatureService.updateDefinition"><code class="xref py py-func docutils literal"><span class="pre">arcrest.hostedservice.service.AdminFeatureService.updateDefinition()</span></code></a>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcresthelper.featureservicetools.featureservicetools.enableSync">
+<code class="descname">enableSync</code><span class="sig-paren">(</span><em>url</em>, <em>definition=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#featureservicetools.enableSync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.featureservicetools.enableSync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables Sync capability for an AGOL feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The URL of the feature service.</li>
+<li><strong>definition</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)"><em>dict</em></a>) &#8211; A dictionary containing valid definition values. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result from <a class="reference internal" href="arcrest.hostedservice.html#arcrest.hostedservice.service.AdminFeatureService.updateDefinition" title="arcrest.hostedservice.service.AdminFeatureService.updateDefinition"><code class="xref py py-func docutils literal"><span class="pre">arcrest.hostedservice.service.AdminFeatureService.updateDefinition()</span></code></a>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.featureservicetools.trace">
 <code class="descclassname">arcresthelper.featureservicetools.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/featureservicetools.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.featureservicetools.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -585,53 +873,218 @@ to the user</p>
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.createGroup">
 <code class="descname">createGroup</code><span class="sig-paren">(</span><em>title</em>, <em>tags</em>, <em>description=''</em>, <em>snippet=''</em>, <em>phone=''</em>, <em>access='org'</em>, <em>sortField='title'</em>, <em>sortOrder='asc'</em>, <em>isViewOnly=False</em>, <em>isInvitationOnly=False</em>, <em>thumbnail=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.createGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.createGroup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates a new group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the new group, limited to 250 characters.</li>
+<li><strong>tags</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A comma delimited list of tag names.</li>
+<li><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A description of the group that can be any length.</li>
+<li><strong>snippet</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Snippet or summary of the group that has a character limit of 250 characters.
+Defaults to <code class="docutils literal"><span class="pre">&quot;&quot;</span></code>.</li>
+<li><strong>phone</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Group contact information, limited to 250 characters. Defaults to <code class="docutils literal"><span class="pre">&quot;&quot;</span></code>.</li>
+<li><strong>access</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Sets the access level for the group. Defaults to <code class="docutils literal"><span class="pre">&quot;org&quot;</span></code>.</li>
+<li><strong>sortField</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Sets sort field for group items. Defaults to <code class="docutils literal"><span class="pre">&quot;title&quot;</span></code>.</li>
+<li><strong>sortOrder</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Sets sort order for group items. Defaults to <code class="docutils literal"><span class="pre">&quot;asc&quot;</span></code>.</li>
+<li><strong>isViewOnly</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to create a view-only group with no sharing. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+<li><strong>isInvitationOnly</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to not accept join requests. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+<li><strong>thumbnail</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The full pathname to the group thumbnail to upload. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>If sucessful, the result from <code class="xref py py-func docutils literal"><span class="pre">arcrest.manageorg._community.Community.createGroup()</span></code>.</p>
+<p>If the group already exists or there is an error, <code class="docutils literal"><span class="pre">None</span></code> is returned.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Parameters</td>
+<td>Possible Values</td>
+</tr>
+<tr class="row-even"><td>access</td>
+<td><code class="docutils literal"><span class="pre">private|org|public</span></code></td>
+</tr>
+<tr class="row-odd"><td>sortField</td>
+<td><code class="docutils literal"><span class="pre">title|owner|avgrating|numviews|created|modified</span></code></td>
+</tr>
+<tr class="row-even"><td>sortOrder</td>
+<td><code class="docutils literal"><span class="pre">asc|desc</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.createRole">
 <code class="descname">createRole</code><span class="sig-paren">(</span><em>name</em>, <em>description=''</em>, <em>privileges=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.createRole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.createRole" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates a new role.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the new role.</li>
+<li><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The description of the new role. Defaults to <code class="docutils literal"><span class="pre">&quot;&quot;</span></code>.</li>
+<li><strong>privileges</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A comma delimited list of privileges to apply to the new role.
+Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>If <code class="docutils literal"><span class="pre">privileges</span></code> is <code class="docutils literal"><span class="pre">None</span></code>, the result from <code class="xref py py-func docutils literal"><span class="pre">arcrest.manageorg._portals.Portal.createRole()</span></code>.</p>
+<p>If <code class="docutils literal"><span class="pre">privileges</span></code> were succesfully added, the result from <code class="xref py py-func docutils literal"><span class="pre">arcrest.manageorg._portals.Roles.setPrivileges()</span></code>.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.getGroupContent">
-<code class="descname">getGroupContent</code><span class="sig-paren">(</span><em>groupName</em>, <em>onlyInOrg</em>, <em>onlyInUser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.getGroupContent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.getGroupContent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">getGroupContent</code><span class="sig-paren">(</span><em>groupName</em>, <em>onlyInOrg=False</em>, <em>onlyInUser=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.getGroupContent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.getGroupContent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all the content from a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>groupName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the group from which to get items.</li>
+<li><strong>onlyInOrg</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to only return content belonging to the current org.
+Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+<li><strong>onlyInUser</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)"><em>bool</em></a>) &#8211; A boolean value to only return content belonging to the current user
+credentials. Defaults to <code class="docutils literal"><span class="pre">False</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of content belonging to the group.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)">list</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.orgtools.orgtools.getGroupContentItems" title="arcresthelper.orgtools.orgtools.getGroupContentItems"><code class="xref py py-func docutils literal"><span class="pre">getGroupContentItems()</span></code></a> for retrieving only items.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.getGroupContentItems">
 <code class="descname">getGroupContentItems</code><span class="sig-paren">(</span><em>groupName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.getGroupContentItems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.getGroupContentItems" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Gets all the items owned by a group(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>groupName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; The name of the group(s) from which to get items.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of items belonging to the group(s).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)">list</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">If you want to get items from a single group, <code class="docutils literal"><span class="pre">groupName</span></code> can be passed as a <a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.orgtools.orgtools.getGroupContent" title="arcresthelper.orgtools.orgtools.getGroupContent"><code class="xref py py-func docutils literal"><span class="pre">getGroupContent()</span></code></a> for retrieving all content, not just items.</p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.getThumbnailForItem">
 <code class="descname">getThumbnailForItem</code><span class="sig-paren">(</span><em>itemId</em>, <em>fileName</em>, <em>filePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.getThumbnailForItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.getThumbnailForItem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Gets an item&#8217;s thumbnail and saves it to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>itemId</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The item&#8217;s ID.</li>
+<li><strong>fileName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the output image.</li>
+<li><strong>fileName</strong> &#8211; The directory on disk where to save the thumbnail.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The result from <code class="xref py py-func docutils literal"><span class="pre">arcrest.manageorg._content.UserItem.saveThumbnail()</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.orgtools.orgtools.shareItemsToGroup">
 <code class="descname">shareItemsToGroup</code><span class="sig-paren">(</span><em>shareToGroupName</em>, <em>items=None</em>, <em>groups=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#orgtools.shareItemsToGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.orgtools.shareItemsToGroup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Share already published items with a group(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>shareToGroupName</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; The name of the group(s) with which the item(s) will be shared.</li>
+<li><strong>items</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; The item(s) that will be shared, referenced by their ID. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>groups</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; The group(s) whose content will be shared, referenced by their ID. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">If you want to share with a single group, <code class="docutils literal"><span class="pre">shareToGroupName</span></code> can be passed as a <code class="docutils literal"><span class="pre">str</span></code>.</p>
+</div>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.orgtools.trace">
 <code class="descclassname">arcresthelper.orgtools.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/orgtools.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.orgtools.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
 <div class="section" id="module-arcresthelper.portalautomation">
 <span id="arcresthelper-portalautomation-module"></span><h2>arcresthelper.portalautomation module<a class="headerlink" href="#module-arcresthelper.portalautomation" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: ArcGIS for Utilities
-&#64;contact: <a class="reference external" href="mailto:ArcGISTeamUtilities&#37;&#52;&#48;esri&#46;com">ArcGISTeamUtilities<span>&#64;</span>esri<span>&#46;</span>com</a>
-&#64;company: Esri
-&#64;version: 1.2
-&#64;description: Used to create reports, maps and apps
-&#64;requirements: Python 2.7.x, ArcGIS 10.2
-&#64;copyright: Esri, 2015</p>
 <dl class="class">
 <dt id="arcresthelper.portalautomation.portalautomation">
 <em class="property">class </em><code class="descclassname">arcresthelper.portalautomation.</code><code class="descname">portalautomation</code><span class="sig-paren">(</span><em>securityinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation" title="Permalink to this definition">¶</a></dt>
@@ -639,36 +1092,123 @@ to the user</p>
 <dl class="method">
 <dt id="arcresthelper.portalautomation.portalautomation.createGroups">
 <code class="descname">createGroups</code><span class="sig-paren">(</span><em>configFiles</em>, <em>dateTimeFormat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation.createGroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation.createGroups" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Parses a JSON configuration file to create groups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configFiles</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON files on disk containing
+configuration data for creating groups.</li>
+<li><strong>dateTimeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A valid date formatting directive, as understood
+by <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime.strftime" title="(in Python v3.4)"><code class="xref py py-meth docutils literal"><span class="pre">datetime.datetime.strftime()</span></code></a>. Defaults to <code class="docutils literal"><span class="pre">None</span></code>, i.e.,
+<code class="docutils literal"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M'</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.portalautomation.portalautomation.createRoles">
 <code class="descname">createRoles</code><span class="sig-paren">(</span><em>configFiles</em>, <em>dateTimeFormat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation.createRoles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation.createRoles" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Parses a JSON configuration file to create roles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configFiles</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON files on disk containing
+configuration data for creating roles.</li>
+<li><strong>dateTimeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A valid date formatting directive, as understood
+by <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime.strftime" title="(in Python v3.4)"><code class="xref py py-meth docutils literal"><span class="pre">datetime.datetime.strftime()</span></code></a>. Defaults to <code class="docutils literal"><span class="pre">None</span></code>, i.e.,
+<code class="docutils literal"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M'</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.portalautomation.portalautomation.publishfromconfig">
 <code class="descname">publishfromconfig</code><span class="sig-paren">(</span><em>configFiles</em>, <em>combinedApp=None</em>, <em>dateTimeFormat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation.publishfromconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation.publishfromconfig" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Parses a JSON configuration file to publish data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configFiles</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON files on disk containing
+configuration data for publishing.</li>
+<li><strong>combinedApp</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A JSON file on disk containing configuration data
+for app publishing. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>dateTimeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A valid date formatting directive, as understood
+by <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime.strftime" title="(in Python v3.4)"><code class="xref py py-meth docutils literal"><span class="pre">datetime.datetime.strftime()</span></code></a>. Defaults to <code class="docutils literal"><span class="pre">None</span></code>, i.e.,
+<code class="docutils literal"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M'</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.portalautomation.portalautomation.setLog">
 <code class="descname">setLog</code><span class="sig-paren">(</span><em>log_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation.setLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation.setLog" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p class="rubric">References</p>
+<p><a class="reference internal" href="#arcresthelper.common.init_log" title="arcresthelper.common.init_log"><code class="xref py py-func docutils literal"><span class="pre">arcresthelper.common.init_log()</span></code></a></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.portalautomation.portalautomation.stageContent">
 <code class="descname">stageContent</code><span class="sig-paren">(</span><em>configFiles</em>, <em>dateTimeFormat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#portalautomation.stageContent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.portalautomation.stageContent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Parses a JSON configuration file to stage content.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>configFiles</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON files on disk containing
+configuration data for staging content.</li>
+<li><strong>dateTimeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A valid date formatting directive, as understood
+by <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime.strftime" title="(in Python v3.4)"><code class="xref py py-meth docutils literal"><span class="pre">datetime.datetime.strftime()</span></code></a>. Defaults to <code class="docutils literal"><span class="pre">None</span></code>, i.e.,
+<code class="docutils literal"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M'</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.portalautomation.trace">
 <code class="descclassname">arcresthelper.portalautomation.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/portalautomation.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.portalautomation.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -687,105 +1227,256 @@ to the user</p>
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.folderExist">
 <code class="descname">folderExist</code><span class="sig-paren">(</span><em>name</em>, <em>folders</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.folderExist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.folderExist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines if a folder exist</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd>name - the name of the folder
-folders - list of folders</dd>
-<dt>Output:</dt>
-<dd>boolean - true/false if the folder exist</dd>
-</dl>
+<dd><p>Determines if a folder exists, case insensitively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the folder to check.</li>
+<li><strong>folders</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of folder dicts to check against. The dicts must contain
+the key:value pair <code class="docutils literal"><span class="pre">title</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="docutils literal"><span class="pre">True</span></code> if the folder exists in the list, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.getItem">
 <code class="descname">getItem</code><span class="sig-paren">(</span><em>userContent</em>, <em>title=None</em>, <em>name=None</em>, <em>itemType=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.getItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.getItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function retrieves the item ID if the item exist</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd><blockquote class="first">
-<div>name - the name of the item</div></blockquote>
-<p class="last">userContent - a list of user contnet</p>
-</dd>
-<dt>Output:</dt>
-<dd>string - ID of item, none if item does not exist</dd>
-</dl>
+<dd><p>Gets an item by a combination of title, name, and type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>userContent</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of user content.</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The title of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>itemType</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The type of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The item&#8217;s ID. If the item does not exist, <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#AttributeError" title="(in Python v3.4)"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code></a> &#8211;
+If both <code class="docutils literal"><span class="pre">title</span></code> and <code class="docutils literal"><span class="pre">name</span></code> are not specified (<code class="docutils literal"><span class="pre">None</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.publishingtools.publishingtools.getItemID" title="arcresthelper.publishingtools.publishingtools.getItemID"><code class="xref py py-func docutils literal"><span class="pre">getItemID()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.getItemID">
 <code class="descname">getItemID</code><span class="sig-paren">(</span><em>userContent</em>, <em>title=None</em>, <em>name=None</em>, <em>itemType=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.getItemID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.getItemID" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function retrieves the item ID if the item exist</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd><blockquote class="first">
-<div>name - the name of the item</div></blockquote>
-<p class="last">userContent - a list of user contnet</p>
-</dd>
-<dt>Output:</dt>
-<dd>string - ID of item, none if item does not exist</dd>
-</dl>
+<dd><p>Gets the ID of an item by a combination of title, name, and type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>userContent</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of user content.</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The title of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The name of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>itemType</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; The type of the item. Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The item&#8217;s ID. If the item does not exist, <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#AttributeError" title="(in Python v3.4)"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code></a> &#8211;
+If both <code class="docutils literal"><span class="pre">title</span></code> and <code class="docutils literal"><span class="pre">name</span></code> are not specified (<code class="docutils literal"><span class="pre">None</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcresthelper.publishingtools.publishingtools.getItem" title="arcresthelper.publishingtools.publishingtools.getItem"><code class="xref py py-func docutils literal"><span class="pre">getItem()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishApp">
 <code class="descname">publishApp</code><span class="sig-paren">(</span><em>app_info</em>, <em>map_info=None</em>, <em>fsInfo=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishApp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Publishes apps to AGOL/Portal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>app_info</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration apps to publish.</li>
+<li><strong>map_info</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li><strong>fsInfo</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dictionary of results objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishCombinedWebMap">
 <code class="descname">publishCombinedWebMap</code><span class="sig-paren">(</span><em>maps_info</em>, <em>webmaps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishCombinedWebMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishCombinedWebMap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Publishes a combination of web maps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>maps_info</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration combined web maps to publish.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of results from <code class="xref py py-meth docutils literal"><span class="pre">arcrest.manageorg._content.UserItem.updateItem()</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishFeatureCollections">
 <code class="descname">publishFeatureCollections</code><span class="sig-paren">(</span><em>configs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishFeatureCollections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishFeatureCollections" title="Permalink to this definition">¶</a></dt>
-<dd><p>publishs a feature service from a mxd
-Inputs:</p>
-<blockquote>
-<div>feature_service_config: Json file with list of feature service publishing details</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>feature service item information</dd>
-</dl>
+<dd><p>Publishes feature collections to a feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>configs</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration feature service details to publish.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of results objects.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishFsFromMXD">
 <code class="descname">publishFsFromMXD</code><span class="sig-paren">(</span><em>fs_config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishFsFromMXD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishFsFromMXD" title="Permalink to this definition">¶</a></dt>
-<dd><p>publishs a feature service from a mxd
-Inputs:</p>
-<blockquote>
-<div>feature_service_config: Json file with list of feature service publishing details</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>feature service item information</dd>
-</dl>
+<dd><p>Publishes the layers in a MXD to a feauture service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fs_config</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration feature service details to publish.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of results objects.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishItems">
 <code class="descname">publishItems</code><span class="sig-paren">(</span><em>items_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishItems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishItems" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Publishes a list of items.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items_info</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration items to publish.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of results from <code class="xref py py-meth docutils literal"><span class="pre">arcrest.manageorg._content.User.addItem()</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.publishMap">
 <code class="descname">publishMap</code><span class="sig-paren">(</span><em>maps_info</em>, <em>fsInfo=None</em>, <em>itInfo=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.publishMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.publishMap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Publishes a list of maps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>maps_info</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration maps to publish.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of results from <code class="xref py py-meth docutils literal"><span class="pre">arcrest.manageorg._content.UserItem.updateItem()</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.publishingtools.publishingtools.updateFeatureService">
 <code class="descname">updateFeatureService</code><span class="sig-paren">(</span><em>efs_config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#publishingtools.updateFeatureService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.publishingtools.updateFeatureService" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates a feature service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>efs_config</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#list" title="(in Python v3.4)"><em>list</em></a>) &#8211; A list of JSON configuration feature service details to update.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of results objects.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="arcresthelper.publishingtools.trace">
 <code class="descclassname">arcresthelper.publishingtools.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/publishingtools.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.publishingtools.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -798,21 +1489,41 @@ to the user</p>
 <dl class="method">
 <dt id="arcresthelper.resettools.resetTools.removeUserData">
 <code class="descname">removeUserData</code><span class="sig-paren">(</span><em>users=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/resettools.html#resetTools.removeUserData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.resettools.resetTools.removeUserData" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function deletes content for the list of users,
-if no users are specified, all users in the org are queried
-and their content is deleted.</p>
-<p>Inputs:
-users - Comma delimited list of user names</p>
+<dd><p>Removes users&#8217; content and data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A comma delimited list of user names.
+Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When <code class="docutils literal"><span class="pre">users</span></code> is not provided (<code class="docutils literal"><span class="pre">None</span></code>), all users
+in the organization will have their data deleted!</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="arcresthelper.resettools.resetTools.removeUserGroups">
 <code class="descname">removeUserGroups</code><span class="sig-paren">(</span><em>users=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/resettools.html#resetTools.removeUserGroups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.resettools.resetTools.removeUserGroups" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function deletes all groups for the list of users,
-if no users are specified, all users in the org are queried
-and their groups is deleted.</p>
-<p>Inputs:
-users - Comma delimted list of user names</p>
+<dd><p>Removes users&#8217; groups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; A comma delimited list of user names.
+Defaults to <code class="docutils literal"><span class="pre">None</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When <code class="docutils literal"><span class="pre">users</span></code> is not provided (<code class="docutils literal"><span class="pre">None</span></code>), all users
+in the organization will have their groups deleted!</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -820,9 +1531,28 @@ users - Comma delimted list of user names</p>
 <dl class="function">
 <dt id="arcresthelper.resettools.trace">
 <code class="descclassname">arcresthelper.resettools.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/resettools.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.resettools.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -838,31 +1568,134 @@ to the user</p>
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper">
 <em class="property">class </em><code class="descclassname">arcresthelper.securityhandlerhelper.</code><code class="descname">securityhandlerhelper</code><span class="sig-paren">(</span><em>securityinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/securityhandlerhelper.html#securityhandlerhelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>A number of different security handlers are suppoted by ArcGIS, this
-function simplifies the creation of the handlers.  A dict with the
-type of handler and information to created it is required to generate
-the handlers</p>
+<p>A number of different security handlers are suppoted by ArcGIS; this
+function simplifies the creation of the handlers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>securityinfo</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#dict" title="(in Python v3.4)"><em>dict</em></a>) &#8211; A <code class="docutils literal"><span class="pre">dict</span></code> with the type of handler and
+information to be created.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="42%" />
+<col width="34%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Description</td>
+<td>Required?</td>
+</tr>
+<tr class="row-even"><td>security_type</td>
+<td>security type used to connect</td>
+<td>See Values *</td>
+</tr>
+<tr class="row-odd"><td>username</td>
+<td>username for log in</td>
+<td><code class="docutils literal"><span class="pre">LDAP|NTLM</span></code> **</td>
+</tr>
+<tr class="row-even"><td>password</td>
+<td>password for log in</td>
+<td><code class="docutils literal"><span class="pre">LDAP|NTLM</span></code> **</td>
+</tr>
+<tr class="row-odd"><td>proxy_url</td>
+<td>url for proxy server</td>
+<td>Optional</td>
+</tr>
+<tr class="row-even"><td>proxy_port</td>
+<td>port for proxy server</td>
+<td>Optional</td>
+</tr>
+<tr class="row-odd"><td>token_url</td>
+<td>url for token server</td>
+<td>Optional</td>
+</tr>
+<tr class="row-even"><td>referer_url</td>
+<td>url for referer</td>
+<td>Optional</td>
+</tr>
+<tr class="row-odd"><td>certificatefile</td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">PKI</span></code></td>
+</tr>
+<tr class="row-even"><td>keyfile</td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">PKI</span></code></td>
+</tr>
+<tr class="row-odd"><td>client_id</td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">OAuth</span></code></td>
+</tr>
+<tr class="row-even"><td>secret_id</td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">OAuth</span></code></td>
+</tr>
+<tr class="row-odd"><td colspan="3">* Values: <code class="docutils literal"><span class="pre">ArcGIS|Portal|LDAP|NTLM|PKI|OAuth</span></code> (defaults to <code class="docutils literal"><span class="pre">Portal</span></code>)</td>
+</tr>
+<tr class="row-even"><td colspan="3">** Also required for <code class="docutils literal"><span class="pre">ArcGIS|Portal</span></code> unless using anonymous logins</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">securityinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span> <span class="p">:</span> <span class="s1">&#39;secret&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span> <span class="p">:</span> <span class="s1">&#39;really_secret&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shh</span> <span class="o">=</span> <span class="n">arcresthelper</span><span class="o">.</span><span class="n">securityhandlerhelper</span><span class="o">.</span><span class="n">securityhandlerhelper</span><span class="p">(</span><span class="n">securityinfo</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">shh</span><span class="o">.</span><span class="n">_org_url</span><span class="p">)</span>
+<span class="go">http://myorg.maps.arcgis.com</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper.dispose">
 <code class="descname">dispose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/securityhandlerhelper.html#securityhandlerhelper.dispose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper.dispose" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Disposes the <a class="reference internal" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper" title="arcresthelper.securityhandlerhelper.securityhandlerhelper"><code class="xref py py-class docutils literal"><span class="pre">securityhandlerhelper</span></code></a> object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper.message">
 <code class="descname">message</code><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns any messages</p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Any messages generated by the object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper.securityhandler">
 <code class="descname">securityhandler</code><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper.securityhandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the security hanlder</p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The security handler object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper" title="arcresthelper.securityhandlerhelper.securityhandlerhelper">securityhandlerhelper</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="arcresthelper.securityhandlerhelper.securityhandlerhelper.valid">
 <code class="descname">valid</code><a class="headerlink" href="#arcresthelper.securityhandlerhelper.securityhandlerhelper.valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns boolean wether handler is valid</p>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if the object is valid, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/functions.html#bool" title="(in Python v3.4)">bool</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -870,9 +1703,28 @@ the handlers</p>
 <dl class="function">
 <dt id="arcresthelper.securityhandlerhelper.trace">
 <code class="descclassname">arcresthelper.securityhandlerhelper.</code><code class="descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcresthelper/securityhandlerhelper.html#trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcresthelper.securityhandlerhelper.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>trace finds the line, the filename
-and error message and returns it
-to the user</p>
+<dd><p>Determines information about where an error was thrown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">line number, filename, error message</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#tuple" title="(in Python v3.4)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Error on &#39;{}&#39;</span><span class="se">\n</span><span class="s2">in file &#39;{}&#39;</span><span class="se">\n</span><span class="s2">with error &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">trace</span><span class="p">()))</span>
+<span class="gp">...</span>
+<span class="go">Error on &#39;line 1234&#39;</span>
+<span class="go">in file &#39;C:\foo\baz.py&#39;</span>
+<span class="go">with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

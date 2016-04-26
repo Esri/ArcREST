@@ -49,6 +49,7 @@
   <h1>Source code for arcrest.ags.layer</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
@@ -105,9 +106,12 @@
     <span class="n">_useStandardizedQueries</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_securityHandler</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_supportsRollbackOnFailureParameter</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsApplyEditsWithGlobalIds</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_globalIdField</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsValidateSQL</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_syncCanReturnChanges</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_allowGeometryUpdates</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_supportsCalculate</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_objectIdField</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_templates</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_editFieldsInfo</span> <span class="o">=</span> <span class="bp">None</span>
@@ -116,6 +120,10 @@
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_advancedQueryCapabilities</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_indexes</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_standardMaxRecordCount</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_tileMaxRecordCount</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_maxRecordCountFactor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_dateFieldsTimeReference</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
@@ -205,6 +213,34 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowGeometryUpdates</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowGeometryUpdates</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">supportsCalculate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the boolean value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsCalculate</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsCalculate</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">supportsApplyEditsWithGlobalIds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the boolean value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsApplyEditsWithGlobalIds</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsApplyEditsWithGlobalIds</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">supportsValidateSQL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the boolean value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsValidateSQL</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supportsValidateSQL</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dateFieldsTimeReference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the boolean value &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dateFieldsTimeReference</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dateFieldsTimeReference</span>        
     <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">objectIdField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -452,6 +488,27 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useStandardizedQueries</span>
     <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">standardMaxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the standardMaxRecordCount for the feature layer&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardMaxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardMaxRecordCount</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tileMaxRecordCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the tileMaxRecordCount for the feature layer&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileMaxRecordCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tileMaxRecordCount</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maxRecordCountFactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the maxRecordCountFactor for the feature layer&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCountFactor</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxRecordCountFactor</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="FeatureLayer.addFeature"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.addFeature">[docs]</a>    <span class="k">def</span> <span class="nf">addFeature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span>
                    <span class="n">gdbVersion</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">rollbackOnFailure</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -499,7 +556,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">l</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="n">newn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">newn</span><span class="p">:</span><span class="n">i</span><span class="o">*</span><span class="n">newn</span><span class="o">+</span><span class="n">newn</span><span class="p">]</span>
         <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="n">newn</span><span class="o">-</span><span class="n">newn</span><span class="p">:]</span>
     <span class="c1">#----------------------------------------------------------------------</span>
@@ -924,6 +981,98 @@
             <span class="k">return</span> <span class="n">results</span>
         <span class="k">return</span></div>
     <span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="FeatureLayer.queryRelatedRecords"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.queryRelatedRecords">[docs]</a>    <span class="k">def</span> <span class="nf">queryRelatedRecords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">objectIds</span><span class="p">,</span>
+                            <span class="n">relationshipId</span><span class="p">,</span>
+                            <span class="n">outFields</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+                            <span class="n">definitionExpression</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">returnGeometry</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                            <span class="n">maxAllowableOffset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">geometryPrecision</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">outWKID</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">gdbVersion</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">returnZ</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                            <span class="n">returnM</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           The Query Related Records operation is performed on a feature service </span>
+<span class="sd">           layer resource. The result of this operation are feature sets grouped</span>
+<span class="sd">           by source layer/table object IDs. Each feature set contains</span>
+<span class="sd">           Feature objects including the values for the fields requested by</span>
+<span class="sd">           the user. For related layers, if you request geometry</span>
+<span class="sd">           information, the geometry of each feature is also returned in</span>
+<span class="sd">           the feature set. For related tables, the feature set does not</span>
+<span class="sd">           include geometries. All parameters related to geometry are</span>
+<span class="sd">           ignored when querying related tables.</span>
+<span class="sd">           Inputs:</span>
+<span class="sd">              objectIds - The object IDs of the table/layer to be queried.</span>
+<span class="sd">              relationshipId - The ID of the relationship to be queried.</span>
+<span class="sd">              outFields - The list of fields from the related table/layer</span>
+<span class="sd">                          to be included in the returned feature set. This</span>
+<span class="sd">                          list is a comma delimited list of field names. If</span>
+<span class="sd">                          you specify the shape field in the list of return</span>
+<span class="sd">                          fields, it is ignored. To request geometry, set</span>
+<span class="sd">                          returnGeometry to true.</span>
+<span class="sd">                          You can also specify the wildcard &quot;*&quot; as the</span>
+<span class="sd">                          value of this parameter. In this case, the result</span>
+<span class="sd">                          s will include all the field values.</span>
+<span class="sd">              definitionExpression - The definition expression to be</span>
+<span class="sd">                                     applied to the related table/layer.</span>
+<span class="sd">                                     From the list of objectIds, only those</span>
+<span class="sd">                                     records that conform to this</span>
+<span class="sd">                                     expression are queried for related</span>
+<span class="sd">                                     records.</span>
+<span class="sd">              returnGeometry - If true, the feature set includes the</span>
+<span class="sd">                               geometry associated with each feature. The</span>
+<span class="sd">                               default is true.</span>
+<span class="sd">              maxAllowableOffset - This option can be used to specify the</span>
+<span class="sd">                                   maxAllowableOffset to be used for</span>
+<span class="sd">                                   generalizing geometries returned by the</span>
+<span class="sd">                                   query operation. The maxAllowableOffset</span>
+<span class="sd">                                   is in the units of the outSR. If outSR</span>
+<span class="sd">                                   is not specified, then</span>
+<span class="sd">                                   maxAllowableOffset is assumed to be in</span>
+<span class="sd">                                   the unit of the spatial reference of the</span>
+<span class="sd">                                   map.</span>
+<span class="sd">              geometryPrecision - This option can be used to specify the</span>
+<span class="sd">                                  number of decimal places in the response</span>
+<span class="sd">                                  geometries.</span>
+<span class="sd">              outWKID - The WKID for the spatial reference of the</span>
+<span class="sd">                        returned geometry.</span>
+<span class="sd">              gdbVersion - The geodatabase version to query. This parameter</span>
+<span class="sd">                           applies only if the isDataVersioned property of</span>
+<span class="sd">                           the layer queried is true.</span>
+<span class="sd">              returnZ - If true, Z values are included in the results if</span>
+<span class="sd">                        the features have Z values. Otherwise, Z values are</span>
+<span class="sd">                        not returned. The default is false.</span>
+<span class="sd">              returnM - If true, M values are included in the results if</span>
+<span class="sd">                        the features have M values. Otherwise, M values are</span>
+<span class="sd">                        not returned. The default is false.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;objectIds&quot;</span> <span class="p">:</span> <span class="n">objectIds</span><span class="p">,</span>
+            <span class="s2">&quot;relationshipId&quot;</span> <span class="p">:</span> <span class="n">relationshipId</span><span class="p">,</span>
+            <span class="s2">&quot;outFields&quot;</span> <span class="p">:</span> <span class="n">outFields</span><span class="p">,</span>
+            <span class="s2">&quot;returnGeometry&quot;</span> <span class="p">:</span> <span class="n">returnGeometry</span><span class="p">,</span>
+            <span class="s2">&quot;returnM&quot;</span> <span class="p">:</span> <span class="n">returnM</span><span class="p">,</span>
+            <span class="s2">&quot;returnZ&quot;</span> <span class="p">:</span> <span class="n">returnZ</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">gdbVersion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;gdbVersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdbVersion</span>
+        <span class="k">if</span> <span class="n">definitionExpression</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;definitionExpression&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">definitionExpression</span>
+        <span class="k">if</span> <span class="n">outWKID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;outSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span><span class="n">outWKID</span><span class="p">)</span><span class="o">.</span><span class="n">asDictionary</span>
+        <span class="k">if</span> <span class="n">maxAllowableOffset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;maxAllowableOffset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxAllowableOffset</span>
+        <span class="k">if</span> <span class="n">geometryPrecision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometryPrecision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometryPrecision</span>
+        <span class="n">quURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/queryRelatedRecords&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">quURL</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                        <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
+                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>    </div>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="FeatureLayer.calculate"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.FeatureLayer.calculate">[docs]</a>    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">calcExpression</span><span class="p">,</span> <span class="n">sqlFormat</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The calculate operation is performed on a feature service layer</span>
@@ -1058,10 +1207,11 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">token</span>
-        <span class="n">json_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
-                                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
+                                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>                                    
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                       <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
                       <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
@@ -1070,6 +1220,10 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - attribute not implemented in GroupLayer.&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span></div>
+<span class="c1">########################################################################</span>
+<div class="viewcode-block" id="SchematicsLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.SchematicsLayer">[docs]</a><span class="k">class</span> <span class="nc">SchematicsLayer</span><span class="p">(</span><span class="n">FeatureLayer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; represents a Schematics Layer  &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 <span class="c1">########################################################################</span>
 <div class="viewcode-block" id="TableLayer"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.layer.TableLayer">[docs]</a><span class="k">class</span> <span class="nc">TableLayer</span><span class="p">(</span><span class="n">FeatureLayer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Table object is exactly like FeatureLayer object&quot;&quot;&quot;</span>

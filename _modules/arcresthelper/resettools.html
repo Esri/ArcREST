@@ -48,8 +48,9 @@
             
   <h1>Source code for arcresthelper.resettools</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
+<span class="kn">from</span> <span class="nn">.securityhandlerhelper</span> <span class="kn">import</span> <span class="n">securityhandlerhelper</span>
 
 <span class="n">dateTimeFormat</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span>
 <span class="kn">import</span> <span class="nn">arcrest</span>
@@ -59,15 +60,25 @@
 <span class="kn">import</span> <span class="nn">datetime</span><span class="o">,</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">import</span> <span class="nn">gc</span>
 
 <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
+    <span class="sd">&quot;&quot;&quot;Determines information about where an error was thrown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     1/0</span>
+<span class="sd">        ... except:</span>
+<span class="sd">        ...     print(&quot;Error on &#39;{}&#39;\\nin file &#39;{}&#39;\\nwith error &#39;{}&#39;&quot;.format(*trace()))</span>
+<span class="sd">        ...        </span>
+<span class="sd">        Error on &#39;line 1234&#39;</span>
+<span class="sd">        in file &#39;C:\\foo\\baz.py&#39;</span>
+<span class="sd">        with error &#39;ZeroDivisionError: integer division or modulo by zero&#39;</span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span><span class="o">,</span> <span class="nn">sys</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
@@ -83,17 +94,18 @@
 <div class="viewcode-block" id="resetTools"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.resetTools">[docs]</a><span class="k">class</span> <span class="nc">resetTools</span><span class="p">(</span><span class="n">securityhandlerhelper</span><span class="p">):</span>
 
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="resetTools.removeUserData"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.resetTools.removeUserData">[docs]</a>    <span class="k">def</span> <span class="nf">removeUserData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">users</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This function deletes content for the list of users,</span>
-<span class="sd">            if no users are specified, all users in the org are queried</span>
-<span class="sd">            and their content is deleted.</span>
-
-<span class="sd">            Inputs:</span>
-<span class="sd">            users - Comma delimited list of user names</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
+<div class="viewcode-block" id="resetTools.removeUserData"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.resetTools.removeUserData">[docs]</a>    <span class="k">def</span> <span class="nf">removeUserData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes users&#39; content and data.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            users (str): A comma delimited list of user names.</span>
+<span class="sd">                Defaults to ``None``.</span>
+<span class="sd">        </span>
+<span class="sd">        Warning:</span>
+<span class="sd">            When ``users`` is not provided (``None``), all users</span>
+<span class="sd">            in the organization will have their data deleted!</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">portal</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">user</span> <span class="o">=</span> <span class="bp">None</span>
@@ -173,18 +185,19 @@
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
-
     <span class="c1">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="resetTools.removeUserGroups"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.resetTools.removeUserGroups">[docs]</a>    <span class="k">def</span> <span class="nf">removeUserGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">users</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This function deletes all groups for the list of users,</span>
-<span class="sd">            if no users are specified, all users in the org are queried</span>
-<span class="sd">            and their groups is deleted.</span>
-
-<span class="sd">            Inputs:</span>
-<span class="sd">            users - Comma delimted list of user names</span>
-
-<span class="sd">            &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="resetTools.removeUserGroups"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.resettools.resetTools.removeUserGroups">[docs]</a>    <span class="k">def</span> <span class="nf">removeUserGroups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes users&#39; groups.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            users (str): A comma delimited list of user names.</span>
+<span class="sd">                Defaults to ``None``.</span>
+<span class="sd">        </span>
+<span class="sd">        Warning:</span>
+<span class="sd">            When ``users`` is not provided (``None``), all users</span>
+<span class="sd">            in the organization will have their groups deleted!</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
         <span class="n">admin</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">userCommunity</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">portal</span> <span class="o">=</span> <span class="bp">None</span>
@@ -249,7 +262,6 @@
             <span class="k">del</span> <span class="n">group</span>
 
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
-
 </pre></div>
 
           </div>

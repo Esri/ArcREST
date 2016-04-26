@@ -162,7 +162,7 @@ rel_object_field - string - (optional) name of field with OID of feature class</
 
 <dl class="method">
 <dt id="arcrest.agol.services.FeatureLayer.applyEdits">
-<code class="descname">applyEdits</code><span class="sig-paren">(</span><em>addFeatures=[]</em>, <em>updateFeatures=[]</em>, <em>deleteFeatures=None</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/agol/services.html#FeatureLayer.applyEdits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.applyEdits" title="Permalink to this definition">¶</a></dt>
+<code class="descname">applyEdits</code><span class="sig-paren">(</span><em>addFeatures=[]</em>, <em>updateFeatures=[]</em>, <em>deleteFeatures=None</em>, <em>gdbVersion=None</em>, <em>useGlobalIds=False</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/agol/services.html#FeatureLayer.applyEdits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.applyEdits" title="Permalink to this definition">¶</a></dt>
 <dd><p>This operation adds, updates, and deletes features to the
 associated feature layer or table in a single call.
 Inputs:</p>
@@ -176,15 +176,22 @@ objects</dd>
 </dl>
 <p>deleteFeatures - string of OIDs to remove from service
 gdbVersion - Geodatabase version to apply the edits.
-rollbackOnFailure - Optional parameter to specify if the</p>
+useGlobalIds - instead of referencing the default Object ID</p>
 <blockquote>
-<div>edits should be applied only if all
+<div>field, the service will look at a GUID field
+to track changes.  This means the GUIDs will
+be passed instead of OIDs for delete,
+update or add features.</div></blockquote>
+<dl class="docutils">
+<dt>rollbackOnFailure - Optional parameter to specify if the</dt>
+<dd>edits should be applied only if all
 submitted edits succeed. If false, the
 server will apply the edits that succeed
 even if some of the submitted edits fail.
 If true, the server will apply the edits
 only if all edits succeed. The default
-value is true.</div></blockquote>
+value is true.</dd>
+</dl>
 </div></blockquote>
 <dl class="docutils">
 <dt>Output:</dt>

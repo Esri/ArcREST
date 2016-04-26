@@ -509,6 +509,12 @@ Values: standard, native</dd>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.dateFieldsTimeReference">
+<code class="descname">dateFieldsTimeReference</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.dateFieldsTimeReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the boolean value</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.defaultVisibility">
 <code class="descname">defaultVisibility</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.defaultVisibility" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -656,6 +662,12 @@ edits succeed. The default value is true.</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.maxRecordCountFactor">
+<code class="descname">maxRecordCountFactor</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.maxRecordCountFactor" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the maxRecordCountFactor for the feature layer</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.maxScale">
 <code class="descname">maxScale</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.maxScale" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the max scale</p>
@@ -737,10 +749,79 @@ returnFeatureClass is set to True.</dd>
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="arcrest.ags.layer.FeatureLayer.queryRelatedRecords">
+<code class="descname">queryRelatedRecords</code><span class="sig-paren">(</span><em>objectIds</em>, <em>relationshipId</em>, <em>outFields='*'</em>, <em>definitionExpression=None</em>, <em>returnGeometry=True</em>, <em>maxAllowableOffset=None</em>, <em>geometryPrecision=None</em>, <em>outWKID=None</em>, <em>gdbVersion=None</em>, <em>returnZ=False</em>, <em>returnM=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#FeatureLayer.queryRelatedRecords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.queryRelatedRecords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Query Related Records operation is performed on a feature service
+layer resource. The result of this operation are feature sets grouped
+by source layer/table object IDs. Each feature set contains
+Feature objects including the values for the fields requested by
+the user. For related layers, if you request geometry
+information, the geometry of each feature is also returned in
+the feature set. For related tables, the feature set does not
+include geometries. All parameters related to geometry are
+ignored when querying related tables.
+Inputs:</p>
+<blockquote>
+<div><p>objectIds - The object IDs of the table/layer to be queried.
+relationshipId - The ID of the relationship to be queried.
+outFields - The list of fields from the related table/layer</p>
+<blockquote>
+<div>to be included in the returned feature set. This
+list is a comma delimited list of field names. If
+you specify the shape field in the list of return
+fields, it is ignored. To request geometry, set
+returnGeometry to true.
+You can also specify the wildcard &#8220;*&#8221; as the
+value of this parameter. In this case, the result
+s will include all the field values.</div></blockquote>
+<dl class="docutils">
+<dt>definitionExpression - The definition expression to be</dt>
+<dd>applied to the related table/layer.
+From the list of objectIds, only those
+records that conform to this
+expression are queried for related
+records.</dd>
+<dt>returnGeometry - If true, the feature set includes the</dt>
+<dd>geometry associated with each feature. The
+default is true.</dd>
+<dt>maxAllowableOffset - This option can be used to specify the</dt>
+<dd>maxAllowableOffset to be used for
+generalizing geometries returned by the
+query operation. The maxAllowableOffset
+is in the units of the outSR. If outSR
+is not specified, then
+maxAllowableOffset is assumed to be in
+the unit of the spatial reference of the
+map.</dd>
+<dt>geometryPrecision - This option can be used to specify the</dt>
+<dd>number of decimal places in the response
+geometries.</dd>
+<dt>outWKID - The WKID for the spatial reference of the</dt>
+<dd>returned geometry.</dd>
+<dt>gdbVersion - The geodatabase version to query. This parameter</dt>
+<dd>applies only if the isDataVersioned property of
+the layer queried is true.</dd>
+<dt>returnZ - If true, Z values are included in the results if</dt>
+<dd>the features have Z values. Otherwise, Z values are
+not returned. The default is false.</dd>
+<dt>returnM - If true, M values are included in the results if</dt>
+<dd>the features have M values. Otherwise, M values are
+not returned. The default is false.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.relationships">
 <code class="descname">relationships</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.relationships" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.standardMaxRecordCount">
+<code class="descname">standardMaxRecordCount</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.standardMaxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the standardMaxRecordCount for the feature layer</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.subLayers">
@@ -759,6 +840,18 @@ returnFeatureClass is set to True.</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsApplyEditsWithGlobalIds">
+<code class="descname">supportsApplyEditsWithGlobalIds</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsApplyEditsWithGlobalIds" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the boolean value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsCalculate">
+<code class="descname">supportsCalculate</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsCalculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the boolean value</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.supportsRollbackOnFailureParameter">
 <code class="descname">supportsRollbackOnFailureParameter</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsRollbackOnFailureParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the value for the supportsRollbackOnFailureParameter</p>
@@ -770,6 +863,12 @@ returnFeatureClass is set to True.</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.supportsValidateSQL">
+<code class="descname">supportsValidateSQL</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.supportsValidateSQL" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the boolean value</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.ags.layer.FeatureLayer.syncCanReturnChanges">
 <code class="descname">syncCanReturnChanges</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.syncCanReturnChanges" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the sync can return changes</p>
@@ -779,6 +878,12 @@ returnFeatureClass is set to True.</dd>
 <dt id="arcrest.ags.layer.FeatureLayer.templates">
 <code class="descname">templates</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.templates" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the templates</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.ags.layer.FeatureLayer.tileMaxRecordCount">
+<code class="descname">tileMaxRecordCount</code><a class="headerlink" href="#arcrest.ags.layer.FeatureLayer.tileMaxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tileMaxRecordCount for the feature layer</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -978,6 +1083,13 @@ registered raster workspace.</p>
 <em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">RasterLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#RasterLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.RasterLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><code class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></code></a></p>
 <p>Raster Layer is exactly like FeatureLayer object</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="arcrest.ags.layer.SchematicsLayer">
+<em class="property">class </em><code class="descclassname">arcrest.ags.layer.</code><code class="descname">SchematicsLayer</code><span class="sig-paren">(</span><em>url</em>, <em>securityHandler=None</em>, <em>initialize=False</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/layer.html#SchematicsLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.layer.SchematicsLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#arcrest.ags.layer.FeatureLayer" title="arcrest.ags.layer.FeatureLayer"><code class="xref py py-class docutils literal"><span class="pre">arcrest.ags.layer.FeatureLayer</span></code></a></p>
+<p>represents a Schematics Layer</p>
 </dd></dl>
 
 <dl class="class">
@@ -1376,6 +1488,12 @@ values: composite | separateImage |</p>
 </dd>
 </dl>
 </div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="arcrest.ags.mapservice.MapService.getExtensions">
+<code class="descname">getExtensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/ags/mapservice.html#MapService.getExtensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.ags.mapservice.MapService.getExtensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns objects for all map service extensions</p>
 </dd></dl>
 
 <dl class="method">

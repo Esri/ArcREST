@@ -32,6 +32,9 @@ sys.path.insert(0, os.path.abspath('../../src'))
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.viewcode',
               'sphinx.ext.intersphinx']
 
+# This value selects what content will be inserted into the main body of an autoclass directive
+autoclass_content = 'class'              
+              
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -284,8 +287,17 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
+# -- Napoleon Configutation --------------------------------------------
+
+# If true, generate private member entries e.g., _foo(x)
+napoleon_include_private_with_doc = False
+
 # If true, generate special member entries e.g., __foo__(x)
 napoleon_include_special_with_doc = False
+
+# True to use the .. admonition:: directive for Notes sections.
+# False to use the .. rubric:: directive instead.
+napoleon_use_admonition_for_notes = True
 
 # Where to search for Python documentation
 intersphinx_mapping = {'python': ('https://docs.python.org/3.4', None)}

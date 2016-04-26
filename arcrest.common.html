@@ -549,16 +549,38 @@ Inputs:</p>
 
 <dl class="function">
 <dt id="arcrest.common.general.online_time_to_string">
-<code class="descclassname">arcrest.common.general.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.online_time_to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a timestamp to date/time string
-Inputs:</p>
-<blockquote>
-<div>value - timestamp as long
-timeFormat - output date/time format</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>string</dd>
-</dl>
+<code class="descclassname">arcrest.common.general.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em>, <em>utcOffset=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.online_time_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts AGOL timestamp to formatted string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#float" title="(in Python v3.4)"><em>float</em></a>) &#8211; A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)</li>
+<li><strong>timeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Date/Time format string as parsed by <code class="xref py py-func docutils literal"><span class="pre">datetime.strftime()</span></code>.</li>
+<li><strong>utcOffset</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; Hours difference from UTC and desired output. Default is 0 (remain in UTC).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A string representation of the timestamp.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcrest</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">1457167261000.0</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+<span class="go">&#39;2016-03-05 00:41:01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcrest</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">731392515000.0</span><span class="p">,</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># PST is UTC-8:00</span>
+<span class="go">&#39;03/05/1993 12:35:15&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcrest.common.general.local_time_to_online" title="arcrest.common.general.local_time_to_online"><code class="xref py py-func docutils literal"><span class="pre">local_time_to_online()</span></code></a> for converting a <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a> object to AGOL timestamp</p>
+</div>
 </dd></dl>
 
 <dl class="function">
