@@ -1,5 +1,8 @@
 """
-   This sample shows to load assignments from csv
+   This sample shows to load assignments from a csv and 
+   using the workforce project to lookup the workers ID and
+   the Dispatchers ID.  A assignment area layer is required to
+   provide the XY for the assignment location.
    Python 2.x/3.x
    ArcREST 3.5
 """
