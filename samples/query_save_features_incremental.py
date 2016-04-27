@@ -76,15 +76,15 @@ def main():
         fst = featureservicetools.featureservicetools(securityinfo)
         
         """Settings"""
-        #URL to adoption service
-        url = 'http://services1.arcgis.com/DlnuvLGpDczjeSgG/arcgis/rest/services/CatchBasin/FeatureServer/0/' 
+        #URL to service
+        url = ''#url to feature layer, make sure it ends in \layer number 
         
         #Base sql expression to find features of a type
         sql = "Assetstatus = 'Adopted'"
   
         #Field used to restrict query to only records since last query
         statusUpdateField = 'Laststatusupdate'
-        #Fields to save to the output CSV
+        #Fields to save to the output CSV, format Field1,Field2,...
         out_fields ='OBJECTID,GIS_ID,Nickname'
     
         """The location and file name to save the results to"""
