@@ -177,9 +177,9 @@ class Services(BaseAGOLClass):
                 if 'name' in item:
                     name = item['name']
                 typefs = item['type']
-                if item.has_key('name') == True:
+                if 'name' in item == True:
                     name = item['name']
-                elif item.has_key('serviceName') == True:
+                elif 'serviceName' in item == True:
                     name = item['serviceName']
 
                 self._services.append(
@@ -193,10 +193,10 @@ class Services(BaseAGOLClass):
                 if 'name' in item:
                     name = item['name']
                 typefs = item['type']
-                if item.has_key('adminServiceInfo') == True:
+                if 'adminServiceInfo' in item == True:
                     name = item['adminServiceInfo']['name']
                     typefs = item['adminServiceInfo']['type']
-                elif item.has_key('serviceName') == True:
+                elif 'serviceName' in item == True:
                     name = item['serviceName']
                     typefs = item['type']
 

@@ -51,7 +51,7 @@ class MapGraphicLayer(BaseOperationalLayer):
             return False, layerName
         geom = _unicode_convert(json.loads(geometry.JSON))
         geomType = self.__look_up_geom(geometry.type.lower())
-        if self._storedFeatures.has_key(layerName):
+        if layerName in self._storedFeatures:
             self._storedFeatures[layerName]['featureSet']['features'].append({"geometry":geom,
                                                                                "symbol":symbol.asDictionary})
         else:

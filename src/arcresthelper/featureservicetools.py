@@ -647,7 +647,7 @@ class featureservicetools(securityhandlerhelper):
             del fl
             gc.collect()
     #----------------------------------------------------------------------
-    def QueryAllFeatures(self, url, sql, out_fields="*", chunksize=1000, savePath=None):
+    def QueryAllFeatures(self, url, sql, out_fields="*", chunksize=1000, savePath=None,printIndent=""):
         """Performs an SQL query against a hosted feature service layer.
 
         Args:
@@ -680,7 +680,7 @@ class featureservicetools(securityhandlerhelper):
                 if total == 0:
                     return  {'success':True, 'message':"No features matched the query"}
 
-                print ("%s features to be downloaded" % total)
+                print (printIndent + "%s features to be downloaded" % total)
                 chunksize = min(chunksize, fl.maxRecordCount)
                 combinedResults = None
                 totalQueried = 0
@@ -700,7 +700,7 @@ class featureservicetools(securityhandlerhelper):
                                     combinedResults.features.append(feature)
 
                             totalQueried += len(results.features)
-                            print("{:.0%} Completed: {}/{}".format(totalQueried / float(total), totalQueried, total))
+                            print(printIndent + "{:.0%} Completed: {}/{}".format(totalQueried / float(total), totalQueried, total))
 
                         else:
                             print (results)
@@ -713,7 +713,7 @@ class featureservicetools(securityhandlerhelper):
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({
-                        "function": "QueryFeatureLayer",
+                        "function": "QueryAllFeatures",
                         "line": line,
                         "filename":  filename,
                         "synerror": synerror,

@@ -51,7 +51,7 @@ class Administration(BaseAGOLClass):
             raise AttributeError("Security Handler is required for the administration function")
 
         urlInfo = urlparse(self._url)
-        if str(urlInfo.netloc).lower() == "www.arcgis.com":
+        if str(urlInfo.netloc).lower() == "www.arcgis.com"> -1:
             portalSelf = self.portals.portalSelf
             urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
             self._url = urlunparse(urlInfo)

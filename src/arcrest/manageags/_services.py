@@ -193,7 +193,7 @@ class Services(BaseAGSServer):
                                securityHandler=self._securityHandler,
                                proxy_url=self._proxy_url,
                                proxy_port=self._proxy_port)
-            if res.has_key("services"):
+            if "services" in res:
                 for service in res['services']:
                     if service_type == "*":
                         service['URL'] = url + "/%s.%s" % (service['serviceName'],

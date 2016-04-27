@@ -176,7 +176,7 @@ class publishingtools(securityhandlerhelper):
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             item_results = []
             for item_info in items_info:
-                if item_info.has_key('ReplaceTag'):
+                if 'ReplaceTag' in item_info:
 
                     itemInfo = {"ReplaceTag":item_info['ReplaceTag'] }
                 else:
@@ -254,15 +254,15 @@ class publishingtools(securityhandlerhelper):
             extent = ''
             webmap_data = ''
 
-            if config.has_key('Data'):
+            if 'Data' in config:
                 itemData = config['Data']
 
-            if config.has_key('Url'):
+            if 'Url' in config:
                 url = config['Url']
 
             name = config['Title']
 
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
@@ -282,7 +282,7 @@ class publishingtools(securityhandlerhelper):
             itemType = config['Type']
             typeKeywords = config['typeKeywords']
             skipIfExist = False
-            if config.has_key('SkipIfExist'):
+            if 'SkipIfExist' in config:
                 skipIfExist = config['SkipIfExist']
                 if str(skipIfExist).lower() == 'true':
                     skipIfExist = True
@@ -472,7 +472,7 @@ class publishingtools(securityhandlerhelper):
             for map_info in maps_info:
                 itemInfo = {}
 
-                if map_info.has_key('ReplaceInfo'):
+                if 'ReplaceInfo' in map_info:
                     replaceInfo = map_info['ReplaceInfo']
                 else:
                     replaceInfo = None
@@ -492,8 +492,8 @@ class publishingtools(securityhandlerhelper):
                                         replaceItem['ItemFolder'] = fs['FSInfo']['folderId']
                                         if 'convertCase' in fs['FSInfo']:
                                             replaceItem['convertCase'] = fs['FSInfo']['convertCase']
-                                    elif replaceItem.has_key('ItemID'):
-                                        if replaceItem.has_key('ItemFolder') == False:
+                                    elif 'ItemID' in replaceItem:
+                                        if 'ItemFolder' in replaceItem == False:
 
                                             itemId = replaceItem['ItemID']
                                             itemInfo = admin.content.getItem(itemId=itemId)
@@ -515,7 +515,7 @@ class publishingtools(securityhandlerhelper):
                                                     replaceItem['ReplaceString'] = itm['ItemInfo']['url']
 
 
-                if map_info.has_key('ReplaceTag'):
+                if 'ReplaceTag' in map_info:
 
                     itemInfo = {"ReplaceTag":map_info['ReplaceTag'] }
                 else:
@@ -652,31 +652,31 @@ class publishingtools(securityhandlerhelper):
                         if replaceItem['ReplaceType'] == 'Global':
                             webmap_data = common.find_replace(webmap_data,replaceItem['SearchString'],replaceItem['ReplaceString'])
                         elif replaceItem['ReplaceType'] == 'Layer':
-                            if webmap_data.has_key('tables'):
+                            if 'tables' in webmap_data:
                                 opLayers = webmap_data['tables']
                                 for opLayer in opLayers:
                                     layerInfo= {}
                                     if replaceItem['SearchString'] in opLayer['url']:
 
                                         opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
-                                        if replaceItem.has_key('ItemID'):
+                                        if 'ItemID' in replaceItem:
                                             opLayer['itemId'] = replaceItem['ItemID']
                                         else:
                                             opLayer['itemId'] = None
                                             #opLayer['itemId'] = get_guid()
-                                        if replaceItem.has_key('convertCase'):
+                                        if 'convertCase' in replaceItem:
                                             if replaceItem['convertCase'] == 'lower':
                                                 layerInfo = {}
 
                                                 layerInfo['convertCase'] = replaceItem['convertCase']
                                                 layerInfo['fields'] = []
-                                                if opLayer.has_key("layerDefinition"):
+                                                if 'layerDefinition' in opLayer:
 
-                                                    if opLayer["layerDefinition"].has_key('drawingInfo'):
-                                                        if opLayer["layerDefinition"]['drawingInfo'].has_key('renderer'):
+                                                    if 'drawingInfo' in opLayer["layerDefinition"]:
+                                                        if 'renderer' in opLayer["layerDefinition"]['drawingInfo']:
                                                             if 'field1' in opLayer["layerDefinition"]['drawingInfo']['renderer']:
                                                                 opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'] = opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'].lower()
-                                                        if opLayer["layerDefinition"]['drawingInfo'].has_key('labelingInfo'):
+                                                        if 'labelingInfo' in opLayer["layerDefinition"]['drawingInfo']:
 
                                                             lblInfos = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
                                                             if len(lblInfos) > 0:
@@ -696,7 +696,7 @@ class publishingtools(securityhandlerhelper):
                                                                                     lblInfo['labelExpressionInfo']['value'] = str(lblInfo['labelExpressionInfo']['value']).replace(res,str(res).lower())
 
 
-                                                if opLayer.has_key("popupInfo"):
+                                                if 'popupInfo' in opLayer:
 
                                                     if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
                                                         for chart in opLayer['popupInfo']['mediaInfos']:
@@ -707,7 +707,7 @@ class publishingtools(securityhandlerhelper):
 
                                                                     for i in range(len(chart['value']['fields'])):
                                                                         chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
-                                                    if opLayer['popupInfo'].has_key("fieldInfos"):
+                                                    if 'fieldInfos' in opLayer['popupInfo']:
 
                                                         for field in opLayer['popupInfo']['fieldInfos']:
                                                             newFld = str(field['fieldName']).lower()
@@ -728,24 +728,24 @@ class publishingtools(securityhandlerhelper):
                                 if replaceItem['SearchString'] in opLayer['url']:
 
                                     opLayer['url'] = opLayer['url'].replace(replaceItem['SearchString'],replaceItem['ReplaceString'])
-                                    if replaceItem.has_key('ItemID'):
+                                    if 'ItemID' in replaceItem:
                                         opLayer['itemId'] = replaceItem['ItemID']
                                     else:
                                         opLayer['itemId'] = None
                                         #opLayer['itemId'] = get_guid()
-                                    if replaceItem.has_key('convertCase'):
+                                    if 'convertCase' in replaceItem:
                                         if replaceItem['convertCase'] == 'lower':
                                             layerInfo = {}
 
                                             layerInfo['convertCase'] = replaceItem['convertCase']
                                             layerInfo['fields'] = []
-                                            if opLayer.has_key("layerDefinition"):
+                                            if 'layerDefinition' in opLayer:
 
-                                                if opLayer["layerDefinition"].has_key('drawingInfo'):
-                                                    if opLayer["layerDefinition"]['drawingInfo'].has_key('renderer'):
+                                                if 'drawingInfo' in opLayer["layerDefinition"]:
+                                                    if 'renderer' in opLayer["layerDefinition"]['drawingInfo']:
                                                         if 'field1' in opLayer["layerDefinition"]['drawingInfo']['renderer']:
                                                             opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'] = opLayer["layerDefinition"]['drawingInfo']['renderer']['field1'].lower()
-                                                    if opLayer["layerDefinition"]['drawingInfo'].has_key('labelingInfo'):
+                                                    if 'labelingInfo' in opLayer["layerDefinition"]['drawingInfo']:
 
                                                         lblInfos = opLayer["layerDefinition"]['drawingInfo']['labelingInfo']
                                                         if len(lblInfos) > 0:
@@ -764,7 +764,7 @@ class publishingtools(securityhandlerhelper):
                                                                             for res in result:
                                                                                 lblInfo['labelExpressionInfo']['value'] = str(lblInfo['labelExpressionInfo']['value']).replace(res,str(res).lower())
 
-                                            if opLayer.has_key("popupInfo"):
+                                            if 'popupInfo' in opLayer:
 
                                                 if 'mediaInfos' in opLayer['popupInfo'] and not opLayer['popupInfo']['mediaInfos'] is None:
                                                     for k in range(len(opLayer['popupInfo']['mediaInfos'])):
@@ -777,7 +777,7 @@ class publishingtools(securityhandlerhelper):
                                                                 for i in range(len(chart['value']['fields'])):
                                                                     chart['value']['fields'][i] = str(chart['value']['fields'][i]).lower()
                                                             opLayer['popupInfo']['mediaInfos'][k] = chart
-                                                if opLayer['popupInfo'].has_key("fieldInfos"):
+                                                if 'fieldInfos' in opLayer['popupInfo']:
 
                                                     for field in opLayer['popupInfo']['fieldInfos']:
                                                         newFld = str(field['fieldName']).lower()
@@ -845,7 +845,7 @@ class publishingtools(securityhandlerhelper):
                     resultMap['Layers'][currentID] = resultLayer
 
 
-                if webmap_data.has_key('tables'):
+                if 'tables' in webmap_data:
 
                     opLayers = webmap_data['tables']
                     for opLayer in opLayers:
@@ -892,7 +892,7 @@ class publishingtools(securityhandlerhelper):
 
             name = config['Title']
 
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
@@ -1150,7 +1150,7 @@ class publishingtools(securityhandlerhelper):
                         tblLays.extend(tableLayers)
                         tableLayers = tblLays
 
-                if map_info.has_key('ReplaceTag'):
+                if 'ReplaceTag' in map_info:
 
                     itemInfo = {"ReplaceTag":map_info['ReplaceTag'] }
                 else:
@@ -1232,7 +1232,7 @@ class publishingtools(securityhandlerhelper):
             res = []
             if isinstance(fs_config, list):
                 for fs in fs_config:
-                    if fs.has_key('ReplaceTag'):
+                    if 'ReplaceTag' in fs:
 
                         resItm = {"ReplaceTag":fs['ReplaceTag'] }
                     else:
@@ -1247,7 +1247,7 @@ class publishingtools(securityhandlerhelper):
                         print (str(resItm['FSInfo']))
 
             else:
-                if fs_config.has_key('ReplaceTag'):
+                if 'ReplaceTag' in fs_config:
 
                     resItm = {"ReplaceTag":fs_config['ReplaceTag'] }
                 else:
@@ -1303,7 +1303,7 @@ class publishingtools(securityhandlerhelper):
             res = []
             if isinstance(configs, list):
                 for config in configs:
-                    if config.has_key('ReplaceTag'):
+                    if 'ReplaceTag' in config:
 
                         resItm = {"ReplaceTag":config['ReplaceTag'] }
                     else:
@@ -1397,7 +1397,7 @@ class publishingtools(securityhandlerhelper):
             everyone = config['ShareEveryone']
             org = config['ShareOrg']
             groupNames = config['Groups']  #Groups are by ID. Multiple groups comma separated
-            if config.has_key('EnableEditTracking'):
+            if 'EnableEditTracking' in config:
                 print ("enableEditTracking parameter has been deprecated, please add a definition section to the config")
                 enableEditTracking = config['EnableEditTracking']
             else:
@@ -1415,17 +1415,17 @@ class publishingtools(securityhandlerhelper):
 
                 if 'capabilities' in definition:
                     capabilities = definition['capabilities']
-            if config.has_key("maxRecordCount"):
+            if 'maxRecordCount' in config:
                 maxRecordCount =  config["maxRecordCount"]
             else:
                 maxRecordCount = '1000' # If not cast as a string, the MXDtoFeatureServiceDef method called below returns an error stating 'cannot serialize 1000 (type int)'
 
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
             skipIfExist = False
-            if config.has_key('SkipIfExist'):
+            if 'SkipIfExist' in config:
                 skipIfExist = config['SkipIfExist']
                 if str(skipIfExist).lower() == 'true':
                     skipIfExist = True
@@ -1898,7 +1898,7 @@ class publishingtools(securityhandlerhelper):
             admin = arcrest.manageorg.Administration(securityHandler=self._securityHandler)
             itemInfo = {}
 
-            if appDet.has_key('ReplaceInfo'):
+            if 'ReplaceInfo' in appDet:
                 replaceInfo = appDet['ReplaceInfo']
             else:
                 replaceInfo = None
@@ -1908,7 +1908,7 @@ class publishingtools(securityhandlerhelper):
                 for replaceItem in replaceInfo:
                     if fsInfo is not None:
                         for fsDet in fsInfo:
-                            if fsDet.has_key('ReplaceTag'):
+                            if 'ReplaceTag' in fsDet:
                                 if 'ReplaceString' in replaceItem:
                                     if fsDet is not None and replaceItem['ReplaceString'] == fsDet['ReplaceTag'] and \
                                        (replaceItem['ReplaceType'] == 'Service' or replaceItem['ReplaceType'] == 'Layer'):
@@ -1920,7 +1920,7 @@ class publishingtools(securityhandlerhelper):
                                         replaceItem['ReplaceType'] = "Global"
                     if map_info is not None:
                         for mapDet in map_info:
-                            if mapDet.has_key('ReplaceTag'):
+                            if 'ReplaceTag' in mapDet:
                                 if 'ReplaceString' in replaceItem:
                                     if mapDet is not None and replaceItem['ReplaceString'] == mapDet['ReplaceTag'] and \
                                        replaceItem['ReplaceType'] == 'Map':
@@ -1936,8 +1936,8 @@ class publishingtools(securityhandlerhelper):
                                                     if value["Name"] == repInfo[1]:
                                                         replaceItem['ReplaceString'] = value["ID"]
 
-                                if replaceItem.has_key('ItemID'):
-                                    if replaceItem.has_key('ItemFolder') == False:
+                                if 'ItemID' in replaceItem:
+                                    if 'ItemFolder' in replaceItem == False:
 
                                         itemId = replaceItem['ItemID']
 
@@ -1949,7 +1949,7 @@ class publishingtools(securityhandlerhelper):
                                             replaceItem['ItemFolder'] = None
 
 
-            if appDet.has_key('ReplaceTag'):
+            if 'ReplaceTag' in appDet:
 
                 itemInfo = {"ReplaceTag":appDet['ReplaceTag'] }
             else:
@@ -2156,7 +2156,7 @@ class publishingtools(securityhandlerhelper):
 
             name = config['Title']
 
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
@@ -2457,17 +2457,17 @@ class publishingtools(securityhandlerhelper):
                             dataSourceIDToFields = {}
                             for widget in widgets:
 
-                                if widget.has_key('mapId'):
+                                if 'mapId' in widget:
                                     if replaceItem['SearchString'] == widget['mapId']:
                                         widget['mapId'] = replaceItem['ItemID']
-                                        if widget.has_key('mapTools'):
+                                        if 'mapTools' in widget:
                                             for mapTool in widget['mapTools']:
-                                                if mapTool.has_key('layerIds'):
+                                                if 'layerIds' in mapTool:
                                                     mapTool['layerIds'] = layerIDs
-                                        if widget.has_key('dataSources'):
+                                        if 'dataSources' in widget:
                                             for dataSource in widget['dataSources']:
 
-                                                if dataSource.has_key('layerId'):
+                                                if 'layerId' in dataSource:
                                                     if 'LayerInfo' in replaceItem:
                                                         if dataSource['layerId'] in replaceItem['LayerInfo']:
                                                             layerIDSwitch.append({"OrigID":dataSource['layerId'],
@@ -2477,12 +2477,12 @@ class publishingtools(securityhandlerhelper):
                                                             #dataSourceIDToFields[dataSource['id']] = {'NewID': replaceItem['LayerInfo'][dataSource['layerId']]['ID'],
                                                                                                       #'FieldInfo': replaceItem['LayerInfo'][dataSource['layerId']]['FieldInfo']}
                                                             dataSource['layerId'] = replaceItem['LayerInfo'][dataSource['layerId']]['ID']
-                                                    elif layerNamesID.has_key(dataSource['name']):
+                                                    elif dataSource['name'] in layerNamesID:
                                                         layerIDSwitch.append({"OrigID":dataSource['layerId'],"NewID":layerNamesID[dataSource['name']] })
                                                         dataSource['layerId'] = layerNamesID[dataSource['name']]
                                             for dataSource in widget['dataSources']:
 
-                                                if dataSource.has_key('filter'):
+                                                if 'filter' in dataSource:
                                                     if dataSource['parentDataSourceId'] in dataSourceIDToFields:
                                                         if 'whereClause' in dataSource['filter']:
                                                             whercla = str(dataSource['filter']['whereClause'])
@@ -2527,7 +2527,7 @@ class publishingtools(securityhandlerhelper):
 
             name = config['Title']
 
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat
@@ -2856,7 +2856,7 @@ class publishingtools(securityhandlerhelper):
             # Service settings
             zipfile = config['Zip']
             service_name = config['Title']
-            if config.has_key('DateTimeFormat'):
+            if 'DateTimeFormat' in config:
                 loc_df = config['DateTimeFormat']
             else:
                 loc_df = dateTimeFormat

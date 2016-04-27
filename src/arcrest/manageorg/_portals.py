@@ -252,7 +252,7 @@ class Portal(BaseAGOLClass):
                            securityHandler=self._securityHandler,
                            proxy_port=self._proxy_port,
                            proxy_url=self._proxy_url)
-        if res.has_key('id'):
+        if 'id' in res:
             return res['id']
         return None
     ##----------------------------------------------------------------------
