@@ -730,7 +730,7 @@ class FeatureSet(object):
         filename, file_extension = os.path.splitext(outName)
         if (file_extension == ".csv"):
             res = os.path.join(saveLocation,outName)
-            with open(res, "wb+") as csvFile:
+            with open(res, "wt+",newline='') as csvFile:
                 import csv
                 f = csv.writer(csvFile)
                 fields = []
@@ -759,9 +759,9 @@ class FeatureSet(object):
             
         else:
             tempDir =  tempfile.gettempdir()
-            tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().get_hex())
-            with open(tempFile, 'wb') as writer:
-                writer.write(str(self))
+            tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().hex)
+            with open(tempFile, 'wt') as writer:
+                writer.write(self.toJSON)
                 writer.flush()
                 writer.close()
             del writer
