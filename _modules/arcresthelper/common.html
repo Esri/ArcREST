@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcresthelper.common &mdash; src  documentation</title>
+    <title>arcresthelper.common &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,9 @@
           <div class="body" role="main">
             
   <h1>Source code for arcresthelper.common</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -49,31 +60,42 @@
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">packages.six.moves</span> <span class="kn">import</span> <span class="n">urllib_parse</span> <span class="k">as</span> <span class="n">urlparse</span>
+<span class="kn">from</span> <span class="nn">.packages.six.moves</span> <span class="kn">import</span> <span class="n">urllib_parse</span> <span class="k">as</span> <span class="n">urlparse</span>
 <span class="kn">import</span> <span class="nn">gc</span>
 <span class="kn">import</span> <span class="nn">operator</span>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        trace finds the line, the filename</span>
-<span class="sd">        and error message and returns it</span>
-<span class="sd">        to the user</span>
+    <span class="sd">&quot;&quot;&quot;Determine information about where an error was thrown.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: line number, filename, error message</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">inspect</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">tbinfo</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">tb</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
-    <span class="c"># script name + line number</span>
-    <span class="n">line</span> <span class="o">=</span> <span class="n">tbinfo</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="c"># Get Python syntax error</span>
-    <span class="c">#</span>
+    <span class="c1"># script name + line number</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">tbinfo</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># Get Python syntax error</span>
+    <span class="c1">#</span>
     <span class="n">synerror</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span></div>
 
 <div class="viewcode-block" id="ArcRestHelperError"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.ArcRestHelperError">[docs]</a><span class="k">class</span> <span class="nc">ArcRestHelperError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; raised when error occurs in utility module functions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when error occurs in utility module functions.&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 <div class="viewcode-block" id="merge_dicts"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.merge_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="n">dicts</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge a list of dictionaries.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dicts (list): a list of dictionary objects</span>
+<span class="sd">        op (operator): an operator item used to merge the dictionaries. Defaults to :py:func:`operator.add`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: the merged dictionary</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">a</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
 
@@ -83,41 +105,65 @@
             <span class="n">a</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="o">+</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">op</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="p">)])</span>
     <span class="k">return</span> <span class="n">a</span></div>
 
-<span class="c">##----------------------------------------------------------------------</span>
-<span class="c">#def merge_dicts(dicts):</span>
-    <span class="c">#&#39;&#39;&#39;</span>
-    <span class="c">#Given any number of dicts, shallow copy and merge into a new dict,</span>
-    <span class="c">#precedence goes to key value pairs in latter dicts.</span>
-    <span class="c">#&#39;&#39;&#39;</span>
-   <span class="c">## result = {}</span>
-    <span class="c">#z = None</span>
-    <span class="c">#for dictionary in dicts:</span>
-        <span class="c">##result.update(dictionary)</span>
-        <span class="c">#if z is None:</span>
-            <span class="c">#z = dictionary.copy()</span>
-        <span class="c">#else:</span>
-            <span class="c">#z.update(dictionary)</span>
+<span class="c1">##----------------------------------------------------------------------</span>
+<span class="c1">#def merge_dicts(dicts):</span>
+    <span class="c1">#&#39;&#39;&#39;</span>
+    <span class="c1">#Given any number of dicts, shallow copy and merge into a new dict,</span>
+    <span class="c1">#precedence goes to key value pairs in latter dicts.</span>
+    <span class="c1">#&#39;&#39;&#39;</span>
+   <span class="c1">## result = {}</span>
+    <span class="c1">#z = None</span>
+    <span class="c1">#for dictionary in dicts:</span>
+        <span class="c1">##result.update(dictionary)</span>
+        <span class="c1">#if z is None:</span>
+            <span class="c1">#z = dictionary.copy()</span>
+        <span class="c1">#else:</span>
+            <span class="c1">#z.update(dictionary)</span>
 
-    <span class="c">#return z</span>
-<span class="c">#def merge_two_dicts(x, y):</span>
-    <span class="c">#&#39;&#39;&#39;Given two dicts, merge them into a new dict as a shallow copy.&#39;&#39;&#39;</span>
-    <span class="c">#z = x.copy()</span>
-    <span class="c">#z.update(y)</span>
-    <span class="c">#return z</span>
-<span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="noneToValue"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.noneToValue">[docs]</a><span class="k">def</span> <span class="nf">noneToValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">newValue</span><span class="p">):</span>
+    <span class="c1">#return z</span>
+<span class="c1">#def merge_two_dicts(x, y):</span>
+    <span class="c1">#&#39;&#39;&#39;Given two dicts, merge them into a new dict as a shallow copy.&#39;&#39;&#39;</span>
+    <span class="c1">#z = x.copy()</span>
+    <span class="c1">#z.update(y)</span>
+    <span class="c1">#return z</span>
+<span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="noneToValue"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.noneToValue">[docs]</a><span class="k">def</span> <span class="nf">noneToValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">newValue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert ``None`` to a different value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: The value to convert. This can be anything.</span>
+<span class="sd">        newValue: The resultant value. This can be anything.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        newValue</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">newValue</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="getLayerIndex"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.getLayerIndex">[docs]</a><span class="k">def</span> <span class="nf">getLayerIndex</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract the layer index from a url.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (str): The url to parse.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The layer index.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; url = &quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.getLayerIndex(url)</span>
+<span class="sd">        12</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">urlInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">urlSplit</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">inx</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">urlInfo</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">urlSplit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">urlSplit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="n">inx</span> <span class="o">=</span> <span class="n">urlSplit</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">urlSplit</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">is_number</span><span class="p">(</span><span class="n">inx</span><span class="p">):</span>
@@ -133,13 +179,27 @@
         <span class="k">del</span> <span class="n">urlSplit</span>
 
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="getLayerName"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.getLayerName">[docs]</a><span class="k">def</span> <span class="nf">getLayerName</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract the layer name from a url.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (str): The url to parse.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The layer name.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; url = &quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.getLayerIndex(url)</span>
+<span class="sd">        &#39;test&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">urlInfo</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">urlSplit</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">urlInfo</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">urlSplit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">urlSplit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">urlSplit</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">urlSplit</span><span class="p">)</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">name</span>
     <span class="k">except</span><span class="p">:</span>
@@ -153,44 +213,120 @@
         <span class="k">del</span> <span class="n">urlSplit</span>
 
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="random_string_generator"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.random_string_generator">[docs]</a><span class="k">def</span> <span class="nf">random_string_generator</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">chars</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">):</span>
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="getOrgId"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.getOrgId">[docs]</a><span class="k">def</span> <span class="nf">getOrgId</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract the org ID from a url.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (str): The url to parse.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The org ID.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; url = &quot;http://services.arcgis.com/&lt;random&gt;/arcgis/rest/services/test/FeatureServer/12&quot;</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.getLayerIndex(url)</span>
+<span class="sd">        &#39;&lt;random&gt;&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">urlInfo</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">urlSplit</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">urlInfo</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">urlSplit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">urlSplit</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">urlSplit</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">name</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">url</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">urlInfo</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">urlSplit</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">del</span> <span class="n">urlInfo</span>
+        <span class="k">del</span> <span class="n">urlSplit</span>
+
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
+
+<span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="random_string_generator"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.random_string_generator">[docs]</a><span class="k">def</span> <span class="nf">random_string_generator</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">chars</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a random string from a set of characters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        size (int): The length of the resultant string. Defaults to 6.</span>
+<span class="sd">        chars (str): The characters to be used by :py:func:`random.choice`. Defaults to :py:const:`string.ascii_uppercase`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The randomly generated string.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.random_string_generator()</span>
+<span class="sd">        &#39;DCNYWU&#39;</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.random_string_generator(12, &quot;arcREST&quot;)</span>
+<span class="sd">        &#39;cESaTTEacTES&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;random_string_generator&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;random_string_generator&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">pass</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="random_int_generator"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.random_int_generator">[docs]</a><span class="k">def</span> <span class="nf">random_int_generator</span><span class="p">(</span><span class="n">maxrange</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a random integer from 0 to `maxrange`, inclusive.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        maxrange (int): The upper range of integers to randomly choose.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The randomly generated integer from :py:func:`random.randint`.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.random_int_generator(15)</span>
+<span class="sd">        9</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">maxrange</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;random_int_generator&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;random_int_generator&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">pass</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="local_time_to_online"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.local_time_to_online">[docs]</a><span class="k">def</span> <span class="nf">local_time_to_online</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">       converts datetime object to a UTC timestamp for AGOL</span>
-<span class="sd">       Inputs:</span>
-<span class="sd">          dt - datetime object</span>
-<span class="sd">       Output:</span>
-<span class="sd">          Long value</span>
+    <span class="sd">&quot;&quot;&quot;Converts datetime object to a UTC timestamp for AGOL.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (datetime): The :py:class:`datetime.datetime` object to convert. Defaults to ``None``, i.e., :py:func:`datetime.datetime.now`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: A UTC timestamp as understood by AGOL (time in ms since Unix epoch * 1000)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.local_time_to_online() # PST</span>
+<span class="sd">        1457167261000.0</span>
+<span class="sd">        &gt;&gt;&gt; dt = datetime.datetime(1993, 3, 5, 12, 35, 15) # PST</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.local_time_to_online(dt)</span>
+<span class="sd">        731392515000.0</span>
+<span class="sd">    See Also:</span>
+<span class="sd">       :py:func:`online_time_to_string` for converting a UTC timestamp</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">is_dst</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">utc_offset</span> <span class="o">=</span> <span class="bp">None</span>
@@ -205,10 +341,10 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;local_time_to_online&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;local_time_to_online&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
@@ -218,31 +354,52 @@
         <span class="k">del</span> <span class="n">is_dst</span>
         <span class="k">del</span> <span class="n">utc_offset</span></div>
 
-<span class="c">#----------------------------------------------------------------------</span>
-<div class="viewcode-block" id="online_time_to_string"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.online_time_to_string">[docs]</a><span class="k">def</span> <span class="nf">online_time_to_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">timeFormat</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">       Converts a timestamp to date/time string</span>
-<span class="sd">       Inputs:</span>
-<span class="sd">          value - timestamp as long</span>
-<span class="sd">          timeFormat - output date/time format</span>
-<span class="sd">       Output:</span>
-<span class="sd">          string</span>
+<span class="c1">#----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="online_time_to_string"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.online_time_to_string">[docs]</a><span class="k">def</span> <span class="nf">online_time_to_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timeFormat</span><span class="p">,</span> <span class="n">utcOffset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts AGOL timestamp to formatted string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (float): A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)</span>
+<span class="sd">        timeFormat (str): Date/Time format string as parsed by :py:func:`datetime.strftime`.</span>
+<span class="sd">        utcOffset (int): Hours difference from UTC and desired output. Default is 0 (remain in UTC).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A string representation of the timestamp.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.online_time_to_string(1457167261000.0, &quot;%Y-%m-%d %H:%M:%S&quot;)</span>
+<span class="sd">        &#39;2016-03-05 00:41:01&#39;</span>
+<span class="sd">        &gt;&gt;&gt; arcresthelper.common.online_time_to_string(731392515000.0, &#39;%m/%d/%Y %H:%M:%S&#39;, -8) # PST is UTC-8:00</span>
+<span class="sd">        &#39;03/05/1993 12:35:15&#39;</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">       :py:func:`local_time_to_online` for converting a :py:class:`datetime.datetime` object to AGOL timestamp</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timeFormat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="mi">1000</span> <span class="o">+</span> <span class="n">utcOffset</span><span class="o">*</span><span class="mi">3600</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timeFormat</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;online_time_to_string&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;online_time_to_string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">pass</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="is_number"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.is_number">[docs]</a><span class="k">def</span> <span class="nf">is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determines if the input is numeric</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s: The value to check.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: ``True`` if the input is numeric, ``False`` otherwise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">True</span>
@@ -257,12 +414,20 @@
         <span class="k">pass</span>
 
     <span class="k">return</span> <span class="bp">False</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="init_config_json"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.init_config_json">[docs]</a><span class="k">def</span> <span class="nf">init_config_json</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Deserializes a JSON configuration file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file (str): The path to the JSON file.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary object containing the JSON data. If ``config_file`` does not exist, returns ``None``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">json_data</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
-        <span class="c">#Load the config file</span>
+        <span class="c1">#Load the config file</span>
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
                 <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
@@ -272,10 +437,10 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;init_config_json&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;init_config_json&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
@@ -285,19 +450,26 @@
 
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="write_config_json"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.write_config_json">[docs]</a><span class="k">def</span> <span class="nf">write_config_json</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serializes an object to disk.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file (str): The path on disk to save the file.</span>
+<span class="sd">        data (object): The object to serialize.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">outfile</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;init_config_json&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;init_config_json&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
@@ -307,25 +479,42 @@
 
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="unicode_convert"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.unicode_convert">[docs]</a><span class="k">def</span> <span class="nf">unicode_convert</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; converts unicode to anscii &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Converts unicode objects to anscii.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        obj (object): The object to convert.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The object converted to anscii, if possible. For ``dict`` and ``list``, the object type is maintained.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="n">unicode_convert</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="n">unicode_convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">unicode_convert</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">obj</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">obj</span></div>
-<div class="viewcode-block" id="find_replace_string"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.find_replace_string">[docs]</a><span class="k">def</span> <span class="nf">find_replace_string</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">find</span><span class="p">,</span><span class="n">replace</span><span class="p">):</span>
+
+<div class="viewcode-block" id="find_replace_string"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.find_replace_string">[docs]</a><span class="k">def</span> <span class="nf">find_replace_string</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">replace</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Performs a string.replace() on the input object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (object): The object to find/replace. It will be cast to ``str``.</span>
+<span class="sd">        find (str): The string to search for.</span>
+<span class="sd">        replace (str): The string to replace with.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The replaced string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">strobj</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="n">newStr</span> <span class="o">=</span>  <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">strobj</span><span class="p">,</span><span class="n">find</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
+        <span class="n">newStr</span> <span class="o">=</span>  <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">strobj</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">replace</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">newStr</span> <span class="o">==</span> <span class="n">strobj</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">obj</span>
         <span class="k">else</span><span class="p">:</span>
@@ -334,17 +523,26 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;find_replace_string&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;find_replace_string&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">pass</span></div>
-<div class="viewcode-block" id="find_replace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.find_replace">[docs]</a><span class="k">def</span> <span class="nf">find_replace</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">find</span><span class="p">,</span><span class="n">replace</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot; searchs an object and does a find and replace &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="find_replace"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.find_replace">[docs]</a><span class="k">def</span> <span class="nf">find_replace</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">replace</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Searches an object and performs a find and replace.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (object): The object to iterate and find/replace.</span>
+<span class="sd">        find (str): The string to search for.</span>
+<span class="sd">        replace (str): The string to replace with.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        object: The object with replaced strings.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="n">find_replace</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">find</span><span class="p">,</span><span class="n">replace</span><span class="p">):</span> <span class="n">find_replace</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">find</span><span class="p">,</span><span class="n">replace</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -355,73 +553,95 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">unicode_convert</span><span class="p">(</span><span class="n">find_replace_string</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">replace</span><span class="p">))</span>
-                <span class="c">#obj = unicode_convert(json.loads(obj))</span>
-                <span class="c">#return find_replace(obj,find,replace)</span>
+                <span class="c1">#obj = unicode_convert(json.loads(obj))</span>
+                <span class="c1">#return find_replace(obj,find,replace)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">unicode_convert</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">line</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">synerror</span> <span class="o">=</span> <span class="n">trace</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ArcRestHelperError</span><span class="p">({</span>
-                    <span class="s">&quot;function&quot;</span><span class="p">:</span> <span class="s">&quot;find_replace&quot;</span><span class="p">,</span>
-                    <span class="s">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
-                    <span class="s">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
-                    <span class="s">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
+                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;find_replace&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">,</span>
+                    <span class="s2">&quot;filename&quot;</span><span class="p">:</span>  <span class="n">filename</span><span class="p">,</span>
+                    <span class="s2">&quot;synerror&quot;</span><span class="p">:</span> <span class="n">synerror</span><span class="p">,</span>
                                     <span class="p">}</span>
                                     <span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">pass</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="chunklist"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.chunklist">[docs]</a><span class="k">def</span> <span class="nf">chunklist</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from l .&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from l.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        l (object): The object to chunk.</span>
+<span class="sd">        n (int): The size of the chunks.</span>
+<span class="sd">    Yields:</span>
+<span class="sd">        The next chunk in the object.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: if ``l`` has no :py:func:`len`.</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; for c in arcresthelper.common.chunklist(list(range(20)), 6):</span>
+<span class="sd">        ...     print(c)</span>
+<span class="sd">        [0, 1, 2, 3, 4, 5]</span>
+<span class="sd">        [6, 7, 8, 9, 10, 11]</span>
+<span class="sd">        [12, 13, 14, 15, 16, 17]</span>
+<span class="sd">        [18, 19]</span>
+<span class="sd">        &gt;&gt;&gt; list(arcresthelper.common.chunklist(string.ascii_uppercase, 7))</span>
+<span class="sd">        [&#39;ABCDEFG&#39;, &#39;HIJKLMN&#39;, &#39;OPQRSTU&#39;, &#39;VWXYZ&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span></div>
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="init_log"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.init_log">[docs]</a><span class="k">def</span> <span class="nf">init_log</span><span class="p">(</span><span class="n">log_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Creates log file on disk and &quot;Tees&quot; :py:class:`sys.stdout` to console and disk</span>
 
-    <span class="c">#Create the log file</span>
+<span class="sd">    Args:</span>
+<span class="sd">        log_file (str): The path on disk to append or create the log file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        file: The opened log file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Create the log file</span>
     <span class="n">log</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
 
-        <span class="c">#Change the output to both the windows and log file</span>
-        <span class="c">#original = sys.stdout</span>
+        <span class="c1">#Change the output to both the windows and log file</span>
+        <span class="c1">#original = sys.stdout</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">return</span> <span class="n">log</span></div>
+
 <div class="viewcode-block" id="close_log"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.close_log">[docs]</a><span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="n">log_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Closes the open file and returns :py:class:`sys.stdout` to the default (i.e., console output).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_file (file): The file object to close.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span>
     <span class="k">if</span> <span class="n">log_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">log_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">log_file</span></div>
 
-<span class="c">#----------------------------------------------------------------------</span>
+<span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="Tee"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.Tee">[docs]</a><span class="k">class</span> <span class="nc">Tee</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Combines standard output with a file for logging&quot;&quot;&quot;</span>
-
+    <span class="sd">&quot;&quot;&quot;Combines standard output with a file for logging.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">files</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">files</span>
 <div class="viewcode-block" id="Tee.write"><a class="viewcode-back" href="../../arcresthelper.html#arcresthelper.common.Tee.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div></div>
-
-
 </pre></div>
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -439,17 +659,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

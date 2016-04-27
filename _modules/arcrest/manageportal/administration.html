@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.manageportal.administration &mdash; src  documentation</title>
+    <title>arcrest.manageportal.administration &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.manageportal.administration</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The ArcREST API allows you to perform administrative tasks not available in</span>
 <span class="sd">the Portal for ArcGIS website. The API is organized into resources and</span>
 <span class="sd">operations. Resources are entities within Portal for ArcGIS that hold some</span>
@@ -52,7 +61,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">.._abstract.abstract</span> <span class="kn">import</span> <span class="n">BaseAGOLClass</span>
 <span class="kn">from</span> <span class="nn">..security</span> <span class="kn">import</span> <span class="n">PortalTokenSecurityHandler</span><span class="p">,</span><span class="n">ArcGISTokenSecurityHandler</span><span class="p">,</span><span class="n">OAuthSecurityHandler</span>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <span class="k">class</span> <span class="nc">_log</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;handles the portal log information at 10.3.1+&quot;&quot;&quot;</span>
     <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
@@ -64,26 +73,26 @@
     <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_operations</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="p">,</span>
                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;/log&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s">&quot;/log&quot;</span>
+        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/log&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/log&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="o">=</span> <span class="n">securityHandler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the site properties &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -92,47 +101,47 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implemented in manageportal.administration.log class.&quot;</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot; - attribute not implemented in manageportal.administration.log class.&quot;</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the admin sites resources&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">operations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;lists operations available to user&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the log settings for portal&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/settings&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/settings&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">editLogSettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logLocation</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="s">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">maxLogFileAge</span><span class="o">=</span><span class="mi">90</span><span class="p">):</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">editLogSettings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logLocation</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">maxLogFileAge</span><span class="o">=</span><span class="mi">90</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           edits the log settings for the portal site</span>
 
@@ -144,20 +153,20 @@
 <span class="sd">                  DEBUG</span>
 <span class="sd">              maxLogFileAge - the numbers of days to keep a single log file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/settings/edit&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/settings/edit&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;logDir&quot;</span> <span class="p">:</span> <span class="n">logLocation</span><span class="p">,</span>
-            <span class="s">&quot;logLevel&quot;</span> <span class="p">:</span> <span class="n">logLevel</span><span class="p">,</span>
-            <span class="s">&quot;maxLogFileAge&quot;</span> <span class="p">:</span> <span class="n">maxLogFileAge</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;logDir&quot;</span> <span class="p">:</span> <span class="n">logLocation</span><span class="p">,</span>
+            <span class="s2">&quot;logLevel&quot;</span> <span class="p">:</span> <span class="n">logLevel</span><span class="p">,</span>
+            <span class="s2">&quot;maxLogFileAge&quot;</span> <span class="p">:</span> <span class="n">maxLogFileAge</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="s">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">&quot;ALL&quot;</span><span class="p">,</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;ALL&quot;</span><span class="p">,</span>
               <span class="n">startTime</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">endTime</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
               <span class="n">logCodes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">messageCount</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -176,52 +185,52 @@
 <span class="sd">              messageCount - integer number of the max number of log</span>
 <span class="sd">                entries to return to the user.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/query&quot;</span>
-        <span class="n">filter_value</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;codes&quot;</span><span class="p">:[],</span> <span class="s">&quot;users&quot;</span><span class="p">:[],</span> <span class="s">&quot;source&quot;</span><span class="p">:</span> <span class="s">&quot;*&quot;</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
-            <span class="n">filter_value</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/query&quot;</span>
+        <span class="n">filter_value</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;codes&quot;</span><span class="p">:[],</span> <span class="s2">&quot;users&quot;</span><span class="p">:[],</span> <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;*&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="n">filter_value</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">filter_value</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+            <span class="n">filter_value</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;level&quot;</span> <span class="p">:</span> <span class="n">logLevel</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;level&quot;</span> <span class="p">:</span> <span class="n">logLevel</span>
 
         <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">startTime</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="nb">isinstance</span><span class="p">(</span><span class="n">startTime</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;startTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">startTime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&quot;</span><span class="p">)</span><span class="c">#2015-01-31T15:00:00</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;startTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">startTime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span><span class="c1">#2015-01-31T15:00:00</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">endTime</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
            <span class="nb">isinstance</span><span class="p">(</span><span class="n">endTime</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;endTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">startTime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;endTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">startTime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">logCodes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">filter_value</span><span class="p">[</span><span class="s">&#39;codes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logCodes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">filter_value</span><span class="p">[</span><span class="s1">&#39;codes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logCodes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">users</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">filter_value</span><span class="p">[</span><span class="s">&#39;users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">users</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">filter_value</span><span class="p">[</span><span class="s1">&#39;users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">users</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">messageCount</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messageCount</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">long</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">messageCount</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">messageCount</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_value</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;pageSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_value</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">cleanLogs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;erases all the log data&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/clean&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/clean&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span><span class="p">:</span><span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span><span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <span class="k">class</span> <span class="nc">_Security</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">       The security resource is the root of all the security configurations</span>
@@ -235,7 +244,7 @@
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_dict</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_resources</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="p">,</span>
                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -254,11 +263,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the site properties &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -267,35 +276,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implemented in manageportal.administration.log class.&quot;</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot; - attribute not implemented in manageportal.administration.log class.&quot;</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the admin sites resources&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">createUser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">username</span><span class="p">,</span>
                    <span class="n">password</span><span class="p">,</span>
                    <span class="n">fullname</span><span class="p">,</span>
                    <span class="n">email</span><span class="p">,</span>
-                   <span class="n">role</span><span class="o">=</span><span class="s">&quot;org_user&quot;</span><span class="p">,</span>
-                   <span class="n">provider</span><span class="o">=</span><span class="s">&quot;arcgis&quot;</span><span class="p">,</span>
-                   <span class="n">description</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                   <span class="n">role</span><span class="o">=</span><span class="s2">&quot;org_user&quot;</span><span class="p">,</span>
+                   <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;arcgis&quot;</span><span class="p">,</span>
+                   <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                    <span class="n">idpUsername</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This operation is used to create a new user account in the portal.</span>
@@ -317,26 +326,26 @@
 <span class="sd">           idpUsername - name of the user on the domain controller.</span>
 <span class="sd">                         Ex: domain\account</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/users/createUser&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/users/createUser&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
-            <span class="s">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span><span class="p">,</span>
-            <span class="s">&quot;fullname&quot;</span> <span class="p">:</span> <span class="n">fullname</span><span class="p">,</span>
-            <span class="s">&quot;email&quot;</span> <span class="p">:</span> <span class="n">email</span><span class="p">,</span>
-            <span class="s">&quot;role&quot;</span> <span class="p">:</span> <span class="n">role</span><span class="p">,</span>
-            <span class="s">&quot;provider&quot;</span> <span class="p">:</span> <span class="n">provider</span><span class="p">,</span>
-            <span class="s">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s2">&quot;fullname&quot;</span> <span class="p">:</span> <span class="n">fullname</span><span class="p">,</span>
+            <span class="s2">&quot;email&quot;</span> <span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="s2">&quot;role&quot;</span> <span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+            <span class="s2">&quot;provider&quot;</span> <span class="p">:</span> <span class="n">provider</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">idpUsername</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;idpUsername&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idpUsername</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;idpUsername&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idpUsername</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateSecurityConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                     <span class="n">enableAutomaticAccountCreation</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                                     <span class="n">disableServicesDirectory</span><span class="o">=</span><span class="bp">False</span>
@@ -367,17 +376,17 @@
 <span class="sd">        The default value for this property is false, meaning the services</span>
 <span class="sd">        directory HTML pages are accessible to everyone.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/config/update&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/config/update&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;enableAutomaticAccountCreation&quot;</span><span class="p">:</span> <span class="n">enableAutomaticAccountCreation</span><span class="p">,</span>
-            <span class="s">&quot;disableServicesDirectory&quot;</span> <span class="p">:</span> <span class="n">disableServicesDirectory</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;enableAutomaticAccountCreation&quot;</span><span class="p">:</span> <span class="n">enableAutomaticAccountCreation</span><span class="p">,</span>
+            <span class="s2">&quot;disableServicesDirectory&quot;</span> <span class="p">:</span> <span class="n">disableServicesDirectory</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateIdenityStore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                            <span class="n">userPassword</span><span class="p">,</span>
                            <span class="n">user</span><span class="p">,</span>
@@ -432,23 +441,23 @@
 <span class="sd">                           If your LDAP is configured to be case</span>
 <span class="sd">                           insensitive, set parameter to false.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/config/updateIdentityStore&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/config/updateIdentityStore&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;userPassword&quot;</span> <span class="p">:</span> <span class="n">userPassword</span><span class="p">,</span>
-            <span class="s">&quot;isPasswordEncrypted&quot;</span> <span class="p">:</span> <span class="n">isPasswordEncrypted</span><span class="p">,</span>
-            <span class="s">&quot;user&quot;</span> <span class="p">:</span> <span class="n">user</span><span class="p">,</span>
-            <span class="s">&quot;userFullnameAttribute&quot;</span><span class="p">:</span> <span class="n">userFullnameAttribute</span><span class="p">,</span>
-            <span class="s">&quot;ldapURLForUsers&quot;</span> <span class="p">:</span> <span class="n">ldapURLForUsers</span><span class="p">,</span>
-            <span class="s">&quot;userEmailAttribute&quot;</span> <span class="p">:</span> <span class="n">userEmailAttribute</span><span class="p">,</span>
-            <span class="s">&quot;usernameAttribute&quot;</span> <span class="p">:</span> <span class="n">usernameAttribute</span><span class="p">,</span>
-            <span class="s">&quot;caseSensitive&quot;</span> <span class="p">:</span> <span class="n">caseSensitive</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;userPassword&quot;</span> <span class="p">:</span> <span class="n">userPassword</span><span class="p">,</span>
+            <span class="s2">&quot;isPasswordEncrypted&quot;</span> <span class="p">:</span> <span class="n">isPasswordEncrypted</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span> <span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+            <span class="s2">&quot;userFullnameAttribute&quot;</span><span class="p">:</span> <span class="n">userFullnameAttribute</span><span class="p">,</span>
+            <span class="s2">&quot;ldapURLForUsers&quot;</span> <span class="p">:</span> <span class="n">ldapURLForUsers</span><span class="p">,</span>
+            <span class="s2">&quot;userEmailAttribute&quot;</span> <span class="p">:</span> <span class="n">userEmailAttribute</span><span class="p">,</span>
+            <span class="s2">&quot;usernameAttribute&quot;</span> <span class="p">:</span> <span class="n">usernameAttribute</span><span class="p">,</span>
+            <span class="s2">&quot;caseSensitive&quot;</span> <span class="p">:</span> <span class="n">caseSensitive</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateTokenConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sharedKey</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        You can use this operation to change the shared key for the token</span>
@@ -458,16 +467,16 @@
 <span class="sd">        Input:</span>
 <span class="sd">           sharedKey - key used to generate token</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/tokens/update&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/tokens/update&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;tokenConfig&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;sharedKey&quot;</span> <span class="p">:</span> <span class="n">sharedKey</span><span class="p">}</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tokenConfig&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sharedKey&quot;</span> <span class="p">:</span> <span class="n">sharedKey</span><span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tokenConfigurations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -475,16 +484,16 @@
 <span class="sd">        Use the Update Token Configuration operation to change the</span>
 <span class="sd">        configuration properties of the token service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/tokens&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/tokens&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">securityConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -497,29 +506,29 @@
 <span class="sd">        or LDAP. By default, Portal for ArcGIS is configured to use the</span>
 <span class="sd">        built-in store and token-based authentication.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/config&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/config&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the number of registered users on site &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/users&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/users&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <span class="k">class</span> <span class="nc">_System</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">       This resource is an umbrella for a collection of system-wide</span>
@@ -532,7 +541,7 @@
     <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="p">,</span>
                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -544,7 +553,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">webAdaptors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -553,16 +562,16 @@
 <span class="sd">        configuration web page or the command line utility provided with</span>
 <span class="sd">        the installation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/webadaptors&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/webadaptors&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">webAdaptor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">webAdaptorID</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The ArcGIS Web Adaptor is a web application that runs in a</span>
@@ -587,9 +596,9 @@
 <span class="sd">        Input:</span>
 <span class="sd">           webAdaptorID - id of the web adaptor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/webadaptors/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">webAdaptorID</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/webadaptors/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">webAdaptorID</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
@@ -597,7 +606,7 @@
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">unregisterWebAdaptor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">webAdaptorID</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        You can use this operation to unregister the ArcGIS Web Adaptor</span>
@@ -610,16 +619,16 @@
 <span class="sd">        Input:</span>
 <span class="sd">           webAdaptorID - id of the web adaptor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/webadaptors/</span><span class="si">%s</span><span class="s">/unregister&quot;</span> <span class="o">%</span> <span class="n">webAdaptorID</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/webadaptors/</span><span class="si">%s</span><span class="s2">/unregister&quot;</span> <span class="o">%</span> <span class="n">webAdaptorID</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateWebAdaptorsConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">webAdaptorsConfig</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This operation is used to change the common properties and</span>
@@ -630,17 +639,17 @@
 <span class="sd">           webAdaptorsConfig - The JSON object containing all the properties</span>
 <span class="sd">                               in the configuration.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/webadaptors/config/update&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/webadaptors/config/update&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;webAdaptorsConfig&quot;</span> <span class="p">:</span> <span class="n">webAdaptorsConfig</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;webAdaptorsConfig&quot;</span> <span class="p">:</span> <span class="n">webAdaptorsConfig</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">webAdaptorsConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -652,16 +661,16 @@
 <span class="sd">                          shared with the Web Adaptor. The Web Adaptor uses</span>
 <span class="sd">                          these credentials to communicate with the portal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/webadaptors/config&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/webadaptors/config&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -687,16 +696,16 @@
 <span class="sd">        If you would like to change the path for a directory, you can use</span>
 <span class="sd">        the Edit Directory operation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/directories&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/directories&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directoryName</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A directory is a file system-based folder that contains a specific</span>
@@ -712,16 +721,16 @@
 <span class="sd">        Input:</span>
 <span class="sd">           directoryName - name of diretory category</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/directories/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">directoryName</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/directories/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">directoryName</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">editDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directoryName</span><span class="p">,</span> <span class="n">physicalPath</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The edit operation on a directory can be used to change the</span>
@@ -736,18 +745,18 @@
 <span class="sd">           physicalPath - new path for directroy</span>
 <span class="sd">           description - new description of the directory</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/directories/</span><span class="si">%s</span><span class="s">/edit&quot;</span> <span class="o">%</span> <span class="n">directoryName</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/directories/</span><span class="si">%s</span><span class="s2">/edit&quot;</span> <span class="o">%</span> <span class="n">directoryName</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;physicalPath&quot;</span><span class="p">:</span> <span class="n">physicalPath</span><span class="p">,</span>
-            <span class="s">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;physicalPath&quot;</span><span class="p">:</span> <span class="n">physicalPath</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -759,16 +768,16 @@
 <span class="sd">        administrative database account that is used by components within</span>
 <span class="sd">        the portal to communicate with the database server.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/database&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/database&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateDatabaseAccount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span>
                               <span class="n">password</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -784,18 +793,18 @@
 <span class="sd">           username - database user name</span>
 <span class="sd">           password - database user password</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/database/updateAdminAccount&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/database/updateAdminAccount&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
-            <span class="s">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">indexer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -804,16 +813,16 @@
 <span class="sd">        as the port number and host name if you want the portal sharing API</span>
 <span class="sd">        to connect to and access another indexing service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/indexer&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/indexer&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">indexerStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -825,17 +834,17 @@
 <span class="sd">        that you reindex to correct any issues. If indexing is in progress,</span>
 <span class="sd">        you can monitor the status by refreshing the page.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/indexer/status&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/indexer/status&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">includes</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">includes</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This operation allows you to generate or update the indexes for</span>
 <span class="sd">        content; such as users, groups, and items stored in the database</span>
@@ -852,20 +861,20 @@
 <span class="sd">                     include in the index. This is useful if you want to</span>
 <span class="sd">                     only index certain items or user accounts.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/indexer/reindex&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/indexer/reindex&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;mode&quot;</span> <span class="p">:</span> <span class="n">mode</span><span class="p">,</span>
-            <span class="s">&quot;includes&quot;</span> <span class="p">:</span> <span class="n">includes</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mode&quot;</span> <span class="p">:</span> <span class="n">mode</span><span class="p">,</span>
+            <span class="s2">&quot;includes&quot;</span> <span class="p">:</span> <span class="n">includes</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">updateIndexConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                 <span class="n">indexerHost</span><span class="o">=</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span>
+                                 <span class="n">indexerHost</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
                                  <span class="n">indexerPort</span><span class="o">=</span><span class="mi">7199</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        You can use this operation to change the connection information for</span>
@@ -880,27 +889,27 @@
 <span class="sd">           indexerPort - The port number on which the index service is</span>
 <span class="sd">                         listening. The default value is 7199</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/indexer/update&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/indexer/update&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;indexerHost&quot;</span><span class="p">:</span> <span class="n">indexerHost</span><span class="p">,</span>
-            <span class="s">&quot;indexerPort&quot;</span><span class="p">:</span> <span class="n">indexerPort</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;indexerHost&quot;</span><span class="p">:</span> <span class="n">indexerHost</span><span class="p">,</span>
+            <span class="s2">&quot;indexerPort&quot;</span><span class="p">:</span> <span class="n">indexerPort</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">licenses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Portal for ArcGIS requires a valid license to function correctly.</span>
 <span class="sd">        This resource returns the current status of the license.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/licenses&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/licenses&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
@@ -908,7 +917,7 @@
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
 
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="PortalAdministration"><a class="viewcode-back" href="../../../arcrest.manageportal.html#arcrest.manageportal.administration.PortalAdministration">[docs]</a><span class="k">class</span> <span class="nc">PortalAdministration</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is the root resource for administering your portal. Starting from</span>
@@ -927,7 +936,7 @@
     <span class="n">_version</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_dict</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">admin_url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="p">,</span>
                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -943,11 +952,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">admin_url</span>
         <span class="k">if</span> <span class="n">initalize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the site properties &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
@@ -957,20 +966,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implemented in manageportal.administration class.&quot;</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot; - attribute not implemented in manageportal.administration class.&quot;</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the raw key/values for the object&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -978,21 +987,21 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">]</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the admin sites resources&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resources</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the portal version&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="PortalAdministration.createSite"><a class="viewcode-back" href="../../../arcrest.manageportal.html#arcrest.manageportal.administration.PortalAdministration.createSite">[docs]</a>    <span class="k">def</span> <span class="nf">createSite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">username</span><span class="p">,</span>
                    <span class="n">password</span><span class="p">,</span>
@@ -1000,7 +1009,7 @@
                    <span class="n">email</span><span class="p">,</span>
                    <span class="n">securityQuerstionIdx</span><span class="p">,</span>
                    <span class="n">securityQuestionAns</span><span class="p">,</span>
-                   <span class="n">description</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+                   <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
                    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The create site operation initializes and configures Portal for</span>
@@ -1029,59 +1038,59 @@
 <span class="sd">           securityQuestionAns - The answer to the secret question</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/createNewSite&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/createNewSite&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
-            <span class="s">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span><span class="p">,</span>
-            <span class="s">&quot;fullname&quot;</span> <span class="p">:</span> <span class="n">fullname</span><span class="p">,</span>
-            <span class="s">&quot;email&quot;</span> <span class="p">:</span> <span class="n">email</span><span class="p">,</span>
-            <span class="s">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-            <span class="s">&quot;securityQuerstionIdx&quot;</span> <span class="p">:</span> <span class="n">securityQuerstionIdx</span><span class="p">,</span>
-            <span class="s">&quot;securityQuestionAns&quot;</span> <span class="p">:</span> <span class="n">securityQuestionAns</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span> <span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span> <span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s2">&quot;fullname&quot;</span> <span class="p">:</span> <span class="n">fullname</span><span class="p">,</span>
+            <span class="s2">&quot;email&quot;</span> <span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span> <span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+            <span class="s2">&quot;securityQuerstionIdx&quot;</span> <span class="p">:</span> <span class="n">securityQuerstionIdx</span><span class="p">,</span>
+            <span class="s2">&quot;securityQuestionAns&quot;</span> <span class="p">:</span> <span class="n">securityQuestionAns</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a reference to the System operations for Portal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/system&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/system&quot;</span>
         <span class="k">return</span> <span class="n">_System</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                        <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                        <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                        <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a reference to the Security operations for Portal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/security&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/security&quot;</span>
         <span class="k">return</span> <span class="n">_Security</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the portals log information&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/logs&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/logs&quot;</span>
         <span class="k">return</span> <span class="n">_log</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                     <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                     <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                     <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets/sets the root admin url&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@root.setter</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets/sets the root admin url&quot;&quot;&quot;</span>
@@ -1093,15 +1102,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -1119,17 +1120,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

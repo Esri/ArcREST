@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.geometryservice.geometryservice &mdash; src  documentation</title>
+    <title>arcrest.geometryservice.geometryservice &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,14 +47,14 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.geometryservice.geometryservice</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">.._abstract</span> <span class="kn">import</span> <span class="n">abstract</span>
 <span class="kn">from</span> <span class="nn">..common.geometry</span> <span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">,</span> <span class="n">Envelope</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 
-<span class="c">########################################################################</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="GeometryService"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService">[docs]</a><span class="k">class</span> <span class="nc">GeometryService</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A geometry service contains utility methods that provide access to</span>
@@ -59,7 +68,7 @@
     <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_dict</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_string</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">proxy_port</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
@@ -69,11 +78,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;loads the json values&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span>
-                           <span class="n">param_dict</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">},</span>
+                           <span class="n">param_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">},</span>
                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
@@ -81,20 +90,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_string</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as a string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_string</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_string</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the JSON response in key/value pairs&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">]</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.areasAndLengths"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.areasAndLengths">[docs]</a>    <span class="k">def</span> <span class="nf">areasAndLengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">polygons</span><span class="p">,</span>
                         <span class="n">lengthUnit</span><span class="p">,</span>
@@ -165,26 +174,26 @@
 <span class="sd">           Output:</span>
 <span class="sd">              JSON as dictionary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/areasAndLengths&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/areasAndLengths&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
-            <span class="s">&quot;areaUnit&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&quot;areaUnit&quot;</span> <span class="p">:</span> <span class="n">areaUnit</span><span class="p">},</span>
-            <span class="s">&quot;calculationType&quot;</span> <span class="p">:</span> <span class="n">calculationType</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
+            <span class="s2">&quot;areaUnit&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s2">&quot;areaUnit&quot;</span> <span class="p">:</span> <span class="n">areaUnit</span><span class="p">},</span>
+            <span class="s2">&quot;calculationType&quot;</span> <span class="p">:</span> <span class="n">calculationType</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">polygons</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygons</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">polygons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">spatialReference</span><span class="p">[</span><span class="s">&#39;wkid&#39;</span><span class="p">]</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;polygons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">poly</span><span class="o">.</span><span class="n">asDictionary</span> <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">polygons</span><span class="p">]</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">spatialReference</span><span class="p">[</span><span class="s1">&#39;wkid&#39;</span><span class="p">]</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">poly</span><span class="o">.</span><span class="n">asDictionary</span> <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">polygons</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">p</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;No polygons provided, please submit a list of polygon geometries&quot;</span>
+            <span class="k">return</span> <span class="s2">&quot;No polygons provided, please submit a list of polygon geometries&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__geometryListToGeomTemplate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            converts a list of common.Geometry objects to the geometry</span>
@@ -194,27 +203,27 @@
 <span class="sd">            Output:</span>
 <span class="sd">               Dictionary in geometry service template</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                    <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPoint&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryMultipoint&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryEnvelope&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryEnvelope&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">g</span>
             <span class="k">return</span> <span class="n">template</span>
         <span class="k">return</span> <span class="n">template</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__geometryToGeomTemplate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">           Converts a single geometry object to a geometry service geometry</span>
@@ -225,40 +234,40 @@
 <span class="sd">           Output:</span>
 <span class="sd">              python dictionary of geometry template</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s">&quot;geometry&quot;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                    <span class="s2">&quot;geometry&quot;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPoint&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">):</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryMultipoint&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">):</span>
-            <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryEnvelope&quot;</span>
+            <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryEnvelope&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
-        <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
+        <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">asDictionary</span>
         <span class="k">return</span> <span class="n">template</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__geomToStringArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="s">&quot;str&quot;</span><span class="p">):</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__geomToStringArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="s2">&quot;str&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; function to convert the geomtries to strings &quot;&quot;&quot;</span>
         <span class="n">listGeoms</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
                 <span class="n">listGeoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                <span class="n">listGeoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span> <span class="c">#json.dumps(</span>
+                <span class="n">listGeoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span> <span class="c1">#json.dumps(</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                <span class="n">listGeoms</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;paths&#39;</span> <span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s">&#39;paths&#39;</span><span class="p">]})</span>
-        <span class="k">if</span> <span class="n">returnType</span> <span class="o">==</span> <span class="s">&quot;str&quot;</span><span class="p">:</span>
+                <span class="n">listGeoms</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;paths&#39;</span> <span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="n">returnType</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">listGeoms</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">returnType</span> <span class="o">==</span> <span class="s">&quot;list&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">returnType</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">listGeoms</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">listGeoms</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.autoComplete"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.autoComplete">[docs]</a>    <span class="k">def</span> <span class="nf">autoComplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                      <span class="n">polygons</span><span class="o">=</span><span class="p">[],</span>
                      <span class="n">polylines</span><span class="o">=</span><span class="p">[],</span>
@@ -275,17 +284,17 @@
 <span class="sd">              polylines - list of Polyline objects</span>
 <span class="sd">              sr - spatial reference of the input geometries WKID</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/autoComplete&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span><span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/autoComplete&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;f&quot;</span><span class="p">:</span><span class="s2">&quot;json&quot;</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">sr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;polygons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">polygons</span><span class="p">)</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;polylines&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">polylines</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;polygons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">polygons</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;polylines&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">polylines</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.buffer"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.buffer">[docs]</a>    <span class="k">def</span> <span class="nf">buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">geometries</span><span class="p">,</span>
                <span class="n">inSR</span><span class="p">,</span>
@@ -305,67 +314,67 @@
 <span class="sd">           Inputs:</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/buffer&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/buffer&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
-            <span class="s">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span><span class="p">,</span>
-            <span class="s">&quot;unionResults&quot;</span> <span class="p">:</span> <span class="n">unionResults</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
+            <span class="s2">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span><span class="p">,</span>
+            <span class="s2">&quot;unionResults&quot;</span> <span class="p">:</span> <span class="n">unionResults</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">geometries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPolygon&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPolyline&quot;</span><span class="p">,</span>
-                                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distances</span><span class="p">]</span>
 
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;distances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;distances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;distances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;distances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span>
         <span class="k">if</span> <span class="n">bufferSR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;bufferSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bufferSR</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bufferSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bufferSR</span>
         <span class="k">if</span> <span class="n">outSR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;outSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outSR</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;outSR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outSR</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.convexHull"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.convexHull">[docs]</a>    <span class="k">def</span> <span class="nf">convexHull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">geometries</span><span class="p">,</span>
                    <span class="n">sr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/convexHull&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/convexHull&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
 
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">geometries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">sr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">_wkid</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">_wkid</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPolygon&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPoint&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;esriGeometryPolyline&quot;</span><span class="p">,</span>
-                                                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s">&quot;list&quot;</span><span class="p">)}</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">)}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
@@ -373,44 +382,44 @@
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.cut"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">cutter</span><span class="p">,</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">sr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/cut&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/cut&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">sr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sr</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cutter</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;cutter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cutter</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cutter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cutter</span><span class="o">.</span><span class="n">asDictionary</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Input must be type Polyline&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Input must be type Polyline&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">geoms</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
-                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">target</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry in target, entries can only be Polygon or Polyline&quot;</span><span class="p">)</span>
+                    <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry in target, entries can only be Polygon or Polyline&quot;</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">g</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;You must provide at least 1 Polygon/Polyline geometry in a list&quot;</span><span class="p">)</span>
+            <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;You must provide at least 1 Polygon/Polyline geometry in a list&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.density"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.density">[docs]</a>    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">geometries</span><span class="p">,</span>
                 <span class="n">sr</span><span class="p">,</span>
@@ -419,105 +428,105 @@
                 <span class="n">geodesic</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                 <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/densify&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/densify&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;maxSegmentLength&quot;</span> <span class="p">:</span> <span class="n">maxSegmentLength</span><span class="p">,</span>
-            <span class="s">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
-            <span class="s">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;maxSegmentLength&quot;</span> <span class="p">:</span> <span class="n">maxSegmentLength</span><span class="p">,</span>
+            <span class="s2">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
+            <span class="s2">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.difference"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.difference">[docs]</a>    <span class="k">def</span> <span class="nf">difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">geometries</span><span class="p">,</span>
                    <span class="n">sr</span><span class="p">,</span>
                    <span class="n">geometry</span>
                    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/difference&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/difference&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span>
 
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPoint&quot;</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-                    <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
+                    <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryMultipoint&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
-                <span class="n">template</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
+                <span class="n">template</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">asDictionary</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">g</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
-        <span class="n">geomTemplate</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                        <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="n">geomTemplate</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;geometryType&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="p">[]</span>
                         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-            <span class="n">geomTemplate</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolyline&quot;</span>
+            <span class="n">geomTemplate</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolyline&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
-            <span class="n">geomTemplate</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPolygon&quot;</span>
+            <span class="n">geomTemplate</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPolygon&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-            <span class="n">geomTemplate</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryPoint&quot;</span>
+            <span class="n">geomTemplate</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryPoint&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-            <span class="n">geomTemplate</span><span class="p">[</span><span class="s">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;esriGeometryMultipoint&quot;</span>
+            <span class="n">geomTemplate</span><span class="p">[</span><span class="s1">&#39;geometryType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esriGeometryMultipoint&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
-        <span class="n">geomTemplate</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">asDictionary</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geomTemplate</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid geometry type&quot;</span><span class="p">)</span>
+        <span class="n">geomTemplate</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">asDictionary</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geomTemplate</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.distance"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.distance">[docs]</a>    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">sr</span><span class="p">,</span>
                  <span class="n">geometry1</span><span class="p">,</span>
                  <span class="n">geometry2</span><span class="p">,</span>
-                 <span class="n">distanceUnit</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">distanceUnit</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                  <span class="n">geodesic</span><span class="o">=</span><span class="bp">False</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/distance&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/distance&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;distanceUnit&quot;</span> <span class="p">:</span> <span class="n">distanceUnit</span><span class="p">,</span>
-            <span class="s">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;distanceUnit&quot;</span> <span class="p">:</span> <span class="n">distanceUnit</span><span class="p">,</span>
+            <span class="s2">&quot;geodesic&quot;</span> <span class="p">:</span> <span class="n">geodesic</span>
         <span class="p">}</span>
         <span class="n">geometry1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geometry1</span><span class="p">)</span>
         <span class="n">geometry2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geometry2</span><span class="p">)</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometry1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry1</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometry2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry2</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometry1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry1</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometry2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry2</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.findTransformation"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.findTransformation">[docs]</a>    <span class="k">def</span> <span class="nf">findTransformation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inSR</span><span class="p">,</span> <span class="n">outSR</span><span class="p">,</span> <span class="n">extentOfInterest</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">numOfResults</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The findTransformations operation is performed on a geometry</span>
@@ -553,20 +562,20 @@
 <span class="sd">             -1, all applicable transformations are returned.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
-            <span class="s">&quot;outSR&quot;</span> <span class="p">:</span> <span class="n">outSR</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
+            <span class="s2">&quot;outSR&quot;</span> <span class="p">:</span> <span class="n">outSR</span>
         <span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/findTransformations&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/findTransformations&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numOfResults</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;numOfResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numOfResults</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;numOfResults&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numOfResults</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extentOfInterest</span><span class="p">,</span> <span class="n">Envelope</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;extentOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extentOfInterest</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;extentOfInterest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extentOfInterest</span><span class="o">.</span><span class="n">asDictionary</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.fromGeoCoordinateString"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.fromGeoCoordinateString">[docs]</a>    <span class="k">def</span> <span class="nf">fromGeoCoordinateString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span>
                                 <span class="n">conversionType</span><span class="p">,</span> <span class="n">conversionMode</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -613,74 +622,74 @@
 <span class="sd">           utmNorthSouth - Uses north/south latitude indicators instead of</span>
 <span class="sd">            zone numbers. Non-standard. Default is recommended</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/fromGeoCoordinateString&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/fromGeoCoordinateString&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;strings&quot;</span> <span class="p">:</span> <span class="n">strings</span><span class="p">,</span>
-            <span class="s">&quot;conversionType&quot;</span> <span class="p">:</span> <span class="n">conversionType</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;strings&quot;</span> <span class="p">:</span> <span class="n">strings</span><span class="p">,</span>
+            <span class="s2">&quot;conversionType&quot;</span> <span class="p">:</span> <span class="n">conversionType</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">conversionMode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;conversionMode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversionMode</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conversionMode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversionMode</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.generalize"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.generalize">[docs]</a>    <span class="k">def</span> <span class="nf">generalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">sr</span><span class="p">,</span>
                    <span class="n">geometries</span><span class="p">,</span>
                    <span class="n">maxDeviation</span><span class="p">,</span>
                    <span class="n">deviationUnit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/generalize&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/generalize&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;deviationUnit&quot;</span> <span class="p">:</span> <span class="n">deviationUnit</span><span class="p">,</span>
-            <span class="s">&quot;maxDeviation&quot;</span><span class="p">:</span> <span class="n">maxDeviation</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;deviationUnit&quot;</span> <span class="p">:</span> <span class="n">deviationUnit</span><span class="p">,</span>
+            <span class="s2">&quot;maxDeviation&quot;</span><span class="p">:</span> <span class="n">maxDeviation</span>
         <span class="p">}</span>
-        <span class="n">params</span><span class="p">[</span><span class="s">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;geometries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.intersect"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.intersect">[docs]</a>    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                   <span class="n">sr</span><span class="p">,</span>
                   <span class="n">geometries</span><span class="p">,</span>
                   <span class="n">geometry</span>
                   <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/intersect&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/intersect&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
-            <span class="s">&quot;geometry&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
+            <span class="s2">&quot;geometry&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.labelPoints"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.labelPoints">[docs]</a>    <span class="k">def</span> <span class="nf">labelPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">sr</span><span class="p">,</span>
                     <span class="n">polygons</span><span class="p">,</span>
                     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/labelPoints&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/labelPoints&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;polygons&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polygons</span><span class="p">,</span>
-                                                 <span class="n">returnType</span><span class="o">=</span><span class="s">&quot;list&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;polygons&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polygons</span><span class="p">,</span>
+                                                 <span class="n">returnType</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.lengths"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.lengths">[docs]</a>    <span class="k">def</span> <span class="nf">lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">sr</span><span class="p">,</span>
                 <span class="n">polylines</span><span class="p">,</span>
@@ -688,155 +697,155 @@
                 <span class="n">calculationType</span>
                 <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">allowedCalcTypes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;planar&#39;</span><span class="p">,</span> <span class="s">&#39;geodesic&#39;</span><span class="p">,</span> <span class="s">&#39;preserveShape&#39;</span><span class="p">]</span>
+        <span class="n">allowedCalcTypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;planar&#39;</span><span class="p">,</span> <span class="s1">&#39;geodesic&#39;</span><span class="p">,</span> <span class="s1">&#39;preserveShape&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">calculationType</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowedCalcTypes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid calculation Type&quot;</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/lengths&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid calculation Type&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/lengths&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;polylines&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polylines</span><span class="p">,</span>
-                                                 <span class="n">returnType</span><span class="o">=</span><span class="s">&quot;list&quot;</span><span class="p">),</span>
-            <span class="s">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
-            <span class="s">&quot;calculationType&quot;</span> <span class="p">:</span> <span class="n">calculationType</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;polylines&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polylines</span><span class="p">,</span>
+                                                 <span class="n">returnType</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;lengthUnit&quot;</span> <span class="p">:</span> <span class="n">lengthUnit</span><span class="p">,</span>
+            <span class="s2">&quot;calculationType&quot;</span> <span class="p">:</span> <span class="n">calculationType</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.offset"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.offset">[docs]</a>    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">geometries</span><span class="p">,</span>
                <span class="n">offsetDistance</span><span class="p">,</span>
                <span class="n">offsetUnit</span><span class="p">,</span>
-               <span class="n">offsetHow</span><span class="o">=</span><span class="s">&quot;esriGeometryOffsetRounded&quot;</span><span class="p">,</span>
+               <span class="n">offsetHow</span><span class="o">=</span><span class="s2">&quot;esriGeometryOffsetRounded&quot;</span><span class="p">,</span>
                <span class="n">bevelRatio</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                <span class="n">simplifyResult</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                <span class="n">sr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">allowedHow</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;esriGeometryOffsetRounded&quot;</span><span class="p">,</span>
-                      <span class="s">&quot;esriGeometryOffsetBevelled&quot;</span><span class="p">,</span>
-                      <span class="s">&quot;esriGeometryOffsetMitered&quot;</span><span class="p">]</span>
+        <span class="n">allowedHow</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;esriGeometryOffsetRounded&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;esriGeometryOffsetBevelled&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;esriGeometryOffsetMitered&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">offsetHow</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowedHow</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid Offset How value&quot;</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/offset&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid Offset How value&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/offset&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;geometries&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
-            <span class="s">&quot;offsetDistance&quot;</span><span class="p">:</span> <span class="n">offsetDistance</span><span class="p">,</span>
-            <span class="s">&quot;offsetUnit&quot;</span> <span class="p">:</span> <span class="n">offsetUnit</span><span class="p">,</span>
-            <span class="s">&quot;offsetHow&quot;</span> <span class="p">:</span> <span class="n">offsetHow</span><span class="p">,</span>
-            <span class="s">&quot;bevelRatio&quot;</span> <span class="p">:</span> <span class="n">bevelRatio</span><span class="p">,</span>
-            <span class="s">&quot;simplifyResult&quot;</span> <span class="p">:</span> <span class="n">simplifyResult</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;geometries&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
+            <span class="s2">&quot;offsetDistance&quot;</span><span class="p">:</span> <span class="n">offsetDistance</span><span class="p">,</span>
+            <span class="s2">&quot;offsetUnit&quot;</span> <span class="p">:</span> <span class="n">offsetUnit</span><span class="p">,</span>
+            <span class="s2">&quot;offsetHow&quot;</span> <span class="p">:</span> <span class="n">offsetHow</span><span class="p">,</span>
+            <span class="s2">&quot;bevelRatio&quot;</span> <span class="p">:</span> <span class="n">bevelRatio</span><span class="p">,</span>
+            <span class="s2">&quot;simplifyResult&quot;</span> <span class="p">:</span> <span class="n">simplifyResult</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.project"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.project">[docs]</a>    <span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">geometries</span><span class="p">,</span>
                 <span class="n">inSR</span><span class="p">,</span>
                 <span class="n">outSR</span><span class="p">,</span>
-                <span class="n">transformation</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">transformation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="n">transformFoward</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/project&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/project&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
-            <span class="s">&quot;geometries&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
-            <span class="s">&quot;outSR&quot;</span> <span class="p">:</span> <span class="n">outSR</span><span class="p">,</span>
-            <span class="s">&quot;transformation&quot;</span> <span class="p">:</span> <span class="n">transformation</span><span class="p">,</span>
-            <span class="s">&quot;transformFoward&quot;</span><span class="p">:</span> <span class="n">transformFoward</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inSR&quot;</span> <span class="p">:</span> <span class="n">inSR</span><span class="p">,</span>
+            <span class="s2">&quot;geometries&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">),</span>
+            <span class="s2">&quot;outSR&quot;</span> <span class="p">:</span> <span class="n">outSR</span><span class="p">,</span>
+            <span class="s2">&quot;transformation&quot;</span> <span class="p">:</span> <span class="n">transformation</span><span class="p">,</span>
+            <span class="s2">&quot;transformFoward&quot;</span><span class="p">:</span> <span class="n">transformFoward</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.relation"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.relation">[docs]</a>    <span class="k">def</span> <span class="nf">relation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">geometries1</span><span class="p">,</span>
                  <span class="n">geometries2</span><span class="p">,</span>
                  <span class="n">sr</span><span class="p">,</span>
-                 <span class="n">relation</span><span class="o">=</span><span class="s">&quot;esriGeometryRelationIntersection&quot;</span><span class="p">,</span>
-                 <span class="n">relationParam</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+                 <span class="n">relation</span><span class="o">=</span><span class="s2">&quot;esriGeometryRelationIntersection&quot;</span><span class="p">,</span>
+                 <span class="n">relationParam</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">relationType</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s">&quot;esriGeometryRelationCross&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationDisjoint&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationIn&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationInteriorIntersection&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationIntersection&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationLineCoincidence&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationLineTouch&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationOverlap&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationPointTouch&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationTouch&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationWithin&quot;</span><span class="p">,</span>
-            <span class="s">&quot;esriGeometryRelationRelation&quot;</span>
+            <span class="s2">&quot;esriGeometryRelationCross&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationDisjoint&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationIn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationInteriorIntersection&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationIntersection&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationLineCoincidence&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationLineTouch&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationOverlap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationPointTouch&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationTouch&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationWithin&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;esriGeometryRelationRelation&quot;</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">relation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">relationType</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid relation type&quot;</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/relation&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid relation type&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/relation&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;geometries1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries1</span><span class="p">),</span>
-            <span class="s">&quot;geometries2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries2</span><span class="p">),</span>
-            <span class="s">&quot;relation&quot;</span> <span class="p">:</span> <span class="n">relation</span><span class="p">,</span>
-            <span class="s">&quot;relationParam&quot;</span> <span class="p">:</span> <span class="n">relationParam</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;geometries1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries1</span><span class="p">),</span>
+            <span class="s2">&quot;geometries2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries2</span><span class="p">),</span>
+            <span class="s2">&quot;relation&quot;</span> <span class="p">:</span> <span class="n">relation</span><span class="p">,</span>
+            <span class="s2">&quot;relationParam&quot;</span> <span class="p">:</span> <span class="n">relationParam</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.reshape"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.reshape">[docs]</a>    <span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">sr</span><span class="p">,</span>
                 <span class="n">target</span><span class="p">,</span>
                 <span class="n">reshaper</span>
                 <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;calls the reshape command on a geometry service&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/reshape&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/reshape&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;target&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryToGeomTemplate</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reshaper</span><span class="p">,</span> <span class="n">Polyline</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&quot;reshaper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reshaper</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;reshaper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reshaper</span><span class="o">.</span><span class="n">asDictionary</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid reshaper object, must be Polyline&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid reshaper object, must be Polyline&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.simplify"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.simplify">[docs]</a>    <span class="k">def</span> <span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">sr</span><span class="p">,</span>
                  <span class="n">geometries</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns a simplied geometry object&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/simplify&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/simplify&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.toGeoCoordinateString"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.toGeoCoordinateString">[docs]</a>    <span class="k">def</span> <span class="nf">toGeoCoordinateString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                               <span class="n">sr</span><span class="p">,</span>
                               <span class="n">coordinates</span><span class="p">,</span>
                               <span class="n">conversionType</span><span class="p">,</span>
-                              <span class="n">conversionMode</span><span class="o">=</span><span class="s">&quot;mgrsDefault&quot;</span><span class="p">,</span>
+                              <span class="n">conversionMode</span><span class="o">=</span><span class="s2">&quot;mgrsDefault&quot;</span><span class="p">,</span>
                               <span class="n">numOfDigits</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                               <span class="n">rounding</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                               <span class="n">addSpaces</span><span class="o">=</span><span class="bp">True</span>
@@ -896,26 +905,26 @@
 <span class="sd">           while the default value for both USNG and UTM is true.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;coordinates&quot;</span> <span class="p">:</span> <span class="n">coordinates</span><span class="p">,</span>
-            <span class="s">&quot;conversionType&quot;</span><span class="p">:</span> <span class="n">conversionType</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;coordinates&quot;</span> <span class="p">:</span> <span class="n">coordinates</span><span class="p">,</span>
+            <span class="s2">&quot;conversionType&quot;</span><span class="p">:</span> <span class="n">conversionType</span>
         <span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/toGeoCoordinateString&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/toGeoCoordinateString&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">conversionMode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;conversionMode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversionMode</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conversionMode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversionMode</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numOfDigits</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;numOfDigits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numOfDigits</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;numOfDigits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numOfDigits</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rounding</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;rounding&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rounding</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;rounding&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rounding</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">addSpaces</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;addSpaces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">addSpaces</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;addSpaces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">addSpaces</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                              <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.trimExtend"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.trimExtend">[docs]</a>    <span class="k">def</span> <span class="nf">trimExtend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">sr</span><span class="p">,</span>
                    <span class="n">polylines</span><span class="p">,</span>
@@ -924,14 +933,14 @@
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">allowedHow</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">extendHow</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowedHow</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Invalid extend How value.&quot;</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/trimExtend&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Invalid extend How value.&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/trimExtend&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;polylines&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polylines</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="s">&quot;list&quot;</span><span class="p">),</span>
-            <span class="s">&quot;extendHow&quot;</span><span class="p">:</span> <span class="n">extendHow</span><span class="p">,</span>
-            <span class="s">&quot;trimExtendTo&quot;</span> <span class="p">:</span> <span class="n">trimExtendTo</span><span class="o">.</span><span class="n">asDictionary</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;polylines&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geomToStringArray</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">polylines</span><span class="p">,</span> <span class="n">returnType</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;extendHow&quot;</span><span class="p">:</span> <span class="n">extendHow</span><span class="p">,</span>
+            <span class="s2">&quot;trimExtendTo&quot;</span> <span class="p">:</span> <span class="n">trimExtendTo</span><span class="o">.</span><span class="n">asDictionary</span>
 
         <span class="p">}</span>
 
@@ -939,16 +948,16 @@
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="GeometryService.union"><a class="viewcode-back" href="../../../arcrest.geometryservice.html#arcrest.geometryservice.geometryservice.GeometryService.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">sr</span><span class="p">,</span>
               <span class="n">geometries</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/union&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/union&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
-            <span class="s">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sr&quot;</span> <span class="p">:</span> <span class="n">sr</span><span class="p">,</span>
+            <span class="s2">&quot;geometries&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geometryListToGeomTemplate</span><span class="p">(</span><span class="n">geometries</span><span class="o">=</span><span class="n">geometries</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -960,15 +969,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -986,17 +987,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

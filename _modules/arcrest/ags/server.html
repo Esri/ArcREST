@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.ags.server &mdash; src  documentation</title>
+    <title>arcrest.ags.server &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.ags.server</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This provides access to a server and it&#39;s services for non administrative</span>
 <span class="sd">functions.  This allows developers to access a REST service just like a</span>
 <span class="sd">user/developer would.</span>
@@ -59,8 +68,8 @@
 <span class="kn">from</span> <span class="nn">._geodataservice</span> <span class="kn">import</span> <span class="n">GeoDataService</span>
 <span class="kn">from</span> <span class="nn">._networkservice</span> <span class="kn">import</span> <span class="n">NetworkService</span>
 <span class="kn">from</span> <span class="nn">._globeservice</span> <span class="kn">import</span> <span class="n">GlobeService</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Server&#39;</span><span class="p">]</span>
-<span class="c">########################################################################</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Server&#39;</span><span class="p">]</span>
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Server"><a class="viewcode-back" href="../../../arcrest.ags.html#arcrest.ags.server.Server">[docs]</a><span class="k">class</span> <span class="nc">Server</span><span class="p">(</span><span class="n">BaseAGSServer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This object represents an ArcGIS Server instance&quot;&quot;&quot;</span>
     <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
@@ -74,7 +83,7 @@
     <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_location</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_currentFolder</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="p">,</span>
@@ -84,7 +93,7 @@
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validateurl</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_currentFolder</span> <span class="o">=</span> <span class="s">&quot;root&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_currentFolder</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="o">=</span> <span class="n">securityHandler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">securityHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span> <span class="o">=</span> <span class="n">securityHandler</span><span class="o">.</span><span class="n">referer_url</span>
@@ -92,24 +101,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_validateurl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;assembles the server url&quot;&quot;&quot;</span>
         <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adminUrl</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">/arcgis/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">/arcgis/rest/services&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adminUrl</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">/arcgis/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">/arcgis/rest/services&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adminUrl</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">://</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/rest/services&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s">&#39;root&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_adminUrl</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/rest/services&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;loads the property data into the class&quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="n">folder</span> <span class="o">==</span> <span class="s">&quot;root&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">folder</span> <span class="o">==</span> <span class="s2">&quot;root&quot;</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span>
@@ -121,53 +130,53 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;folders&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;folders&quot;</span><span class="p">:</span>
                 <span class="k">pass</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> - attribute not implemented in ags.Server class.&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> - attribute not implemented in ags.Server class.&quot;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
                                  <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&#39;folders&#39;</span><span class="p">:</span>
-                <span class="n">v</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;root&#39;</span><span class="p">)</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;folders&#39;</span><span class="p">:</span>
+                <span class="n">v</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the url of the class&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;points to the adminstrative side of ArcGIS Server&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Cannot connect to adminstrative server without authentication&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot connect to adminstrative server without authentication&quot;</span><span class="p">)</span>
         <span class="kn">from</span> <span class="nn">..manageags</span> <span class="kn">import</span> <span class="n">AGSAdministration</span>
         <span class="k">return</span> <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_adminUrl</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                  <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                  <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                  <span class="n">initialize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the current url position in the server folder structure&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as raw string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;iterates through json and returns values as [key, value]&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -175,25 +184,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">]</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the current version of arcgis server&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">self</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the logged in user&quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/self&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/services&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/self&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/services&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                          <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">services</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the services in the current folder&quot;&quot;&quot;</span>
@@ -201,88 +210,88 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GPServer&quot;</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GPServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GPService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                           <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                           <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MapServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MapServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MapService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                            <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                            <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                            <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ImageServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ImageServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ImageService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;FeatureServer&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentFolder</span> <span class="o">==</span> <span class="s">&#39;root&#39;</span><span class="p">:</span>
-                    <span class="n">serviceName</span> <span class="o">=</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FeatureServer&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentFolder</span> <span class="o">==</span> <span class="s1">&#39;root&#39;</span><span class="p">:</span>
+                    <span class="n">serviceName</span> <span class="o">=</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">serviceName</span> <span class="o">=</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">serviceName</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
+                    <span class="n">serviceName</span> <span class="o">=</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">serviceName</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FeatureService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeometryServer&quot;</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GeometryServer&quot;</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeometryService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MobileServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MobileServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MobileService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                               <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                               <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                               <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;NAServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NAServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NetworkService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeocodeServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GeocodeServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeocodeService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GeoDataServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GeoDataServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeoDataService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GlobeServer&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GlobeServer&quot;</span><span class="p">:</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GlobeService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                                                <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;IndexGenerator&quot;</span><span class="p">,</span> <span class="s">&quot;IndexingLauncher&quot;</span><span class="p">,</span> <span class="s">&quot;SearchServer&quot;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;IndexGenerator&quot;</span><span class="p">,</span> <span class="s2">&quot;IndexingLauncher&quot;</span><span class="p">,</span> <span class="s2">&quot;SearchServer&quot;</span><span class="p">):</span>
                 <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span> <span class="p">(</span><span class="n">service</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+                <span class="k">print</span> <span class="p">(</span><span class="n">service</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">services</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the folders on server&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folders</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s">&quot;root&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folders</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">currentFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets/sets the current folder name&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentFolder</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@currentFolder.setter</span>
     <span class="k">def</span> <span class="nf">currentFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets/sets the current folder name&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">folders</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&#39;root&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;root&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_currentFolder</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_currentFolder</span> <span class="o">=</span> <span class="n">value</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
@@ -294,15 +303,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -320,17 +321,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

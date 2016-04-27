@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.agol package &mdash; src  documentation</title>
+    <title>arcrest.agol package &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,16 +23,32 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="index.html" />
     <link rel="up" title="arcrest package" href="arcrest.html" />
     <link rel="next" title="arcrest.agol.helperservices package" href="arcrest.agol.helperservices.html" />
-    <link rel="prev" title="arcrest package" href="arcrest.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="prev" title="arcrest package" href="arcrest.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.agol.helperservices.html" title="arcrest.agol.helperservices package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.html" title="arcrest package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" accesskey="U">arcrest package</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -146,7 +162,7 @@ rel_object_field - string - (optional) name of field with OID of feature class</
 
 <dl class="method">
 <dt id="arcrest.agol.services.FeatureLayer.applyEdits">
-<code class="descname">applyEdits</code><span class="sig-paren">(</span><em>addFeatures=[]</em>, <em>updateFeatures=[]</em>, <em>deleteFeatures=None</em>, <em>gdbVersion=None</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/agol/services.html#FeatureLayer.applyEdits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.applyEdits" title="Permalink to this definition">¶</a></dt>
+<code class="descname">applyEdits</code><span class="sig-paren">(</span><em>addFeatures=[]</em>, <em>updateFeatures=[]</em>, <em>deleteFeatures=None</em>, <em>gdbVersion=None</em>, <em>useGlobalIds=False</em>, <em>rollbackOnFailure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/agol/services.html#FeatureLayer.applyEdits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.applyEdits" title="Permalink to this definition">¶</a></dt>
 <dd><p>This operation adds, updates, and deletes features to the
 associated feature layer or table in a single call.
 Inputs:</p>
@@ -160,15 +176,22 @@ objects</dd>
 </dl>
 <p>deleteFeatures - string of OIDs to remove from service
 gdbVersion - Geodatabase version to apply the edits.
-rollbackOnFailure - Optional parameter to specify if the</p>
+useGlobalIds - instead of referencing the default Object ID</p>
 <blockquote>
-<div>edits should be applied only if all
+<div>field, the service will look at a GUID field
+to track changes.  This means the GUIDs will
+be passed instead of OIDs for delete,
+update or add features.</div></blockquote>
+<dl class="docutils">
+<dt>rollbackOnFailure - Optional parameter to specify if the</dt>
+<dd>edits should be applied only if all
 submitted edits succeed. If false, the
 server will apply the edits that succeed
 even if some of the submitted edits fail.
 If true, the server will apply the edits
 only if all edits succeed. The default
-value is true.</div></blockquote>
+value is true.</dd>
+</dl>
 </div></blockquote>
 <dl class="docutils">
 <dt>Output:</dt>
@@ -490,6 +513,12 @@ includeAttachments - default False. If sync is not supported</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.agol.services.FeatureLayer.maxRecordCountFactor">
+<code class="descname">maxRecordCountFactor</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.maxRecordCountFactor" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the maxRecordCountFactor for the feature layer</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.agol.services.FeatureLayer.maxScale">
 <code class="descname">maxScale</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.maxScale" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the max scale</p>
@@ -669,6 +698,12 @@ not returned. The default is false.</dd>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="arcrest.agol.services.FeatureLayer.standardMaxRecordCount">
+<code class="descname">standardMaxRecordCount</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.standardMaxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the standardMaxRecordCount for the feature layer</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="arcrest.agol.services.FeatureLayer.subLayers">
 <code class="descname">subLayers</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.subLayers" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns sublayers for layer</p>
@@ -732,6 +767,12 @@ not returned. The default is false.</dd>
 <dt id="arcrest.agol.services.FeatureLayer.templates">
 <code class="descname">templates</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.templates" title="Permalink to this definition">¶</a></dt>
 <dd><p>gets the template</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="arcrest.agol.services.FeatureLayer.tileMaxRecordCount">
+<code class="descname">tileMaxRecordCount</code><a class="headerlink" href="#arcrest.agol.services.FeatureLayer.tileMaxRecordCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the tileMaxRecordCount for the feature layer</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1432,17 +1473,13 @@ only return the uploads class if syncEnabled is True.</p>
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="arcrest.html">arcrest package</a><ul>
-      <li>Previous: <a href="arcrest.html" title="previous chapter">arcrest package</a></li>
-      <li>Next: <a href="arcrest.agol.helperservices.html" title="next chapter">arcrest.agol.helperservices package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arcrest.html"
+                        title="previous chapter">arcrest package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arcrest.agol.helperservices.html"
+                        title="next chapter">arcrest.agol.helperservices package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -1467,20 +1504,29 @@ only return the uploads class if syncEnabled is True.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/arcrest.agol.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.agol.helperservices.html" title="arcrest.agol.helperservices package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.html" title="arcrest package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" >arcrest package</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

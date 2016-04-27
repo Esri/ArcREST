@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.manageorg.administration &mdash; src  documentation</title>
+    <title>arcrest.manageorg.administration &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.manageorg.administration</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">   Manages Portal/AGOL content, users, items, etc..</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
@@ -49,7 +58,9 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_community</span><span class="p">,</span> <span class="n">_content</span><span class="p">,</span> <span class="n">_portals</span><span class="p">,</span> <span class="n">_oauth2</span>
 <span class="kn">from</span> <span class="nn">..hostedservice</span> <span class="kn">import</span> <span class="n">Services</span>
 <span class="kn">from</span> <span class="nn">..manageags</span> <span class="kn">import</span> <span class="n">AGSAdministration</span>
-<span class="c">########################################################################</span>
+<span class="kn">from</span> <span class="nn">..packages.six.moves.urllib_parse</span> <span class="kn">import</span> <span class="n">urlparse</span><span class="p">,</span> <span class="n">urlunparse</span>
+
+<span class="c1">########################################################################</span>
 <div class="viewcode-block" id="Administration"><a class="viewcode-back" href="../../../arcrest.manageorg.html#arcrest.manageorg.administration.Administration">[docs]</a><span class="k">class</span> <span class="nc">Administration</span><span class="p">(</span><span class="n">BaseAGOLClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;  Administers the AGOL/Portal Site &quot;&quot;&quot;</span>
     <span class="n">_securityHandler</span> <span class="o">=</span> <span class="bp">None</span>
@@ -60,7 +71,7 @@
     <span class="n">_currentVersion</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_dict</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -71,34 +82,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="o">=</span> <span class="n">securityHandler</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">securityHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="n">securityHandler</span><span class="o">.</span><span class="n">org_url</span>
-        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">url</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;URL or Security Handler needs to be specified&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;/sharing&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s">&quot;/sharing&quot;</span>
-
-        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;/rest&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">url</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;URL or Security Handler needs to be specified&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/sharing&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s">&quot;/rest&quot;</span>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/sharing&quot;</span>
+        <span class="c1">#if url.lower().find(&quot;/rest&quot;) &gt; -1:</span>
+            <span class="c1">#self._url = url</span>
+        <span class="c1">#else:</span>
+            <span class="c1">#self._url = url + &quot;/rest&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
         <span class="k">if</span> <span class="n">securityHandler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_referer_url</span> <span class="o">=</span> <span class="n">securityHandler</span><span class="o">.</span><span class="n">referer_url</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Security Handler is required for the administration function&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Security Handler is required for the administration function&quot;</span><span class="p">)</span>
+
+        <span class="n">urlInfo</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;www.arcgis.com&quot;</span><span class="p">:</span>
+            <span class="n">portalSelf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span>
+            <span class="n">urlInfo</span><span class="o">=</span><span class="n">urlInfo</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">netloc</span><span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">portalSelf</span><span class="o">.</span><span class="n">urlKey</span><span class="p">,</span> <span class="n">portalSelf</span><span class="o">.</span><span class="n">customBaseUrl</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">urlunparse</span><span class="p">(</span><span class="n">urlInfo</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="s2">&quot;https://</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">/sharing&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">portalSelf</span><span class="o">.</span><span class="n">urlKey</span><span class="p">,</span> <span class="n">portalSelf</span><span class="o">.</span><span class="n">customBaseUrl</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">portalSelf</span>
+
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; initializes the site properties &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                  <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -107,93 +125,93 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
-                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
+                      <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                      <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s">&quot; - attribute not implemented in Administration class.&quot;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot; - attribute not implemented in Administration class.&quot;</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as a dictionary&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as a string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;iterates over raw json and returns the values&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the base url&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tokenURL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the token url&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/generateToken&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/generateToken&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">currentVersion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the current version of the site &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_currentVersion</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">portals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns the Portals class that provides administration access</span>
 <span class="sd">        into a given organization&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/portals&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/portals&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
         <span class="k">return</span> <span class="n">_portals</span><span class="o">.</span><span class="n">Portals</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                 <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">oauth2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns the oauth2 class</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;/oauth2&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/oauth2&quot;</span><span class="p">):</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/oauth2&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/oauth2&quot;</span>
         <span class="k">return</span> <span class="n">_oauth2</span><span class="o">.</span><span class="n">oauth2</span><span class="p">(</span><span class="n">oauth_url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                               <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                               <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                               <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">community</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The portal community root covers user and group resources and</span>
 <span class="sd">        operations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_community</span><span class="o">.</span><span class="n">Community</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/community&quot;</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">_community</span><span class="o">.</span><span class="n">Community</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/community&quot;</span><span class="p">,</span>
                                     <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                     <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                     <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns access into the site&#39;s content&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_content</span><span class="o">.</span><span class="n">Content</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/content&quot;</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">_content</span><span class="o">.</span><span class="n">Content</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/content&quot;</span><span class="p">,</span>
                                 <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                 <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                 <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="Administration.search"><a class="viewcode-back" href="../../../arcrest.manageorg.html#arcrest.manageorg.administration.Administration.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">q</span><span class="p">,</span>
               <span class="n">t</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -202,7 +220,7 @@
               <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
               <span class="n">sortField</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-              <span class="n">sortOrder</span><span class="o">=</span><span class="s">&quot;asc&quot;</span><span class="p">,</span>
+              <span class="n">sortOrder</span><span class="o">=</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span>
               <span class="n">useSecurity</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This operation searches for content items in the portal. The</span>
@@ -260,30 +278,30 @@
 <span class="sd">           Output:</span>
 <span class="sd">             returns a list of dictionary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;/rest&quot;</span><span class="p">):</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/search&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/rest&quot;</span><span class="p">):</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/search&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/rest/search&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/rest/search&quot;</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">,</span>
-            <span class="s">&quot;q&quot;</span> <span class="p">:</span> <span class="n">q</span><span class="p">,</span>
-            <span class="s">&quot;sortOrder&quot;</span> <span class="p">:</span> <span class="n">sortOrder</span><span class="p">,</span>
-            <span class="s">&quot;num&quot;</span> <span class="p">:</span> <span class="n">num</span><span class="p">,</span>
-            <span class="s">&quot;start&quot;</span> <span class="p">:</span> <span class="n">start</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;q&quot;</span> <span class="p">:</span> <span class="n">q</span><span class="p">,</span>
+            <span class="s2">&quot;sortOrder&quot;</span> <span class="p">:</span> <span class="n">sortOrder</span><span class="p">,</span>
+            <span class="s2">&quot;num&quot;</span> <span class="p">:</span> <span class="n">num</span><span class="p">,</span>
+            <span class="s2">&quot;start&quot;</span> <span class="p">:</span> <span class="n">start</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">focus</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;focus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">focus</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;focus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">focus</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">t</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
         <span class="k">if</span> <span class="n">useSecurity</span> <span class="ow">and</span> \
            <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
-           <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&quot;token&quot;</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&quot;token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">token</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;token&quot;</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="o">.</span><span class="n">token</span>
         <span class="k">if</span> <span class="n">sortField</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;sortField&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sortField</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;sortField&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sortField</span>
         <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                         <span class="n">param_dict</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
@@ -291,7 +309,7 @@
                         <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                         <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div>
 
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="Administration.hostingServers"><a class="viewcode-back" href="../../../arcrest.manageorg.html#arcrest.manageorg.administration.Administration.hostingServers">[docs]</a>    <span class="k">def</span> <span class="nf">hostingServers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">          Returns the objects to manage site&#39;s hosted services. It returns</span>
@@ -302,36 +320,36 @@
         <span class="n">portals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">portals</span>
         <span class="n">portal</span> <span class="o">=</span> <span class="n">portals</span><span class="o">.</span><span class="n">portalSelf</span>
         <span class="n">urls</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">urls</span>
-        <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span> <span class="n">urls</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="n">services</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">urls</span> <span class="o">!=</span> <span class="p">{}:</span>
-            <span class="k">if</span> <span class="s">&#39;urls&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s">&#39;features&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s">&#39;urls&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="s">&#39;https&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s">&#39;urls&#39;</span><span class="p">][</span><span class="s">&#39;features&#39;</span><span class="p">]:</span>
-                        <span class="k">for</span> <span class="n">https</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s">&#39;urls&#39;</span><span class="p">][</span><span class="s">&#39;features&#39;</span><span class="p">][</span><span class="s">&#39;https&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s1">&#39;urls&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;features&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s1">&#39;urls&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="s1">&#39;https&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s1">&#39;urls&#39;</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+                        <span class="k">for</span> <span class="n">https</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s1">&#39;urls&#39;</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="s1">&#39;https&#39;</span><span class="p">]:</span>
                             <span class="k">if</span> <span class="n">portal</span><span class="o">.</span><span class="n">isPortal</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
 
-                                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/admin&quot;</span> <span class="o">%</span> <span class="n">https</span>
-                                <span class="c">#url = https</span>
+                                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/admin&quot;</span> <span class="o">%</span> <span class="n">https</span>
+                                <span class="c1">#url = https</span>
                                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
 
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;https://</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/ArcGIS/rest/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">https</span><span class="p">,</span> <span class="n">portal</span><span class="o">.</span><span class="n">portalId</span><span class="p">)</span>
+                                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/ArcGIS/rest/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">https</span><span class="p">,</span> <span class="n">portal</span><span class="o">.</span><span class="n">portalId</span><span class="p">)</span>
                                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Services</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                              <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                              <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                              <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
-                    <span class="k">elif</span> <span class="s">&#39;http&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s">&#39;urls&#39;</span><span class="p">][</span><span class="s">&#39;features&#39;</span><span class="p">]:</span>
-                        <span class="k">for</span> <span class="n">http</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s">&#39;urls&#39;</span><span class="p">][</span><span class="s">&#39;features&#39;</span><span class="p">][</span><span class="s">&#39;http&#39;</span><span class="p">]:</span>
+                    <span class="k">elif</span> <span class="s1">&#39;http&#39;</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s1">&#39;urls&#39;</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+                        <span class="k">for</span> <span class="n">http</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">[</span><span class="s1">&#39;urls&#39;</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="s1">&#39;http&#39;</span><span class="p">]:</span>
 
                             <span class="k">if</span> <span class="p">(</span><span class="n">portal</span><span class="o">.</span><span class="n">isPortal</span> <span class="o">==</span> <span class="bp">True</span><span class="p">):</span>
-                                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/admin&quot;</span> <span class="o">%</span> <span class="n">http</span>
+                                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/admin&quot;</span> <span class="o">%</span> <span class="n">http</span>
                                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                                   <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                                   <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
@@ -339,25 +357,25 @@
                                                                   <span class="n">initialize</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;http://</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">/ArcGIS/rest/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">http</span><span class="p">,</span> <span class="n">portal</span><span class="o">.</span><span class="n">portalId</span><span class="p">)</span>
+                                <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/ArcGIS/rest/admin&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">http</span><span class="p">,</span> <span class="n">portal</span><span class="o">.</span><span class="n">portalId</span><span class="p">)</span>
                                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Services</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                                                           <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                           <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                                                           <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">))</span>
 
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">print</span><span class="p">(</span> <span class="s">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span> <span class="s2">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
+                    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span> <span class="s">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span> <span class="s2">&quot;Publishing servers not found&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">services</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">portal</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="s">&#39;servers&#39;</span><span class="p">]:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">server</span><span class="p">[</span><span class="s">&#39;adminUrl&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;/admin&quot;</span>
+            <span class="k">for</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">portal</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="s1">&#39;servers&#39;</span><span class="p">]:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">server</span><span class="p">[</span><span class="s1">&#39;adminUrl&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/admin&quot;</span>
                 <span class="n">sh</span> <span class="o">=</span> <span class="n">PortalServerSecurityHandler</span><span class="p">(</span><span class="n">tokenHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                                                    <span class="n">serverUrl</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-                                                   <span class="n">referer</span><span class="o">=</span><span class="n">server</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;:6080&quot;</span><span class="p">,</span> <span class="s">&quot;:6443&quot;</span><span class="p">)</span>
+                                                   <span class="n">referer</span><span class="o">=</span><span class="n">server</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:6080&quot;</span><span class="p">,</span> <span class="s2">&quot;:6443&quot;</span><span class="p">)</span>
                                                    <span class="p">)</span>
                 <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
@@ -373,15 +391,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -399,17 +409,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

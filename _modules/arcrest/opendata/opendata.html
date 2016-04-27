@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.opendata.opendata &mdash; src  documentation</title>
+    <title>arcrest.opendata.opendata &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,14 +23,23 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -38,16 +47,16 @@
           <div class="body" role="main">
             
   <h1>Source code for arcrest.opendata.opendata</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">   OpenData Operations</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">BaseOpenData</span>
-<span class="kn">from</span> <span class="nn">._web</span> <span class="kn">import</span> <span class="n">WebOperations</span>
-<span class="c">########################################################################</span>
-<div class="viewcode-block" id="OpenData"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData">[docs]</a><span class="k">class</span> <span class="nc">OpenData</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">WebOperations</span><span class="p">):</span>
+<span class="kn">from</span> <span class="nn">..web._base</span> <span class="kn">import</span> <span class="n">BaseWebOperations</span>
+<span class="c1">########################################################################</span>
+<div class="viewcode-block" id="OpenData"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData">[docs]</a><span class="k">class</span> <span class="nc">OpenData</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">BaseWebOperations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents an open data site</span>
 <span class="sd">    Inputs:</span>
 <span class="sd">       url - web address of the open data site</span>
@@ -56,8 +65,8 @@
     <span class="n">_proxy_port</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_proxy_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_securityHandler</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">_api</span> <span class="o">=</span> <span class="s">&quot;v1&quot;</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="n">_api</span> <span class="o">=</span> <span class="s2">&quot;v1&quot;</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">url</span><span class="p">,</span>
                  <span class="n">securityHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -68,44 +77,44 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span> <span class="o">=</span> <span class="n">securityHandler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span> <span class="o">=</span> <span class="n">proxy_port</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;get/set the base url&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="nd">@root.setter</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;get/set the base url&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="OpenData.search"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">q</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">per_page</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">page</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                <span class="n">bbox</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-               <span class="n">sort_by</span><span class="o">=</span><span class="s">&quot;relavance&quot;</span><span class="p">,</span>
-               <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;asc&quot;</span><span class="p">):</span>
+               <span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;relavance&quot;</span><span class="p">,</span>
+               <span class="n">sort_order</span><span class="o">=</span><span class="s2">&quot;asc&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        searches the opendata site and returns the dataset results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/datasets.json&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/datasets.json&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&quot;sort_by&quot;</span> <span class="p">:</span> <span class="n">sort_by</span><span class="p">,</span>
-            <span class="s">&quot;f&quot;</span> <span class="p">:</span> <span class="s">&quot;json&quot;</span>
+            <span class="s2">&quot;sort_by&quot;</span> <span class="p">:</span> <span class="n">sort_by</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span> <span class="p">:</span> <span class="s2">&quot;json&quot;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span>
         <span class="k">if</span> <span class="n">per_page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;per_page&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_page</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;per_page&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_page</span>
         <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;page&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span>
         <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bbox</span>
         <span class="k">if</span> <span class="n">sort_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;sort_by&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort_by</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;sort_by&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort_by</span>
         <span class="k">if</span> <span class="n">sort_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">param_dict</span><span class="p">[</span><span class="s">&#39;sort_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort_order</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;sort_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sort_order</span>
         <span class="n">ds_data</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                     <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span>
                     <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
@@ -113,20 +122,20 @@
                     <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                     <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_data</span></div>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
 <div class="viewcode-block" id="OpenData.getDataset"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenData.getDataset">[docs]</a>    <span class="k">def</span> <span class="nf">getDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itemId</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets a dataset class&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;datasets&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;datasets&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s">&quot;/datasets&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">+</span> <span class="s2">&quot;/datasets&quot;</span>
         <span class="k">return</span> <span class="n">OpenDataItem</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                             <span class="n">itemId</span><span class="o">=</span><span class="n">itemId</span><span class="p">,</span>
                             <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                             <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">,</span>
                             <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">)</span></div></div>
-<span class="c">########################################################################</span>
-<div class="viewcode-block" id="OpenDataItem"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem">[docs]</a><span class="k">class</span> <span class="nc">OpenDataItem</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">WebOperations</span><span class="p">):</span>
+<span class="c1">########################################################################</span>
+<div class="viewcode-block" id="OpenDataItem"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem">[docs]</a><span class="k">class</span> <span class="nc">OpenDataItem</span><span class="p">(</span><span class="n">BaseOpenData</span><span class="p">,</span> <span class="n">BaseWebOperations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;represents a single data object&quot;&quot;&quot;</span>
     <span class="n">_url</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_itemId</span> <span class="o">=</span> <span class="bp">None</span>
@@ -136,7 +145,7 @@
     <span class="n">_json</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_json_dict</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_related_items</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">url</span><span class="p">,</span>
                  <span class="n">itemId</span><span class="p">,</span>
@@ -152,41 +161,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span> <span class="o">=</span> <span class="n">proxy_url</span>
         <span class="k">if</span> <span class="n">initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Attribute &#39;</span><span class="si">%s</span><span class="s">&#39; of &#39;</span><span class="si">%s</span><span class="s">&#39; object cannot be deleted&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Attribute &#39;</span><span class="si">%s</span><span class="s2">&#39; of &#39;</span><span class="si">%s</span><span class="s2">&#39; object cannot be deleted&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;returns object as a string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__init</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the properties for the site&quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">.json&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_itemId</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;f&quot;</span><span class="p">:</span> <span class="s">&quot;json&quot;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">.json&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_itemId</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">}</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                          <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                          <span class="n">proxy_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_port</span><span class="p">,</span>
                          <span class="n">proxy_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy_url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span> <span class="o">=</span> <span class="n">json_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_json_dict</span><span class="p">)</span>
-        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;data&quot;</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="s">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">json_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
                 <span class="k">del</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
-    <span class="c">#----------------------------------------------------------------------</span>
+    <span class="c1">#----------------------------------------------------------------------</span>
     <span class="kn">import</span> <span class="nn">time</span>
-<div class="viewcode-block" id="OpenDataItem.export"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outFormat</span><span class="o">=</span><span class="s">&quot;shp&quot;</span><span class="p">,</span> <span class="n">outFolder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenDataItem.export"><a class="viewcode-back" href="../../../arcrest.opendata.html#arcrest.opendata.opendata.OpenDataItem.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outFormat</span><span class="o">=</span><span class="s2">&quot;shp&quot;</span><span class="p">,</span> <span class="n">outFolder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;exports a dataset t&quot;&quot;&quot;</span>
-        <span class="n">export_formats</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;shp&#39;</span><span class="p">:</span><span class="s">&quot;.zip&quot;</span><span class="p">,</span> <span class="s">&#39;kml&#39;</span><span class="p">:</span><span class="s">&#39;.kml&#39;</span><span class="p">,</span> <span class="s">&#39;geojson&#39;</span><span class="p">:</span><span class="s">&quot;.geojson&quot;</span><span class="p">,</span><span class="s">&#39;csv&#39;</span><span class="p">:</span> <span class="s">&#39;.csv&#39;</span><span class="p">}</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_itemId</span><span class="p">,</span> <span class="n">export_formats</span><span class="p">[</span><span class="n">outFormat</span><span class="p">])</span>
+        <span class="n">export_formats</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shp&#39;</span><span class="p">:</span><span class="s2">&quot;.zip&quot;</span><span class="p">,</span> <span class="s1">&#39;kml&#39;</span><span class="p">:</span><span class="s1">&#39;.kml&#39;</span><span class="p">,</span> <span class="s1">&#39;geojson&#39;</span><span class="p">:</span><span class="s2">&quot;.geojson&quot;</span><span class="p">,</span><span class="s1">&#39;csv&#39;</span><span class="p">:</span> <span class="s1">&#39;.csv&#39;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_itemId</span><span class="p">,</span> <span class="n">export_formats</span><span class="p">[</span><span class="n">outFormat</span><span class="p">])</span>
         <span class="n">results</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                     <span class="n">securityHandler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_securityHandler</span><span class="p">,</span>
                     <span class="n">out_folder</span><span class="o">=</span><span class="n">outFolder</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s">&#39;status&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;status&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">outFormat</span><span class="o">=</span><span class="n">outFormat</span><span class="p">,</span> <span class="n">outFolder</span><span class="o">=</span><span class="n">outFolder</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span></div></div>
@@ -196,15 +205,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -222,17 +223,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.security package &mdash; src  documentation</title>
+    <title>arcrest.security package &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,16 +23,32 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="index.html" />
     <link rel="up" title="arcrest package" href="arcrest.html" />
     <link rel="next" title="arcrest.web package" href="arcrest.web.html" />
-    <link rel="prev" title="arcrest.packages.ntlm3 package" href="arcrest.packages.ntlm3.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="prev" title="arcrest.packages.ntlm3 package" href="arcrest.packages.ntlm3.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.web.html" title="arcrest.web package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.packages.ntlm3.html" title="arcrest.packages.ntlm3 package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" accesskey="U">arcrest package</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -46,6 +62,7 @@
 </div>
 <div class="section" id="module-arcrest.security.security">
 <span id="arcrest-security-security-module"></span><h2>arcrest.security.security module<a class="headerlink" href="#module-arcrest.security.security" title="Permalink to this headline">¶</a></h2>
+<p>Handles all the security operations for the product logins.</p>
 <dl class="class">
 <dt id="arcrest.security.security.AGOLTokenSecurityHandler">
 <em class="property">class </em><code class="descclassname">arcrest.security.security.</code><code class="descname">AGOLTokenSecurityHandler</code><span class="sig-paren">(</span><em>username</em>, <em>password</em>, <em>org_url='https://www.arcgis.com'</em>, <em>token_url=None</em>, <em>proxy_url=None</em>, <em>proxy_port=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/security/security.html#AGOLTokenSecurityHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.security.security.AGOLTokenSecurityHandler" title="Permalink to this definition">¶</a></dt>
@@ -388,10 +405,10 @@ proxy_port - optional - port of the proxy server</p>
 &gt;&gt;&gt; newSH = sh.portalServerHandler(serverUrl=serverUrl,</p>
 <blockquote>
 <div>username=None)</div></blockquote>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agsAdmin</span> <span class="o">=</span> <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">serverUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agsAdmin</span> <span class="o">=</span> <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">serverUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agsAdmin</span><span class="o">.</span><span class="n">info</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># access a secure service from portal handler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">msUrl</span> <span class="o">=</span> <span class="s">&quot;https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># access a secure service from portal handler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msUrl</span> <span class="o">=</span> <span class="s2">&quot;https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ms</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">ags</span><span class="o">.</span><span class="n">MapService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">msUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ms</span><span class="o">.</span><span class="n">mapName</span>
 </pre></div>
@@ -582,7 +599,7 @@ proxy_port - optional - proxy port as integer</p>
 
 <dl class="attribute">
 <dt id="arcrest.security.security.PKISecurityHandler.HTTPSClientAuthHandler.httplib">
-<code class="descname">httplib</code><em class="property"> = &lt;module 'httplib' from 'c:\python27\arcgis10.3\lib\httplib.pyc'&gt;</em><a class="headerlink" href="#arcrest.security.security.PKISecurityHandler.HTTPSClientAuthHandler.httplib" title="Permalink to this definition">¶</a></dt>
+<code class="descname">httplib</code><em class="property"> = &lt;module 'httplib' from 'C:\Python27\ArcGIS10.2\lib\httplib.pyc'&gt;</em><a class="headerlink" href="#arcrest.security.security.PKISecurityHandler.HTTPSClientAuthHandler.httplib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -806,10 +823,10 @@ proxy_port - proxy port</p>
 &gt;&gt;&gt; newSH = sh.portalServerHandler(serverUrl=serverUrl,</p>
 <blockquote>
 <div>username=None)</div></blockquote>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agsAdmin</span> <span class="o">=</span> <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">serverUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agsAdmin</span> <span class="o">=</span> <span class="n">AGSAdministration</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">serverUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agsAdmin</span><span class="o">.</span><span class="n">info</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># access a secure service from portal handler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">msUrl</span> <span class="o">=</span> <span class="s">&quot;https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># access a secure service from portal handler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msUrl</span> <span class="o">=</span> <span class="s2">&quot;https://mysite.site.com:6443/arcgis/rest/services/SampleWorldCities/MapServer&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ms</span> <span class="o">=</span> <span class="n">arcrest</span><span class="o">.</span><span class="n">ags</span><span class="o">.</span><span class="n">MapService</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">msUrl</span><span class="p">,</span> <span class="n">securityHandler</span><span class="o">=</span><span class="n">newSH</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ms</span><span class="o">.</span><span class="n">mapName</span>
 </pre></div>
@@ -893,17 +910,13 @@ proxy_port - proxy port</p>
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="arcrest.html">arcrest package</a><ul>
-      <li>Previous: <a href="arcrest.packages.ntlm3.html" title="previous chapter">arcrest.packages.ntlm3 package</a></li>
-      <li>Next: <a href="arcrest.web.html" title="next chapter">arcrest.web package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arcrest.packages.ntlm3.html"
+                        title="previous chapter">arcrest.packages.ntlm3 package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arcrest.web.html"
+                        title="next chapter">arcrest.web package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -928,20 +941,29 @@ proxy_port - proxy port</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/arcrest.security.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.web.html" title="arcrest.web package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.packages.ntlm3.html" title="arcrest.packages.ntlm3 package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" >arcrest package</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>

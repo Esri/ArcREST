@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>arcrest.common package &mdash; src  documentation</title>
+    <title>arcrest.common package &mdash; ArcREST 3.5.4 documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '3.5.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,16 +23,32 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="src  documentation" href="index.html" />
+    <link rel="top" title="ArcREST 3.5.4 documentation" href="index.html" />
     <link rel="up" title="arcrest package" href="arcrest.html" />
     <link rel="next" title="arcrest.enrichment package" href="arcrest.enrichment.html" />
-    <link rel="prev" title="arcrest.cmp package" href="arcrest.cmp.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="prev" title="arcrest.cmp package" href="arcrest.cmp.html" /> 
   </head>
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.enrichment.html" title="arcrest.enrichment package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.cmp.html" title="arcrest.cmp package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" accesskey="U">arcrest package</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -51,7 +67,7 @@ Domains specify the set of valid values for a field.</p>
 <dl class="class">
 <dt id="arcrest.common.domain.CodedValueDomain">
 <em class="property">class </em><code class="descclassname">arcrest.common.domain.</code><code class="descname">CodedValueDomain</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/domain.html#CodedValueDomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.domain.CodedValueDomain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Coded value domain specifies an explicit set of valid values for a
 field. Each valid value is assigned a unique name. The type property
 for coded value domains is codedValue.</p>
@@ -101,7 +117,7 @@ code - value</dd>
 <dl class="class">
 <dt id="arcrest.common.domain.InheritedDomain">
 <em class="property">class </em><code class="descclassname">arcrest.common.domain.</code><code class="descname">InheritedDomain</code><a class="reference internal" href="_modules/arcrest/common/domain.html#InheritedDomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.domain.InheritedDomain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Inherited domains apply to domains on subtypes. It implies that the
 domain for a field at the subtype level is the same as the domain for
 the field at the layer level.</p>
@@ -122,7 +138,7 @@ the field at the layer level.</p>
 <dl class="class">
 <dt id="arcrest.common.domain.RangeDomain">
 <em class="property">class </em><code class="descclassname">arcrest.common.domain.</code><code class="descname">RangeDomain</code><span class="sig-paren">(</span><em>name</em>, <em>minValue</em>, <em>maxValue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/domain.html#RangeDomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.domain.RangeDomain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Range domain specifies a range of valid values for a field. The type
 property for range domains is range.</p>
 <dl class="attribute">
@@ -215,9 +231,15 @@ Can be of type integer or float.</dd>
 </dd>
 </dl>
 </dd>
-<dt>Raises:</dt>
-<dd>AttributeError for invalid inputs</dd>
 </dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError for invalid inputs</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="arcrest.common.filters.GeometryFilter.filter">
 <code class="descname">filter</code><a class="headerlink" href="#arcrest.common.filters.GeometryFilter.filter" title="Permalink to this definition">¶</a></dt>
@@ -353,7 +375,7 @@ orderByFields, time, and where.</dd>
 <dl class="class">
 <dt id="arcrest.common.general.Feature">
 <em class="property">class </em><code class="descclassname">arcrest.common.general.</code><code class="descname">Feature</code><span class="sig-paren">(</span><em>json_string</em>, <em>wkid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#Feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>returns a feature</p>
 <dl class="attribute">
 <dt id="arcrest.common.general.Feature.asDictionary">
@@ -419,7 +441,7 @@ Input:</p>
 <dl class="class">
 <dt id="arcrest.common.general.FeatureSet">
 <em class="property">class </em><code class="descclassname">arcrest.common.general.</code><code class="descname">FeatureSet</code><span class="sig-paren">(</span><em>fields</em>, <em>features</em>, <em>hasZ=False</em>, <em>hasM=False</em>, <em>geometryType=None</em>, <em>spatialReference=None</em>, <em>displayFieldName=None</em>, <em>objectIdFieldName=None</em>, <em>globalIdFieldName=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#FeatureSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.FeatureSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This featureSet contains Feature objects, including the values for the
 fields requested by the user. For layers, if you request geometry
 information, the geometry of each feature is also returned in the
@@ -527,16 +549,38 @@ Inputs:</p>
 
 <dl class="function">
 <dt id="arcrest.common.general.online_time_to_string">
-<code class="descclassname">arcrest.common.general.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.online_time_to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a timestamp to date/time string
-Inputs:</p>
-<blockquote>
-<div>value - timestamp as long
-timeFormat - output date/time format</div></blockquote>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>string</dd>
-</dl>
+<code class="descclassname">arcrest.common.general.</code><code class="descname">online_time_to_string</code><span class="sig-paren">(</span><em>value</em>, <em>timeFormat</em>, <em>utcOffset=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#online_time_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.online_time_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts AGOL timestamp to formatted string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#float" title="(in Python v3.4)"><em>float</em></a>) &#8211; A UTC timestamp as reported by AGOL (time in ms since Unix epoch * 1000)</li>
+<li><strong>timeFormat</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)"><em>str</em></a>) &#8211; Date/Time format string as parsed by <code class="xref py py-func docutils literal"><span class="pre">datetime.strftime()</span></code>.</li>
+<li><strong>utcOffset</strong> (<a class="reference external" href="https://docs.python.org/3.4/library/functions.html#int" title="(in Python v3.4)"><em>int</em></a>) &#8211; Hours difference from UTC and desired output. Default is 0 (remain in UTC).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A string representation of the timestamp.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.4/library/stdtypes.html#str" title="(in Python v3.4)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcrest</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">1457167261000.0</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+<span class="go">&#39;2016-03-05 00:41:01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcrest</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">online_time_to_string</span><span class="p">(</span><span class="mf">731392515000.0</span><span class="p">,</span> <span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%Y %H:%M:%S&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># PST is UTC-8:00</span>
+<span class="go">&#39;03/05/1993 12:35:15&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#arcrest.common.general.local_time_to_online" title="arcrest.common.general.local_time_to_online"><code class="xref py py-func docutils literal"><span class="pre">local_time_to_online()</span></code></a> for converting a <a class="reference external" href="https://docs.python.org/3.4/library/datetime.html#datetime.datetime" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a> object to AGOL timestamp</p>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -555,7 +599,7 @@ Inputs:</p>
 <dl class="class">
 <dt id="arcrest.common.general.MosaicRuleObject">
 <em class="property">class </em><code class="descclassname">arcrest.common.general.</code><code class="descname">MosaicRuleObject</code><span class="sig-paren">(</span><em>mosaicMethod</em>, <em>where=''</em>, <em>sortField=''</em>, <em>sortValue=''</em>, <em>ascending=True</em>, <em>lockRasterIds=[]</em>, <em>viewpoint=None</em>, <em>fids=[]</em>, <em>mosaicOperation=None</em>, <em>itemRenderingRule=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/general.html#MosaicRuleObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.general.MosaicRuleObject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The image service uses a mosaic rule to mosaick multiple rasters on the
 fly. The mosaic rule parameter is used by many image service operations,
 for example, export image and identify operations.</p>
@@ -901,7 +945,7 @@ hasM - boolean -</div></blockquote>
 <dl class="class">
 <dt id="arcrest.common.renderer.BaseRenderer">
 <em class="property">class </em><code class="descclassname">arcrest.common.renderer.</code><code class="descname">BaseRenderer</code><a class="reference internal" href="_modules/arcrest/common/renderer.html#BaseRenderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.renderer.BaseRenderer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>base renderer object</p>
 </dd></dl>
 
@@ -1276,14 +1320,14 @@ Input:</p>
 <dl class="class">
 <dt id="arcrest.common.symbology.BaseSymbol">
 <em class="property">class </em><code class="descclassname">arcrest.common.symbology.</code><code class="descname">BaseSymbol</code><a class="reference internal" href="_modules/arcrest/common/symbology.html#BaseSymbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.symbology.BaseSymbol" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>base symbol class</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="arcrest.common.symbology.Color">
 <em class="property">class </em><code class="descclassname">arcrest.common.symbology.</code><code class="descname">Color</code><span class="sig-paren">(</span><em>red</em>, <em>green</em>, <em>blue</em>, <em>alpha=255</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arcrest/common/symbology.html#Color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arcrest.common.symbology.Color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Color is represented as a four-element array. The four elements
 represent values for red, green, blue, and alpha in that order. Values
 range from 0 through 255. If color is undefined for a symbol, the color
@@ -1480,17 +1524,13 @@ where East is the 0 degrees axis.</p>
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="arcrest.html">arcrest package</a><ul>
-      <li>Previous: <a href="arcrest.cmp.html" title="previous chapter">arcrest.cmp package</a></li>
-      <li>Next: <a href="arcrest.enrichment.html" title="next chapter">arcrest.enrichment package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arcrest.cmp.html"
+                        title="previous chapter">arcrest.cmp package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arcrest.enrichment.html"
+                        title="next chapter">arcrest.enrichment package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -1515,20 +1555,29 @@ where East is the 0 degrees axis.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2016, Author.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/arcrest.common.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arcrest.enrichment.html" title="arcrest.enrichment package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="arcrest.cmp.html" title="arcrest.cmp package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ArcREST 3.5.4 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >src</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="arcrest.html" >arcrest package</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Esri.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
   </body>
 </html>
