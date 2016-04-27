@@ -58,6 +58,41 @@ class Security(BaseAGSServer):
             del v
     #----------------------------------------------------------------------
     @property
+    def securityConfig(self):
+        """ returns the security config """
+        params = {
+            "f": "json",
+        }
+        aURL = self._url + "/config"
+        return self._post(url=aURL, param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateSecurityConfig(self, securityConfig):
+        """
+        Use this operation to change the security config parameters.
+
+        Inputs:
+           securityConfig JSON representation of the new security config
+        """
+        url = self._url + "/config/update"
+        params = {
+            "f": "json",
+        }
+
+        if isinstance(securityConfig, str):
+            params['securityConfig'] = securityConfig
+        elif isinstance(securityConfig, dict):
+            params['securityConfig'] = json.dumps(securityConfig)
+
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
     def resources(self):
         """ returns the resources """
         if self._resources is None:
