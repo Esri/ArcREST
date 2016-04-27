@@ -2,7 +2,7 @@
 Server Control Package
 """
 from __future__ import absolute_import
-from .server.ags import Catalog as AGSCatalog
+# from .server.ags import Catalog as AGSCatalog
 from .manage import AGSAdministration
 from .manage._services import Services
 
