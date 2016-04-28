@@ -251,7 +251,8 @@ class _Security(BaseAGOLClass):
     def createUser(self,
                    username,
                    password,
-                   fullname,
+                   firstName,
+                   lastName,
                    email,
                    role="org_user",
                    provider="arcgis",
@@ -264,7 +265,8 @@ class _Security(BaseAGOLClass):
            password - The password for the account. This is a required
                       parameter only if the provider is arcgis; otherwise,
                       the password parameter is ignored.
-           fullname - The full name for the user account.
+           firstName - first name of the user account
+           lastName - last name of the user account
            email - The email address for the user account.
            description - An optional description string for the user
                          account.
@@ -282,7 +284,8 @@ class _Security(BaseAGOLClass):
             "f" : "json",
             "username" : username,
             "password" : password,
-            "fullname" : fullname,
+            "firstname" : firstName,
+            "lastname" : lastName,
             "email" : email,
             "role" : role,
             "provider" : provider,
@@ -291,10 +294,10 @@ class _Security(BaseAGOLClass):
         if idpUsername is None:
             params['idpUsername'] = idpUsername
         return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
 
     #----------------------------------------------------------------------
     def updateSecurityConfiguration(self,
