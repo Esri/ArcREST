@@ -325,7 +325,7 @@ class FeatureService(abstract.BaseAGOLClass):
                                   proxy_url=self._proxy_url,
                                   proxy_port=self._proxy_port)
             if isinstance(json_dict, dict) and \
-               json_dict.has_key("layers"):
+               'layers' in json_dict:
                 for l in json_dict['layers']:
                     self._layers.append(FeatureLayer(url=self._url + "/%s" % l['id'],
                                                      securityHandler=self._securityHandler,
@@ -344,7 +344,7 @@ class FeatureService(abstract.BaseAGOLClass):
                                      proxy_url=self._proxy_url,
                                      proxy_port=self._proxy_port)
             if isinstance(json_dict, dict) and \
-               json_dict.has_key("tables"):
+               'tables' in json_dict:
                 for l in json_dict['tables']:
                     self._tables.append(FeatureLayer(url=self._url + "/%s" % l['id'],
                                                      securityHandler=self._securityHandler,

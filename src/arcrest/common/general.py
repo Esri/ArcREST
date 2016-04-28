@@ -180,11 +180,11 @@ class Feature(object):
         """returns the feature as a dictionary"""
         feat_dict = {}
         if self._geom is not None:
-            if self._dict.has_key('feature'):
-                feat_dict['geometry'] =  self._dict['feature']['geometry']
-            elif self._dict.has_key('geometry'):
+            if 'feature' in self._dict:
+                feat_dict['geometry'] = self._dict['feature']['geometry']
+            elif 'geometry' in self._dict:
                 feat_dict['geometry'] =  self._dict['geometry']
-        if self._dict.has_key("feature"):
+        if 'feature' in self._dict:
             feat_dict['attributes'] = self._dict['feature']['attributes']
         else:
             feat_dict['attributes'] = self._dict['attributes']
@@ -217,9 +217,9 @@ class Feature(object):
             else:
                 sr = None
             if self._geom is None:
-                if self._dict.has_key('feature'):
+                if 'feature' in self._dict:
                     self._geom = arcpy.AsShape(self._dict['feature']['geometry'], esri_json=True)
-                elif self._dict.has_key('geometry'):
+                elif 'geometry' in self._dict:
                     self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
             return self._geom
         return None
@@ -227,7 +227,7 @@ class Feature(object):
     @property
     def fields(self):
         """ returns a list of feature fields """
-        if self._dict.has_key("feature"):
+        if 'feature' in self._dict:
             self._attributes = self._dict['feature']['attributes']
         else:
             self._attributes = self._dict['attributes']
@@ -610,7 +610,7 @@ class FeatureSet(object):
         """returns a featureset from a JSON string"""
         jd = json.loads(jsonValue)
         features = []
-        if jd.has_key('fields'):
+        if 'fields' in jd:
             fields = jd['fields']
         else:
             fields = {'fields':[]}
@@ -713,23 +713,61 @@ class FeatureSet(object):
         """gets/sets the displayFieldName"""
         self._displayFieldName = value
     #----------------------------------------------------------------------
+   
     def save(self, saveLocation, outName):
         """
         Saves a featureset object to a feature class
         Input:
            saveLocation - output location of the data
            outName - name of the table the data will be saved to
+                Types: 
+                    *.csv - CSV file returned
+                    *.json - text file with json
+                    * If no extension, a shapefile if the path is a 
+                        folder, a featureclass if the path is a GDB
+                    
         """
-        tempDir =  tempfile.gettempdir()
-        tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().get_hex())
-        with open(tempFile, 'wb') as writer:
-            writer.write(str(self))
-            writer.flush()
-            writer.close()
-        del writer
-        res = json_to_featureclass(json_file=tempFile,
-                                   out_fc=os.path.join(saveLocation, outName))
-        os.remove(tempFile)
+        filename, file_extension = os.path.splitext(outName)
+        if (file_extension == ".csv"):
+            res = os.path.join(saveLocation,outName)
+            with open(res, "wt+",newline='') as csvFile:
+                import csv
+                f = csv.writer(csvFile)
+                fields = []
+                #write the headers to the csv
+                for field in self.fields:
+                    fields.append(field['name'])
+                f.writerow(fields)
+        
+                newRow = []
+                #Loop through the results and save each to a row
+                for feature in self:
+                    newRow = []
+                    for field in self.fields:
+                        newRow.append(feature.get_value(field['name']))
+                    f.writerow(newRow)
+                csvFile.close()
+            del csvFile
+        elif (file_extension == ".json"):
+            res = os.path.join(saveLocation,outName)
+            with open(res, 'wb') as writer:
+                
+                json.dump(self.value, writer, sort_keys = True, indent = 4, ensure_ascii=False)
+                writer.flush()
+                writer.close()
+            del writer
+            
+        else:
+            tempDir =  tempfile.gettempdir()
+            tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().hex)
+            with open(tempFile, 'wt') as writer:
+                writer.write(self.toJSON)
+                writer.flush()
+                writer.close()
+            del writer
+            res = json_to_featureclass(json_file=tempFile,
+                                       out_fc=os.path.join(saveLocation, outName))
+            os.remove(tempFile)
         return res
     #----------------------------------------------------------------------
     @property

@@ -277,7 +277,7 @@ class FeatureService(BaseAGSServer):
                                  proxy_url=self._proxy_url,
                                  proxy_port=self._proxy_port)
         self._layers = []
-        if json_dict.has_key("layers"):
+        if 'layers' in json_dict:
             for l in json_dict["layers"]:
                 self._layers.append(
                     layer.FeatureLayer(url=self._url + "/%s" % l['id'],

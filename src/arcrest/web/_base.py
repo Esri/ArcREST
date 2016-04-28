@@ -610,7 +610,8 @@ class BaseWebOperations(BaseOperation):
         ctx = None
         hasContext = False
         if self._verify == False and \
-           'context' in self._has_context(request.urlopen):
+           'context' in self._has_context(request.urlopen) and \
+            sys.version_info[0:3] >= (2, 7, 9):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE

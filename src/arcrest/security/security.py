@@ -1157,7 +1157,7 @@ class AGOLTokenSecurityHandler(abstract.BaseSecurityHandler):
 
         urlInfo = urlparse(org_url)
 
-        if str(urlInfo.netloc).lower() == "www.arcgis.com"> -1:
+        if str(urlInfo.netloc).lower() == "www.arcgis.com":
             self._initURL(org_url=org_url,token_url=token_url)
 
             from ..manageorg import Administration
