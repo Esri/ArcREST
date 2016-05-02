@@ -77,7 +77,7 @@ class Polyline(AbstractGeometry):
                 del path
         elif arcpyFound and \
              isinstance(paths, arcpy.Polyline):
-            print 'arcpy.Polyline'
+            print ('arcpy.Polyline')
         elif isinstance(paths, Point):
             return paths
         return _geoms
@@ -160,7 +160,7 @@ class Polyline(AbstractGeometry):
                                                   x2=path[1][0], y2=path[1][1])
                 else:
                     for pt in range(len(path)):
-                        print pt, pt+1, len(path)
+                        print (pt, pt+1, len(path))
                         if pt + 1 < len(path):
                             distance += calculateDistance(
                                 x1=path[pt][0], y1=path[pt][1],

@@ -7,7 +7,7 @@ from .._base import BasePortal
 import json
 from . import _portals, _community, _content, _oauth2
 from ..hostedservice import Services
-from ..enrichment import GeoEnrichment
+# from ..enrichment import GeoEnrichment
 from ...server import AGSAdministration
 from ...common.packages.six.moves.urllib_parse import urlparse, urlunparse
 
