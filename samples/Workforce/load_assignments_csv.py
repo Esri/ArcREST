@@ -128,9 +128,9 @@ def main():
                             json_string['attributes']['assignmentType'] = assignmentTypeCol
                     if workorderCol is not None:
                         if workorderCol in row:
-                            json_string['attributes']['workorder'] = row[workorderCol]
+                            json_string['attributes']['workOrderId'] = row[workorderCol]
                         else:
-                            json_string['attributes']['workorder'] = workorderCol
+                            json_string['attributes']['workOrderId'] = workorderCol
                     if locationCol is not None:
                         if locationCol in row:
                             json_string['attributes']['location'] = row[locationCol]
