@@ -948,7 +948,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print("%s - attribute not implemented in Feature Layer." % k)
-        if not self._parentLayer is None:
+        if self._parentLayer is None:
             self._parentLayer = FeatureService(
                 url=os.path.dirname(self._url),
                 securityHandler=self._securityHandler,
@@ -1210,7 +1210,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def parentLayer(self):
         """ returns information about the parent """
         if self._parentLayer is None:
-            self.__init()
+            url = os.path.dirname(self._url)
+            self._parentLayer = FeatureService(url=url,
+                                               securityHandler=self._securityHandler,
+                                               proxy_url=self._proxy_url,
+                                               proxy_port=self._proxy_port)
         return self._parentLayer
     #----------------------------------------------------------------------
     @property
