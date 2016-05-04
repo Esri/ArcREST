@@ -4,7 +4,6 @@ from __future__ import division
 import os
 import json
 import uuid
-from .featureservice import FeatureService
 from ..packages.six.moves import urllib_parse as urlparse
 from .._abstract.abstract import BaseAGSServer
 from ..security import security
@@ -13,8 +12,9 @@ from ..common.spatial import scratchFolder, json_to_featureclass, \
     featureclass_to_json
 from ..common import filters
 from ..common.general import _date_handler, Feature, FeatureSet
+from ..agol.services import FeatureLayer
 ########################################################################
-class FeatureLayer(BaseAGSServer):
+class FeatureLayer_Depricated(BaseAGSServer):
     """
        This contains information about a feature service's layer.
     """
@@ -289,6 +289,8 @@ class FeatureLayer(BaseAGSServer):
     def parentLayer(self):
         """ returns information about the parent """
         if self._parentLayer is None:
+            from ..agol.services import FeatureService
+            self.__init()
             url = os.path.dirname(self._url)
             self._parentLayer = FeatureService(url=url,
                                                securityHandler=self._securityHandler,

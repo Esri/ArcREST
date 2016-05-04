@@ -6,7 +6,7 @@ from __future__ import print_function
 from re import search
 from .._abstract.abstract import BaseAGSServer, BaseSecurityHandler
 from ..security import security
-from . import layer
+from ..agol.services import FeatureLayer
 import json
 from ..common.geometry import SpatialReference
 from ..common.general import FeatureSet
@@ -280,7 +280,7 @@ class FeatureService(BaseAGSServer):
         if 'layers' in json_dict:
             for l in json_dict["layers"]:
                 self._layers.append(
-                    layer.FeatureLayer(url=self._url + "/%s" % l['id'],
+                    FeatureLayer(url=self._url + "/%s" % l['id'],
                                        securityHandler=self._securityHandler,
                                        proxy_port=self._proxy_port,
                                        proxy_url=self._proxy_url)
