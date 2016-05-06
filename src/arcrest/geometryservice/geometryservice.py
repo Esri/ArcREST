@@ -930,7 +930,17 @@ class GeometryService(abstract.BaseAGSServer):
                 target,
                 reshaper
                 ):
-        """calls the reshape command on a geometry service"""
+        """
+        The reshape operation is performed on a geometry service resource. It reshapes 
+        a polyline or polygon feature by constructing a polyline over the feature. The 
+        feature takes the shape of the reshaper polyline from the first place the reshaper 
+        intersects the feature to the last.
+        
+        Inputs:
+            target - polyline or polygon to be reshaped.
+            reshaper - single-part polyline that does the reshaping.
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/reshape"
         params = {
             "f" : "json",
@@ -950,7 +960,17 @@ class GeometryService(abstract.BaseAGSServer):
                  sr,
                  geometries
                  ):
-        """returns a simplied geometry object"""
+        """
+        The simplify operation is performed on a geometry service resource. Simplify 
+        permanently alters the input geometry so that the geometry becomes topologically 
+        consistent. This resource applies the ArcGIS simplify operation to each geometry 
+        in the input array.
+        
+        Inputs:
+            geometries - array of geometries to be simplified (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API)
+            sr - spatial reference of the input geometries and output geometries. 
+        """
         url = self._url + "/simplify"
         params = {
             "f" : "json",
@@ -1051,7 +1071,23 @@ class GeometryService(abstract.BaseAGSServer):
                    polylines,
                    trimExtendTo,
                    extendHow=0):
-        """"""
+        """
+        The trimExtend operation is performed on a geometry service resource. This 
+        operation trims or extends each polyline specified in the input array, using 
+        the user-specified guide polylines. When trimming features, the part to the 
+        left of the oriented cutting line is preserved in the output, and the other 
+        part is discarded. An empty polyline is added to the output array if the 
+        corresponding input polyline is neither cut nor extended.
+        
+        Inputs:
+            polylines - array of polylines to be trimmed or extended (structured as 
+                        JSON polyline objects returned by the ArcGIS REST API).
+            trimExtendTo - a polyline that is used as a guide for trimming or 
+                           extending input polylines (structured as JSON polyline 
+                           objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input polylines.
+            extendHow - a flag that is used along with the trimExtend operation. 
+        """
         allowedHow = [0,1,2,4,8,16]
         if extendHow not in allowedHow:
             raise AttributeError("Invalid extend How value.")
@@ -1064,7 +1100,6 @@ class GeometryService(abstract.BaseAGSServer):
             "trimExtendTo" : trimExtendTo.asDictionary
 
         }
-
         return self._get(url=url, param_dict=params,
                             proxy_url=self._proxy_url,
                             securityHandler=self._securityHandler,
@@ -1073,7 +1108,16 @@ class GeometryService(abstract.BaseAGSServer):
     def union(self,
               sr,
               geometries):
-        """"""
+        """
+        The union operation is performed on a geometry service resource. This 
+        operation constructs the set-theoretic union of the geometries in the 
+        input array. All inputs must be of the same type.
+        
+        Inputs:
+            geometries - array of geometries to be unioned (structured as JSON 
+                         geometry objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries.
+        """
         url = self._url + "/union"
         params = {
             "f" : "json",
