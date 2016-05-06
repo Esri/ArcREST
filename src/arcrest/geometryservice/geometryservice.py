@@ -263,7 +263,18 @@ class GeometryService(abstract.BaseAGSServer):
            available to union buffers and to use geodesic distance.
 
            Inputs:
-
+             geometries - array of geometries (structured as JSON geometry 
+                          objects returned by the ArcGIS REST API)
+             inSR - spatial reference of the input geometries WKID
+             outSR - spatial reference for the returned geometries
+             bufferSR - WKID or a spatial reference JSON object in 
+                        which the geometries are buffered
+             distances - distances that each of the input geometries is buffered
+             unit - units for calculating each buffer distance
+             unionResults - if true, all geometries buffered at a given distance 
+                            are unioned into a single (possibly multipart) polygon, 
+                            and the unioned geometry is placed in the output array.
+             geodesic - set geodesic to true to buffer the using geodesic distance.
         """
         url = self._url + "/buffer"
         params = {
@@ -304,12 +315,21 @@ class GeometryService(abstract.BaseAGSServer):
     def convexHull(self,
                    geometries,
                    sr=None):
-        """"""
+        """
+        The convexHull operation is performed on a geometry service resource. 
+        It returns the convex hull of the input geometry. The input geometry can 
+        be a point, multipoint, polyline, or polygon. The convex hull is typically 
+        a polygon but can also be a polyline or point in degenerate cases.
+        
+        Inputs:
+            geometries - array of geometries (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API)
+            sr - spatial reference of the input geometries WKID
+        """
         url = self._url + "/convexHull"
         params = {
             "f" : "json"
         }
-
 
         if isinstance(geometries, list) and len(geometries) > 0:
             g = geometries[0]
@@ -338,7 +358,18 @@ class GeometryService(abstract.BaseAGSServer):
             cutter,
             target,
             sr=None):
-        """"""
+        """
+        The cut operation is performed on a geometry service resource. 
+        This operation splits the target polyline or polygon where it's 
+        crossed by the cutter polyline.
+        Inputs:
+            cutter - polyline that will be used to divide the target into 
+                     pieces where it crosses the target (structured as 
+                     JSON polyline objects returned by the ArcGIS REST API)
+            target - array of polylines/polygons to be cut (structured as 
+                     JSON geometry objects returned by the ArcGIS REST API)
+            sr - spatial reference of the input geometries WKID
+        """
         url = self._url + "/cut"
         params = {
             "f" : "json"
