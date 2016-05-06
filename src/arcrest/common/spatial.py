@@ -81,7 +81,7 @@ def get_attachment_data(attachmentTable, sql,
     return ret_rows
 #----------------------------------------------------------------------
 def get_records_with_attachments(attachment_table, rel_object_field="REL_OBJECTID"):
-    """"""
+    """returns a list of ObjectIDs for rows in the attachment table"""
     if arcpyFound == False:
         raise Exception("ArcPy is required to use this function")
     OIDs = []
