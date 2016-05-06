@@ -231,9 +231,9 @@ class GeometryService(abstract.BaseAGSServer):
            polygons and a set of polylines.
 
            Inputs:
-              polygons - array of Polygon objects
-              polylines - list of Polyline objects
-              sr - spatial reference of the input geometries WKID
+              polygons - array of Polygon objects.
+              polylines - list of Polyline objects.
+              sr - spatial reference of the input geometries WKID.
         """
         url = self._url + "/autoComplete"
         params = {"f":"json"}
@@ -263,7 +263,18 @@ class GeometryService(abstract.BaseAGSServer):
            available to union buffers and to use geodesic distance.
 
            Inputs:
-
+             geometries - array of geometries (structured as JSON geometry 
+                          objects returned by the ArcGIS REST API).
+             inSR - spatial reference of the input geometries WKID.
+             outSR - spatial reference for the returned geometries.
+             bufferSR - WKID or a spatial reference JSON object in 
+                        which the geometries are buffered.
+             distances - distances that each of the input geometries is buffered
+             unit - units for calculating each buffer distance.
+             unionResults - if true, all geometries buffered at a given distance 
+                            are unioned into a single (possibly multipart) polygon, 
+                            and the unioned geometry is placed in the output array.
+             geodesic - set geodesic to true to buffer the using geodesic distance.
         """
         url = self._url + "/buffer"
         params = {
@@ -304,12 +315,21 @@ class GeometryService(abstract.BaseAGSServer):
     def convexHull(self,
                    geometries,
                    sr=None):
-        """"""
+        """
+        The convexHull operation is performed on a geometry service resource. 
+        It returns the convex hull of the input geometry. The input geometry can 
+        be a point, multipoint, polyline, or polygon. The convex hull is typically 
+        a polygon but can also be a polyline or point in degenerate cases.
+        
+        Inputs:
+            geometries - array of geometries (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/convexHull"
         params = {
             "f" : "json"
         }
-
 
         if isinstance(geometries, list) and len(geometries) > 0:
             g = geometries[0]
@@ -338,7 +358,19 @@ class GeometryService(abstract.BaseAGSServer):
             cutter,
             target,
             sr=None):
-        """"""
+        """
+        The cut operation is performed on a geometry service resource. 
+        This operation splits the target polyline or polygon where it's 
+        crossed by the cutter polyline.
+        
+        Inputs:
+            cutter - polyline that will be used to divide the target into 
+                     pieces where it crosses the target (structured as 
+                     JSON polyline objects returned by the ArcGIS REST API).
+            target - array of polylines/polygons to be cut (structured as 
+                     JSON geometry objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/cut"
         params = {
             "f" : "json"
@@ -371,14 +403,26 @@ class GeometryService(abstract.BaseAGSServer):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def density(self,
+    def densify(self,
                 geometries,
                 sr,
                 maxSegmentLength,
                 lengthUnit,
                 geodesic=False,
                 ):
-        """"""
+        """
+        The densify operation is performed on a geometry service resource. This 
+        operation densifies geometries by plotting points between existing vertices.
+        
+        Inputs:
+            geometries - array of geometries to be densified (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            maxSegmentLength - all segments longer than maxSegmentLength are replaced 
+                               with sequences of lines no longer than maxSegmentLength.
+            geodesic - if set to true, geodesic distance is used to calculate maxSegmentLength.
+            lengthUnit - length unit of maxSegmentLength.
+        """
         url = self._url + "/densify"
         params = {
             "f" : "json",
@@ -409,7 +453,21 @@ class GeometryService(abstract.BaseAGSServer):
                    sr,
                    geometry
                    ):
-        """"""
+        """
+        The difference operation is performed on a geometry service resource. This 
+        operation constructs the set-theoretic difference between each element of an 
+        array of geometries and another geometry, the so-called difference geometry. 
+        In other words, let B be the difference geometry. For each geometry, A, in 
+        the input geometry array, it constructs A - B.
+        
+        Inputs:
+            geometries - array of points, multipoints, polylines or polygons (structured 
+                         as JSON geometry objects returned by the ArcGIS REST API).
+            geometry - single geometry of any type and of a dimension equal to or greater 
+                       than the elements of geometries (structured as JSON geometry objects 
+                       returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/difference"
         params = {
             "f" : "json",
@@ -460,7 +518,19 @@ class GeometryService(abstract.BaseAGSServer):
                  distanceUnit="",
                  geodesic=False
                  ):
-        """"""
+        """The distance operation is performed on a geometry service resource. 
+        It reports the 2D Euclidean or geodesic distance between the two geometries.
+        
+        Inputs:
+            geometry1 - geometry from which the distance is to be measured 
+                        (structured as JSON geometry objects returned by the ArcGIS REST API).
+            geometry2 - geometry to which the distance is to be measured
+                        (structured as JSON geometry objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            distanceUnit - units for measuring distance between the geometry1 
+                           and geometry2 geometries.
+            geodesic - if set to true, geodesic distance is used to calculate maxSegmentLength.
+        """
         url = self._url + "/distance"
         params = {
             "f" : "json",
@@ -502,7 +572,7 @@ class GeometryService(abstract.BaseAGSServer):
              spatial reference JSON object for the input geometries
            outSR - The well-known ID (WKID) of the spatial reference or a
              spatial reference JSON object for the input geometries
-           extentOfInterest -  The bounding box of the area of interest
+           extentOfInterest - The bounding box of the area of interest
              specified as a JSON envelope. If provided, the extent of
              interest is used to return the most applicable geographic
              transformations for the area. If a spatial reference is not
@@ -592,7 +662,23 @@ class GeometryService(abstract.BaseAGSServer):
                    geometries,
                    maxDeviation,
                    deviationUnit):
-        """"""
+        """
+        The generalize operation is performed on a geometry service resource. 
+        The generalize operation simplifies the input geometries using the 
+        Douglas-Peucker algorithm with a specified maximum deviation distance. 
+        The output geometries will contain a subset of the original input vertices. 
+        
+        Inputs:
+            geometries - array of geometries to be generalized (structured as JSON 
+                         geometry objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            maxDeviation - maxDeviation sets the maximum allowable offset, which will 
+                           determine the degree of simplification. This value limits 
+                           the distance the output geometry can differ from the 
+                           input geometry.
+            deviationUnit - a unit for maximum deviation. If a unit is not specified, 
+                            the units are derived from sr.
+        """
         url = self._url + "/generalize"
         params = {
             "f" : "json",
@@ -611,7 +697,20 @@ class GeometryService(abstract.BaseAGSServer):
                   geometries,
                   geometry
                   ):
-        """"""
+        """The intersect operation is performed on a geometry service resource. 
+        This operation constructs the set-theoretic intersection between an array of 
+        geometries and another geometry. The dimension of each resultant geometry is 
+        the minimum dimension of the input geometry in the geometries array and the 
+        other geometry specified by the geometry parameter.
+        
+        Inputs:
+            geometries - array of points, multipoints, polylines, or polygons. 
+                         (structured as JSON geometry objects returned by the ArcGIS REST API)
+            geometry - single geometry of any type with a dimension equal to or greater than 
+                       the elements of geometries (structured as JSON geometry objects 
+                       returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID
+        """
         url = self._url + "/intersect"
         params = {
             "f" : "json",
@@ -628,7 +727,18 @@ class GeometryService(abstract.BaseAGSServer):
                     sr,
                     polygons,
                     ):
-        """"""
+        """
+        The labelPoints operation is performed on a geometry service resource. 
+        The labelPoints operation calculates an interior point for each polygon 
+        specified in the input array. These interior points can be used by 
+        clients for labeling the polygons.
+        
+        Inputs:
+            polygons - array of polygons whose label points are to be computed
+                       (structured as JSON geometry objects returned by the 
+                       ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/labelPoints"
         params = {
             "f" : "json",
@@ -647,7 +757,19 @@ class GeometryService(abstract.BaseAGSServer):
                 lengthUnit,
                 calculationType
                 ):
-        """"""
+        """
+        The lengths operation is performed on a geometry service resource. 
+        This operation calculates the 2D Euclidean or geodesic lengths of each 
+        polyline specified in the input array.
+        
+        Inputs:
+            polylines - array of polylines whose lengths are to be computed
+                        (structured as JSON geometry objects returned by 
+                        the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            lengthUnit - unit in which lengths of polylines will be calculated.
+            calculationType - defines the length calculation for the geometry.
+        """
         allowedCalcTypes = ['planar', 'geodesic', 'preserveShape']
         if calculationType not in allowedCalcTypes:
             raise AttributeError("Invalid calculation Type")
@@ -675,7 +797,25 @@ class GeometryService(abstract.BaseAGSServer):
                simplifyResult=False,
                sr=None,
                ):
-        """"""
+        """
+        The offset operation is performed on a geometry service resource. This 
+        operation constructs geometries that are offset from the given input geometries.
+        
+        Inputs:
+            geometries - array of geometries to be offset (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            offsetDistance - the distance for constructing an offset based on the 
+                             input geometries.
+            offsetUnit - A unit for offset distance. If a unit is not specified, 
+                         the units are derived from sr.
+            offsetHow - determines how outer corners between segments are handled.
+            bevelRatio -  is multiplied by the offset distance, and the result determines 
+                          how far a mitered offset intersection can be located 
+                          before it is bevelled.
+            simplifyResult - if set to true, then self intersecting loops will be 
+                             removed from the result offset geometries.
+        """
         allowedHow = ["esriGeometryOffsetRounded",
                       "esriGeometryOffsetBevelled",
                       "esriGeometryOffsetMitered"]
@@ -703,7 +843,21 @@ class GeometryService(abstract.BaseAGSServer):
                 outSR,
                 transformation="",
                 transformFoward=False):
-        """"""
+        """
+        The project operation is performed on a geometry service resource. This 
+        operation projects an array of input geometries from the input spatial 
+        reference to the output spatial reference.
+        
+        Inputs:
+            geometries -  array of geometries to be projected (structured as 
+                          JSON geometry objects returned by the ArcGIS REST API).
+            inSR - spatial reference of the input geometries WKID.
+            outSR - spatial reference or WKID for the returned geometries.
+            transformation - The WKID or a JSON object specifying the geographic 
+                             transformation (also known as datum transformation) 
+                             to be applied to the projected geometries.
+            transformForward - indicating whether or not to transform forward.
+        """
         url = self._url + "/project"
         params = {
             "f" : "json",
@@ -724,7 +878,23 @@ class GeometryService(abstract.BaseAGSServer):
                  sr,
                  relation="esriGeometryRelationIntersection",
                  relationParam=""):
-        """"""
+        """
+        The relation operation is performed on a geometry service resource. This 
+        operation determines the pairs of geometries from the input geometry arrays 
+        that participate in the specified spatial relation.
+        
+        Inputs:
+            geometries1 - the first array of geometries used to compute the relations
+                          (structured as JSON geometry objects returned by the 
+                          ArcGIS REST API).
+            geometries2 - the second array of geometries to compute the relations
+                          (structured as JSON geometry objects returned by the 
+                          ArcGIS REST API).
+            sr - spatial reference of the input geometries WKID.
+            relation - the spatial relationship to be tested between the two input 
+                       geometry arrays.
+            relationParam - the Shape Comparison Language string to be evaluated.
+        """
         relationType = [
             "esriGeometryRelationCross",
             "esriGeometryRelationDisjoint",
@@ -760,7 +930,17 @@ class GeometryService(abstract.BaseAGSServer):
                 target,
                 reshaper
                 ):
-        """calls the reshape command on a geometry service"""
+        """
+        The reshape operation is performed on a geometry service resource. It reshapes 
+        a polyline or polygon feature by constructing a polyline over the feature. The 
+        feature takes the shape of the reshaper polyline from the first place the reshaper 
+        intersects the feature to the last.
+        
+        Inputs:
+            target - polyline or polygon to be reshaped.
+            reshaper - single-part polyline that does the reshaping.
+            sr - spatial reference of the input geometries WKID.
+        """
         url = self._url + "/reshape"
         params = {
             "f" : "json",
@@ -780,7 +960,17 @@ class GeometryService(abstract.BaseAGSServer):
                  sr,
                  geometries
                  ):
-        """returns a simplied geometry object"""
+        """
+        The simplify operation is performed on a geometry service resource. Simplify 
+        permanently alters the input geometry so that the geometry becomes topologically 
+        consistent. This resource applies the ArcGIS simplify operation to each geometry 
+        in the input array.
+        
+        Inputs:
+            geometries - array of geometries to be simplified (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API)
+            sr - spatial reference of the input geometries and output geometries. 
+        """
         url = self._url + "/simplify"
         params = {
             "f" : "json",
@@ -881,7 +1071,23 @@ class GeometryService(abstract.BaseAGSServer):
                    polylines,
                    trimExtendTo,
                    extendHow=0):
-        """"""
+        """
+        The trimExtend operation is performed on a geometry service resource. This 
+        operation trims or extends each polyline specified in the input array, using 
+        the user-specified guide polylines. When trimming features, the part to the 
+        left of the oriented cutting line is preserved in the output, and the other 
+        part is discarded. An empty polyline is added to the output array if the 
+        corresponding input polyline is neither cut nor extended.
+        
+        Inputs:
+            polylines - array of polylines to be trimmed or extended (structured as 
+                        JSON polyline objects returned by the ArcGIS REST API).
+            trimExtendTo - a polyline that is used as a guide for trimming or 
+                           extending input polylines (structured as JSON polyline 
+                           objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input polylines.
+            extendHow - a flag that is used along with the trimExtend operation. 
+        """
         allowedHow = [0,1,2,4,8,16]
         if extendHow not in allowedHow:
             raise AttributeError("Invalid extend How value.")
@@ -894,7 +1100,6 @@ class GeometryService(abstract.BaseAGSServer):
             "trimExtendTo" : trimExtendTo.asDictionary
 
         }
-
         return self._get(url=url, param_dict=params,
                             proxy_url=self._proxy_url,
                             securityHandler=self._securityHandler,
@@ -903,7 +1108,16 @@ class GeometryService(abstract.BaseAGSServer):
     def union(self,
               sr,
               geometries):
-        """"""
+        """
+        The union operation is performed on a geometry service resource. This 
+        operation constructs the set-theoretic union of the geometries in the 
+        input array. All inputs must be of the same type.
+        
+        Inputs:
+            geometries - array of geometries to be unioned (structured as JSON 
+                         geometry objects returned by the ArcGIS REST API).
+            sr - spatial reference of the input geometries.
+        """
         url = self._url + "/union"
         params = {
             "f" : "json",
