@@ -25,8 +25,6 @@ if six.PY2:
                                 maxRecordCount=1000,
                                 server_type='MY_HOSTED_SERVICES',
                                 url='http://www.arcgis.com'):
-        if arcpyFound == False:
-            return
         """
             converts an MXD to a service defenition
             Inputs:
@@ -41,8 +39,10 @@ if six.PY2:
                       Values: ARCGIS_SERVER | FROM_CONNECTION_FILE | SPATIAL_DATA_SERVER | MY_HOSTED_SERVICES
             Output:
                 Service Definition File - *.sd
-
         """
+        if arcpyFound == False:
+            return
+        
         if not os.path.isabs(mxd_path):
             sciptPath = os.getcwd()
             mxd_path = os.path.join(sciptPath,mxd_path)
