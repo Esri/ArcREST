@@ -782,7 +782,8 @@ class Item(BaseAGOLClass):
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def deleteRating(self):
-        """"""
+        """Removes the rating the calling user added for the specified item 
+        (POST only)."""
         url = "%s/deleteRating" % self.root
         params = {
             "f": "json",
