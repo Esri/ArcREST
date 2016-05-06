@@ -402,20 +402,20 @@ class GeocodeService(BaseAGSServer):
         if not addressDict is None:
             params = params.update(addressDict)
         if not singleLine is None:
-            params['singleLine'] = singleLine
+            params['SingleLine'] = singleLine
         if not maxLocations is None:
             params['maxLocations'] = maxLocations
         if not outFields is None:
             params['outFields'] = outFields
         if not outSR is None:
-            params['outSR'] = outSR
+            params['outSR'] = {"wkid": outSR}
         if not searchExtent is None:
             params['searchExtent'] = searchExtent
         if isinstance(location, Point):
             params['location'] = location.asDictionary
         elif isinstance(location, list):
             params['location'] = "%s,%s" % (location[0], location[1])
-        return self._post(url=url,
+        return self._get(url=url,
                              param_dict=params,
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,

@@ -438,6 +438,8 @@ class BaseWebOperations(BaseOperation):
             "User-Agent": self.useragent,
             'Accept': '*/*'
         }
+        if securityHandler and securityHandler.referer_url:
+            headers['referer'] = securityHandler.referer_url
         opener = None
         return_value = None
         handlers = [RedirectHandler()]
@@ -558,6 +560,7 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary, string or None
         """
+        pass_headers = {}
         if custom_handlers is None:
             custom_handlers = []
         if handlers is None:
@@ -572,6 +575,8 @@ class BaseWebOperations(BaseOperation):
         else:
             headers = []
         pass_headers = {}
+        if securityHandler and securityHandler.referer_url:
+            pass_headers['referer'] = securityHandler.referer_url
         for h in headers:
             pass_headers[h[0]] = h[1]
 

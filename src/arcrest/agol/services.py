@@ -836,6 +836,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
     """
        This contains information about a feature service's layer.
     """
+    _supportsValidateSQL = None
+    _syncCanReturnChanges = None
+    _dateFieldsTimeReference = None
+    _enableZDefaults = None
     _objectIdField = None
     _allowGeometryUpdates = None
     _globalIdField = None
@@ -948,7 +952,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 print("%s - attribute not implemented in Feature Layer." % k)
-        if not self._parentLayer is None:
+        if self._parentLayer is None:
             self._parentLayer = FeatureService(
                 url=os.path.dirname(self._url),
                 securityHandler=self._securityHandler,
@@ -961,6 +965,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
     #----------------------------------------------------------------------
     def __str__(self):
         """ returns object as string """
+        if self._json is None:
+            self.refresh()
         return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
@@ -1210,7 +1216,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def parentLayer(self):
         """ returns information about the parent """
         if self._parentLayer is None:
-            self.__init()
+            url = os.path.dirname(self._url)
+            self._parentLayer = FeatureService(url=url,
+                                               securityHandler=self._securityHandler,
+                                               proxy_url=self._proxy_url,
+                                               proxy_port=self._proxy_port)
         return self._parentLayer
     #----------------------------------------------------------------------
     @property
@@ -1378,6 +1388,33 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if self._useStandardizedQueries is None:
             self.__init()
         return self._useStandardizedQueries
+    #----------------------------------------------------------------------
+    @property
+    def supportsValidateSQL(self):
+        """ returns the boolean value """
+        if self._supportsValidateSQL is None:
+            self.__init()
+        return self._supportsValidateSQL
+    #----------------------------------------------------------------------
+    @property
+    def syncCanReturnChanges(self):
+        """ returns the syncCanReturnChanges value"""
+        if self._syncCanReturnChanges is None:
+            self.__init()
+        return self._syncCanReturnChanges
+    #----------------------------------------------------------------------
+    @property
+    def dateFieldsTimeReference(self):
+        """returns the dateFieldsTimeReference value"""
+        if self._dateFieldsTimeReference is None:
+            self.__init()
+        return self._dateFieldsTimeReference
+    #----------------------------------------------------------------------
+    @property
+    def enableZDefaults(self):
+        if self._enableZDefaults is None:
+            self.__init()
+        return self._enableZDefaults
     #----------------------------------------------------------------------
     @property
     def securityHandler(self):

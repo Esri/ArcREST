@@ -12,8 +12,9 @@ from ..common.spatial import scratchFolder, json_to_featureclass, \
     featureclass_to_json
 from ..common import filters
 from ..common.general import _date_handler, Feature, FeatureSet
+from ..agol.services import FeatureLayer
 ########################################################################
-class FeatureLayer(BaseAGSServer):
+class FeatureLayer_Depricated(BaseAGSServer):
     """
        This contains information about a feature service's layer.
     """
@@ -191,7 +192,7 @@ class FeatureLayer(BaseAGSServer):
         """ returns the boolean value """
         if self._dateFieldsTimeReference is None:
             self.__init()
-        return self._dateFieldsTimeReference        
+        return self._dateFieldsTimeReference
     #----------------------------------------------------------------------
     @property
     def objectIdField(self):
@@ -288,7 +289,13 @@ class FeatureLayer(BaseAGSServer):
     def parentLayer(self):
         """ returns information about the parent """
         if self._parentLayer is None:
+            from ..agol.services import FeatureService
             self.__init()
+            url = os.path.dirname(self._url)
+            self._parentLayer = FeatureService(url=url,
+                                               securityHandler=self._securityHandler,
+                                               proxy_url=self._proxy_url,
+                                               proxy_port=self._proxy_port)
         return self._parentLayer
     #----------------------------------------------------------------------
     @property
@@ -945,7 +952,7 @@ class FeatureLayer(BaseAGSServer):
                             returnZ=False,
                             returnM=False):
         """
-           The Query Related Records operation is performed on a feature service 
+           The Query Related Records operation is performed on a feature service
            layer resource. The result of this operation are feature sets grouped
            by source layer/table object IDs. Each feature set contains
            Feature objects including the values for the fields requested by
@@ -1022,7 +1029,7 @@ class FeatureLayer(BaseAGSServer):
         res = self._get(url=quURL, param_dict=params,
                         securityHandler=self._securityHandler,
                         proxy_url=self._proxy_url, proxy_port=self._proxy_port)
-        return res    
+        return res
     #----------------------------------------------------------------------
     def calculate(self, where, calcExpression, sqlFormat="standard"):
         """
@@ -1162,7 +1169,7 @@ class GroupLayer(FeatureLayer):
                                             securityHandler=self._securityHandler,
                                             proxy_url=self._proxy_url,
                                             proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)                                    
+        self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
