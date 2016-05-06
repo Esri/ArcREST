@@ -402,14 +402,25 @@ class GeometryService(abstract.BaseAGSServer):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
-    def density(self,
+    def densify(self,
                 geometries,
                 sr,
                 maxSegmentLength,
                 lengthUnit,
                 geodesic=False,
                 ):
-        """"""
+        """
+        The densify operation is performed on a geometry service resource. This 
+        operation densifies geometries by plotting points between existing vertices.
+        Inputs:
+            geometries - array of geometries (structured as JSON geometry 
+                         objects returned by the ArcGIS REST API)
+            sr - spatial reference of the input geometries WKID
+            maxSegmentLength - all segments longer than maxSegmentLength are replaced 
+                               with sequences of lines no longer than maxSegmentLength
+            geodesic - if set to true, geodesic distance is used to calculate maxSegmentLength
+            lengthUnit - length unit of maxSegmentLength
+        """
         url = self._url + "/densify"
         params = {
             "f" : "json",
