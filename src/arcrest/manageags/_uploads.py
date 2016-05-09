@@ -84,7 +84,15 @@ class Uploads(BaseAGSServer):
                             proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def uploadItem(self, filePath, description):
-        """"""
+        """
+        This operation uploads an item to the server. Each uploaded item is 
+        identified by a unique itemID. Since this request uploads a file, it 
+        must be a multi-part request as per IETF RFC1867. 
+        
+        Inputs:
+            filePath - the file to be uploaded.
+            description - optional description for the uploaded item.
+        """
         import urlparse
         url = self._url + "/upload"
         params = {
