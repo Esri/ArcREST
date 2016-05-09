@@ -1022,6 +1022,13 @@ class ArcGISTokenSecurityHandler(abstract.BaseSecurityHandler):
         """ returns when the token was generated """
         return self._referer_url
     #----------------------------------------------------------------------
+    @referer_url.setter
+    def referer_url(self, value):
+        """sets the referer url"""
+        if self._referer_url != value:
+            self._token = None
+            self._referer_url = value
+    # ----------------------------------------------------------------------
     @property
     def token(self):
         """ returns the token for the site """
