@@ -223,6 +223,12 @@ class Feature(object):
                     self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
             return self._geom
         return None
+    @geometry.setter
+    def geometry(self, value):
+        """gets/sets a feature's geometry"""
+        if isinstance(value, [Polygon, Point, Polyline, MultiPoint]):
+            if value.type == self.geometryType:
+                self._geom = value
     #----------------------------------------------------------------------
     @property
     def fields(self):

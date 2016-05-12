@@ -2069,8 +2069,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         return result
     #----------------------------------------------------------------------
     def applyEdits(self,
-                   addFeatures=[],
-                   updateFeatures=[],
+                   addFeatures=None,
+                   updateFeatures=None,
                    deleteFeatures=None,
                    gdbVersion=None,
                    useGlobalIds=False,
@@ -2080,11 +2080,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
            associated feature layer or table in a single call.
            Inputs:
               addFeatures - The array of features to be added.  These
-                            features should be common.Feature objects
+                            features should be common.Feature objects, or
+                            they should be a list of dictionary features.
               updateFeatures - The array of features to be updateded.
                                These features should be common.Feature
-                               objects
-              deleteFeatures - string of OIDs to remove from service
+                               objects or a list of dictionary formed 
+                               features.
+              deleteFeatures - string of OIDs to remove from service or a 
+                               list of values.  
               gdbVersion - Geodatabase version to apply the edits.
               useGlobalIds - instead of referencing the default Object ID
                               field, the service will look at a GUID field
@@ -2109,21 +2112,36 @@ class FeatureLayer(abstract.BaseAGOLClass):
                   }
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
+        if addFeatures is None:
+            addFeatures = []
+        if updateFeatures is None:
+            updateFeatures = []
         if len(addFeatures) > 0 and \
            isinstance(addFeatures[0], Feature):
             params['adds'] = json.dumps([f.asDictionary for f in addFeatures],
                                         default=_date_handler)
+        elif len(addFeatures) > 0 and \
+             isinstance(addFeatures[0], dict):
+            params['adds'] = json.dumps(addFeatures, default=_date_handler)
         if len(updateFeatures) > 0 and \
            isinstance(updateFeatures[0], Feature):
             params['updates'] = json.dumps([f.asDictionary for f in updateFeatures],
                                            default=_date_handler)
+        elif len(updateFeatures) > 0 and \
+             isinstance(updateFeatures[0], dict):
+            params['updates'] = json.dumps(updateFeatures, 
+                                           default=_date_handler)
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
-        return self._post(url=editURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        elif deleteFeatures is not None and \
+             isinstance(deleteFeatures, list):
+            params['deletes'] = ",".join([str(f) for f in deleteFeatures])
+        return self._post(url=editURL, 
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def addFeature(self, features,
                    gdbVersion=None,
@@ -2131,7 +2149,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         """ Adds a single feature to the service
            Inputs:
               feature - list of common.Feature object or a single
-                        common.Feature Object or a FeatureSet object
+                        common.Feature Object, a FeatureSet object, or a
+                        list of dictionary objects
               gdbVersion - Geodatabase version to apply the edits
               rollbackOnFailure - Optional parameter to specify if the
                                   edits should be applied only if all
@@ -2152,9 +2171,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['gdbVersion'] = gdbVersion
         if isinstance(rollbackOnFailure, bool):
             params['rollbackOnFailure'] = rollbackOnFailure
-        if isinstance(features, list):
-            params['features'] = json.dumps([feature.asDictionary for feature in features],
-                                            default=_date_handler)
+        if isinstance(features, list) and \
+           len(features) > 0:
+            if isinstance(features[0], Feature):
+                params['features'] = json.dumps([feature.asDictionary for feature in features],
+                                                default=_date_handler)
+            elif isinstance(features[0], dict):
+                params['features'] = json.dumps(features, 
+                                                default=_date_handler)
         elif isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
                                             default=_date_handler)
