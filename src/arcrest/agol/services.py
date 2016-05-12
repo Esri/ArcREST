@@ -1772,7 +1772,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         if 'error' in result:
             raise ValueError(result) 
         if as_json or \
-           returnCountOnly == True:
+           returnCountOnly == True or \
+           returnIDsOnly == True:
             return result
         elif returnFeatureClass and\
              not returnCountOnly and \
