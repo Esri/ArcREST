@@ -619,12 +619,13 @@ class FeatureSet(object):
         if 'fields' in jd:
             fields = jd['fields']
         else:
-            fields = {'fields':[]}
-        for feat in jd['features']:
-            wkid = None
-            if 'spatialReference' in jd and 'latestWkid' in jd['spatialReference']:
-                wkid = jd['spatialReference']['latestWkid']
-            features.append(Feature(json_string=feat, wkid=wkid))
+            fields = {'fields':[]} 
+        if 'features' in jd:
+            for feat in jd['features']:
+                wkid = None
+                if 'spatialReference' in jd and 'latestWkid' in jd['spatialReference']:
+                    wkid = jd['spatialReference']['latestWkid']
+                features.append(Feature(json_string=feat, wkid=wkid))
         return FeatureSet(fields,
                           features,
                           hasZ=jd['hasZ'] if 'hasZ' in jd else False,
