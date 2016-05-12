@@ -46,7 +46,7 @@ def trace():
 
 def main():
     #Path and name of file to store log
-    logFile = r"c:\temp\adoptedAssets.log"
+    logFile = r"c:\temp\log.log"
     logFile = common.init_log(logFile)    
     try:
         proxy_port = None
@@ -80,7 +80,7 @@ def main():
         url = ''#url to feature layer, make sure it ends in \layer number 
         
         #Base sql expression to find features of a type
-        sql = "Assetstatus = 'Adopted'"
+        sql = "1=1"
   
         #Field used to restrict query to only records since last query
         statusUpdateField = 'Laststatusupdate'
@@ -112,17 +112,17 @@ def main():
             print("\t\tLast query date: {0}".format(lastQueryDate))
             
         #If the last query date file was found and value is a date
+        queryDate = datetime.datetime.now().strftime(dateTimeFormat)
         if lastQueryDate is not None and validate(date_text=lastQueryDate, dateTimeFormat=dateTimeFormat):
             sql = sql + " AND " + statusUpdateField + " >= " + "'" + lastQueryDate + "'"
-            
-        #Add current time to query
-        queryDate = datetime.datetime.now().strftime(dateTimeFormat)
-        sql = sql + " AND " + statusUpdateField + " <= " + "'" + queryDate + "'"
+            #Add current time to query
+            sql = sql + " AND " + statusUpdateField + " <= " + "'" + queryDate + "'"
+        
         print("\tSQL: {0}".format(sql))
         
         #query the layer
         results  = fst.QueryAllFeatures(url=url,
-                            sql=sql,
+                            where=sql,
                             out_fields=out_fields,
                             chunksize=300,
                             printIndent="\t")
@@ -150,10 +150,7 @@ def main():
                         #print ("\t\tField Name: {0} | Field Value: {1}".format(field['name'],feature.get_value(field['name'])))
                     #print ("\t######################")
         else:
-            if 'message' in results:
-                print ("\t" + results['message'])
-            else:
-                print ("\t" + str(results))
+            print ("\tNo features matching the query where found")
                 
         #Update the last run file
         with open(lastRunDetails, 'w') as configFile:
@@ -162,7 +159,13 @@ def main():
             print("\t{0} saved to last run file".format(queryDate))
         print ("\tCompleted at {0}".format(datetime.datetime.now().strftime(dateTimeFormat)))
         print ("###### Completed ######")
-        
+    except (common.ArcRestHelperError) as e:
+        print ("error in function: %s" % e[0]['function'])
+        print ("error on line: %s" % e[0]['line'])
+        print ("error in file name: %s" % e[0]['filename'])
+        print ("with error message: %s" % e[0]['synerror'])
+        if 'arcpyError' in e[0]:
+            print ("with arcpy message: %s" % e[0]['arcpyError'])
     except:
         line, filename, synerror = trace()
         print ("error on line: %s" % line)

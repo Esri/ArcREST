@@ -737,7 +737,14 @@ class FeatureSet(object):
         filename, file_extension = os.path.splitext(outName)
         if (file_extension == ".csv"):
             res = os.path.join(saveLocation,outName)
-            with open(res, "wt+",newline='') as csvFile:
+            import sys
+            if sys.version_info[0] == 2:
+                access = 'wb+'
+                kwargs = {}
+            else:
+                access = 'wt+'
+                kwargs = {'newline':''}
+            with open(res, access, **kwargs) as csvFile:
                 import csv
                 f = csv.writer(csvFile)
                 fields = []
