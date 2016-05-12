@@ -121,34 +121,36 @@ def main():
         print("\tSQL: {0}".format(sql))
         
         #query the layer
-        results  = fst.QueryAllFeatures(url=url,
+        featureSet  = fst.QueryAllFeatures(url=url,
                             where=sql,
                             out_fields=out_fields,
                             chunksize=300,
                             printIndent="\t")
-        if (isinstance(results,arcrest.common.general.FeatureSet)):
-            featureSet = results
-            print("\t{0} feature(s) returned".format(len(featureSet.features)))
-            #Create a new output writer
-            saveLocation = os.path.join(outputLocation, outputFileName)
-            if (len(featureSet.features) == 0):
-                if os.path.isfile(saveLocation):
-                    os.remove(saveLocation)
+        if (isinstance(featureSet,arcrest.common.general.FeatureSet)):
+            if len(featureSet.features) == 0:
+                print ("\tNo features matching the query where found")
             else:
-                #Save the results to a file
-                result = featureSet.save(saveLocation=outputLocation, outName=outputFileName)
-                print ("\t{0} created".format(result))
-                """
-                If you want to process the results of the query without saving to a file
-                uncomment the process below and add your code.  The example below loops
-                through each field in a feature in a featureset.
-                
-                """
-                #for feature in featureSet:
-                    #print ("\t----------------------")
-                    #for field in featureSet.fields:
-                        #print ("\t\tField Name: {0} | Field Value: {1}".format(field['name'],feature.get_value(field['name'])))
-                    #print ("\t######################")
+                print("\t{0} feature(s) returned".format(len(featureSet.features)))
+                #Create a new output writer
+                saveLocation = os.path.join(outputLocation, outputFileName)
+                if (len(featureSet.features) == 0):
+                    if os.path.isfile(saveLocation):
+                        os.remove(saveLocation)
+                else:
+                    #Save the results to a file
+                    result = featureSet.save(saveLocation=outputLocation, outName=outputFileName)
+                    print ("\t{0} created".format(result))
+                    """
+                    If you want to process the results of the query without saving to a file
+                    uncomment the process below and add your code.  The example below loops
+                    through each field in a feature in a featureset.
+                    
+                    """
+                    #for feature in featureSet:
+                        #print ("\t----------------------")
+                        #for field in featureSet.fields:
+                            #print ("\t\tField Name: {0} | Field Value: {1}".format(field['name'],feature.get_value(field['name'])))
+                        #print ("\t######################")
         else:
             print ("\tNo features matching the query where found")
                 

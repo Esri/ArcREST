@@ -701,7 +701,12 @@ class featureservicetools(securityhandlerhelper):
                 oids = qRes['objectIds']
                 total = len(oids)
                 if total == 0:
-                    return []#{'success':True, 'message':"No features matched the query"}
+                    return fl.query(where=where, 
+                                    returnGeometry=True,
+                                    out_fields=out_fields,
+                                    timeFilter=timeFilter,
+                                    geometryFilter=geometryFilter,
+                                    outSR=outSR)
 
                 print (printIndent + "%s features to be downloaded" % total)
                 chunksize = min(chunksize, fl.maxRecordCount)
