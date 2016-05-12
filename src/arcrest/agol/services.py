@@ -1770,7 +1770,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
         if 'error' in result:
-            raise ValueError(results) 
+            raise ValueError(result) 
         if as_json:
             return result
         elif returnFeatureClass and\
@@ -2074,7 +2074,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
                    deleteFeatures=None,
                    gdbVersion=None,
                    useGlobalIds=False,
-                   rollbackOnFailure=True):
+                   rollbackOnFailure=True,
+                   attachments=None):
         """
            This operation adds, updates, and deletes features to the
            associated feature layer or table in a single call.
@@ -2102,6 +2103,25 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                   If true, the server will apply the edits
                                   only if all edits succeed. The default
                                   value is true.
+              attachments - Optional parameter which requires the layer's 
+                            supportsApplyEditsWithGlobalIds property to be 
+                            true.
+                            Use the attachments parameter to add, update or
+                            delete attachments. Applies only when the 
+                            useGlobalIds parameter is set to true. For 
+                            adds, the globalIds of the attachments provided
+                            by the client are preserved. When useGlobalIds 
+                            is true, updates and deletes are identified by 
+                            each feature or attachment globalId rather than
+                            their objectId or attachmentId.
+                            
+                            Dictionary Format:
+                            {
+                            "adds": [<attachment1>, <attachment2>],
+                            "updates": [<attachment1>, <attachment2>],
+                            "deletes": ["<attachmentGlobalId1>", 
+                                        "<attachmentGlobalId2>"]
+                            }
            Output:
               dictionary of messages
         """
@@ -2123,6 +2143,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
         elif len(addFeatures) > 0 and \
              isinstance(addFeatures[0], dict):
             params['adds'] = json.dumps(addFeatures, default=_date_handler)
+        elif len(addFeatures) == 0:
+            params['adds'] = json.dumps(addFeatures)
         if len(updateFeatures) > 0 and \
            isinstance(updateFeatures[0], Feature):
             params['updates'] = json.dumps([f.asDictionary for f in updateFeatures],
@@ -2131,17 +2153,27 @@ class FeatureLayer(abstract.BaseAGOLClass):
              isinstance(updateFeatures[0], dict):
             params['updates'] = json.dumps(updateFeatures, 
                                            default=_date_handler)
+        elif updateFeatures is None or \
+             len(updateFeatures) == 0:
+            updateFeatures = json.dumps([])
         if deleteFeatures is not None and \
            isinstance(deleteFeatures, str):
             params['deletes'] = deleteFeatures
         elif deleteFeatures is not None and \
              isinstance(deleteFeatures, list):
             params['deletes'] = ",".join([str(f) for f in deleteFeatures])
-        return self._post(url=editURL, 
+        else:
+            params['deletes'] = ""
+        if attachments is None:
+            params['attachments'] = ""
+        else:
+            params['attachments'] = attachments
+        res = self._post(url=editURL, 
                           param_dict=params,
                           securityHandler=self._securityHandler,
                           proxy_port=self._proxy_port,
                           proxy_url=self._proxy_url)
+        return res
     #----------------------------------------------------------------------
     def addFeature(self, features,
                    gdbVersion=None,
