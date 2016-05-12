@@ -1771,7 +1771,9 @@ class FeatureLayer(abstract.BaseAGOLClass):
                             proxy_port=self._proxy_port)
         if 'error' in result:
             raise ValueError(result) 
-        if as_json:
+        if as_json or \
+           returnCountOnly == True or \
+           returnIDsOnly == True:
             return result
         elif returnFeatureClass and\
              not returnCountOnly and \
