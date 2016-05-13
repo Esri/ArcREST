@@ -625,12 +625,13 @@ class FeatureSet(object):
         if 'fields' in jd:
             fields = jd['fields']
         else:
-            fields = {'fields':[]}
-        for feat in jd['features']:
-            wkid = None
-            if 'spatialReference' in jd and 'latestWkid' in jd['spatialReference']:
-                wkid = jd['spatialReference']['latestWkid']
-            features.append(Feature(json_string=feat, wkid=wkid))
+            fields = {'fields':[]} 
+        if 'features' in jd:
+            for feat in jd['features']:
+                wkid = None
+                if 'spatialReference' in jd and 'latestWkid' in jd['spatialReference']:
+                    wkid = jd['spatialReference']['latestWkid']
+                features.append(Feature(json_string=feat, wkid=wkid))
         return FeatureSet(fields,
                           features,
                           hasZ=jd['hasZ'] if 'hasZ' in jd else False,
@@ -742,7 +743,14 @@ class FeatureSet(object):
         filename, file_extension = os.path.splitext(outName)
         if (file_extension == ".csv"):
             res = os.path.join(saveLocation,outName)
-            with open(res, "wt+",newline='') as csvFile:
+            import sys
+            if sys.version_info[0] == 2:
+                access = 'wb+'
+                kwargs = {}
+            else:
+                access = 'wt+'
+                kwargs = {'newline':''}
+            with open(res, access, **kwargs) as csvFile:
                 import csv
                 f = csv.writer(csvFile)
                 fields = []
