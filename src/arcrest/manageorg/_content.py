@@ -782,7 +782,7 @@ class Item(BaseAGOLClass):
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def deleteRating(self):
-        """Removes the rating the calling user added for the specified item 
+        """Removes the rating the calling user added for the specified item
         (POST only)."""
         url = "%s/deleteRating" % self.root
         params = {
@@ -2388,7 +2388,8 @@ class User(BaseAGOLClass):
            title - name of export item
            itemId - id of the item to export
            exportFormat - out format. Values: Shapefile, CSV or File
-                          Geodatabase, feature collection, GeoJson
+                          Geodatabase, feature collection, GeoJson,
+                          or Scene Package
            tags - comma seperated list of quick descriptors, the default is
             export.
            snippet - short explination of the exported item
