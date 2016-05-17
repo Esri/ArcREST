@@ -1016,6 +1016,8 @@ class Item(BaseAGOLClass):
 ########################################################################
 class UserItem(BaseAGOLClass):
     """represents a single item on the site for a given user"""
+    _appProxies = None
+    _serviceProxyParams = None
     _url = None
     _itemType = None
     _uploaded = None
@@ -1407,6 +1409,18 @@ class UserItem(BaseAGOLClass):
         if self._sourceUrl is None:
             self.__init()
         return self._sourceUrl
+    #----------------------------------------------------------------------
+    @property
+    def appProxies(self):
+        if self._appProxies is None:
+            self.__init()
+        return self._appProxies
+    #----------------------------------------------------------------------
+    @property
+    def serviceProxyParams(self):
+        if self._serviceProxyParams is None:
+            self.__init()
+        return self._serviceProxyParams
     #----------------------------------------------------------------------
     @property
     def item(self):
