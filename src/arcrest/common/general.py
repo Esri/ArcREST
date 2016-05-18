@@ -107,25 +107,28 @@ class Feature(object):
     _geomType = None
     _attributes = None
     _wkid = None
+    _wkt = None
     #----------------------------------------------------------------------
-    def __init__(self, json_string, wkid=None):
+    def __init__(self, json_string, wkid=None, spatialReference=None):
         """Constructor"""
         self._wkid = wkid
         if type(json_string) is dict:
-            if not wkid is None:
-                if 'geometry' in json_string and 'spatialReference' in json_string['geometry']:
-                    json_string['geometry']['spatialReference']  = {"wkid" : wkid}
-            self._json = json.dumps(json_string,
-                                    default=_date_handler)
             self._dict = json_string
         elif type(json_string) is str:
             self._dict = json.loads(json_string)
-            if not wkid is None:
-                self._dict['geometry']['spatialReference']  = {"wkid" : wkid}
-            self._json = json.dumps(self._dict,
-                                    default=_date_handler)
         else:
             raise TypeError("Invalid Input, only dictionary or string allowed")
+        if 'geometry' in self._dict:
+            if not wkid is None: # kept for compatibility
+                self._dict['geometry']['spatialReference']  = {"wkid" : wkid}
+            if not spatialReference is None and isinstance(spatialReference, dict):
+                if 'wkid' in spatialReference:
+                    self._wkid = spatialReference['wkid']
+                if 'wkt' in spatialReference:
+                    self._wkt = spatialReference['wkt']
+                self._dict['geometry'].update({'spatialReference':spatialReference})
+            self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
+        self._json = json.dumps(self._dict, default=_date_handler)
     #----------------------------------------------------------------------
     def set_value(self, field_name, value):
         """ sets an attribute value for a given field name """
@@ -156,6 +159,8 @@ class Feature(object):
                     }
                 else:
                     return False
+                if value.spatialReference:
+                    self._dict['geometry'].update({'spatialReference':value.spatialReference})
                 self._json = json.dumps(self._dict, default=_date_handler)
             elif arcpyFound and isinstance(value, arcpy.Geometry):
                 if isinstance(value, arcpy.PointGeometry):
@@ -232,9 +237,14 @@ class Feature(object):
     @geometry.setter
     def geometry(self, value):
         """gets/sets a feature's geometry"""
-        if isinstance(value, [Polygon, Point, Polyline, MultiPoint]):
+        if isinstance(value, (Polygon, Point, Polyline, MultiPoint)):
             if value.type == self.geometryType:
                 self._geom = value
+        elif arcpyFound:
+           if isinstance(value, arcpy.Geometry):
+               if value.type == self.geometryType:
+                   self._geom = value
+
     #----------------------------------------------------------------------
     @property
     def fields(self):
@@ -629,9 +639,12 @@ class FeatureSet(object):
         if 'features' in jd:
             for feat in jd['features']:
                 wkid = None
-                if 'spatialReference' in jd and 'latestWkid' in jd['spatialReference']:
-                    wkid = jd['spatialReference']['latestWkid']
-                features.append(Feature(json_string=feat, wkid=wkid))
+                spatialReference =None
+                if 'spatialReference' in jd:
+                    spatialReference = jd['spatialReference']
+                    if 'latestWkid' in jd['spatialReference']: # kept for compatibility
+                        wkid = jd['spatialReference']['latestWkid']
+                features.append(Feature(json_string=feat, wkid=wkid, spatialReference=spatialReference))
         return FeatureSet(fields,
                           features,
                           hasZ=jd['hasZ'] if 'hasZ' in jd else False,
@@ -662,6 +675,18 @@ class FeatureSet(object):
         elif isinstance(value, str) and \
              str(value).isdigit():
             self._spatialReference = SpatialReference(wkid=int(value))
+        elif isinstance(value, dict):
+            wkid = None
+            wkt = None
+            if 'wkid' in value and \
+                 str(value['wkid']).isdigit():
+                wkid = int(value['wkid'])
+            if 'latestWkid' in value and \
+                 str(value['latestWkid']).isdigit():
+                wkid = int(value['latestWkid'])
+            if 'wkt' in value:
+                wkt = value['wkt']
+            self._spatialReference = SpatialReference(wkid=wkid,wkt=wkt)
     #----------------------------------------------------------------------
     @property
     def hasZ(self):
