@@ -11,7 +11,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -116,7 +116,7 @@ def main():
 
             newServiceResult = user.createService(createServiceParameter=createSerParams)
             print newServiceResult
-            item = admin.content.getItem(itemId=newServiceResult['itemId']).userItem
+            item = admin.content.getItem(itemId=newServiceResult.id).userItem
 
             params = arcrest.manageorg.ItemParameter()
             params.title = new_service_name
@@ -128,7 +128,7 @@ def main():
 
             print updateItemResults
 
-            adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult['encodedServiceURL'], securityHandler=shh.securityhandler)
+            adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult.url, securityHandler=shh.securityhandler)
             adminExistFS = fs.administration
             jsdic = {}
             exJson = adminExistFS.json
