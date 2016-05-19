@@ -9,6 +9,7 @@ try:
     arcpyFound = True
 except:
     arcpyFound = False
+from ..packages import six
 import copy
 import os
 import tempfile
@@ -19,7 +20,12 @@ from .._abstract.abstract import AbstractGeometry
 __all__ = ['_unicode_convert', "Feature", "FeatureSet",
            "_date_handler", "local_time_to_online",
            "online_time_to_string", "timestamp_to_datetime",
-           "MosaicRuleObject"]
+           "MosaicRuleObject", "create_uid"]
+def create_uid():
+    if six.PY3:
+        return uuid.uuid4().hex
+    else:
+        return uuid.uuid4().get_hex()
 def _unicode_convert(obj):
     """ converts unicode to anscii """
     if isinstance(obj, dict):

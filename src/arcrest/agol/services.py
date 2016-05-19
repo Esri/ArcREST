@@ -16,8 +16,9 @@ import uuid
 import json
 import types
 from re import search
+from ..common.general import create_uid
 from ..packages.six.moves import urllib_parse as urlparse
-#from six.moves import urllib_parse as urlparse
+from ..packages import six
 from ._uploads import Uploads
 from ..security import security
 from .._abstract import abstract
@@ -1778,12 +1779,15 @@ class FeatureLayer(abstract.BaseAGOLClass):
         elif returnFeatureClass and\
              not returnCountOnly and \
              not returnIDsOnly:
-            if out_fc is None:
+            uid = create_uid()
+            if out_fc is None:    
                 out_fc = os.path.join(scratchGDB(), 
-                                      "a{fid}".format(fid=uuid.uuid4().get_hex()))
+                                      "a{fid}".format(fid=uid))
             text = json.dumps(result)
-            temp = scratchFolder() + os.sep + uuid.uuid4().get_hex() + ".json"
+            temp = scratchFolder() + os.sep + uid + ".json"
             with open(temp, 'wb') as writer:
+                if six.PY3:
+                    text = bytes(text, 'UTF-8')
                 writer.write(text)
                 writer.flush()
                 del writer

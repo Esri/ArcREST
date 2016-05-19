@@ -3,4 +3,4 @@ from .analysis import *
 from .elevation import *
 from .hydrology import *
 #from .geocoder import *
-__version__ = "3.5.4"
+__version__ = "3.5.5"
