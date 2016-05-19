@@ -100,7 +100,6 @@ def timestamp_to_datetime(timestamp):
 ########################################################################
 class Feature(object):
     """ returns a feature  """
-    _geom = None
     _json = None
     _dict = None
     _geom = None
@@ -127,7 +126,7 @@ class Feature(object):
                 if 'wkt' in spatialReference:
                     self._wkt = spatialReference['wkt']
                 self._dict['geometry'].update({'spatialReference':spatialReference})
-            self._geom = arcpy.AsShape(self._dict['geometry'], esri_json=True)
+            self._geom = self.geometry
         self._json = json.dumps(self._dict, default=_date_handler)
     #----------------------------------------------------------------------
     def set_value(self, field_name, value):
@@ -135,47 +134,25 @@ class Feature(object):
         if field_name in self.fields:
             if not value is None:
                 self._dict['attributes'][field_name] = _unicode_convert(value)
-                self._json = json.dumps(self._dict, default=_date_handler)
             else:
                 pass
         elif field_name.upper() in ['SHAPE', 'SHAPE@', "GEOMETRY"]:
-            if isinstance(value, AbstractGeometry):
-                if isinstance(value, Point):
-                    self._dict['geometry'] = {
-                    "x" : value.asDictionary['x'],
-                    "y" : value.asDictionary['y']
-                    }
-                elif isinstance(value, MultiPoint):
-                    self._dict['geometry'] = {
-                        "points" : value.asDictionary['points']
-                    }
-                elif isinstance(value, Polyline):
-                    self._dict['geometry'] = {
-                        "paths" : value.asDictionary['paths']
-                    }
-                elif isinstance(value, Polygon):
-                    self._dict['geometry'] = {
-                        "rings" : value.asDictionary['rings']
-                    }
-                else:
-                    return False
-                if value.spatialReference:
-                    self._dict['geometry'].update({'spatialReference':value.spatialReference})
-                self._json = json.dumps(self._dict, default=_date_handler)
-            elif arcpyFound and isinstance(value, arcpy.Geometry):
-                if isinstance(value, arcpy.PointGeometry):
-                    self.set_value( field_name, Point(value,value.spatialReference.factoryCode))
-                elif isinstance(value, arcpy.Multipoint):
-                    self.set_value( field_name,  MultiPoint(value,value.spatialReference.factoryCode))
-
-                elif isinstance(value, arcpy.Polyline):
-                    self.set_value( field_name,  Polyline(value,value.spatialReference.factoryCode))
-
-                elif isinstance(value, arcpy.Polygon):
-                    self.set_value( field_name, Polygon(value,value.spatialReference.factoryCode))
-
+            if isinstance(value, dict):
+                if 'geometry' in value:
+                    self._dict['geometry'] = value['geometry']
+                elif any(k in value.keys() for k in ['x','y','points','paths','rings', 'spatialReference']):
+                    self._dict['geometry'] = value
+            elif isinstance(value, AbstractGeometry):
+                self._dict['geometry'] = value.asDictionary
+            elif arcpyFound:
+                if isinstance(value, arcpy.Geometry) and \
+                    value.type == self.geometryType:
+                   self._dict['geometry']=json.loads(value.JSON)
+            self._geom = None
+            self._geom = self.geometry
         else:
             return False
+        self._json = json.dumps(self._dict, default=_date_handler)
         return True
     #----------------------------------------------------------------------
     def get_value(self, field_name):
@@ -223,10 +200,6 @@ class Feature(object):
     def geometry(self):
         """returns the feature geometry"""
         if arcpyFound:
-            if not self._wkid is None:
-                sr = arcpy.SpatialReference(self._wkid)
-            else:
-                sr = None
             if self._geom is None:
                 if 'feature' in self._dict:
                     self._geom = arcpy.AsShape(self._dict['feature']['geometry'], esri_json=True)
@@ -243,8 +216,9 @@ class Feature(object):
         elif arcpyFound:
            if isinstance(value, arcpy.Geometry):
                if value.type == self.geometryType:
-                   self._geom = value
-
+                   self._dict['geometry']=json.loads(value.JSON)
+                   self._geom = None
+                   self._geom = self.geometry
     #----------------------------------------------------------------------
     @property
     def fields(self):
@@ -642,7 +616,9 @@ class FeatureSet(object):
                 spatialReference =None
                 if 'spatialReference' in jd:
                     spatialReference = jd['spatialReference']
-                    if 'latestWkid' in jd['spatialReference']: # kept for compatibility
+                    if 'wkid' in jd['spatialReference']:
+                        wkid = jd['spatialReference']['wkid']
+                    elif 'latestWkid' in jd['spatialReference']: # kept for compatibility
                         wkid = jd['spatialReference']['latestWkid']
                 features.append(Feature(json_string=feat, wkid=wkid, spatialReference=spatialReference))
         return FeatureSet(fields,
