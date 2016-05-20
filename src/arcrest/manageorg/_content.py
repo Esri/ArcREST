@@ -1944,6 +1944,10 @@ class User(BaseAGOLClass):
         self._json = ""
         while nextStart > -1:
             res = self.search(start=nextStart, num=100)
+            if self._location.find(res['username'].lower()) > -1:
+                self._location = self._location.replace(res['username'].lower(), res['username'])
+                self._url = self._url.replace(res['username'].lower(), res['username'])
+
             nextStart = int(res['nextStart'])
             result_template['username'] = res['username']
             result_template["total"] = res["total"]

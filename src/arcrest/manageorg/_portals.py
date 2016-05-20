@@ -1277,7 +1277,14 @@ class Portal(BaseAGOLClass):
 
         if "users" in res:
             if len(res['users']) > 0:
-                cURL = "https://%s/sharing/rest/community" % self.portalHostname
+                parsed = urlparse.urlparse(self._url)
+                if parsed.netloc.lower().find('arcgis.com') == -1:
+                    cURL = "%s://%s/%s/sharing/rest/community" % (parsed.scheme,
+                                                                  parsed.netloc,
+                                                                  parsed.path[1:].split('/')[0])
+                else:
+                    cURL = "%s://%s/sharing/rest/community" % (parsed.scheme,
+                                                               parsed.netloc)
                 com = Community(url=cURL,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,

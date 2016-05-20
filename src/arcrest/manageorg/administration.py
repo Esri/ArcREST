@@ -56,7 +56,7 @@ class Administration(BaseAGOLClass):
             urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
             self._url = urlunparse(urlInfo)
             self._securityHandler.referer_url = "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl)
-            self._url = "https://%s.%s/sharing" % (portalSelf.urlKey, portalSelf.customBaseUrl)
+            self._url = "https://%s.%s%s" % (portalSelf.urlKey, portalSelf.customBaseUrl, urlInfo.path)
             del portalSelf
 
         if initialize:
