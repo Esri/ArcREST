@@ -1342,16 +1342,20 @@ class User(BaseAGOLClass):
         for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
+
     @property
     def userContent(self):
         """allows access into the individual user's content to get at the
         items owned by the current user"""
-        url = self._url.lower().replace('/community/', '/content/')
+        replace_start = self._url.lower().find("/community/")
+        len_replace = len("/community/")
+        url = self._url.replace(self._url[replace_start:replace_start+len_replace],
+                                '/content/')
         from ._content import User as UserContent
         return UserContent(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
     @property
     def lastName(self):
         '''gets the property value for username'''
