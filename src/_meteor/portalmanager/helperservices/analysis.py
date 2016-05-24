@@ -64,7 +64,7 @@ class analysis(object):
         params = {
             "f" :"json"
         }
-        res = self._con.get(url=portals_self_url,
+        res = self._con.get(path_or_url=portals_self_url,
                            params=params)
         if "helperServices" in res:
             helper_services = res.get("helperServices")

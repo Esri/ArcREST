@@ -606,7 +606,7 @@ class FeatureService(BaseService):
 
         if async:
             if wait:
-                exportJob = self._con.post(url=url,
+                exportJob = self._con.post(path_or_url=url,
                                            postdata=params)
                 status = self.replicaStatus(url=exportJob['statusUrl'])
                 while status['status'].lower() != "completed":
@@ -1112,7 +1112,7 @@ class FeatureLayer(BaseService):
             params = {'f':'json'}
 
             files = {'attachment': file_path}
-            res = self._con.post(url=attachURL,
+            res = self._con.post(path_or_url=attachURL,
                                  postdata=params,
                                  files=files)
             return res
