@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
+from ...common._base import BaseServer
 from datetime import datetime
 import csv
-import json
 ########################################################################
 class Log(BaseServer):
     """ Log of a server """
@@ -21,45 +20,26 @@ class Log(BaseServer):
                url - admin url
                connection - SiteConnection class
         """
+        super(Log, self).__init__(url=url,
+                                  connection=connection,
+                                  initialize=initialize)
         self._url = url
         self._con = connection
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        self._json_dict = json_dict
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-            del k, v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def operations(self):
         """ returns the operations """
         if self._operations is None:
-            self.__init()
+            self.init()
         return self._operations
     #----------------------------------------------------------------------
     @property
     def resources(self):
         """ returns the log resources """
         if self._resources is None:
-            self.__init()
+            self.init()
         return self._resources
     #----------------------------------------------------------------------
     def countErrorReports(self, machine="*"):
@@ -144,8 +124,8 @@ class Log(BaseServer):
               services="*",
               machines="*",
               server="*",
-              codes=[],
-              processIds=[],
+              codes=None,
+              processIds=None,
               export=False,
               exportType="CSV", #CSV or TAB
               out_path=None
@@ -156,6 +136,10 @@ class Log(BaseServer):
            Inputs:
 
         """
+        if codes is None:
+            codes = []
+        if processIds is None:
+            processIds = []
         allowed_levels = ("SEVERE", "WARNING", "INFO",
                           "FINE", "VERBOSE", "DEBUG")
         qFilter = {

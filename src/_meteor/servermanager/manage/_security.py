@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
-import json
+from ...common._base import BaseServer
 ########################################################################
 class Security(BaseServer):
     """ The security resource is a container for all resources and
@@ -25,37 +24,19 @@ class Security(BaseServer):
                url - admin url
 
         """
+        super(Security, self).__init__(url=url,
+                                       connection=connection,
+                                       initialize=initialize)
         self._url = url
         self._con = connection
         if initialize:
-            self.__init(connection=connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
+            self.init(connection=connection)
     #----------------------------------------------------------------------
     @property
     def resources(self):
         """ returns the resources """
         if self._resources is None:
-            self.__init()
+            self.init()
         return self._resources
     #----------------------------------------------------------------------
     def addRole(self, name, description=""):

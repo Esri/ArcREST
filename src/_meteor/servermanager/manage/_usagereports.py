@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from ...common.packages import six
-from .._base import BaseServer
+from ...common._base import BaseServer
 import json
 ########################################################################
 class UsageReports(BaseServer):
@@ -28,43 +28,20 @@ class UsageReports(BaseServer):
             self._url = url + "/usagereports"
         self._con = connection
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def metrics(self):
         """gets the metrics values"""
         if self._metrics is None:
-            self.__init()
+            self.init()
         return self._metrics
     #----------------------------------------------------------------------
     @property
     def reports(self):
         """returns a list of reports on the server"""
         if self._metrics is None:
-            self.__init()
+            self.init()
         self._reports = []
         if isinstance(self._metrics, list):
             for r in self._metrics:
@@ -252,7 +229,7 @@ class UsageReports(BaseServer):
         res =  self._con.post(path_or_url=url,
                              postdata=params)
         #  Refresh the metrics object
-        self.__init()
+        self.init()
         return res
 
 ########################################################################
@@ -283,48 +260,20 @@ class UsageReport(BaseServer):
         self._con = connection
         self._url = url
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=params,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=params,
-                                       params=params)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k.lower() == "from":
-                self._from = v
-            elif k.lower() == "to":
-                self._to = v
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k
-            del v
+            self.init()
     #----------------------------------------------------------------------
     @property
     def reportname(self):
         """gets the report name"""
         if self._reportname is None:
-            self.__init()
+            self.init()
         return self._reportname
     #----------------------------------------------------------------------
     @property
     def since(self):
         """gets/sets the since value"""
         if self._since is None:
-            self.__init()
+            self.init()
         return self._since
     #----------------------------------------------------------------------
     @since.setter
@@ -336,7 +285,7 @@ class UsageReport(BaseServer):
     def fromValue(self):
         """gets/sets the from value"""
         if self._from is None:
-            self.__init()
+            self.init()
         return self._from
     #----------------------------------------------------------------------
     @fromValue.setter
@@ -348,7 +297,7 @@ class UsageReport(BaseServer):
     def toValue(self):
         """gets/sets the toValue"""
         if self._to is None:
-            self.__init()
+            self.init()
         return self._to
     #----------------------------------------------------------------------
     @toValue.setter
@@ -360,7 +309,7 @@ class UsageReport(BaseServer):
     def aggregationInterval(self):
         """gets/sets the aggregationInterval value"""
         if self._aggregationInterval is None:
-            self.__init()
+            self.init()
         return self._aggregationInterval
     #----------------------------------------------------------------------
     @aggregationInterval.setter
@@ -372,7 +321,7 @@ class UsageReport(BaseServer):
     def queries(self):
         """gets/sets the query values"""
         if self._queries is None:
-            self.__init()
+            self.init()
         return self._queries
     #----------------------------------------------------------------------
     @queries.setter
@@ -384,7 +333,7 @@ class UsageReport(BaseServer):
     def metadata(self):
         """gets/sets the metadata value"""
         if self._metadata is None:
-            self.__init()
+            self.init()
         return self._metadata
     #----------------------------------------------------------------------
     @metadata.setter

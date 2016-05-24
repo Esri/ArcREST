@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
+from ...common._base import BaseServer
 import json
 from .parameters import ClusterProtocol
 ########################################################################
@@ -28,7 +28,7 @@ class Clusters(BaseServer):
                  connection,
                  initialize=False):
         """Constructor"""
-
+        super(Clusters, self).__init__(url=url, connection=connection, initialize=initialize)
         self._con = connection
         self._url = url
         if url.lower().endswith("/clusters"):
@@ -36,30 +36,7 @@ class Clusters(BaseServer):
         else:
             self._url = url + "/clusters"
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = self._con.get(path_or_url=self._url,
-                                      params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url,
-                                      params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, json_dict[k])
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     def createCluster(self, clusterName, machineNames="", tcpClusterPort=""):
         """
@@ -93,7 +70,7 @@ class Clusters(BaseServer):
             "machineNames" : machineNames,
             "tcpClusterPort" : tcpClusterPort
         }
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def getAvailableMachines(self):
@@ -138,40 +115,11 @@ class Cluster(BaseServer):
     _configurationState = None
     _clusters = None
     #----------------------------------------------------------------------
-    def __init__(self, url, connection,
-                 initialize=False):
-        """Constructor"""
-        self._con = connection
-        self._url = url
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url, params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url,
-                                      params=params)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k, v
     @property
     def clusters(self):
         """returns the cluster object for each server"""
         if self._clusters is None:
-            self.__init()
+            self.init()
             Cs = []
             for c in self._clusters:
                 url = self._url + "/%s" % c['clusterName']
@@ -183,34 +131,34 @@ class Cluster(BaseServer):
     #----------------------------------------------------------------------
     def refresh(self):
         """refreshes the object's properties"""
-        self.__init()
+        self.init()
     #----------------------------------------------------------------------
     @property
     def clusterName(self):
         """returns the cluster name"""
         if self._clusterName is None:
-            self.__init()
+            self.init()
         return self._clusterName
     #----------------------------------------------------------------------
     @property
     def clusterProtocol(self):
         """returns the cluster's protocol parameters"""
         if self._clusterProtocol is None:
-            self.__init()
+            self.init()
         return self._clusterProtocol
     #----------------------------------------------------------------------
     @property
     def configuredState(self):
         """returns the current state of the cluster"""
         if self._configurationState is None:
-            self.__init()
+            self.init()
         return self._configuredState
     #----------------------------------------------------------------------
     @property
     def machineNames(self):
         """returns a list of machines in cluster"""
         if self._machineNames is None:
-            self.__init()
+            self.init()
         return self._machineNames
     #----------------------------------------------------------------------
     def start(self):
@@ -225,7 +173,7 @@ class Cluster(BaseServer):
             "f" : "json"
         }
         url = self._url + "/start"
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                               postdata=params)
     #----------------------------------------------------------------------
     def stop(self):
@@ -239,7 +187,7 @@ class Cluster(BaseServer):
             "f" : "json"
         }
         url = self._url + "/stop"
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def delete(self):
@@ -253,7 +201,7 @@ class Cluster(BaseServer):
             "f" : "json"
         }
         url = self._url + "/delete"
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def servicesInCluster(self):
@@ -268,7 +216,7 @@ class Cluster(BaseServer):
             "f" : "json"
         }
         url = self._url + "/services"
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def machinesInCluster(self):
@@ -303,7 +251,7 @@ class Cluster(BaseServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                              postdata=params)
     #----------------------------------------------------------------------
     def removeMachinesFromCluster(self,
@@ -321,7 +269,7 @@ class Cluster(BaseServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                               postdata=params)
     #----------------------------------------------------------------------
     def editProtocol(self, clusterProtocolObj):
@@ -340,5 +288,5 @@ class Cluster(BaseServer):
             "f" : "json",
             "tcpClusterPort" : value
         }
-        return self._con.post(url=url,
+        return self._con.post(path_or_url=url,
                               postdata=params)

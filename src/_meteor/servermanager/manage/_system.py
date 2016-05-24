@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
-import json
+from ...common._base import BaseServer
 ########################################################################
 class System(BaseServer):
     """
@@ -18,40 +17,22 @@ class System(BaseServer):
     def __init__(self, url, connection,
                  initialize=False):
         """Constructor"""
+        super(System, self).__init__(url=url,
+                                     connection=connection,
+                                     initialize=initialize)
         self._con = connection
         if url.lower().endswith("/system"):
             self._url = url
         else:
             self._url = url + "/system"
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def resources(self):
         """gets the resources"""
         if self._resources is None:
-            self.__init()
+            self.init()
         return self._resources
     #----------------------------------------------------------------------
     @property
@@ -170,63 +151,32 @@ class ConfigurationStore(BaseServer):
     _class = None
     _status = None
     #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 connection,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._con = connection
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
-    #----------------------------------------------------------------------
     @property
     def type(self):
         """gets the configuration store type"""
         if self._type is None:
-            self.__init()
+            self.init()
         return self._type
     #----------------------------------------------------------------------
     @property
     def connectionString(self):
         """gets the connection string"""
         if self._connectionString is None:
-            self.__init()
+            self.init()
         return self._connectionString
     #----------------------------------------------------------------------
     @property
     def classValue(self):
         """gets the class value"""
         if self._class is None:
-            self.__init()
+            self.init()
         return self._class
     #----------------------------------------------------------------------
     @property
     def status(self):
         """gets the status value"""
         if self._status is None:
-            self.__init()
+            self.init()
         return self._status
     #----------------------------------------------------------------------
     def edit(self, typeValue,
@@ -277,41 +227,11 @@ class Jobs(BaseServer):
     _json_dict = None
     _url = None
     #----------------------------------------------------------------------
-    def __init__(self, url,
-                 connection,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._con = connection
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
-    #----------------------------------------------------------------------
     @property
     def jobs(self):
         """gets the job ids"""
         if self._jobs is None:
-            self.__init()
+            self.init()
         return self._jobs
     #----------------------------------------------------------------------
     def getJobDetails(self, jobId):
@@ -428,33 +348,15 @@ class ServerProperties(BaseServer):
                  connection,
                  initialize=False):
         """Constructor"""
+        super(ServerProperties, self).__init__(url=url,
+                                               connection=connection,
+                                               initialize=initialize)
         if url.lower().endswith('/properties'):
             self._url = url
         else:
             self._url = url + "/properties"
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
+            self.init(connection)
     #----------------------------------------------------------------------
     def updateServerProperties(self, properties):
         """
@@ -507,84 +409,53 @@ class ServerDirectory(BaseServer):
     _description = None
     _virtualPath = None
     #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 connection,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._con = connection
-        if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
-    #----------------------------------------------------------------------
     @property
     def name(self):
         """gets the directory name"""
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
     #----------------------------------------------------------------------
     @property
     def physicalPath(self):
         """gets the physical path"""
         if self._physicalPath is None:
-            self.__init()
+            self.init()
         return self._physicalPath
     #----------------------------------------------------------------------
     @property
     def directoryType(self):
         """gets the directoryType value"""
         if self._directoryType is None:
-            self.__init()
+            self.init()
         return self._directoryType
     #----------------------------------------------------------------------
     @property
     def cleanupMode(self):
         """gets the cleanupMode value"""
         if self._cleanupMode is None:
-            self.__init()
+            self.init()
         return self._cleanupMode
     #----------------------------------------------------------------------
     @property
     def maxFileAge(self):
         """gets the maxFileAge value"""
         if self._maxFileAge is None:
-            self.__init()
+            self.init()
         return self._maxFileAge
     #----------------------------------------------------------------------
     @property
     def description(self):
         """gets the description value"""
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def virtualPath(self):
         """gets the virtualPath value"""
         if self._virtualPath is None:
-            self.__init()
+            self.init()
         return self._virtualPath
     #----------------------------------------------------------------------
     def edit(self,

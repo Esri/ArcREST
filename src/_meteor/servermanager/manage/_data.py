@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from .._base import BaseServer
+from ...common._base import BaseServer
 ########################################################################
 class Data(BaseServer):
     """
@@ -26,8 +26,14 @@ class Data(BaseServer):
             Inputs:
                url - admin url
         """
+        super(Data, self).__init__(url=url, connection=connection,
+                                   initialize=initialize)
         self._con = connection
         self._url = url
+    #----------------------------------------------------------------------
+    def init(self, connection=None):
+        self._json_dict = {}
+        self._json = ""
     #----------------------------------------------------------------------
     @property
     def datastoreConfiguration(self):
@@ -46,7 +52,7 @@ class Data(BaseServer):
             "f" : "json"
         }
         dURL = self._url + "/config"
-        return self._con.get(url=dURL, params=params)
+        return self._con.get(path_or_url=dURL, params=params)
     #----------------------------------------------------------------------
     def updateDatastoreConfiguration(self, datastoreConfig=None):
         """
@@ -66,7 +72,7 @@ class Data(BaseServer):
             "datastoreConfig" : datastoreConfig
         }
         url = self._url + "/config/update"
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def computeTotalRefCount(self, path):
         """
@@ -84,7 +90,7 @@ class Data(BaseServer):
             "f" : "json",
             "path" : path
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def findDataItems(self, parentPath=None, ancestorPath=None,
                       type=None, id=None):
@@ -112,7 +118,7 @@ class Data(BaseServer):
         if id is not None:
             params['id'] = id
         url = self._url + "/findItems"
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def registerDataItem(self, item):
         """
@@ -128,7 +134,7 @@ class Data(BaseServer):
             "f" : "json"
         }
         url = self._url + "/registerItem"
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def rootDataItems(self):
@@ -139,7 +145,7 @@ class Data(BaseServer):
         params = {
             "f" : "json"
         }
-        return self._con.get(url=url,
+        return self._con.get(path_or_url=url,
                             params=params)
     #----------------------------------------------------------------------
     @property
@@ -148,7 +154,7 @@ class Data(BaseServer):
         params = {
         "f" : "json"}
         url = self._url + "/validateAllDataItems"
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def validateDataItem(self, item):
         """
@@ -171,7 +177,7 @@ class Data(BaseServer):
             "item" : item
         }
         url = self._url + "/validateDataItem"
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def makePrimary(self, dataStoreName, machineName):
         """
@@ -183,7 +189,7 @@ class Data(BaseServer):
         params = {
             "f" : "json"
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def removeDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -198,7 +204,7 @@ class Data(BaseServer):
         params = {
             "f" : "json"
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def startDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -212,7 +218,7 @@ class Data(BaseServer):
         params = {
             "f": "json"
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def stopDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -226,7 +232,7 @@ class Data(BaseServer):
         params = {
             "f": "json"
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def unregisterDataItem(self, path):
         """
@@ -245,7 +251,7 @@ class Data(BaseServer):
             "f" : "json",
             "itempath" : path
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def validateDataStore(self, dataStoreName, machineName):
         """
@@ -260,4 +266,4 @@ class Data(BaseServer):
         params = {
             "f" : "json"
         }
-        return self._con.post(url=url, postdata=params)
+        return self._con.post(path_or_url=url, postdata=params)

@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
-import json
+from ...common._base import BaseServer
 ########################################################################
 class Machines(BaseServer):
     """
@@ -33,61 +32,40 @@ class Machines(BaseServer):
                connection - SiteConnection object
                initialize - loads the machine information
         """
+        super(Machines, self).__init__(url=url,
+                                       connection=connection,
+                                       initialize=initialize)
         self._url = url
         self._con = connection
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(url=self._url,
-                                      params=params)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k == "machines":
-                self._machines = []
-                for m in v:
-                    self._machines.append(
-                        Machine(url=self._url +"/%s" % m['machineName'],
-                                connection=self._con)
-                    )
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-            del k, v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def DatastoreMachines(self):
         """returns the datastore machine list"""
         if self._DatastoreMachines is None:
-            self.__init()
+            self.init()
         return self._DatastoreMachines
     #----------------------------------------------------------------------
     @property
     def Protocol(self):
         """returns the protocal"""
         if self._Protocal is None:
-            self.__init()
+            self.init()
         return self._Protocal
     #----------------------------------------------------------------------
     @property
     def machines(self):
         """  returns the list of machines in the cluster """
+        machines = []
         if self._machines is None:
-            self.__init()
-        return self._machines
+            self.init()
+        if isinstance(self._machines, list):
+            for m in self._machines:
+                machines.append(
+                    Machine(url=self._url +"/%s" % m['machineName'],
+                            connection=self._con))
+        return machines
     #----------------------------------------------------------------------
     def getMachine(self, machineName):
         """returns a machine object for a given machine
@@ -193,118 +171,97 @@ class Machine(BaseServer):
                connection - SiteConnection object
                initialize - boolean - loads properties at creation of object
         """
+        super(Machine, self).__init__(url=url,
+                                      connection=connection,
+                                      initialize=initialize)
         self._url = url
         self._con = connection
         self._currentURL = url
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url,
-                                      params=params)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def appServerMaxHeapSize(self):
         """ returns the app server max heap size """
         if self._appServerMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._appServerMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def webServerSSLEnabled(self):
         """ SSL enabled """
         if self._webServerSSLEnabled is None:
-            self.__init()
+            self.init()
         return self._webServerSSLEnabled
     #----------------------------------------------------------------------
     @property
     def webServerMaxHeapSize(self):
         """ returns the web server max heap size """
         if self._webServerMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._webServerMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def platform(self):
         """ returns the platform information """
         if self._platform is None:
-            self.__init()
+            self.init()
         return self._platform
     #----------------------------------------------------------------------
     @property
     def adminURL(self):
         """ returns the administration URL """
         if self._adminURL is None:
-            self.__init()
+            self.init()
         return self._adminURL
     #----------------------------------------------------------------------
     @property
     def machineName(self):
         """ returns the machine name """
         if self._machineName is None:
-            self.__init()
+            self.init()
         return self._machineName
     #----------------------------------------------------------------------
     @property
     def ServerStartTime(self):
         """ returns the server start date/time """
         if self._ServerStartTime is None:
-            self.__init()
+            self.init()
         return self._ServerStartTime
     #----------------------------------------------------------------------
     @property
     def webServerCertificateAlias(self):
         """ returns the webserver cert alias"""
         if self._webServerCertificateAlias is None:
-            self.__init()
+            self.init()
         return self._webServerCertificateAlias
     #----------------------------------------------------------------------
     @property
     def socMaxHeapSize(self):
         """ returns the soc's max heap size """
         if self._socMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._socMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def synchronize(self):
         """synchronize value"""
         if self._synchronize is None:
-            self.__init()
+            self.init()
         return self._synchronize
     #----------------------------------------------------------------------
     @property
     def ports(self):
         """ returns the used ports """
         if self._ports is None:
-            self.__init()
+            self.init()
         return self._ports
     #----------------------------------------------------------------------
     @property
     def configuredState(self):
         """ returns the configured state """
         if self._configuredState is None:
-            self.__init()
+            self.init()
         return self._configuredState
     #----------------------------------------------------------------------
     @property
@@ -322,7 +279,7 @@ class Machine(BaseServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._con.post(url=uURL, postdata=params)
+        return self._con.post(path_or_url=uURL, postdata=params)
     #----------------------------------------------------------------------
     def stopMachine(self):
         """ Stops the server machine """
@@ -330,7 +287,7 @@ class Machine(BaseServer):
             "f" : "json"
         }
         uURL = self._url + "/stop"
-        return self._con.post(url=uURL, postdata=params)
+        return self._con.post(path_or_url=uURL, postdata=params)
     #----------------------------------------------------------------------
     def unregisterMachine(self):
         """
@@ -349,4 +306,4 @@ class Machine(BaseServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._con.post(url=uURL, postdata=params)
+        return self._con.post(path_or_url=uURL, postdata=params)

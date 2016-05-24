@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-import json
-from .._base import BaseServer
+from ...common._base import BaseServer
 
 ########################################################################
 class Info(BaseServer):
@@ -30,73 +29,54 @@ class Info(BaseServer):
                connection - SiteConnection object
                initialize - loads the object's properties on runtime
         """
+        super(Info, self).__init__(url=url,
+                                   connection=connection,
+                                   initialize=initialize)
         self._con = connection
         self._url = url
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url, params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        self._json_dict = json_dict
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def fullVersion(self):
         """ returns the full version """
         if self._fullVersion is None:
-            self.__init()
+            self.init()
         return self._fullVersion
     #----------------------------------------------------------------------
     @property
     def currentversion(self):
         """ returns the current vesrion """
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def loggedInUser(self):
         """ get the logged in user """
         if self._loggedInUser is None:
-            self.__init()
+            self.init()
         return self._loggedInUser
     #----------------------------------------------------------------------
     @property
     def currentbuild(self):
         """ returns the current build """
         if self._currentBuild is None:
-            self.__init()
+            self.init()
         return self._currentBuild
     #----------------------------------------------------------------------
     @property
     def timezone(self):
         """ returns the server's defined time zone """
         if self._timezone is None:
-            self.__init()
+            self.init()
         return self._timezone
     #----------------------------------------------------------------------
     @property
     def loggedInUserPrivilege(self):
         """ gets the logged in user's privileges """
         if self._loggedInUserPrivilege is None:
-            self.__init()
+            self.init()
         return self._loggedInUserPrivilege
     #----------------------------------------------------------------------
     def healthCheck(self):

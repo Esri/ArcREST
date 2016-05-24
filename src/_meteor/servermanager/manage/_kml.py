@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
+from ...common._base import BaseServer
 
 ########################################################################
 class KML(BaseServer):
@@ -22,33 +22,13 @@ class KML(BaseServer):
                initialize - boolean - if true, information loaded at object
                 creation
         """
+        super(KML, self).__init__(url=url,
+              connection=connection,
+              initialize=initialize)
         self._con = connection
         self._url = url
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url,
-                                      params=params)
-        self._json_dict = json_dict
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     def createKMZ(self, kmz_as_json):
         """
@@ -67,5 +47,5 @@ class KML(BaseServer):
     def items(self):
         """ returns list of KMZ/KML on server """
         if self._items is None:
-            self.__init()
+            self.init()
         return self._items

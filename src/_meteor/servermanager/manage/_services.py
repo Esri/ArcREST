@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
+from ...common._base import BaseServer
 from .parameters import Extension
 import os
 import json
@@ -29,13 +29,16 @@ class Services(BaseServer):
                url - admin url
                connection - SiteConnection object
         """
+        super(Services, self).__init__(url=url,
+                                       connection=connection,
+                                       initialize=initialize)
         self._con = connection
         self._url = url
         self._currentURL = url
         if initialize:
-            self.__init(connection)
+            self.init(connection)
     #----------------------------------------------------------------------
-    def __init(self, connection=None):
+    def init(self, connection=None):
         """ populates server admin information """
         params = {
             "f": "json"
@@ -48,6 +51,7 @@ class Services(BaseServer):
                                       params=params)
         self._json = json.dumps(json_dict)
         self._json_dict = json_dict
+        missing = {}
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -56,19 +60,15 @@ class Services(BaseServer):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 setattr(self, k, v)
+                missing[k] = v
             del k, v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns the object as a string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+        self.__dict__.update(missing)
     #----------------------------------------------------------------------
     @property
     def webEncrypted(self):
         """ returns if the server is web encrypted """
         if self._webEncrypted is None:
-            self.__init()
+            self.init()
         return self._webEncrypted
     #----------------------------------------------------------------------
     @property
@@ -87,7 +87,7 @@ class Services(BaseServer):
             self._description = None
             self._folderName = None
             self._webEncrypted = None
-            self.__init()
+            self.init()
             self._folderName = folder
         elif folder in self.folders:
             self._currentURL = self._url + "/%s" % folder
@@ -95,14 +95,14 @@ class Services(BaseServer):
             self._description = None
             self._folderName = None
             self._webEncrypted = None
-            self.__init()
+            self.init()
             self._folderName = folder
     #----------------------------------------------------------------------
     @property
     def folders(self):
         """ returns a list of all folders """
         if self._folders is None:
-            self.__init()
+            self.init()
         if "/" not in self._folders:
             self._folders.append("/")
         return self._folders
@@ -111,21 +111,21 @@ class Services(BaseServer):
     def foldersDetail(self):
         """returns the folder's details"""
         if self._foldersDetail is None:
-            self.__init()
+            self.init()
         return self._foldersDetail
     #----------------------------------------------------------------------
     @property
     def description(self):
         """ returns the decscription """
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def isDefault(self):
         """ returns the is default property """
         if self._isDefault is None:
-            self.__init()
+            self.init()
         return self._isDefault
     #----------------------------------------------------------------------
     @property
@@ -540,13 +540,14 @@ class AGSService(BaseServer):
                initialize - fills all the properties at object creation is
                             true
         """
+        super(AGSService, self).__init__(url,connection, initialize)
         self._url = url
         self._currentURL = url
         self._con = connection
         if initialize:
-            self.__init(connection)
+            self.init(connection)
     #----------------------------------------------------------------------
-    def __init(self, connection=None):
+    def init(self, connection=None):
         """ populates server admin information """
         params = {
             "f" : "json"
@@ -577,12 +578,12 @@ class AGSService(BaseServer):
     #----------------------------------------------------------------------
     def refreshProperties(self):
         """refreshes the object's values by re-querying the service"""
-        self.__init()
+        self.init()
     #----------------------------------------------------------------------
     def __str__(self):
         """returns a string of the object"""
         if self._json is None:
-            self.__init()
+            self.init()
             return self._json
         else:
             val = {"serviceName": self._serviceName,
@@ -620,59 +621,59 @@ class AGSService(BaseServer):
     def jsonProperties(self):
         """returns the jsonProperties"""
         if self._jsonProperties is None:
-            self.__init()
+            self.init()
         return self._jsonProperties
     #----------------------------------------------------------------------
     @property
     def frameworkProperties(self):
         """returns the framework properties for an AGS instance"""
         if self._frameworkProperties is None:
-            self.__init()
+            self.init()
         return self._frameworkProperties
     #----------------------------------------------------------------------
     @property
     def portalProperties(self):
         """returns the service's portal properties"""
         if self._portalProperties is None:
-            self.__init()
+            self.init()
         return self._portalProperties
     #----------------------------------------------------------------------
     @property
     def interceptor(self):
         """returns the interceptor property"""
         if self._interceptor is None:
-            self.__init()
+            self.init()
         return self._interceptor
     #----------------------------------------------------------------------
     @property
     def provider(self):
         """returns the provider for the service"""
         if self._provider is None:
-            self.__init()
+            self.init()
         return self._provider
     #----------------------------------------------------------------------
     @property
     def recycleInterval(self):
         if self._recycleInterval is None:
-            self.__init()
+            self.init()
         return self._recycleInterval
     #----------------------------------------------------------------------
     @property
     def instancesPerContainer(self):
         if self._instancesPerContainer is None:
-            self.__init()
+            self.init()
         return self._instancesPerContainer
     #----------------------------------------------------------------------
     @property
     def maxWaitTime(self):
         if self._maxWaitTime is None:
-            self.__init()
+            self.init()
         return self._maxWaitTime
     #----------------------------------------------------------------------
     @property
     def extensions(self):
         if self._extensions is None:
-            self.__init()
+            self.init()
         return self._extensions
     #----------------------------------------------------------------------
     def modifyExtensions(self,
@@ -687,133 +688,133 @@ class AGSService(BaseServer):
             self._extensions = extensionObjects
             res = self.edit(str(self))
             self._json = None
-            self.__init()
+            self.init()
             return res
     #----------------------------------------------------------------------
     @property
     def minInstancesPerNode(self):
         if self._minInstancesPerNode is None:
-            self.__init()
+            self.init()
         return self._minInstancesPerNode
     #----------------------------------------------------------------------
     @property
     def maxIdleTime(self):
         if self._maxIdleTime is None:
-            self.__init()
+            self.init()
         return self._maxIdleTime
     #----------------------------------------------------------------------
     @property
     def maxUsageTime(self):
         if self._maxUsageTime is None:
-            self.__init()
+            self.init()
         return self._maxUsageTime
     #----------------------------------------------------------------------
     @property
     def allowedUploadFileTypes(self):
         if self._allowedUploadFileTypes is None:
-            self.__init()
+            self.init()
         return self._allowedUploadFileTypes
     #----------------------------------------------------------------------
     @property
     def datasets(self):
         if self._datasets is None:
-            self.__init()
+            self.init()
         return self._datasets
     #----------------------------------------------------------------------
     @property
     def properties(self):
         if self._properties is None:
-            self.__init()
+            self.init()
         return self._properties
     #----------------------------------------------------------------------
     @property
     def recycleStartTime(self):
         if self._recycleStartTime is None:
-            self.__init()
+            self.init()
         return self._recycleStartTime
     #----------------------------------------------------------------------
     @property
     def clusterName(self):
         if self._clusterName is None:
-            self.__init()
+            self.init()
         return self._clusterName
     #----------------------------------------------------------------------
     @property
     def description(self):
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def isDefault(self):
         if self._isDefault is None:
-            self.__init()
+            self.init()
         return self._isDefault
     #----------------------------------------------------------------------
     @property
     def type(self):
         if self._type is None:
-            self.__init()
+            self.init()
         return self._type
     #----------------------------------------------------------------------
     @property
     def maxUploadFileSize(self):
         if self._maxUploadFileSize is None:
-            self.__init()
+            self.init()
         return self._maxUploadFileSize
     #----------------------------------------------------------------------
     @property
     def keepAliveInterval(self):
         if self._keepAliveInterval is None:
-            self.__init()
+            self.init()
         return self._keepAliveInterval
     #----------------------------------------------------------------------
     @property
     def maxInstancesPerNode(self):
         if self._maxInstancesPerNode is None:
-            self.__init()
+            self.init()
         return self._maxInstancesPerNode
     #----------------------------------------------------------------------
     @property
     def private(self):
         if self._private is None:
-            self.__init()
+            self.init()
         return self._private
     #----------------------------------------------------------------------
     @property
     def maxStartupTime(self):
         if self._maxStartupTime is None:
-            self.__init()
+            self.init()
         return self._maxStartupTime
     #----------------------------------------------------------------------
     @property
     def loadBalancing(self):
         if self._loadBalancing is None:
-            self.__init()
+            self.init()
         return self._loadBalancing
     #----------------------------------------------------------------------
     @property
     def configuredState(self):
         if self._configuredState is None:
-            self.__init()
+            self.init()
         return self._configuredState
     #----------------------------------------------------------------------
     @property
     def capabilities(self):
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     #----------------------------------------------------------------------
     @property
     def isolationLevel(self):
         if self._isolationLevel is None:
-            self.__init()
+            self.init()
         return self._isolationLevel
     #----------------------------------------------------------------------
     @property
     def serviceName(self):
         if self._serviceName is None:
-            self.__init()
+            self.init()
         return self._serviceName
     #----------------------------------------------------------------------
     def start_service(self):

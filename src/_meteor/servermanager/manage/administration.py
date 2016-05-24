@@ -5,7 +5,7 @@
 """
 from __future__ import absolute_import
 import json
-from .._base import BaseServer
+from ...common._base import BaseServer
 from . import _machines, _clusters
 from . import _data, _info
 from . import _kml, _logs
@@ -37,19 +37,10 @@ class AGSAdministration(BaseServer):
     _resources = None
     _fullVersion = None
     #----------------------------------------------------------------------
-    def __init__(self, connection, url,
-                 initialize=False):
-        """Constructor"""
-        super(AGSAdministration, self).__init__(connection,url, initialize)
-        if url.lower().endswith('/admin') == False:
-            url = "%s/admin" % url
-        self._url = url
-        self._con = connection
-        if initialize:
-            self.__init(connection=connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
+    def init(self, connection=None):
         """ populates server admin information """
+        if self._url.lower().endswith('/admin') == False:
+            self._url = "%s/admin" % self._url
         params = {
             "f": "json"
             }
@@ -61,6 +52,7 @@ class AGSAdministration(BaseServer):
                                       params=params)
         self._json = json.dumps(json_dict)
         self._json_dict = json_dict
+        missing = {}
         attributes = [attr for attr in dir(self)
                     if not attr.startswith('__') and \
                     not attr.startswith('_')]
@@ -69,34 +61,36 @@ class AGSAdministration(BaseServer):
                 setattr(self, "_"+ k, json_dict[k])
             else:
                 setattr(self, k, v)
+                missing[k] = v
             del k, v
+        self.__dict__.update(missing)
     #----------------------------------------------------------------------
     @property
     def acceptLanguage(self):
         """returns the accepted lanaguage"""
         if self._acceptLanguage is None:
-            self.__init()
+            self.init()
         return self._acceptLanguage
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         """returns the current version"""
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def resources(self):
         """returns the resources on the server"""
         if self._resources is None:
-            self.__init()
+            self.init()
         return self._resources
     #----------------------------------------------------------------------
     @property
     def fullVersion(self):
         """returns the full version of the arcgis server software"""
         if self._fullVersion is None:
-            self.__init()
+            self.init()
         return self._fullVersion
     #----------------------------------------------------------------------
     def createSite(self,
@@ -276,9 +270,9 @@ class AGSAdministration(BaseServer):
     def machines(self):
         """gets a reference to the machines object"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("machines"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "machines" in self.resources:
             url = self._url + "/machines"
             return _machines.Machines(url,
                                       connection=self._con,
@@ -290,9 +284,9 @@ class AGSAdministration(BaseServer):
     def data(self):
         """returns the reference to the data functions as a class"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("data"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "data" in self.resources:
             url = self._url + "/data"
             return _data.Data(url=url,
                               connection=self._con,
@@ -306,7 +300,7 @@ class AGSAdministration(BaseServer):
         A read-only resource that returns meta information about the server
         """
         if self._resources is None:
-            self.__init()
+            self.init()
         url = self._url + "/info"
         return _info.Info(url=url,
                           connection=self._con,
@@ -316,9 +310,9 @@ class AGSAdministration(BaseServer):
     def clusters(self):
         """returns the clusters functions if supported in resources"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("clusters"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "clusters" in self.resources:
             url = self._url + "/clusters"
             return _clusters.Cluster(url=url,
                                      connection=self._con,
@@ -333,9 +327,9 @@ class AGSAdministration(BaseServer):
         admin information about services and folders.
         """
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("services"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "services" in self.resources:
             url = self._url + "/services"
             return _services.Services(url=url,
                                       connection=self._con,
@@ -350,9 +344,9 @@ class AGSAdministration(BaseServer):
         admin information about the usagereports.
         """
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("usagereports"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "usagereports" in self.resources:
             url = self._url + "/usagereports"
             return _usagereports.UsageReports(url=url,
                                               connection=self._con,
@@ -372,9 +366,9 @@ class AGSAdministration(BaseServer):
     def logs(self):
         """returns an object to work with the site logs"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("logs"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "logs" in self.resources:
             url = self._url + "/logs"
             return _logs.Log(url=url,
                              connection=self._con,
@@ -386,9 +380,9 @@ class AGSAdministration(BaseServer):
     def security(self):
         """returns an object to work with the site security"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("security"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "security" in self.resources:
             url = self._url + "/security"
             return _security.Security(url=url,
                                       connection=self._con,
@@ -400,9 +394,9 @@ class AGSAdministration(BaseServer):
     def system(self):
         """returns an object to work with the site system"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("system"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "system" in self.resources:
             url = self._url + "/system"
             return _system.System(url=url,
                                   connection=self._con,
@@ -414,9 +408,9 @@ class AGSAdministration(BaseServer):
     def uploads(self):
         """returns an object to work with the site uploads"""
         if self._resources is None:
-            self.__init()
-        if isinstance(self._resources, dict) and \
-           self._resources.has_key("uploads"):
+            self.init()
+        if isinstance(self.resources, list) and \
+           "uploads" in self.resources:
             url = self._url + "/uploads"
             return _uploads.Uploads(url=url,
                                     connection=self._con,

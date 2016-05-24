@@ -8,10 +8,10 @@ from ...common.packages.six.moves.urllib_parse import urlparse
 from ...services.geoprocessing._geoprocessing import GPService
 import json
 from ...services import *
-
+from ...common._base import BaseServer
 __all__ = ['Catalog']
 ########################################################################
-class Catalog(object):
+class Catalog(BaseServer):
     """This object represents an ArcGIS Server instance"""
     _url = None
     _con = None
@@ -28,6 +28,7 @@ class Catalog(object):
                  connection,
                  initialize=False):
         """Constructor"""
+        super(Catalog, self).__init__(url, connection,initialize)
         self._url = self._validateurl(url=url)
         self._con = connection
         self._location = self._url
@@ -59,7 +60,7 @@ class Catalog(object):
         if connection is None:
             connection = self._con
         missing = {}
-        json_dict = connection.get(url=url,params=params)
+        json_dict = connection.get(path_or_url=url, params=params)
         self._json_dict = json_dict
         self._json = json.dumps(json_dict)
         attributes = [attr for attr in dir(self)
@@ -73,7 +74,7 @@ class Catalog(object):
             else:
                 missing[k] = v
                 setattr(self, k,v)
-        json_dict = connection.get(url=self.root,
+        json_dict = connection.get(path_or_url=self.root,
                                  params=params)
         for k,v in json_dict.items():
             if k == 'folders':
@@ -89,29 +90,19 @@ class Catalog(object):
     @property
     def admin(self):
         """points to the adminstrative side of ArcGIS Server"""
-        from ..manage import AGSAdministration
-        return AGSAdministration(url=self._adminUrl,
-                                 connection=self._con,
-                                 initialize=False)
+        if self._con.security_method != "ANONYMOUS" or \
+           self._con.is_logged_in() == False:
+            from ..manage import AGSAdministration
+            return AGSAdministration(url=self._adminUrl,
+                                     connection=self._con,
+                                     initialize=False)
+        else:
+            return None
     #----------------------------------------------------------------------
     @property
     def location(self):
         """returns the current url position in the server folder structure"""
         return self._location
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as raw string"""
-        if self._json is None:
-            self.init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """iterates through json and returns values as [key, value]"""
-        if self._json_dict is None:
-            self._json_dict = {}
-            self.init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
@@ -121,19 +112,19 @@ class Catalog(object):
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
-    def self(self):
+    def user(self):
         """gets the logged in user"""
         params = {"f" : "json"}
         url = "%s/self" % self.root.replace("/services", "")
-        return self._con.get(url=url,
+        return self._con.get(path_or_url=url,
                          params=params)
     #----------------------------------------------------------------------
     @property
     def info(self):
-        """gets the logged in user"""
+        """gets the site's information"""
         params = {"f" : "json"}
         url = "%s/info" % self.root.replace("/services", "")
-        return self._con.get(url=url,
+        return self._con.get(path_or_url=url,
                              params=params)
     #----------------------------------------------------------------------
     @property

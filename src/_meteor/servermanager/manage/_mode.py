@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
-import json
+from ...common._base import BaseServer
 
 class Mode(BaseServer):
     """
@@ -25,40 +24,22 @@ class Mode(BaseServer):
                  connection,
                  initialize=False):
         """Constructor"""
+        super(Mode, self).__init__(url=url,
+                                   connection=connection,
+                                   initialize=initialize)
         if url.lower().endswith('/mode'):
             self._url = url
         else:
             self._url = url + "/mode"
         self._con = connection
         if initialize:
-            self.__init(connection)
-    #----------------------------------------------------------------------
-    def __init(self, connection=None):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        if connection:
-            json_dict = connection.get(path_or_url=self._url,
-                                       params=params)
-        else:
-            json_dict = self._con.get(path_or_url=self._url, params=params)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k,v)
-            del k,v
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def siteMode(self):
         """The current mode of the site. Response can be READ_ONLY or EDITABLE."""
         if self._siteMode is None:
-            self.__init()
+            self.init()
         return self._siteMode
     #----------------------------------------------------------------------
     @property
@@ -66,12 +47,12 @@ class Mode(BaseServer):
         """Whether the site configuration files will be copied to the local
         repository upon switching to READ_ONLY. Response can be true or false."""
         if self._copyConfigLocal is None:
-            self.__init()
+            self.init()
         return self._copyConfigLocal
     #----------------------------------------------------------------------
     @property
     def lastModified(self):
         """Time stamp indicating the last time the site mode was modified."""
         if self._lastModified is None:
-            self.__init()
+            self.init()
         return self._lastModified

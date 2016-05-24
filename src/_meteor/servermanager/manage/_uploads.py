@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._base import BaseServer
+from ...common._base import BaseServer
 from ...common.packages.six.moves.urllib_parse import urlparse
-import os
 ########################################################################
 class Uploads(BaseServer):
     """
@@ -20,6 +19,8 @@ class Uploads(BaseServer):
     def __init__(self, url, connection,
                  initialize=False):
         """Constructor"""
+        super(Uploads, self).__init__(url=url,
+                                      connection=connection)
         if url.lower().find("uploads") < -1:
             self._url = url + "/uploads"
         else:
