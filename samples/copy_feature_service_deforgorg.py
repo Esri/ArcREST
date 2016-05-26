@@ -14,7 +14,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
@@ -29,6 +29,7 @@ def main():
     proxy_port = None
     proxy_url = None    
     
+    # Info for the organization that currently houses the item.
     securityinfoSource = {}
     securityinfoSource['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
     securityinfoSource['username'] = ""
@@ -43,6 +44,7 @@ def main():
     securityinfoSource['client_id'] = None
     securityinfoSource['secret_id'] = None   
     
+    # Info for the organization that the item will be copied to.
     securityinfoTarget = {}
     securityinfoTarget['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
     securityinfoTarget['username'] = ""
@@ -166,8 +168,8 @@ def main():
             userTarget = adminTarget.content.users.user()
             
             newServiceResult = userTarget.createService(createServiceParameter=createSerParams)
-            print newServiceResult
-            item = adminTarget.content.getItem(itemId=newServiceResult['itemId']).userItem
+            print(newServiceResult)
+            item = adminTarget.content.getItem(itemId=newServiceResult.id).userItem
           
                  
             params = arcrest.manageorg.ItemParameter()
@@ -191,12 +193,12 @@ def main():
                                                 metadata=None,
                                                 text=None)
             
-            print updateItemResults
+            print(updateItemResults)
                     
             if itemSource.protected:
-                print item.protect()
+                print(item.protect())
             
-            adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult['encodedServiceURL'], securityHandler=shhTarget.securityhandler)
+            adminNewFS = arcrest.hostedservice.AdminFeatureService(url=newServiceResult.url, securityHandler=shhTarget.securityhandler)
             adminExistFS = fs.administration
             jsdic = {}
             exJson = adminExistFS.json
@@ -221,7 +223,7 @@ def main():
                     if 'tableName' in k['adminLayerInfo']:
                         k['adminLayerInfo'].pop('tableName',None)            
             res=adminNewFS.addToDefinition(json_dict=jsdic)
-            print res
+            print(res)
             
             
         if fs.editorTrackingInfo is not None:
@@ -232,13 +234,13 @@ def main():
             json_dict['editorTrackingInfo']['allowOthersToUpdate'] =  fs.editorTrackingInfo['allowOthersToUpdate']
             json_dict['editorTrackingInfo']['enableOwnershipAccessControl'] = fs.editorTrackingInfo['enableOwnershipAccessControl']
             res = adminNewFS.updateDefinition(json_dict=json_dict)
-            print res   
+            print(res)
      
     except:
         line, filename, synerror = trace()
-        print "error on line: %s" % line
-        print "error in file name: %s" % filename
-        print "with error message: %s" % synerror
+        print("error on line: %s" % line)
+        print("error in file name: %s" % filename)
+        print("with error message: %s" % synerror)
         
 if __name__ == "__main__":
     main()
