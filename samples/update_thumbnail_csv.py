@@ -75,7 +75,6 @@ def main():
 
         portalAdmin = arcrest.manageorg.Administration(securityHandler=agolSH)
         content = portalAdmin.content
-        adminusercontent = content.usercontent()
 
         with open(configFiles, 'rb') as csvfile:
 
@@ -83,32 +82,29 @@ def main():
                 if not 'itemid' in row:
                     print "itemID could not be found if table"
                     return
+
                 itemid = row['itemid']
                 item = content.getItem(itemid)
                 itemParams = arcrest.manageorg.ItemParameter()
-
-
 
                 if 'thumbnail' in row:
                     print "%s to be applied to thumbnail of %s" % (row['thumbnail'],itemid )
                     image = os.path.join(imageFolder,row['thumbnail'])
                     if os.path.isfile(image):
-
                         itemParams.thumbnail = image
-
                     else:
                         print "image %s could not be located" % row['thumbnail']
+
                 if 'largethumbnail' in row:
                     print "%s to be applied to largethumbnail of %s" % (row['largethumbnail'],itemid )
                     largeimage = os.path.join(imageFolder,row['largethumbnail'])
                     if os.path.isfile(largeimage):
                         itemParams.largeThumbnail = largeimage
-
                     else:
                         print "image %s could not be located" % row['largethumbnail']
-                print adminusercontent.updateItem(itemId = itemid,
-                                                updateItemParameters=itemParams,
-                                                folderId=item.ownerFolder)
+
+                print(item.userItem.updateItem(itemParameters=itemParams))
+
     except:
         line, filename, synerror = trace()
         print "error on line: %s" % line
