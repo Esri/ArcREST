@@ -195,9 +195,9 @@ class GeometryFilter(BaseFilter):
         elif arcpyFound :
             wkid = None
             wkt = None
-            if hasattr(geometry, 'spatialReference' and \
+            if (hasattr(geometry, 'spatialReference') and \
                        geometry.spatialReference is not None):
-                if hasattr(geometry.spatialReference, 'factoryCode' and \
+                if (hasattr(geometry.spatialReference, 'factoryCode') and \
                             geometry.spatialReference.factoryCode is not None):
                     wkid = geometry.spatialReference.factoryCode
                 else:
