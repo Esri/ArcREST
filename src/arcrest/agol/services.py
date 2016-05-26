@@ -1514,6 +1514,29 @@ class FeatureLayer(abstract.BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def getAttachment(self, oid, attachment_id, out_folder=None):
+        """
+        downloads a feature's attachment.
+
+        Inputs:
+           oid - object id of the feature
+           attachment_id - ID of the attachment.  Should be an integer.
+           out_folder - save path of the file
+        Output:
+           string - full path of the file
+        """
+        attachments = self.listAttachments(oid=oid)
+        if "attachmentInfos" in attachments:
+            for attachment in attachments['attachmentInfos']:
+                if "id" in attachment and \
+                   attachment['id'] == attachment_id:
+                    url = self._url + "/%s/attachments/%s" % (oid, attachment_id)
+                    return self._get(url=url, param_dict={"f":'json'},
+                                     securityHandler=self._securityHandler,
+                                     out_folder=out_folder,
+                                     file_name=attachment['name'])
+        return None
+    #----------------------------------------------------------------------
     def create_fc_template(self, out_path, out_name):
         """creates a featureclass template on local disk"""
         fields = self.fields
@@ -1555,7 +1578,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
               groupByFieldsForStatistics=None,
               statisticFilter=None,
               resultOffset=None,
-              resultRecordCount=None,                  
+              resultRecordCount=None,
               out_fc=None,
               objectIds=None,
               distance=None,
@@ -1577,24 +1600,24 @@ class FeatureLayer(abstract.BaseAGOLClass):
             Inputs:
                 where - the selection sql statement
                 out_fields - the attribute fields to return
-                objectIds -  The object IDs of this layer or table to be 
+                objectIds -  The object IDs of this layer or table to be
                             queried.
-                distance - The buffer distance for the input geometries. 
-                          The distance unit is specified by units. For 
-                          example, if the distance is 100, the query 
+                distance - The buffer distance for the input geometries.
+                          The distance unit is specified by units. For
+                          example, if the distance is 100, the query
                           geometry is a point, units is set to meters, and
-                          all points within 100 meters of the point are 
+                          all points within 100 meters of the point are
                           returned.
-                units - The unit for calculating the buffer distance. If 
+                units - The unit for calculating the buffer distance. If
                         unit is not specified, the unit is derived from the
                         geometry spatial reference. If the geometry spatial
-                        reference is not specified, the unit is derived 
+                        reference is not specified, the unit is derived
                         from the feature service data spatial reference.
-                        This parameter only applies if 
+                        This parameter only applies if
                         supportsQueryWithDistance is true.
                         Values: esriSRUnit_Meter | esriSRUnit_StatuteMile |
-                        esriSRUnit_Foot | esriSRUnit_Kilometer | 
-                        esriSRUnit_NauticalMile | esriSRUnit_USNauticalMile 
+                        esriSRUnit_Foot | esriSRUnit_Kilometer |
+                        esriSRUnit_NauticalMile | esriSRUnit_USNauticalMile
                 timeFilter - a TimeFilter object where either the start time
                             or start and end time are defined to limit the
                             search results for a given time.  The values in
@@ -1604,89 +1627,89 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 geometryFilter - a GeometryFilter object to parse down a given
                                query by another spatial dataset.
                 maxAllowableOffset - This option can be used to specify the
-                                     maxAllowableOffset to be used for 
-                                     generalizing geometries returned by 
+                                     maxAllowableOffset to be used for
+                                     generalizing geometries returned by
                                      the query operation.
                                      The maxAllowableOffset is in the units
-                                     of outSR. If outSR is not specified, 
+                                     of outSR. If outSR is not specified,
                                      maxAllowableOffset is assumed to be in
-                                     the unit of the spatial reference of 
+                                     the unit of the spatial reference of
                                      the map.
                 outSR - The spatial reference of the returned geometry.
                 geometryPrecision -  This option can be used to specify the
-                                     number of decimal places in the 
-                                     response geometries returned by the 
+                                     number of decimal places in the
+                                     response geometries returned by the
                                      Query operation.
                 gdbVersion - Geodatabase version to query
                 returnDistinctValues -  If true, it returns distinct values
-                                        based on the fields specified in 
-                                        outFields. This parameter applies 
-                                        only if the 
+                                        based on the fields specified in
+                                        outFields. This parameter applies
+                                        only if the
                                         supportsAdvancedQueries property of
                                         the layer is true.
-                returnIDsOnly -  If true, the response only includes an 
-                                 array of object IDs. Otherwise, the 
-                                 response is a feature set. The default is 
+                returnIDsOnly -  If true, the response only includes an
+                                 array of object IDs. Otherwise, the
+                                 response is a feature set. The default is
                                  false.
-                returnCountOnly -  If true, the response only includes the 
-                                   count (number of features/records) that 
+                returnCountOnly -  If true, the response only includes the
+                                   count (number of features/records) that
                                    would be returned by a query. Otherwise,
-                                   the response is a feature set. The 
+                                   the response is a feature set. The
                                    default is false. This option supersedes
-                                   the returnIdsOnly parameter. If 
+                                   the returnIdsOnly parameter. If
                                    returnCountOnly = true, the response will
                                    return both the count and the extent.
                 returnExtentOnly -  If true, the response only includes the
-                                    extent of the features that would be 
-                                    returned by the query. If 
+                                    extent of the features that would be
+                                    returned by the query. If
                                     returnCountOnly=true, the response will
-                                    return both the count and the extent. 
-                                    The default is false. This parameter 
-                                    applies only if the 
-                                    supportsReturningQueryExtent property 
+                                    return both the count and the extent.
+                                    The default is false. This parameter
+                                    applies only if the
+                                    supportsReturningQueryExtent property
                                     of the layer is true.
-                orderByFields - One or more field names on which the 
-                                features/records need to be ordered. Use 
+                orderByFields - One or more field names on which the
+                                features/records need to be ordered. Use
                                 ASC or DESC for ascending or descending,
-                                respectively, following every field to 
+                                respectively, following every field to
                                 control the ordering.
-                groupByFieldsForStatistics - One or more field names on 
-                                             which the values need to be 
-                                             grouped for calculating the 
+                groupByFieldsForStatistics - One or more field names on
+                                             which the values need to be
+                                             grouped for calculating the
                                              statistics.
                 outStatistics - The definitions for one or more field-based
                                 statistics to be calculated.
                 returnZ -  If true, Z values are included in the results if
-                           the features have Z values. Otherwise, Z values 
+                           the features have Z values. Otherwise, Z values
                            are not returned. The default is false.
-                returnM - If true, M values are included in the results if 
-                          the features have M values. Otherwise, M values 
+                returnM - If true, M values are included in the results if
+                          the features have M values. Otherwise, M values
                           are not returned. The default is false.
                 multipatchOption - This option dictates how the geometry of
                                    a multipatch feature will be returned.
-                resultOffset -  This option can be used for fetching query 
+                resultOffset -  This option can be used for fetching query
                                 results by skipping the specified number of
-                                records and starting from the next record 
+                                records and starting from the next record
                                 (that is, resultOffset + 1th).
-                resultRecordCount - This option can be used for fetching 
-                                    query results up to the 
-                                    resultRecordCount specified. When 
-                                    resultOffset is specified but this 
-                                    parameter is not, the map service 
-                                    defaults it to maxRecordCount. The 
+                resultRecordCount - This option can be used for fetching
+                                    query results up to the
+                                    resultRecordCount specified. When
+                                    resultOffset is specified but this
+                                    parameter is not, the map service
+                                    defaults it to maxRecordCount. The
                                     maximum value for this parameter is the
-                                    value of the layer's maxRecordCount 
+                                    value of the layer's maxRecordCount
                                     property.
                 quanitizationParameters - Used to project the geometry onto
-                                          a virtual grid, likely 
+                                          a virtual grid, likely
                                           representing pixels on the screen.
-                returnCentroid - Used to return the geometry centroid 
-                                 associated with each feature returned. If 
-                                 true, the result includes the geometry 
+                returnCentroid - Used to return the geometry centroid
+                                 associated with each feature returned. If
+                                 true, the result includes the geometry
                                  centroid. The default is false.
-                as_json - If true, the query will return as the raw JSON. 
+                as_json - If true, the query will return as the raw JSON.
                           The default is False.
-                returnFeatureClass - If true and arcpy is installed, the 
+                returnFeatureClass - If true and arcpy is installed, the
                                      script will attempt to save the result
                                      of the query to a feature class.
                 out_fc - only valid if returnFeatureClass is set to True.
@@ -1751,11 +1774,11 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 params[k] = v
         elif isinstance(timeFilter, dict):
             for k,v in timeFilter.items():
-                params[k] = v            
+                params[k] = v
         if geomtryFilter and \
            isinstance(geomtryFilter, GeometryFilter):
             for k,v in geomtryFilter.filter:
-                params[k] = v        
+                params[k] = v
         elif geomtryFilter and \
              isinstance(geomtryFilter, dict):
             for k,v in geomtryFilter.items():
@@ -1764,14 +1787,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
             for k,v in kwargs.items():
                 params[k] = v
                 del k,v
-        
+
         result = self._post(url=url,
                             securityHandler=self._securityHandler,
-                            param_dict=params, 
+                            param_dict=params,
                             proxy_url=self._proxy_url,
                             proxy_port=self._proxy_port)
         if 'error' in result:
-            raise ValueError(result) 
+            raise ValueError(result)
         if as_json or \
            returnCountOnly == True or \
            returnIDsOnly == True:
@@ -1780,8 +1803,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
              not returnCountOnly and \
              not returnIDsOnly:
             uid = create_uid()
-            if out_fc is None:    
-                out_fc = os.path.join(scratchGDB(), 
+            if out_fc is None:
+                out_fc = os.path.join(scratchGDB(),
                                       "a{fid}".format(fid=uid))
             text = json.dumps(result)
             temp = scratchFolder() + os.sep + uid + ".json"
@@ -1794,7 +1817,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             fc = json_to_featureclass(json_file=temp,
                                       out_fc=out_fc)
             os.remove(temp)
-            return fc            
+            return fc
         else:
             return FeatureSet.fromJSON(jsonValue=json.dumps(result))
         return result
@@ -2091,10 +2114,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
                             they should be a list of dictionary features.
               updateFeatures - The array of features to be updateded.
                                These features should be common.Feature
-                               objects or a list of dictionary formed 
+                               objects or a list of dictionary formed
                                features.
-              deleteFeatures - string of OIDs to remove from service or a 
-                               list of values.  
+              deleteFeatures - string of OIDs to remove from service or a
+                               list of values.
               gdbVersion - Geodatabase version to apply the edits.
               useGlobalIds - instead of referencing the default Object ID
                               field, the service will look at a GUID field
@@ -2109,23 +2132,23 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                   If true, the server will apply the edits
                                   only if all edits succeed. The default
                                   value is true.
-              attachments - Optional parameter which requires the layer's 
-                            supportsApplyEditsWithGlobalIds property to be 
+              attachments - Optional parameter which requires the layer's
+                            supportsApplyEditsWithGlobalIds property to be
                             true.
                             Use the attachments parameter to add, update or
-                            delete attachments. Applies only when the 
-                            useGlobalIds parameter is set to true. For 
+                            delete attachments. Applies only when the
+                            useGlobalIds parameter is set to true. For
                             adds, the globalIds of the attachments provided
-                            by the client are preserved. When useGlobalIds 
-                            is true, updates and deletes are identified by 
+                            by the client are preserved. When useGlobalIds
+                            is true, updates and deletes are identified by
                             each feature or attachment globalId rather than
                             their objectId or attachmentId.
-                            
+
                             Dictionary Format:
                             {
                             "adds": [<attachment1>, <attachment2>],
                             "updates": [<attachment1>, <attachment2>],
-                            "deletes": ["<attachmentGlobalId1>", 
+                            "deletes": ["<attachmentGlobalId1>",
                                         "<attachmentGlobalId2>"]
                             }
            Output:
@@ -2157,7 +2180,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                            default=_date_handler)
         elif len(updateFeatures) > 0 and \
              isinstance(updateFeatures[0], dict):
-            params['updates'] = json.dumps(updateFeatures, 
+            params['updates'] = json.dumps(updateFeatures,
                                            default=_date_handler)
         elif updateFeatures is None or \
              len(updateFeatures) == 0:
@@ -2174,7 +2197,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['attachments'] = ""
         else:
             params['attachments'] = attachments
-        res = self._post(url=editURL, 
+        res = self._post(url=editURL,
                           param_dict=params,
                           securityHandler=self._securityHandler,
                           proxy_port=self._proxy_port,
@@ -2215,7 +2238,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                 params['features'] = json.dumps([feature.asDictionary for feature in features],
                                                 default=_date_handler)
             elif isinstance(features[0], dict):
-                params['features'] = json.dumps(features, 
+                params['features'] = json.dumps(features,
                                                 default=_date_handler)
         elif isinstance(features, Feature):
             params['features'] = json.dumps([features.asDictionary],
