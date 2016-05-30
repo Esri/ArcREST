@@ -940,9 +940,9 @@ class Item(BaseAGOLClass):
         exports metadata to the various supported formats
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
-           inspire, iso19139, iso19139-3.2, iso19115, and default.
-           default means the value will be the default ArcGIS metadata
-           format.
+           inspire, iso19139, iso19139-3.2, iso19115, arcgis, and default.
+           default means the value will be the default metadata format
+           set in ArcGIS online.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -953,12 +953,15 @@ class Item(BaseAGOLClass):
         """
         url = "%s/info/metadata/metadata.xml" % self.root
         allowedFormats = ["fgdc", "inspire", "iso19139",
-                          "iso19139-3.2", "iso19115", "default"]
+                          "iso19139-3.2", "iso19115", "arcgis", "default"]
         if not exportFormat.lower() in allowedFormats:
             raise Exception("Invalid exportFormat")
-        params = {
-            "format" : exportFormat
-        }
+        if exportFormat.lower() == "arcgis":
+            params = {}
+        else:
+            params = {
+                "format" : exportFormat
+            }
         if output is not None:
             params['output'] = output
         if saveFolder is None:
@@ -1671,13 +1674,13 @@ class UserItem(BaseAGOLClass):
             elif key == "metadata":
                 metadata = dictItem['metadata']
                 if os.path.basename(metadata) != 'metadata.xml':
-                    tempfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
-                    if os.path.isfile(tempfile) == True:
-                        os.remove(path=tempfile)
+                    tmp = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tmp) == True:
+                        os.remove(tmp)
                     import shutil
-                    shutil.copy(metadata, tempfile)
+                    shutil.copy(metadata, tmp)
 
-                    metadata = tempfile
+                    metadata = tmp
                 files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]
