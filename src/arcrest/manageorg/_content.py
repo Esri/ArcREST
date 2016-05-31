@@ -1688,13 +1688,13 @@ class UserItem(BaseAGOLClass):
             elif key == "metadata":
                 metadata = dictItem['metadata']
                 if os.path.basename(metadata) != 'metadata.xml':
-                    tempfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
-                    if os.path.isfile(tempfile) == True:
-                        os.remove(path=tempfile)
+                    tempxmlfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tempxmlfile) == True:
+                        os.remove(tempxmlfile)
                     import shutil
-                    shutil.copy(metadata, tempfile)
+                    shutil.copy(metadata, tempxmlfile)
 
-                    metadata = tempfile
+                    metadata = tempxmlfile
                 files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]
