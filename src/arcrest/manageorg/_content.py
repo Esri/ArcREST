@@ -941,8 +941,8 @@ class Item(BaseAGOLClass):
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
            inspire, iso19139, iso19139-3.2, iso19115, and default.
-           default means the value will be the default ArcGIS metadata
-           format.
+           default means the value will be ISO 19139 Metadata
+           Implementation Specification GML3.2.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -956,6 +956,8 @@ class Item(BaseAGOLClass):
                           "iso19139-3.2", "iso19115", "default"]
         if not exportFormat.lower() in allowedFormats:
             raise Exception("Invalid exportFormat")
+        if exportFormat.lower() == "default":
+            exportFormat = ""
         params = {
             "format" : exportFormat
         }
@@ -973,6 +975,13 @@ class Item(BaseAGOLClass):
                                proxy_port=self._proxy_port,
                                out_folder=saveFolder,
                                file_name=fileName)
+            if os.path.isfile(result) == False:
+                with open(os.path.join(saveFolder, fileName), 'wb') as writer:
+                    writer.write(result)
+                    writer.flush()
+                    writer.close()
+                return os.path.join(saveFolder, fileName)
+
             return result
         else:
             return self._post(url=url,
