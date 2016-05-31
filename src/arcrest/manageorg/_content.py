@@ -1078,6 +1078,7 @@ class UserItem(BaseAGOLClass):
     __curl = None
     _privateUrl = None
     _itemControl = None
+    _origin = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1152,6 +1153,13 @@ class UserItem(BaseAGOLClass):
         if self._itemControl is None:
             self.__init()
         return self._itemControl
+    #----------------------------------------------------------------------
+    @property
+    def origin(self):
+        '''gets the property value for origin'''
+        if self._origin is None:
+            self.__init()
+        return self._origin
     #----------------------------------------------------------------------
     @property
     def extent(self):
