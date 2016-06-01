@@ -941,8 +941,9 @@ class Item(BaseAGOLClass):
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
            inspire, iso19139, iso19139-3.2, iso19115, arcgis, and default.
-           default means the value will be the default metadata format
-           set in ArcGIS online.
+           default means the value will be ISO 19139 Metadata
+           Implementation Specification GML3.2 or the default format set
+           for your ArcGIS online organizational account.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -962,6 +963,11 @@ class Item(BaseAGOLClass):
             params = {
                 "format" : exportFormat
             }
+        if exportFormat.lower() == "default":
+            exportFormat = ""
+        params = {
+            "format" : exportFormat
+        }
         if output is not None:
             params['output'] = output
         if saveFolder is None:
@@ -976,6 +982,13 @@ class Item(BaseAGOLClass):
                                proxy_port=self._proxy_port,
                                out_folder=saveFolder,
                                file_name=fileName)
+            if os.path.isfile(result) == False:
+                with open(os.path.join(saveFolder, fileName), 'wb') as writer:
+                    writer.write(result)
+                    writer.flush()
+                    writer.close()
+                return os.path.join(saveFolder, fileName)
+
             return result
         else:
             return self._post(url=url,
@@ -1072,6 +1085,7 @@ class UserItem(BaseAGOLClass):
     __curl = None
     _privateUrl = None
     _itemControl = None
+    _origin = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1146,6 +1160,13 @@ class UserItem(BaseAGOLClass):
         if self._itemControl is None:
             self.__init()
         return self._itemControl
+    #----------------------------------------------------------------------
+    @property
+    def origin(self):
+        '''gets the property value for origin'''
+        if self._origin is None:
+            self.__init()
+        return self._origin
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -1674,13 +1695,13 @@ class UserItem(BaseAGOLClass):
             elif key == "metadata":
                 metadata = dictItem['metadata']
                 if os.path.basename(metadata) != 'metadata.xml':
-                    tmp = os.path.join(tempfile.gettempdir(), "metadata.xml")
-                    if os.path.isfile(tmp) == True:
-                        os.remove(tmp)
+                    tempxmlfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tempxmlfile) == True:
+                        os.remove(tempxmlfile)
                     import shutil
-                    shutil.copy(metadata, tmp)
+                    shutil.copy(metadata, tempxmlfile)
 
-                    metadata = tmp
+                    metadata = tempxmlfile
                 files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]

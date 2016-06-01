@@ -201,6 +201,8 @@ class Portal(BaseAGOLClass):
     _appInfo = None
     _creditAssignments = None
     _updateUserProfileDisabled = None
+    _analysisLayersGroupQuery = None
+    _defaultUserCreditAssignment = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -255,17 +257,20 @@ class Portal(BaseAGOLClass):
         if 'id' in res:
             return res['id']
         return None
-    ##----------------------------------------------------------------------
-    #@property
-    #def hostingServers(self):
-        #"""returns a list of servers that host non-tile based content for a
-        #site."""
-        #return
-    ##----------------------------------------------------------------------
-    #@property
-    #def tileServers(self):
-        #""""""
-        #return
+    #----------------------------------------------------------------------
+    @property
+    def defaultUserCreditAssignment(self):
+        """gets the property value for defaultUserCreditAssignment"""
+        if self._defaultUserCreditAssignment is None:
+            self.__init()
+        return self._defaultUserCreditAssignment
+    #----------------------------------------------------------------------
+    @property
+    def analysisLayersGroupQueryt(self):
+        """gets the property value for analysisLayersGroupQuery"""
+        if self._analysisLayersGroupQuery is None:
+            self.__init()
+        return self._analysisLayersGroupQuery
     #----------------------------------------------------------------------
     @property
     def updateUserProfileDisabled(self):

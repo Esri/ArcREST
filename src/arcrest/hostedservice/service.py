@@ -1177,6 +1177,7 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
        Note, query and edit operations are not available on a layer in the
        adminstrative view.
     """
+    _supportsMultiScaleGeometry = None
     _editFieldsInfo = None
     _drawingInfo = None
     _typeIdField = None
@@ -1524,6 +1525,13 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self._type is None:
             self.__init()
         return self._type
+    #----------------------------------------------------------------------
+    @property
+    def supportsMultiScaleGeometry(self):
+        """ returns the layer's supportsMultiScaleGeometry """
+        if self._supportsMultiScaleGeometry is None:
+            self.__init()
+        return self._supportsMultiScaleGeometry
     #----------------------------------------------------------------------
     @property
     def description(self):
