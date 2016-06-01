@@ -940,9 +940,10 @@ class Item(BaseAGOLClass):
         exports metadata to the various supported formats
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
-           inspire, iso19139, iso19139-3.2, iso19115, and default.
+           inspire, iso19139, iso19139-3.2, iso19115, arcgis, and default.
            default means the value will be ISO 19139 Metadata
-           Implementation Specification GML3.2.
+           Implementation Specification GML3.2 or the default format set
+           for your ArcGIS online organizational account.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -953,9 +954,15 @@ class Item(BaseAGOLClass):
         """
         url = "%s/info/metadata/metadata.xml" % self.root
         allowedFormats = ["fgdc", "inspire", "iso19139",
-                          "iso19139-3.2", "iso19115", "default"]
+                          "iso19139-3.2", "iso19115", "arcgis", "default"]
         if not exportFormat.lower() in allowedFormats:
             raise Exception("Invalid exportFormat")
+        if exportFormat.lower() == "arcgis":
+            params = {}
+        else:
+            params = {
+                "format" : exportFormat
+            }
         if exportFormat.lower() == "default":
             exportFormat = ""
         params = {
