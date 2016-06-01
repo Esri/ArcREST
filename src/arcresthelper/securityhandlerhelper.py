@@ -104,7 +104,7 @@ class securityhandlerhelper(object):
     _client_id = None
     _secret_id = None
     _is_portal = False
-    _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI', "ArcGIS"]
+    _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI', "ArcGIS", "AGS"]
     _valid = None
     _message = None
     
@@ -274,11 +274,22 @@ class securityhandlerhelper(object):
                                                                              proxy_port=self._proxy_port)
 
                         self._message = "OAuth security handler created"
+                elif str(securityinfo['security_type']).upper() == 'AGS'.upper():
+                    if self._username is None or self._username == '' or \
+                       self._password is None or self._password == '':
+                        self._message = "Username and password required for ArcGIS"
+                        self._valid = False
+                    else:
+                        self._securityHandler = security.AGSTokenSecurityHandler(username=self._username,
+                                                                                 password=self._password,
+                                                                                 org_url=self._org_url,
+                                                                                 proxy_url=self._proxy_url,
+                                                                                 proxy_port=self._proxy_port)
+                        self._message = "AGS security handler created"
                 else:
                     print ("No valid security type set")
                     self._message = "No valid security type set"
-                if self._securityHandler is not None:
-
+                if self._securityHandler is not None and str(securityinfo['security_type']).upper() != 'AGS'.upper():
                     admin = Administration(url=self._org_url,
                                            securityHandler=self._securityHandler)
 
