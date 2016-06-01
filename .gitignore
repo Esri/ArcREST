@@ -230,3 +230,7 @@ src/service_monitor
 *.pyc
 error.txt
 /src/setup - Copy.py
+
+
+#pycharm
+.idea/

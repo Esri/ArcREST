@@ -27,7 +27,7 @@ from ..packages.six.moves.urllib import request
 from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
 ########################################################################
-__version__ = "3.5.5"
+__version__ = "3.5.6"
 
 ########################################################################
 class RedirectHandler(request.HTTPRedirectHandler):
