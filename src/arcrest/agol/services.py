@@ -1770,14 +1770,14 @@ class FeatureLayer(abstract.BaseAGOLClass):
             params['units'] = units
         if timeFilter and \
            isinstance(timeFilter, TimeFilter):
-            for k,v in timeFilter.filter:
+            for k,v in timeFilter.filter.items():
                 params[k] = v
         elif isinstance(timeFilter, dict):
             for k,v in timeFilter.items():
                 params[k] = v
         if geomtryFilter and \
            isinstance(geomtryFilter, GeometryFilter):
-            for k,v in geomtryFilter.filter:
+            for k,v in geomtryFilter.filter.items():
                 params[k] = v
         elif geomtryFilter and \
              isinstance(geomtryFilter, dict):
