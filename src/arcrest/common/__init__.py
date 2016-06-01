@@ -5,4 +5,4 @@ from . import geometry
 from . import filters
 from . import servicedef
 from . import find
-__version__ = "3.5.5"
+__version__ = "3.5.6"

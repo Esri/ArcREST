@@ -11,4 +11,4 @@ from ._mobileservice import MobileService, MobileServiceLayer
 from ._geodataservice import GeoDataService
 from ._geocodeservice import GeocodeService
 from .server import Server as AGSServer
-__version__ = "3.5.5"
+__version__ = "3.5.6"
