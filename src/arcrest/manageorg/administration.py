@@ -262,6 +262,7 @@ class Administration(BaseAGOLClass):
                         proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
+    @property
     def hostingServers(self):
         """
           Returns the objects to manage site's hosted services. It returns

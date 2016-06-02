@@ -203,6 +203,7 @@ class Portal(BaseAGOLClass):
     _updateUserProfileDisabled = None
     _analysisLayersGroupQuery = None
     _defaultUserCreditAssignment = None
+    _analysisLayersGroupQuery = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -239,6 +240,7 @@ class Portal(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
+                setattr(self, k, v)
                 print( k, " - attribute not implemented in Portal class.")
     #----------------------------------------------------------------------
     def _findPortalId(self):
@@ -257,6 +259,11 @@ class Portal(BaseAGOLClass):
         if 'id' in res:
             return res['id']
         return None
+    @property
+    def analysisLayersGroupQuery(self):
+        if self._analysisLayersGroupQuery is None:
+            self.__init()
+        return self._analysisLayersGroupQuery
     #----------------------------------------------------------------------
     @property
     def defaultUserCreditAssignment(self):

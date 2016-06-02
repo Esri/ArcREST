@@ -3029,7 +3029,10 @@ class Group(BaseAGOLClass):
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
-        self._url = "%s/%s" % (contentURL, groupId)
+        if contentURL.find(groupId) < 0:
+            self._url = "%s/%s" % (contentURL, groupId)
+        else:
+            self._url = contentURL
         self._groupId = groupId
         self._contentURL = contentURL
         self._securityHandler = securityHandler
@@ -3059,7 +3062,7 @@ class Group(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print(k, " - attribute not implemented in Content.Groups class.")
+                setattr(self, k, v)
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -3110,7 +3113,10 @@ class Group(BaseAGOLClass):
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        gURL = self.__assembleURL(self._contentURL, self._groupId)
+        split_count = self._url.lower().find("/content/")
+        len_count = len('/content/')
+        gURL = self._url[:self._url.lower().find("/content/")] + \
+            "/community/" + self._url[split_count+ len_count:]#self.__assembleURL(self._contentURL, self._groupId)
 
         return CommunityGroup(url=gURL,
                               securityHandler=self._securityHandler,
