@@ -1285,6 +1285,7 @@ class User(BaseAGOLClass):
     _privacy = None
     _defaultGroupId = None
     _organization = None
+    _roleid = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1529,6 +1530,12 @@ class User(BaseAGOLClass):
         if self._region is None:
             self.__init()
         return self._region
+    @property
+    def roleid(self):
+        '''gets the roleid value'''
+        if self._roleid is None:
+            self.__init()
+        return self._roleid
     #----------------------------------------------------------------------
     @property
     def modified(self):
