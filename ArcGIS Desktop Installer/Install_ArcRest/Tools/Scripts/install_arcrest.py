@@ -1,8 +1,4 @@
 from __future__ import print_function
-# Esri start of added imports
-import sys, os, arcpy
-# Esri end of added imports
-
 import os
 import sys
 import arcpy
