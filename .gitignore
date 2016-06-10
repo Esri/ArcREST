@@ -237,3 +237,4 @@ error.txt
 #PYPI credential file
 .pypirc
 *.pypirc
+*.pypirc
