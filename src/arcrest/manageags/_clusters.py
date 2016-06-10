@@ -183,7 +183,7 @@ class Cluster(BaseAGSServer):
     @property
     def clusters(self):
         """returns the cluster object for each server"""
-        if self._clusters is None:
+        if self._clusters is not None:
             self.__init()
             Cs = []
             for c in self._clusters:
