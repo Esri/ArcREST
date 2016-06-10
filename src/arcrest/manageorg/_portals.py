@@ -1112,6 +1112,9 @@ class Portal(BaseAGOLClass):
         }
         if isinstance(updatePortalParameters, parameters.PortalParameters):
             params.update(updatePortalParameters.value)
+        elif isinstance(updatePortalParameters, dict):
+            for k,v in updatePortalParameters.items():
+                params[k] = v
         else:
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
         return self._post(url=url,
