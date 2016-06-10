@@ -234,4 +234,6 @@ error.txt
 
 #pycharm
 .idea/
+#PYPI credential file
 .pypirc
+*.pypirc
