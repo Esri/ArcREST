@@ -1446,7 +1446,7 @@ class publishingtools(securityhandlerhelper):
 
 
             admin = arcrest.manageorg.Administration(securityHandler=self.securityhandler)
-            hostingServers = admin.hostingServers()
+            hostingServers = admin.hostingServers
             if len(hostingServers) == 0:
                 return ("No hosting servers can be found, if this is portal, update the settings to include a hosting server.")
 
