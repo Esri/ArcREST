@@ -11,6 +11,7 @@ try:
     arcpyFound = True
 except:
     arcpyFound = False
+from ..packages import six
 #----------------------------------------------------------------------
 def create_feature_layer(ds, sql, name="layer"):
     """ creates a feature layer object """
@@ -288,7 +289,11 @@ def _unicode_convert(obj):
                 for key, value in obj.items()}
     elif isinstance(obj, list):
         return [_unicode_convert(element) for element in obj]
-    elif isinstance(obj, unicode):
+    elif isinstance(obj, str):
+        return obj 
+    elif isinstance(obj, six.text_type):
         return obj.encode('utf-8')
+    elif isinstance(obj, six.integer_types):
+        return obj
     else:
         return obj
