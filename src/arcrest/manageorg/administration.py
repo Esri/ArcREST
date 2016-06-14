@@ -240,7 +240,8 @@ class Administration(BaseAGOLClass):
             "q" : q,
             "sortOrder" : sortOrder,
             "num" : num,
-            "start" : start
+            "start" : start,
+            'restrict' : useSecurity
         }
         if not focus is None:
             params['focus'] = focus
