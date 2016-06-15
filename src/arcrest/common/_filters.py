@@ -1,15 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import json
-from ..common.geometry import Polygon, Polyline, Point, MultiPoint
-from .._abstract.abstract import AbstractGeometry, BaseFilter
-try:
-    import arcpy
-    arcpyFound = True
-except:
-    arcpyFound = False
+from .geometry import Polygon, Polyline, Point, MultiPoint
 ########################################################################
-class StatisticFilter(BaseFilter):
+class StatisticFilter(object):
     """
     The definitions for one or more field-based statistics to be calculated
     """
@@ -58,7 +52,7 @@ class StatisticFilter(BaseFilter):
         """ returns the key/value pair of a geometry filter """
         return self._array
 ########################################################################
-class LayerDefinitionFilter(BaseFilter):
+class LayerDefinitionFilter(object):
     """
        Allows you to filter the features of individual layers in the
        query by specifying definition expressions for those layers. A
@@ -98,7 +92,7 @@ class LayerDefinitionFilter(BaseFilter):
         """ returns the filter object as a list of layer defs """
         return self._filter
 ########################################################################
-class GeometryFilter(BaseFilter):
+class GeometryFilter(object):
     """ creates a geometry filter for queries
         Inputs:
            geomObject - a common.Geometry or arcpy.Geometry object
@@ -188,38 +182,12 @@ class GeometryFilter(BaseFilter):
     @geometry.setter
     def geometry(self, geometry):
         """ sets the geometry value """
-     
-        if isinstance(geometry, AbstractGeometry):
-            self._geomObject = geometry
+
+        if isinstance(geometry, (Polygon, Point, Polyline, MultiPoint)):
+            self._geomObject = geometry.as_dict
             self._geomType = geometry.type
-        elif arcpyFound :
-            wkid = None
-            wkt = None
-            if (hasattr(geometry, 'spatialReference') and \
-                       geometry.spatialReference is not None):
-                if (hasattr(geometry.spatialReference, 'factoryCode') and \
-                            geometry.spatialReference.factoryCode is not None):
-                    wkid = geometry.spatialReference.factoryCode
-                else:
-                    wkt = geometry.spatialReference.exportToString()
-                    
-            if isinstance(geometry, arcpy.Polygon):
-                
-                self._geomObject = Polygon(geometry, wkid=wkid, wkt=wkt)
-                self._geomType = "esriGeometryPolygon"
-            elif isinstance(geometry, arcpy.Point):
-                self._geomObject = Point(geometry, wkid=wkid, wkt=wkt)
-                self._geomType = "esriGeometryPoint"
-            elif isinstance(geometry, arcpy.Polyline):
-                self._geomObject = Polyline(geometry, wkid=wkid, wkt=wkt)
-                self._geomType = "esriGeometryPolyline"
-            elif isinstance(geometry, arcpy.Multipoint):
-                self._geomObject = MultiPoint(geometry, wkid=wkid, wkt=wkt)
-                self._geomType = "esriGeometryMultipoint"
-            else:
-                raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")
         else:
-            raise AttributeError("geometry must be a common.Geometry or arcpy.Geometry type.")        
+            raise AttributeError("geometry must be a common.Geometry type.")
     #----------------------------------------------------------------------
     @property
     def filter(self):
@@ -235,7 +203,7 @@ class GeometryFilter(BaseFilter):
             val['units'] = self._units
         return val
 ########################################################################
-class TimeFilter(BaseFilter):
+class TimeFilter(object):
     """ Implements the time filter """
     _startTime = None
     _endTime = None
