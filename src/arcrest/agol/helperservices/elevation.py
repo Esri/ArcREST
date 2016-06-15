@@ -1,10 +1,8 @@
 from __future__ import absolute_import
-from ...ags._geoprocessing import *
+from ...services.geoprocessing._geoprocessing import *
 from ...common.geometry import Polygon, Polyline, Point, SpatialReference, Envelope
-from ..._abstract import abstract
-
 ########################################################################
-class elevationSync(abstract.BaseAGOLClass):
+class elevationSync(object):
     """
     These are synchronus gp tasks.
 
@@ -29,10 +27,8 @@ class elevationSync(abstract.BaseAGOLClass):
     _gpService = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 securityHandler,
-                 url=None,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection,
+                 url=None):
         """Constructor"""
         if url is None:
             self._url = "https://www.arcgis.com/sharing/rest"
@@ -40,22 +36,19 @@ class elevationSync(abstract.BaseAGOLClass):
             if url.find("/sharing/rest") == -1:
                 url = url + "/sharing/rest"
             self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
-        self.__init_url()
+        self._con = connection
+        self.__init_url(connection)
     #----------------------------------------------------------------------
-    def __init_url(self):
+    def __init_url(self, connection=None):
         """loads the information into the class"""
+        if connection is None:
+            self._con = connection
         portals_self_url = "{}/portals/self".format(self._url)
         params = {
             "f" :"json"
         }
-        res = self._get(url=portals_self_url,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
+        res = self._con.get(path_or_url=portals_self_url,
+                            params=params)
         if "helperServices" in res:
             helper_services = res.get("helperServices")
             if "elevationSync" in helper_services:
@@ -83,7 +76,7 @@ class elevationSync(abstract.BaseAGOLClass):
         return self._gpService
 
 ########################################################################
-class elevation(abstract.BaseAGOLClass):
+class elevation(object):
     """
     The Elevation Analysis services provide a group of capabilities for
     performing analytical operations against data hosted and managed by
@@ -106,10 +99,8 @@ class elevation(abstract.BaseAGOLClass):
     _gpService = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 securityHandler,
-                 url=None,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection,
+                 url=None):
         """Constructor"""
         if url is None:
             self._url = "https://www.arcgis.com/sharing/rest"
@@ -117,32 +108,27 @@ class elevation(abstract.BaseAGOLClass):
             if url.find("/sharing/rest") == -1:
                 url = url + "/sharing/rest"
             self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
-        self.__init_url()
+        self._con = connection
+        self.__init_url(connection)
     #----------------------------------------------------------------------
-    def __init_url(self):
+    def __init_url(self, connection=None):
         """loads the information into the class"""
+        if connection is None:
+            self._con = connection
         portals_self_url = "{}/portals/self".format(self._url)
         params = {
             "f" :"json"
         }
-        res = self._get(url=portals_self_url,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
+        res = self._con.get(path_or_url=portals_self_url,
+                            params=params)
         if "helperServices" in res:
             helper_services = res.get("helperServices")
             if "elevation" in helper_services:
                 analysis_service = helper_services.get("elevation")
                 if "url" in analysis_service:
                     self._analysis_url = analysis_service.get("url")
-        self._gpService = GPService(url=self._analysis_url,
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port,
+        self._gpService = GPService(connection=self._con,
+                                    url=self._analysis_url,
                                     initialize=False)
     #----------------------------------------------------------------------
     @property

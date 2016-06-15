@@ -1,20 +1,18 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from ..packages import six
-from ..packages.six.moves import urllib_parse as urlparse
-from ..security import OAuthSecurityHandler, AGOLTokenSecurityHandler, PortalTokenSecurityHandler
-from .._abstract.abstract import BaseAGOLClass
-from ._parameters import ItemParameter, BaseParameters, AnalyzeParameters, PublishCSVParameters
+from six.moves import urllib_parse as urlparse
+from ...common.util import local_time_to_online
 from ._community import Group as CommunityGroup
+from ...common._base import BasePortal
+from . import _parameters as parameters
 import json
 import os
-import mmap
 import tempfile
 import time
-from os.path import splitext, basename
+from os.path import splitext
 
 ########################################################################
-class Content(BaseAGOLClass):
+class Content(BasePortal):
     """
     The Portal Content Root operation consists of items, user and group
     content, and feature operations. It is a placeholder URI in that there
@@ -24,24 +22,19 @@ class Content(BaseAGOLClass):
     user (or a user token).
     """
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
+    _json_dict = None
     #----------------------------------------------------------------------
-    def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
+    def __init__(self,
+                 connection,
+                 url):
         """Constructor"""
+        super(Content, self).__init__(connection=connection, url=url)
         if url.lower().find("/content") < 0:
             self._url = url + "/content"
         else:
             self._url = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
     #----------------------------------------------------------------------
     def __str__(self):
         """returns object as string"""
@@ -64,9 +57,7 @@ class Content(BaseAGOLClass):
         Provides access to all user resources
         """
         return Users(url="%s/users" % self.root,
-                     securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port)
+                     connection=self._con)
     #----------------------------------------------------------------------
     def getItem(self, itemId):
         """gets the refernce to the Items class which manages content on a
@@ -74,18 +65,14 @@ class Content(BaseAGOLClass):
         """
         url = "%s/items/%s" % (self.root, itemId)
         return Item(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+                    connection=self._con)
     #----------------------------------------------------------------------
     @property
     def FeatureContent(self):
         """Feature Content class id the parent resource for feature
         operations such as Analyze and Generate."""
         return FeatureContent(url="%s/%s" % (self.root, "features"),
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)
+                              connection=self._con)
 
     #----------------------------------------------------------------------
     def group(self, groupId):
@@ -103,37 +90,28 @@ class Content(BaseAGOLClass):
         """
         url = self._url + "/groups/%s" % groupId
         return Group(groupId=groupId,
-                      contentURL=url,
-                      securityHandler=self._securityHandler,
-                      proxy_url=self._proxy_url,
-                      proxy_port=self._proxy_port)
+                     url=url,
+                     connection=self._con)
 
 ########################################################################
-class Users(BaseAGOLClass):
+class Users(BasePortal):
     """Users allows for the mangements of User content.  This is just a
     class that allows for direct access into users content.
     """
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
     _json = ""
-    _json_dict = {}
+    _json_dict = None
 
     #----------------------------------------------------------------------
     def __init__(self,
+                 connection,
                  url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
                  initalize=False):
         """Constructor"""
+        super(Users, self).__init__(connection=connection, url=url)
         self._url = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -142,42 +120,16 @@ class Users(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
-        return self._json
+        return ""
     #----------------------------------------------------------------------
     def __iter__(self):
-        #TODO Implement Iterator for users
-
         """returns properties (key/values) from the JSON response"""
         yield None
-        #if self._json_dict is None:
-            #self.__init()
-        #for k,v in self._json_dict.items():
-            #yield [k,v]
     #----------------------------------------------------------------------
-    def __getUsername(self):
+    def _getUsername(self):
         """tries to parse the user name from various objects"""
-
-        if isinstance(self._securityHandler, (AGOLTokenSecurityHandler,
-                                              PortalTokenSecurityHandler)):
-            return self._securityHandler._username
-        elif self._securityHandler is not None and \
-               hasattr(self._securityHandler, "org_url") and \
-               self._securityHandler.org_url is not None:
-            from .administration import Administration
-            user = Administration(url=self._securityHandler.org_url,
-                                  securityHandler=self._securityHandler,
-                                  proxy_url=self._proxy_url,
-                                  proxy_port=self._proxy_port).portals.portalSelf.user
-            return user['username']
-        else:
-            from .administration import Administration
-            url = self._url.lower().split('/content/')[0]
-            user = Administration(url=url,
-                                  securityHandler=self._securityHandler,
-                                  proxy_url=self._proxy_url,
-                                  proxy_port=self._proxy_port).portals.portalSelf.user
-            return user['username']
-
+        from . import Administration
+        return Administration(connection=self._con).portals.portalSelf['user']['username']
     #----------------------------------------------------------------------
     def user(self, username=None):
         """gets the user's content.  If None is passed, the current user is
@@ -187,21 +139,17 @@ class Users(BaseAGOLClass):
          username - name of the login for a given user on a site.
         """
         if username is None:
-            username = self.__getUsername()
+            username = self._getUsername()
 
         url = "%s/%s" % (self.root, username)
         return User(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port,
-                    initalize=True)
+                    connection=self._con,
+                    initalize=False)
 ########################################################################
-class Item(BaseAGOLClass):
+class Item(BasePortal):
     """represents a public view of a given item"""
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
     _json = None
     _json_dict = None
     _extent = None
@@ -251,44 +199,24 @@ class Item(BaseAGOLClass):
     _privateUrl = None
 
     #----------------------------------------------------------------------
-    def __init__(self,url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+    def __init__(self,
+                 connection,
+                 url,
                  initalize=False):
         """Constructor"""
+        super(Item, self).__init__(connection=connection,
+                                   url=url,
+                                   initalize=initalize)
+        self._url = url
+        self._con = connection
         self._curl = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
         if initalize:
-            self.__init()
+            self.init(connection=connection)
     #----------------------------------------------------------------------
-    def __init(self):
-        """loads the property data into the class"""
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._curl,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in Item class.")
-
     def orgId(self):
         '''gets the property value for orgId'''
         if self._orgId is None:
-            self.__init()
+            self.init()
         return self._orgId
 
     #----------------------------------------------------------------------
@@ -296,48 +224,48 @@ class Item(BaseAGOLClass):
     def itemType(self):
         '''gets the property value for itemType'''
         if self._itemType is None:
-            self.__init()
+            self.init()
         return self._itemType
     #----------------------------------------------------------------------
     @property
     def uploaded(self):
         '''gets the property value for uploaded'''
         if self._uploaded is None:
-            self.__init()
+            self.init()
         return self._uploaded
     #----------------------------------------------------------------------
     @property
     def lastModified(self):
         '''gets the property value for lastModified'''
         if self._lastModified is None:
-            self.__init()
+            self.init()
         return self._lastModified
     #----------------------------------------------------------------------
     @property
     def item(self):
         '''gets the property value for item'''
         if self._item is None:
-            self.__init()
+            self.init()
         return self._item
     #----------------------------------------------------------------------
     @property
     def privateUrl(self):
         '''gets the property value for privateUrl'''
         if self._privateUrl is None:
-            self.__init()
+            self.init()
         return self._privateUrl
     #----------------------------------------------------------------------
     def itemControl(self):
         '''gets the property value for itemControl'''
         if self._itemControl is None:
-            self.__init()
+            self.init()
         return self._itemControl
     #----------------------------------------------------------------------
     @property
     def extent(self):
         '''gets the property value for extent'''
         if self._extent is None:
-            self.__init()
+            self.init()
         return self._extent
 
     #----------------------------------------------------------------------
@@ -345,7 +273,7 @@ class Item(BaseAGOLClass):
     def culture(self):
         '''gets the property value for culture'''
         if self._culture is None:
-            self.__init()
+            self.init()
         return self._culture
 
     #----------------------------------------------------------------------
@@ -353,7 +281,7 @@ class Item(BaseAGOLClass):
     def owner(self):
         '''gets the property value for owner'''
         if self._owner is None:
-            self.__init()
+            self.init()
         return self._owner
 
     #----------------------------------------------------------------------
@@ -361,7 +289,7 @@ class Item(BaseAGOLClass):
     def commentsEnabled(self):
         '''gets the property value for commentsEnabled'''
         if self._commentsEnabled is None:
-            self.__init()
+            self.init()
         return self._commentsEnabled
 
     #----------------------------------------------------------------------
@@ -369,7 +297,7 @@ class Item(BaseAGOLClass):
     def guid(self):
         '''gets the property value for guid'''
         if self._guid is None:
-            self.__init()
+            self.init()
         return self._guid
 
     #----------------------------------------------------------------------
@@ -377,7 +305,7 @@ class Item(BaseAGOLClass):
     def numRatings(self):
         '''gets the property value for numRatings'''
         if self._numRatings is None:
-            self.__init()
+            self.init()
         return self._numRatings
 
     #----------------------------------------------------------------------
@@ -385,7 +313,7 @@ class Item(BaseAGOLClass):
     def numComments(self):
         '''gets the property value for numComments'''
         if self._numComments is None:
-            self.__init()
+            self.init()
         return self._numComments
 
     #----------------------------------------------------------------------
@@ -393,7 +321,7 @@ class Item(BaseAGOLClass):
     def size(self):
         '''gets the property value for size'''
         if self._size is None:
-            self.__init()
+            self.init()
         return self._size
 
     #----------------------------------------------------------------------
@@ -401,7 +329,7 @@ class Item(BaseAGOLClass):
     def appCategories(self):
         '''gets the property value for appCategories'''
         if self._appCategories is None:
-            self.__init()
+            self.init()
         return self._appCategories
 
     #----------------------------------------------------------------------
@@ -409,7 +337,7 @@ class Item(BaseAGOLClass):
     def access(self):
         '''gets the property value for access'''
         if self._access is None:
-            self.__init()
+            self.init()
         return self._access
 
     #----------------------------------------------------------------------
@@ -417,7 +345,7 @@ class Item(BaseAGOLClass):
     def title(self):
         '''gets the property value for title'''
         if self._title is None:
-            self.__init()
+            self.init()
         return self._title
 
     #----------------------------------------------------------------------
@@ -425,7 +353,7 @@ class Item(BaseAGOLClass):
     def screenshots(self):
         '''gets the property value for screenshots'''
         if self._screenshots is None:
-            self.__init()
+            self.init()
         return self._screenshots
 
     #----------------------------------------------------------------------
@@ -433,7 +361,7 @@ class Item(BaseAGOLClass):
     def id(self):
         '''gets the property value for id'''
         if self._id is None:
-            self.__init()
+            self.init()
         return self._id
 
     #----------------------------------------------------------------------
@@ -441,7 +369,7 @@ class Item(BaseAGOLClass):
     def languages(self):
         '''gets the property value for languages'''
         if self._languages is None:
-            self.__init()
+            self.init()
         return self._languages
 
     #----------------------------------------------------------------------
@@ -449,7 +377,7 @@ class Item(BaseAGOLClass):
     def snippet(self):
         '''gets the property value for snippet'''
         if self._snippet is None:
-            self.__init()
+            self.init()
         return self._snippet
 
     #----------------------------------------------------------------------
@@ -457,7 +385,7 @@ class Item(BaseAGOLClass):
     def listed(self):
         '''gets the property value for listed'''
         if self._listed is None:
-            self.__init()
+            self.init()
         return self._listed
 
     #----------------------------------------------------------------------
@@ -465,7 +393,7 @@ class Item(BaseAGOLClass):
     def largeThumbnail(self):
         '''gets the property value for largeThumbnail'''
         if self._largeThumbnail is None:
-            self.__init()
+            self.init()
         return self._largeThumbnail
 
     #----------------------------------------------------------------------
@@ -473,7 +401,7 @@ class Item(BaseAGOLClass):
     def type(self):
         '''gets the property value for type'''
         if self._type is None:
-            self.__init()
+            self.init()
         return self._type
 
     #----------------------------------------------------------------------
@@ -481,23 +409,20 @@ class Item(BaseAGOLClass):
     def thumbnail(self):
         '''gets the property value for thumbnail'''
         if self._thumbnail is None:
-            self.__init()
+            self.init()
         return self._thumbnail
     #----------------------------------------------------------------------
     def saveThumbnail(self,fileName,filePath):
         """ URL to the thumbnail used for the item """
         if self._thumbnail is None:
-            self.__init()
+            self.init()
         param_dict = {}
         if  self._thumbnail is not None:
             imgUrl = self.root + "/info/" + self._thumbnail
             onlineFileName, file_ext = splitext(self._thumbnail)
             fileNameSafe = "".join(x for x in fileName if x.isalnum()) + file_ext
-            result = self._get(url=imgUrl,
-                               param_dict=param_dict,
-                               securityHandler=self._securityHandler,
-                               proxy_url=self._proxy_url,
-                               proxy_port=self._proxy_port,
+            result = self._con.get(path_or_url=imgUrl,
+                               params=param_dict,
                                out_folder=filePath,
                                file_name=fileNameSafe)
             return result
@@ -508,7 +433,7 @@ class Item(BaseAGOLClass):
     def industries(self):
         '''gets the property value for industries'''
         if self._industries is None:
-            self.__init()
+            self.init()
         return self._industries
 
     #----------------------------------------------------------------------
@@ -516,7 +441,7 @@ class Item(BaseAGOLClass):
     def description(self):
         '''gets the property value for description'''
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
 
     #----------------------------------------------------------------------
@@ -524,7 +449,7 @@ class Item(BaseAGOLClass):
     def tags(self):
         '''gets the property value for tags'''
         if self._tags is None:
-            self.__init()
+            self.init()
         return self._tags
 
     #----------------------------------------------------------------------
@@ -532,7 +457,7 @@ class Item(BaseAGOLClass):
     def typeKeywords(self):
         '''gets the property value for typeKeywords'''
         if self._typeKeywords is None:
-            self.__init()
+            self.init()
         return self._typeKeywords
 
     #----------------------------------------------------------------------
@@ -540,7 +465,7 @@ class Item(BaseAGOLClass):
     def avgRating(self):
         '''gets the property value for avgRating'''
         if self._avgRating is None:
-            self.__init()
+            self.init()
         return self._avgRating
 
     #----------------------------------------------------------------------
@@ -548,7 +473,7 @@ class Item(BaseAGOLClass):
     def banner(self):
         '''gets the property value for banner'''
         if self._banner is None:
-            self.__init()
+            self.init()
         return self._banner
 
     #----------------------------------------------------------------------
@@ -556,7 +481,7 @@ class Item(BaseAGOLClass):
     def properties(self):
         '''gets the property value for properties'''
         if self._properties is None:
-            self.__init()
+            self.init()
         return self._properties
 
     #----------------------------------------------------------------------
@@ -564,7 +489,7 @@ class Item(BaseAGOLClass):
     def ownerFolder(self):
         '''gets the property value for ownerFolder'''
         if self._ownerFolder is None:
-            self.__init()
+            self.init()
         return self._ownerFolder
 
     #----------------------------------------------------------------------
@@ -572,7 +497,7 @@ class Item(BaseAGOLClass):
     def name(self):
         '''gets the property value for name'''
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
 
     #----------------------------------------------------------------------
@@ -580,7 +505,7 @@ class Item(BaseAGOLClass):
     def licenseInfo(self):
         '''gets the property value for licenseInfo'''
         if self._licenseInfo is None:
-            self.__init()
+            self.init()
         return self._licenseInfo
 
     #----------------------------------------------------------------------
@@ -588,7 +513,7 @@ class Item(BaseAGOLClass):
     def created(self):
         '''gets the property value for created'''
         if self._created is None:
-            self.__init()
+            self.init()
         return self._created
 
     #----------------------------------------------------------------------
@@ -596,7 +521,7 @@ class Item(BaseAGOLClass):
     def url(self):
         '''gets the property value for url'''
         if self._url is None:
-            self.__init()
+            self.init()
         return self._url
 
     #----------------------------------------------------------------------
@@ -604,7 +529,7 @@ class Item(BaseAGOLClass):
     def documentation(self):
         '''gets the property value for documentation'''
         if self._documentation is None:
-            self.__init()
+            self.init()
         return self._documentation
 
     #----------------------------------------------------------------------
@@ -612,7 +537,7 @@ class Item(BaseAGOLClass):
     def modified(self):
         '''gets the property value for modified'''
         if self._modified is None:
-            self.__init()
+            self.init()
         return self._modified
 
     #----------------------------------------------------------------------
@@ -620,7 +545,7 @@ class Item(BaseAGOLClass):
     def spatialReference(self):
         '''gets the property value for spatialReference'''
         if self._spatialReference is None:
-            self.__init()
+            self.init()
         return self._spatialReference
 
     #----------------------------------------------------------------------
@@ -628,7 +553,7 @@ class Item(BaseAGOLClass):
     def protected(self):
         '''gets the property value for protected'''
         if self._protected is None:
-            self.__init()
+            self.init()
         return self._protected
 
     #----------------------------------------------------------------------
@@ -636,7 +561,7 @@ class Item(BaseAGOLClass):
     def numViews(self):
         '''gets the property value for numViews'''
         if self._numViews is None:
-            self.__init()
+            self.init()
         return self._numViews
 
     #----------------------------------------------------------------------
@@ -644,7 +569,7 @@ class Item(BaseAGOLClass):
     def accessInformation(self):
         '''gets the property value for accessInformation'''
         if self._accessInformation is None:
-            self.__init()
+            self.init()
         return self._accessInformation
 
     #----------------------------------------------------------------------
@@ -655,7 +580,7 @@ class Item(BaseAGOLClass):
     #----------------------------------------------------------------------
     def refresh(self):
         """refreshes the item class properties"""
-        self.__init()
+        self.init()
     #----------------------------------------------------------------------
     @property
     def userItem(self):
@@ -665,23 +590,14 @@ class Item(BaseAGOLClass):
         else:
             url = "%s/users/%s/items/%s" % (self.root.split('/items/')[0], self.owner, self.id)
         return UserItem(url=url,
-                        securityHandler=self._securityHandler,
-                        proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port)
+                        connection=self._con)
 
     #----------------------------------------------------------------------
     def __str__(self):
         """returns raw JSON response as string"""
         if self._json is None:
-            self.__init()
+            self.init()
         return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """returns properties (key/values) from the JSON response"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
     #----------------------------------------------------------------------
     @property
     def groups(self):
@@ -690,11 +606,8 @@ class Item(BaseAGOLClass):
         params = {
             "f": "json",
         }
-        return self._get(url,
-                             params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                             params=params)
     #----------------------------------------------------------------------
     @property
     def rating(self):
@@ -703,11 +616,8 @@ class Item(BaseAGOLClass):
         params = {
             "f": "json",
         }
-        return self._get(url,
-                             params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                             params=params)
     #----------------------------------------------------------------------
     def itemData(self, f=None, savePath=None):
         """ returns data for an item on agol/portal
@@ -749,19 +659,14 @@ class Item(BaseAGOLClass):
                 raise AttributeError('savePath must be provided for a item of type: %s' % self.type)
             if os.path.isdir(savePath) == False:
                 os.makedirs(savePath)
-            result = self._get(url=url,
-                               param_dict=params,
-                               securityHandler=self._securityHandler,
-                               proxy_url=self._proxy_url,
-                               proxy_port=self._proxy_port,
+            result = self._con.get(path_or_url=url,
+                               params=params,
                                out_folder=savePath,
                                file_name=self.name)
             return result
         else:
-            results =  self._get(url, params,
-                                 proxy_port=self._proxy_port,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url)
+            results =  self._con.get(path_or_url=url,
+                                     params=params)
             return results
     #----------------------------------------------------------------------
     def addRating(self, rating=5.0):
@@ -775,24 +680,17 @@ class Item(BaseAGOLClass):
             "f": "json",
             "rating" : "%s" % rating
         }
-        return self._post(url,
-                             params,
-                             proxy_port=self._proxy_port,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def deleteRating(self):
-        """Removes the rating the calling user added for the specified item
-        (POST only)."""
+        """"""
         url = "%s/deleteRating" % self.root
         params = {
             "f": "json",
         }
-        return self._post(url,
-                             params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def addComment(self, comment):
         """ adds a comment to a given item.  Must be authenticated """
@@ -801,9 +699,8 @@ class Item(BaseAGOLClass):
             "f" : "json",
             "comment" : comment
         }
-        return self._post(url, params, proxy_port=self._proxy_port,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def itemComment(self, commentId):
         """ returns details of a single comment """
@@ -811,11 +708,8 @@ class Item(BaseAGOLClass):
         params = {
             "f": "json"
         }
-        return self._get(url,
-                            params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def itemComments(self):
@@ -824,11 +718,8 @@ class Item(BaseAGOLClass):
         params = {
             "f": "json"
         }
-        return self._get(url,
-                            params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def deleteComment(self, commentId):
         """ removes a comment from an Item
@@ -840,16 +731,14 @@ class Item(BaseAGOLClass):
         params = {
             "f": "json",
         }
-        return self._post(url,
-                             params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
+    #----------------------------------------------------------------------
     @property
     def sourceUrl(self):
         '''gets the property value for sourceUrl'''
         if self._sourceUrl is None:
-            self.__init()
+            self.init()
         return self._sourceUrl
     #----------------------------------------------------------------------
     def shareItem(self,
@@ -876,13 +765,10 @@ class Item(BaseAGOLClass):
         if groups != "" and groups is not None:
             params['groups'] = groups
         url = "%s/share" % self.root
-        res =  self._post(
-            url = url,
-            securityHandler=self._securityHandler,
-            param_dict=params,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
-        self.__init()
+        res =  self._con.post(
+            path_or_url = url,
+            postdata=params)
+        self.init()
         return res
     #----------------------------------------------------------------------
     def unshareItem(self, groups):
@@ -897,21 +783,15 @@ class Item(BaseAGOLClass):
             "groups" : groups
         }
         url = "%s/unshare" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url=url,
+            postdata=params)
     #----------------------------------------------------------------------
     def itemInfoFile(self):
         """  """
         url = "%s/info/iteminfo.xml" % self.root
-        xml = self._get(url=url,
-                        param_dict={},
-                        securityHandler=self._securityHandler,
-                        proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port,
+        xml = self._con.get(path_or_url=url,
+                        params={},
                         out_folder=os.environ['TEMP'],
                         file_name="iteminfo.xml")
         text = open(xml, 'rb').read()
@@ -923,11 +803,8 @@ class Item(BaseAGOLClass):
         """gets the item's package information file"""
         url = "%s/item.pkinfo" % self.root
         params = {'f' : 'json'}
-        result = self._get(url=url,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port,
+        result = self._con.get(path_or_url=url,
+                           params=params,
                            out_folder=tempfile.gettempdir())
         return result
     #----------------------------------------------------------------------
@@ -940,10 +817,9 @@ class Item(BaseAGOLClass):
         exports metadata to the various supported formats
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
-           inspire, iso19139, iso19139-3.2, iso19115, arcgis, and default.
-           default means the value will be ISO 19139 Metadata
-           Implementation Specification GML3.2 or the default format set
-           for your ArcGIS online organizational account.
+           inspire, iso19139, iso19139-3.2, iso19115, and default.
+           default means the value will be the default ArcGIS metadata
+           format.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -954,17 +830,9 @@ class Item(BaseAGOLClass):
         """
         url = "%s/info/metadata/metadata.xml" % self.root
         allowedFormats = ["fgdc", "inspire", "iso19139",
-                          "iso19139-3.2", "iso19115", "arcgis", "default"]
+                          "iso19139-3.2", "iso19115", "default"]
         if not exportFormat.lower() in allowedFormats:
             raise Exception("Invalid exportFormat")
-        if exportFormat.lower() == "arcgis":
-            params = {}
-        else:
-            params = {
-                "format" : exportFormat
-            }
-        if exportFormat.lower() == "default":
-            exportFormat = ""
         params = {
             "format" : exportFormat
         }
@@ -975,27 +843,14 @@ class Item(BaseAGOLClass):
         if fileName is None:
             fileName = "metadata.xml"
         if output is None:
-            result = self._get(url=url,
-                               param_dict=params,
-                               securityHandler=self._securityHandler,
-                               proxy_url=self._proxy_url,
-                               proxy_port=self._proxy_port,
+            result = self._con.get(path_or_url=url,
+                               params=params,
                                out_folder=saveFolder,
                                file_name=fileName)
-            if os.path.isfile(result) == False:
-                with open(os.path.join(saveFolder, fileName), 'wb') as writer:
-                    writer.write(result)
-                    writer.flush()
-                    writer.close()
-                return os.path.join(saveFolder, fileName)
-
             return result
         else:
-            return self._post(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                postdata=params)
     #----------------------------------------------------------------------
     def deleteInfo(self, infoFile="metadata/metadata.xml"):
         """
@@ -1011,10 +866,8 @@ class Item(BaseAGOLClass):
         "f" : "json",
         "infoFile" : infoFile
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def updateMetadata(self, metadataFile):
         """
@@ -1023,24 +876,20 @@ class Item(BaseAGOLClass):
         Output:
          dictionary
         """
-        ip = ItemParameter()
+        ip = parameters.ItemParameter()
         ip.metadata = metadataFile
         res = self.userItem.updateItem(itemParameters=ip,
                                        metadata=metadataFile)
         del ip
         return res
 ########################################################################
-class UserItem(BaseAGOLClass):
+class UserItem(BasePortal):
     """represents a single item on the site for a given user"""
-    _appProxies = None
-    _serviceProxyParams = None
     _url = None
+    _con = None
     _itemType = None
     _uploaded = None
     _lastModified = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
     _json = None
     _json_dict = None
     _sharing = None
@@ -1085,401 +934,337 @@ class UserItem(BaseAGOLClass):
     __curl = None
     _privateUrl = None
     _itemControl = None
-    _origin = None
     #----------------------------------------------------------------------
     def __init__(self,
+                 connection,
                  url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
                  initalize=False):
         """Constructor"""
+        super(UserItem, self).__init__(connection=connection,
+                                       url=url)
+        self._con = connection
+        self._url = url
         self._curl = url
         self._contentURL = "%s/items/%s" % (url.split('/users/')[0], os.path.basename(url))
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
         if initalize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """loads the property data into the class"""
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self.root,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k == "item":
-                for key,value in v.items():
-                    if key in attributes:
-                        setattr(self, "_" + key, value)
-                    else:
-                        print( key, " - attribute not implemented in UserItem class.")
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in UserItem class.")
+            self.init(connection)
     #----------------------------------------------------------------------
     def refresh(self):
         """ refreshes the UserItem properties """
-        self.__init()
+        self.init(self._con)
     #----------------------------------------------------------------------
     @property
     def itemType(self):
         """gets the item type"""
         if self._itemType is None:
-            self.__init()
+            self.init()
         return self._itemType
     #----------------------------------------------------------------------
     @property
     def uploaded(self):
         """gets the item type"""
         if self._uploaded is None:
-            self.__init()
+            self.init()
         return self._uploaded
     #----------------------------------------------------------------------
     @property
     def lastModified(self):
         """gets the item type"""
         if self._lastModified is None:
-            self.__init()
+            self.init()
         return self._lastModified
     #----------------------------------------------------------------------
     @property
     def itemControl(self):
         '''gets the property value for itemControl'''
         if self._itemControl is None:
-            self.__init()
+            self.init()
         return self._itemControl
-    #----------------------------------------------------------------------
-    @property
-    def origin(self):
-        '''gets the property value for origin'''
-        if self._origin is None:
-            self.__init()
-        return self._origin
     #----------------------------------------------------------------------
     @property
     def extent(self):
         '''gets the property value for extent'''
         if self._extent is None:
-            self.__init()
+            self.init()
         return self._extent
     #----------------------------------------------------------------------
     @property
     def privateUrl(self):
         '''gets the property value for privateUrl'''
         if self._privateUrl is None:
-            self.__init()
+            self.init()
         return self._privateUrl
     #----------------------------------------------------------------------
     @property
     def culture(self):
         '''gets the property value for culture'''
         if self._culture is None:
-            self.__init()
+            self.init()
         return self._culture
     #----------------------------------------------------------------------
     @property
     def owner(self):
         '''gets the property value for owner'''
         if self._owner is None:
-            self.__init()
+            self.init()
         return self._owner
     #----------------------------------------------------------------------
     @property
     def guid(self):
         '''gets the property value for guid'''
         if self._guid is None:
-            self.__init()
+            self.init()
         return self._guid
     #----------------------------------------------------------------------
     @property
     def numRatings(self):
         '''gets the property value for numRatings'''
         if self._numRatings is None:
-            self.__init()
+            self.init()
         return self._numRatings
     #----------------------------------------------------------------------
     @property
     def numComments(self):
         '''gets the property value for numComments'''
         if self._numComments is None:
-            self.__init()
+            self.init()
         return self._numComments
     #----------------------------------------------------------------------
     @property
     def size(self):
         '''gets the property value for size'''
         if self._size is None:
-            self.__init()
+            self.init()
         return self._size
     #----------------------------------------------------------------------
     @property
     def appCategories(self):
         '''gets the property value for appCategories'''
         if self._appCategories is None:
-            self.__init()
+            self.init()
         return self._appCategories
     #----------------------------------------------------------------------
     @property
     def access(self):
         '''gets the property value for access'''
         if self._access is None:
-            self.__init()
+            self.init()
         return self._access
     #----------------------------------------------------------------------
     @property
     def title(self):
         '''gets the property value for title'''
         if self._title is None:
-            self.__init()
+            self.init()
         return self._title
     #----------------------------------------------------------------------
     @property
     def screenshots(self):
         '''gets the property value for screenshots'''
         if self._screenshots is None:
-            self.__init()
+            self.init()
         return self._screenshots
     #----------------------------------------------------------------------
     @property
     def id(self):
         '''gets the property value for id'''
         if self._id is None:
-            self.__init()
+            self.init()
         return self._id
     #----------------------------------------------------------------------
     @property
     def languages(self):
         '''gets the property value for languages'''
         if self._languages is None:
-            self.__init()
+            self.init()
         return self._languages
     #----------------------------------------------------------------------
     @property
     def snippet(self):
         '''gets the property value for snippet'''
         if self._snippet is None:
-            self.__init()
+            self.init()
         return self._snippet
     #----------------------------------------------------------------------
     @property
     def listed(self):
         '''gets the property value for listed'''
         if self._listed is None:
-            self.__init()
+            self.init()
         return self._listed
     #----------------------------------------------------------------------
     @property
     def largeThumbnail(self):
         '''gets the property value for largeThumbnail'''
         if self._largeThumbnail is None:
-            self.__init()
+            self.init()
         return self._largeThumbnail
     #----------------------------------------------------------------------
     @property
     def type(self):
         '''gets the property value for type'''
         if self._type is None:
-            self.__init()
+            self.init()
         return self._type
     #----------------------------------------------------------------------
     @property
     def thumbnail(self):
         '''gets the property value for thumbnail'''
         if self._thumbnail is None:
-            self.__init()
+            self.init()
         return self._thumbnail
     #----------------------------------------------------------------------
     @property
     def industries(self):
         '''gets the property value for industries'''
         if self._industries is None:
-            self.__init()
+            self.init()
         return self._industries
     #----------------------------------------------------------------------
     @property
     def description(self):
         '''gets the property value for description'''
         if self._description is None:
-            self.__init()
+            self.init()
         return self._description
     #----------------------------------------------------------------------
     @property
     def tags(self):
         '''gets the property value for tags'''
         if self._tags is None:
-            self.__init()
+            self.init()
         return self._tags
     #----------------------------------------------------------------------
     @property
     def typeKeywords(self):
         '''gets the property value for typeKeywords'''
         if self._typeKeywords is None:
-            self.__init()
+            self.init()
         return self._typeKeywords
     #----------------------------------------------------------------------
     @property
     def avgRating(self):
         '''gets the property value for avgRating'''
         if self._avgRating is None:
-            self.__init()
+            self.init()
         return self._avgRating
     #----------------------------------------------------------------------
     @property
     def banner(self):
         '''gets the property value for banner'''
         if self._banner is None:
-            self.__init()
+            self.init()
         return self._banner
     #----------------------------------------------------------------------
     @property
     def properties(self):
         '''gets the property value for properties'''
         if self._properties is None:
-            self.__init()
+            self.init()
         return self._properties
     #----------------------------------------------------------------------
     @property
     def ownerFolder(self):
         '''gets the property value for ownerFolder'''
         if self._ownerFolder is None:
-            self.__init()
+            self.init()
         return self._ownerFolder
     #----------------------------------------------------------------------
     @property
     def name(self):
         '''gets the property value for name'''
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
     #----------------------------------------------------------------------
     @property
     def licenseInfo(self):
         '''gets the property value for licenseInfo'''
         if self._licenseInfo is None:
-            self.__init()
+            self.init()
         return self._licenseInfo
     #----------------------------------------------------------------------
     @property
     def created(self):
         '''gets the property value for created'''
         if self._created is None:
-            self.__init()
+            self.init()
         return self._created
     #----------------------------------------------------------------------
     @property
     def url(self):
         '''gets the property value for url'''
         if self._url is None:
-            self.__init()
+            self.init()
         return self._url
     #----------------------------------------------------------------------
     @property
     def documentation(self):
         '''gets the property value for documentation'''
         if self._documentation is None:
-            self.__init()
+            self.init()
         return self._documentation
     #----------------------------------------------------------------------
     @property
     def modified(self):
         '''gets the property value for modified'''
         if self._modified is None:
-            self.__init()
+            self.init()
         return self._modified
     #----------------------------------------------------------------------
     @property
     def spatialReference(self):
         '''gets the property value for spatialReference'''
         if self._spatialReference is None:
-            self.__init()
+            self.init()
         return self._spatialReference
     #----------------------------------------------------------------------
     @property
     def protected(self):
         '''gets the property value for protected'''
         if self._protected is None:
-            self.__init()
+            self.init()
         return self._protected
     #----------------------------------------------------------------------
     @property
     def numViews(self):
         '''gets the property value for numViews'''
         if self._numViews is None:
-            self.__init()
+            self.init()
         return self._numViews
     #----------------------------------------------------------------------
     @property
     def accessInformation(self):
         '''gets the property value for accessInformation'''
         if self._accessInformation is None:
-            self.__init()
+            self.init()
         return self._accessInformation
     #----------------------------------------------------------------------
     @property
     def sourceUrl(self):
         """gets the property value for sourceUrl"""
         if self._sourceUrl is None:
-            self.__init()
+            self.init()
         return self._sourceUrl
-    #----------------------------------------------------------------------
-    @property
-    def appProxies(self):
-        if self._appProxies is None:
-            self.__init()
-        return self._appProxies
-    #----------------------------------------------------------------------
-    @property
-    def serviceProxyParams(self):
-        if self._serviceProxyParams is None:
-            self.__init()
-        return self._serviceProxyParams
     #----------------------------------------------------------------------
     @property
     def item(self):
         """returns the Item class of an Item"""
-        url = self._contentURL
         return Item(url=self._contentURL,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port,
+                    connection=self._con,
                     initalize=True)
     #----------------------------------------------------------------------
     @property
     def sharing(self):
         """gets the item's sharing information"""
         if self._sharing is None:
-            self.__init()
+            self.init()
         return self._sharing
     #----------------------------------------------------------------------
     @property
     def root(self):
         """returns the base url"""
         return self._curl
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns raw JSON response as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """returns properties (key/values) from the JSON response"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
     #----------------------------------------------------------------------
     def deleteItem(self):
         """
@@ -1493,12 +1278,9 @@ class UserItem(BaseAGOLClass):
             "f" : "json"
         }
         url = "%s/delete" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url=url,
+            postdata=params)
     #----------------------------------------------------------------------
     def moveItem(self, folder="/"):
         """
@@ -1521,12 +1303,9 @@ class UserItem(BaseAGOLClass):
             "folder" : folder
         }
         url = "%s/move" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def protect(self):
         """
@@ -1538,12 +1317,9 @@ class UserItem(BaseAGOLClass):
             "f" : "json"
         }
         url = "%s/protect" % self.root
-        return self._post(
-            url = url,
-            securityHandler=self._securityHandler,
-            param_dict=params,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def reassignItem(self,
                      targetUsername,
@@ -1568,12 +1344,9 @@ class UserItem(BaseAGOLClass):
             "targetFoldername" : targetFoldername
         }
         url = "%s/reassign" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def shareItem(self,
                   everyone=False,
@@ -1599,12 +1372,9 @@ class UserItem(BaseAGOLClass):
         if groups != "" and groups is not None:
             params['groups'] = groups
         url = "%s/share" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def unprotect(self):
         """
@@ -1614,12 +1384,9 @@ class UserItem(BaseAGOLClass):
             "f": "json"
         }
         url = "%s/unprotect" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def unshareItem(self, groups):
         """
@@ -1636,12 +1403,9 @@ class UserItem(BaseAGOLClass):
 
         }
         url = "%s/unshare" % self.root
-        return self._post(
-            url = url,
-            param_dict=params,
-            securityHandler=self._securityHandler,
-            proxy_url=self._proxy_url,
-            proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def updateItem(self,
                    itemParameters,
@@ -1677,7 +1441,7 @@ class UserItem(BaseAGOLClass):
             params['url'] = serviceUrl
         if text is not None:
             params['text'] = text
-        if isinstance(itemParameters, ItemParameter) == False:
+        if isinstance(itemParameters, parameters.ItemParameter) == False:
             raise AttributeError("itemParameters must be of type parameter.ItemParameter")
         keys_to_delete = ['id', 'owner', 'size', 'numComments',
                           'numRatings', 'avgRating', 'numViews' ,
@@ -1695,13 +1459,13 @@ class UserItem(BaseAGOLClass):
             elif key == "metadata":
                 metadata = dictItem['metadata']
                 if os.path.basename(metadata) != 'metadata.xml':
-                    tempxmlfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
-                    if os.path.isfile(tempxmlfile) == True:
-                        os.remove(tempxmlfile)
+                    tempfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tempfile) == True:
+                        os.remove(path=tempfile)
                     import shutil
-                    shutil.copy(metadata, tempxmlfile)
+                    shutil.copy(metadata, tempfile)
 
-                    metadata = tempxmlfile
+                    metadata = tempfile
                 files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]
@@ -1714,24 +1478,18 @@ class UserItem(BaseAGOLClass):
             itemID = self.id
             params['multipart'] = True
             params['fileName'] = os.path.basename(data)
-            res = self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+            res = self._con.post(
+                path_or_url = url,
+                postdata=params)
             itemPartJSON = self.addByPart(filePath=data)
             res = self.commit(wait=True, additionalParams=\
                               {'type' : self.type })
 
         else:
-            res = self._post(url=url,
-                 param_dict=params,
-                 files=files,
-                 securityHandler=self._securityHandler,
-                 proxy_url=self._proxy_url,
-                 proxy_port=self._proxy_port,
-                 force_form_post=True)
-        self.__init()
+            res = self._con.post(path_or_url=url,
+                 postdata=params,
+                 files=files)
+        self.init()
         return self
     #----------------------------------------------------------------------
     def deleteInfo(self, infoFile="metadata/metadata.xml"):
@@ -1748,10 +1506,9 @@ class UserItem(BaseAGOLClass):
         "f" : "json",
         "infoFile" : infoFile
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(
+            path_or_url = url,
+            postdata=params)
     #----------------------------------------------------------------------
     def status(self, jobId=None, jobType=None):
         """
@@ -1778,11 +1535,8 @@ class UserItem(BaseAGOLClass):
         if jobId is not None:
             params["jobId"] = jobId
         url = "%s/status" % self.root
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def parts(self):
@@ -1790,13 +1544,10 @@ class UserItem(BaseAGOLClass):
         of each part for the item."""
         url = "%s/parts" % self.root
         params = {"f" : "json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
-    def commit(self, wait=False, additionalParams={}):
+    def commit(self, wait=False, additionalParams=None):
         """
         Commit is called once all parts are uploaded during a multipart Add
         Item or Update Item operation. The parts are combined into a file,
@@ -1818,26 +1569,22 @@ class UserItem(BaseAGOLClass):
         params = {
             "f" : "json",
         }
+        if additionalParams is None:
+            additionalParams = {}
         for key, value in additionalParams.items():
             params[key] = value
         if wait == True:
-            res = self._post(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_port=self._proxy_port,
-                                proxy_url=self._proxy_url)
+            res = self._con.post(
+                path_or_url = url,
+                postdata=params)
             res = self.status()
-            import time
             while res['status'].lower() in ["partial", "processing"]:
                 time.sleep(2)
                 res = self.status()
             return res
         else:
-            return self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+            return self._con.post(path_or_url = url,
+                                  postdata=params)
     #----------------------------------------------------------------------
     def addByPart(self, filePath):
         """
@@ -1894,12 +1641,9 @@ class UserItem(BaseAGOLClass):
                 with open(tempFile, 'wb') as writer:
                     writer.write(piece)
                     del writer
-                res = self._post(url=url,
-                                 param_dict=params,
-                                 files=files,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+                res = self._con.post(path_or_url=url,
+                                 postdata=params,
+                                 files=files)
                 if os.path.isfile(tempFile):
                     os.remove(tempFile)
                 del files
@@ -1908,12 +1652,10 @@ class UserItem(BaseAGOLClass):
                 messages.append(res)
         return messages
 ########################################################################
-class User(BaseAGOLClass):
+class User(BasePortal):
     """represents a single user on a portal or AGOL organization"""
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
     _json = None
     _json_dict = None
     _folder = "/"
@@ -1929,25 +1671,24 @@ class User(BaseAGOLClass):
     _total = None
 
     #----------------------------------------------------------------------
-    def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+    def __init__(self,
+                 connection,
+                 url,
                  initalize=False):
         """Constructor"""
+        super(User, self).__init__(connection=connection,
+                                   url=url)
         self._url = url
+        self._con = connection
         self._location = url
         self._folder = "/"
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
         if initalize:
-            self.__init()
+            self.init(connection)
     #----------------------------------------------------------------------
-    def __init(self, folder='/'):
+    def init(self, connection=None, folder='/'):
         """loads the property data into the class"""
+        if connection is None:
+            connection = self._con
         params = {
             "f" : "json"
         }
@@ -1968,39 +1709,16 @@ class User(BaseAGOLClass):
         self._json = ""
         while nextStart > -1:
             res = self.search(start=nextStart, num=100)
-            if self._location.find(res['username'].lower()) > -1:
-                self._location = self._location.replace(res['username'].lower(), res['username'])
-                self._url = self._url.replace(res['username'].lower(), res['username'])
-
             nextStart = int(res['nextStart'])
             result_template['username'] = res['username']
             result_template["total"] = res["total"]
             result_template['nextStart'] = res['nextStart']
             result_template['start'] = res['start']
             result_template['num'] = res['num']
-
-            #Added so the root has content to match when in a folder,
-            #not sure if this is best practice or not.  Did not add
-            #username and created
-            #if res['currentFolder'] is None:
-                #result_template['currentFolder'] = {
-                    #'title': 'root',
-                    #'id': None,
-                    #'created' : None,
-                    #'username' : None
-                #}
-                #result_template['folders'].insert(0, result_template['currentFolder'])
-            #else:
             result_template['currentFolder'] = res['currentFolder']
             for item in res['items']:
                 if item not in result_template['items']:
                     result_template['items'].append(item)
-            #if 'folders' in res and \
-               #folder.lower() == 'root':
-                #for folder in res['folders']:
-                    #if folder not in result_template['folders']:
-                        #result_template['folders'].append(folder)
-
         self._json_dict = result_template
         self._json = json.dumps(result_template)
         attributes = [attr for attr in dir(self)
@@ -2010,11 +1728,9 @@ class User(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, result_template[k])
             else:
-                print( k, " - attribute not implemented in Content.User class.")
-
+                setattr(self, k, v)
         self._loadFolders()
-
-
+    #----------------------------------------------------------------------
     def _loadFolders(self,
                start=1,
                num=100):
@@ -2045,11 +1761,8 @@ class User(BaseAGOLClass):
             "start" : start
         }
 
-        res =  self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        res =  self._con.get(path_or_url=url,
+                            params=params)
         self._folders = []
         if 'folders' in res:
             for folder in res['folders']:
@@ -2099,26 +1812,22 @@ class User(BaseAGOLClass):
             "num" : num,
             "start" : start
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
 
     #----------------------------------------------------------------------
-
     @property
     def username(self):
         '''gets the property value for username'''
         if self._username is None:
-            self.__init()
+            self.init()
         return self._username
     #----------------------------------------------------------------------
     @property
     def folders(self):
         '''gets the property value for folders'''
         if self._folders is None :
-            self.__init()
+            self.init()
         if self._folders is not None and isinstance(self._folders, list):
             if len(self._folders) == 0:
                 self._loadFolders()
@@ -2128,12 +1837,14 @@ class User(BaseAGOLClass):
     def currentFolder(self):
         '''gets/sets the current folder (folder id)'''
         if self._currentFolder is None:
-            self.__init()
+            self.init()
         return self._currentFolder
     #----------------------------------------------------------------------
     @currentFolder.setter
     def currentFolder(self, value):
         """gets/sets the current folder (folder id)"""
+        if self._currentFolder is None:
+            self.currentFolder
         if value is not None and value.lower() == self._currentFolder['title']:
             return
         if value is None:
@@ -2144,67 +1855,65 @@ class User(BaseAGOLClass):
                     'created' : None,
                     'username' : None
                 }
-            self.__init()
+            self.init()
         elif value == "/" or value.lower() == 'root':
-            self.location = self.root
+            self._location = self.root
             self._currentFolder = {
                     'title': 'root',
                     'id': None,
                     'created' : None,
                     'username' : None
                 }
-            self.__init()
+            self.init()
         else:
             for folder in self.folders:
                 if 'title' in folder:
                     if folder['title'].lower() == value.lower():
                         self._location = "%s/%s" % (self.root, folder['id'])
                         self._currentFolder = folder
-                        self.__init(folder['title'])
+                        self.init(folder=folder['title'])
                         break
     #----------------------------------------------------------------------
     @property
     def nextStart(self):
         '''gets the property value for nextStart'''
         if self._nextStart is None:
-            self.__init()
+            self.init()
         return self._nextStart
     #----------------------------------------------------------------------
     @property
     def items(self):
         '''gets the property value for items'''
-        self.__init()
+        self.init()
         items = []
-        for item in self._items:
-            items.append(
-                UserItem(url="%s/items/%s" % (self.location, item['id']),
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port,
-                        initalize=True)
-            )
+        if isinstance(self._items, list):
+            for item in self._items:
+                items.append(
+                    UserItem(url="%s/items/%s" % (self.location, item['id']),
+                             connection=self._con,
+                            initalize=True)
+                )
         return items
     #----------------------------------------------------------------------
     @property
     def start(self):
         '''gets the property value for start'''
         if self._start is None:
-            self.__init()
+            self.init()
         return self._start
     #----------------------------------------------------------------------
     @property
     def num(self):
         '''gets the property value for num'''
         if self._num is None:
-            self.__init()
+            self.init()
         return self._num
-
     #----------------------------------------------------------------------
     @property
     def total(self):
         '''gets the property value for total'''
         if self._total is None:
-            self.__init()
+            self.init()
         return self._total
     #----------------------------------------------------------------------
     @property
@@ -2220,19 +1929,19 @@ class User(BaseAGOLClass):
     def __str__(self):
         """returns raw JSON response as string"""
         if self._json is None:
-            self.__init()
+            self.init()
         return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
         """returns properties (key/values) from the JSON response"""
         if self._json_dict is None:
-            self.__init()
+            self.init()
         for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the group's items"""
-        self.__init()
+        self.init()
         return True
     #----------------------------------------------------------------------
     def addRelationship(self,
@@ -2257,11 +1966,8 @@ class User(BaseAGOLClass):
             "relationshipType" : relationshipType,
             "f" : "json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url = url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def deleteRelationship(self,
                            originItemId,
@@ -2288,11 +1994,9 @@ class User(BaseAGOLClass):
             "relationshipType" : relationshipType
 
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(
+                    path_or_url = url,
+                    postdata=params)
     #----------------------------------------------------------------------
     def publishItem(self,
                     fileType,
@@ -2348,10 +2052,12 @@ class User(BaseAGOLClass):
         if isinstance(buildIntialCache, bool):
             params['buildInitialCache'] = buildIntialCache
         if publishParameters is not None and \
-           isinstance(publishParameters, PublishCSVParameters) == False:
+           isinstance(publishParameters, parameters.PublishCSVParameters) == False:
             params['publishParameters'] = json.dumps(publishParameters.value)
-        elif isinstance(publishParameters, PublishCSVParameters):
+        elif isinstance(publishParameters, parameters.PublishCSVParameters):
             params['publishParameters'] = json.dumps(publishParameters.value)
+        elif isinstance(publishParameters, dict):
+            params['publishParameters'] = json.dumps(publishParameters)
 
         if itemId is not None:
             params['itemId'] = itemId
@@ -2363,18 +2069,13 @@ class User(BaseAGOLClass):
 
             files = {}
             files['file'] = filePath
-            res = self._post(url=url,
-                             param_dict=params,
-                             files=files,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+            res = self._con.post(files=files,
+                                        path_or_url = url,
+                                        postdata=params)
         else:
-            res = self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+            res = self._con.post(
+                path_or_url = url,
+                postdata=params)
         if 'services' in res:
             if len(res['services']) > 0:
                 if 'error' in res['services'][0]:
@@ -2386,9 +2087,7 @@ class User(BaseAGOLClass):
                 else:
                     itemId = res['services'][0]['serviceItemId']
                     ui = UserItem(url="%s/items/%s" % (self.location, itemId),
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port)
+                                    connection=self._con)
                     if wait == True:
                         status = "partial"
                         while status != "completed":
@@ -2405,11 +2104,9 @@ class User(BaseAGOLClass):
                             time.sleep(2)
                     return ui
             else:
-                print (res)
-                raise Exception("Could not publish item: %s" % itemId)
+                raise Exception("Could not publish item: %s" % res)
         else:
-            print (res)
-            raise Exception("Could not publish item: %s" % itemId)
+            raise Exception("Could not publish item: %s" % res)
         return None
 
     #----------------------------------------------------------------------
@@ -2430,8 +2127,7 @@ class User(BaseAGOLClass):
            title - name of export item
            itemId - id of the item to export
            exportFormat - out format. Values: Shapefile, CSV or File
-                          Geodatabase, feature collection, GeoJson,
-                          or Scene Package
+                          Geodatabase, feature collection, GeoJson
            tags - comma seperated list of quick descriptors, the default is
             export.
            snippet - short explination of the exported item
@@ -2459,18 +2155,13 @@ class User(BaseAGOLClass):
             params['snippet'] = snippet
         if exportParameters is not None:
             params["exportParameters"] = json.dumps(exportParameters)
-        res = self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        res = self._con.post(path_or_url=url,
+                            postdata=params)
         itemURL = "%s/items/%s" % (self.location, res['exportItemId'])
         if self.currentFolder is not None or self.currentFolder['title'] != "root":
             self.moveItems(items=res['exportItemId'], folder=self.currentFolder['id'])
         ui = UserItem(url=itemURL,
-                      securityHandler=self._securityHandler,
-                      proxy_url=self._proxy_url,
-                      proxy_port=self._proxy_port)
+                      connection=self._con)
         if wait == True:
             status = "partial"
             while status != "completed":
@@ -2497,7 +2188,10 @@ class User(BaseAGOLClass):
            createServiceParameter - create service object
         """
         url = "%s/createService" % self.location
-        val = createServiceParameter.value
+        if isinstance(createServiceParameter, dict):
+            val = createServiceParameter
+        else:
+            val = createServiceParameter.value
         params = {
             "f" : "json",
             "outputType" : "featureService",
@@ -2508,11 +2202,8 @@ class User(BaseAGOLClass):
             params['snippet'] = snippet
         if description is not None:
             params['description'] = description
-        res =  self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                             postdata=params)
         if 'id' in res or \
            'serviceItemId' in res:
             if 'id' in res:
@@ -2520,9 +2211,7 @@ class User(BaseAGOLClass):
             else:
                 url = "%s/items/%s" % (self.location, res['serviceItemId'])
             return UserItem(url=url,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+                            connection=self._con)
         return res
     #----------------------------------------------------------------------
     def deleteFolder(self):
@@ -2541,11 +2230,8 @@ class User(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            res = self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
+            res =  self._con.post(path_or_url=url,
+                             postdata=params)
             self._folders = None
             self.currentFolder = None
             self.refresh
@@ -2577,11 +2263,9 @@ class User(BaseAGOLClass):
             "org" : org,
             "groups" : groups
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                                     postdata=params)
+        return res
     #----------------------------------------------------------------------
     def unshareItems(self, items, groups):
         """
@@ -2597,11 +2281,9 @@ class User(BaseAGOLClass):
             "items" : items,
             "groups" : groups
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                                     postdata=params)
+        return res
     #----------------------------------------------------------------------
     def moveItems(self, items, folder="/"):
         """
@@ -2619,11 +2301,9 @@ class User(BaseAGOLClass):
             "folder" : folder
 
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                              postdata=params)
+        return res
     #----------------------------------------------------------------------
     def deleteItems(self, items):
         """
@@ -2637,11 +2317,9 @@ class User(BaseAGOLClass):
             "f" : "json",
             "items" : items
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                              postdata=params)
+        return res
     #----------------------------------------------------------------------
     def createFolder(self, name):
         """
@@ -2655,11 +2333,10 @@ class User(BaseAGOLClass):
             "title" : name
         }
         self._folders = None
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        res =  self._con.post(path_or_url=url,
+                              postdata=params)
+        return res
+    #----------------------------------------------------------------------
     def _addItemMultiPart(self,
                           itemParameters,
                           filePath):
@@ -2677,19 +2354,16 @@ class User(BaseAGOLClass):
             'multipart' : 'true',
             "filename"	: os.path.basename(filePath)
         }
-        res = self._post(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler)
+        res =  self._con.post(path_or_url=url,
+                              postdata=params)
         if 'id' in res:
             itemID = res['id']
             iUrl = "%s/items/%s" % (self.location, itemID)
             ui = UserItem(url=iUrl,
-                          securityHandler=self._securityHandler,
-                          proxy_url=self._proxy_url,
-                          proxy_port=self._proxy_port)
+                          connection=self._con)
             res = ui.addByPart(filePath=filePath)
             res = ui.commit(wait=True)
-            up = ItemParameter()
+            up = parameters.ItemParameter()
             up.title = itemParameters.title
             up.tags = itemParameters.tags
             up.filename = os.path.basename(filePath)
@@ -2709,9 +2383,8 @@ class User(BaseAGOLClass):
                         data[k] = json.dumps(v)
                     else:
                         data[k] = v
-            res = self._post(url=update_url,
-                             param_dict=data,
-                            securityHandler=self._securityHandler)
+            res = self._con.post(path_or_url=update_url,
+                             postdata=data)
             ui.refresh()
             return ui
         return None
@@ -2772,11 +2445,18 @@ class User(BaseAGOLClass):
         }
         res = ""
         if itemParameters is not None:
-            for k,v in itemParameters.value.items():
-                if isinstance(v, bool):
-                    params[k] = json.dumps(v)
-                else:
-                    params[k] = v
+            if isinstance(itemParameters, dict):
+                for k,v in itemParameters.items():
+                    if isinstance(v, bool):
+                        params[k] = json.dumps(v)
+                    else:
+                        params[k] = v
+            else:
+                for k,v in itemParameters.value.items():
+                    if isinstance(v, bool):
+                        params[k] = json.dumps(v)
+                    else:
+                        params[k] = v
         if itemParameters.overwrite is not None:
             params['overwrite'] = json.dumps(overwrite)
         if itemParameters.overwrite != overwrite:
@@ -2816,20 +2496,14 @@ class User(BaseAGOLClass):
             if metadata is not None and os.path.isfile(metadata):
                 files['metadata'] = metadata
             if len(files) < 1:
-                res = self._post(url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+                res = self._con.post(path_or_url=url,
+                                 postdata=params)
             else:
                 params['itemType'] = 'file'
                 params['async'] = False
-                res = self._post(url=url,
-                                 param_dict=params,
-                                 files=files,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+                res = self._con.post(path_or_url=url,
+                                 postdata=params,
+                                 files=files)
         if (isinstance(res, dict) and \
            "id" not in res):
             raise Exception("Cannot add the item: %s" % res)
@@ -2841,33 +2515,27 @@ class User(BaseAGOLClass):
         else:
             itemId = res['id']
             return UserItem(url="%s/items/%s" % (self.location, itemId),
-                            securityHandler=self._securityHandler,
-                        proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port)
+                            connection=self._con)
 ########################################################################
-class FeatureContent(BaseAGOLClass):
+class FeatureContent(BasePortal):
     """
     Feature Content Root is the parent resource for feature operations such
     as Analyze and Generate.
     """
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
+    _json_dict = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
+    def __init__(self, connection, url):
         """Constructor"""
+        super(FeatureContent, self).__init__(
+            connection=connection,
+            url=url)
         if url.lower().find("/features") < 0:
             self._url = url + "/features"
         else:
             self._url = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -2920,23 +2588,20 @@ class FeatureContent(BaseAGOLClass):
         fileType = "csv"
         params["fileType"] = fileType
         if analyzeParameters is not None and\
-           isinstance(analyzeParameters, AnalyzeParameters):
+           isinstance(analyzeParameters, parameters.AnalyzeParameters):
             params['analyzeParameters'] = analyzeParameters.value
-
+        elif isinstance(analyzeParameters, dict):
+            params['analyzeParameters'] = analyzeParameters
         if not (filePath is None) and \
            os.path.isfile(filePath):
             params['text'] = open(filePath, 'rb').read()
-            return self._post(url=url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                  postdata=params)
         elif itemId is not None:
             params["fileType"] = fileType
             params['itemId'] = itemId
-            return self._post(url=url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                  postdata=params)
         else:
             raise AttributeError("either an Item ID or a file path must be given.")
     #----------------------------------------------------------------------
@@ -2989,28 +2654,21 @@ class FeatureContent(BaseAGOLClass):
             #Changed from type to filetype to generate a FC from zip
             if fileType.lower() == "csv":
                 params['text'] = open(filePath,'rb').read()
-                return self._post(url=url, param_dict=params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
+                return self._con.post(path_or_url=url,
+                                      postdata=params)
             else:
                 files['file'] = filePath
-                res = self._post(url=url,
-                                 param_dict=params,
-                                 files=files,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+                res = self._con.post(path_or_url=url,
+                                     postdata=params,
+                                     files=files)
                 return res
         elif itemId is not None:
             params["fileType"] = fileType
             params['itemId'] = itemId
-            return self._post(url=url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                  postdata=params)
 ########################################################################
-class Group(BaseAGOLClass):
+class Group(BasePortal):
     """
     The group's content provides access to the items that are shared with
     the group. Group items are stored by reference and are not physically
@@ -3020,9 +2678,7 @@ class Group(BaseAGOLClass):
     _contentURL = None
     _groupId = None
     _url = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
     _json = None
     _json_dict = None
     _items = None
@@ -3030,46 +2686,20 @@ class Group(BaseAGOLClass):
     #----------------------------------------------------------------------
     def __init__(self,
                  groupId,
-                 contentURL,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+                 url,
+                 connection,
                  initalize=False):
         """Constructor"""
-        if contentURL.find(groupId) < 0:
-            self._url = "%s/%s" % (contentURL, groupId)
-        else:
-            self._url = contentURL
+        super(Group, self).__init__(groupId=groupId,
+                                    url=url,
+                                    connection=connection,
+                                    initalize=initalize)
+        self._url = "%s/%s" % (url, groupId)
         self._groupId = groupId
-        self._contentURL = contentURL
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._contentURL = url
+        self._con = connection
         if initalize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """loads the property data into the class"""
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
+            self.init(connection=self._con)
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -3081,35 +2711,21 @@ class Group(BaseAGOLClass):
         """gets the group id"""
         return self._groupId
     #----------------------------------------------------------------------
-    def __str__(self):
-        """returns raw JSON response as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """returns properties (key/values) from the JSON response"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
-    #----------------------------------------------------------------------
     def refresh(self):
         """reloads all the group's items"""
-        self.__init()
+        self.init()
         return True
     #----------------------------------------------------------------------
     @property
     def items(self):
         """returns the registered items for a given group"""
         if self._items is None:
-            self.__init()
+            self.init()
         return self._items
     #----------------------------------------------------------------------
     def __assembleURL(self, url, groupId):
         """private function that assembles the URL for the community.Group
         class"""
-        from ..packages.six.moves.urllib_parse import urlparse
         parsed = urlparse(url)
         communityURL = "%s://%s%s/sharing/rest/community/groups/%s" % (parsed.scheme, parsed.netloc,
                                                                         parsed.path.lower().split('/sharing/rest/')[0],
@@ -3120,15 +2736,10 @@ class Group(BaseAGOLClass):
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        split_count = self._url.lower().find("/content/")
-        len_count = len('/content/')
-        gURL = self._url[:self._url.lower().find("/content/")] + \
-            "/community/" + self._url[split_count+ len_count:]#self.__assembleURL(self._contentURL, self._groupId)
+        gURL = self.__assembleURL(self._contentURL, self._groupId)
 
         return CommunityGroup(url=gURL,
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)
+                              connection=self._con)
 
 
 

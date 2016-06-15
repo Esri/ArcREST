@@ -1,12 +1,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
-import json
+from ...common._base import BaseServer
 ########################################################################
-class Machines(BaseAGSServer):
+class Machines(BaseServer):
     """
        This resource represents a collection of all the server machines that
-       have been registered with the site. In other words, it represents
+       have been registered with the site. It other words, it represents
        the total computing power of your site. A site will continue to run
        as long as there is one server machine online.
        For a server machine to start hosting GIS services, it must be
@@ -18,87 +17,55 @@ class Machines(BaseAGSServer):
        need them.
     """
     _machines = None
-    _proxy_port = None
-    _proxy_url = None
-    _securityHandler = None
+    _json_dict = None
+    _con = None
+    _url = None
     _json = None
     _DatastoreMachines = None
     _Protocal = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 initialize=False, proxy_url=None, proxy_port=None):
+    def __init__(self, url, connection,
+                 initialize=False):
         """Constructor
             Inputs:
                url - admin url
-               securityHandler - manages site security
+               connection - SiteConnection object
                initialize - loads the machine information
-               proxy_url - proxy server web address
-               proxy_port - proxy server port
         """
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        super(Machines, self).__init__(url=url,
+                                       connection=connection,
+                                       initialize=initialize)
         self._url = url
-        self._securityHandler = securityHandler
+        self._con = connection
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k == "machines":
-                self._machines = []
-                for m in v:
-                    self._machines.append(
-                        Machine(url=self._url +"/%s" % m['machineName'],
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
-                    )
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented for Machines")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as a string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def DatastoreMachines(self):
         """returns the datastore machine list"""
         if self._DatastoreMachines is None:
-            self.__init()
+            self.init()
         return self._DatastoreMachines
     #----------------------------------------------------------------------
     @property
     def Protocol(self):
         """returns the protocal"""
         if self._Protocal is None:
-            self.__init()
+            self.init()
         return self._Protocal
     #----------------------------------------------------------------------
     @property
     def machines(self):
         """  returns the list of machines in the cluster """
+        machines = []
         if self._machines is None:
-            self.__init()
-        return self._machines
+            self.init()
+        if isinstance(self._machines, list):
+            for m in self._machines:
+                machines.append(
+                    Machine(url=self._url +"/%s" % m['machineName'],
+                            connection=self._con))
+        return machines
     #----------------------------------------------------------------------
     def getMachine(self, machineName):
         """returns a machine object for a given machine
@@ -107,10 +74,7 @@ class Machines(BaseAGSServer):
         """
         url = self._url + "/%s" % machineName
         return Machine(url=url,
-                       securityHandler=self._securityHandler,
-                       initialize=True,
-                       proxy_url=self._proxy_url,
-                       proxy_port=self._proxy_port)
+                       connection=self._con)
     #----------------------------------------------------------------------
     def registerMachine(self, machineName, adminURL):
         """
@@ -123,7 +87,7 @@ class Machines(BaseAGSServer):
            choose to join a site.
            Inputs:
               machineName - name of the server machine
-              adminURL - URL where the Administrator API is running on the
+              adminURL - URL wher ethe Administrator API is running on the
                          server machine.
                          Example: http://<machineName>:6080/arcgis/admin
            Output:
@@ -134,11 +98,8 @@ class Machines(BaseAGSServer):
             "machineName" : machineName,
             "adminURL" : adminURL
         }
-        uURL = "%s/register" % self._url
-        return self._post(url=uURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        url = "%s/register" % self._url
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def renameMachine(self, machineName, newMachineName):
         """
@@ -161,13 +122,10 @@ class Machines(BaseAGSServer):
             "machineName" : machineName,
             "newMachineName" : newMachineName
         }
-        uURL = self._url + "/rename"
-        return self._post(url=uURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url                             )
+        url = self._url + "/rename"
+        return self._con.post(path_or_url=url, postdata=params)
 ########################################################################
-class Machine(BaseAGSServer):
+class Machine(BaseServer):
     """
        A server machine represents a machine on which ArcGIS Server
        software has been installed and licensed. A site is made up one or
@@ -200,136 +158,110 @@ class Machine(BaseAGSServer):
     _synchronize = None
     _configuredState = None
     _ports = None
-    _proxy_port = None
-    _proxy_url = None
-    _securityHandler = None
     _json = None
+    _json_dict = None
+    _con = None
+    _url = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 initialize=False, proxy_url=None, proxy_port=None):
+    def __init__(self, url, connection,
+                 initialize=False):
         """Constructor
             Inputs:
                url - admin url
-               securityHandler - handles site security
+               connection - SiteConnection object
+               initialize - boolean - loads properties at creation of object
         """
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        super(Machine, self).__init__(url=url,
+                                      connection=connection,
+                                      initialize=initialize)
         self._url = url
-        self._securityHandler = securityHandler
+        self._con = connection
         self._currentURL = url
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._currentURL,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented for Machine")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns the object as a string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def appServerMaxHeapSize(self):
         """ returns the app server max heap size """
         if self._appServerMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._appServerMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def webServerSSLEnabled(self):
         """ SSL enabled """
         if self._webServerSSLEnabled is None:
-            self.__init()
+            self.init()
         return self._webServerSSLEnabled
     #----------------------------------------------------------------------
     @property
     def webServerMaxHeapSize(self):
         """ returns the web server max heap size """
         if self._webServerMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._webServerMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def platform(self):
         """ returns the platform information """
         if self._platform is None:
-            self.__init()
+            self.init()
         return self._platform
     #----------------------------------------------------------------------
     @property
     def adminURL(self):
         """ returns the administration URL """
         if self._adminURL is None:
-            self.__init()
+            self.init()
         return self._adminURL
     #----------------------------------------------------------------------
     @property
     def machineName(self):
         """ returns the machine name """
         if self._machineName is None:
-            self.__init()
+            self.init()
         return self._machineName
     #----------------------------------------------------------------------
     @property
     def ServerStartTime(self):
         """ returns the server start date/time """
         if self._ServerStartTime is None:
-            self.__init()
+            self.init()
         return self._ServerStartTime
     #----------------------------------------------------------------------
     @property
     def webServerCertificateAlias(self):
         """ returns the webserver cert alias"""
         if self._webServerCertificateAlias is None:
-            self.__init()
+            self.init()
         return self._webServerCertificateAlias
     #----------------------------------------------------------------------
     @property
     def socMaxHeapSize(self):
         """ returns the soc's max heap size """
         if self._socMaxHeapSize is None:
-            self.__init()
+            self.init()
         return self._socMaxHeapSize
     #----------------------------------------------------------------------
     @property
     def synchronize(self):
         """synchronize value"""
         if self._synchronize is None:
-            self.__init()
+            self.init()
         return self._synchronize
     #----------------------------------------------------------------------
     @property
     def ports(self):
         """ returns the used ports """
         if self._ports is None:
-            self.__init()
+            self.init()
         return self._ports
     #----------------------------------------------------------------------
     @property
     def configuredState(self):
         """ returns the configured state """
         if self._configuredState is None:
-            self.__init()
+            self.init()
         return self._configuredState
     #----------------------------------------------------------------------
     @property
@@ -339,10 +271,7 @@ class Machine(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        return self._get(url=uURL, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+        return self._con.get(path_or_url=uURL, params=params)
     #----------------------------------------------------------------------
     def startMachine(self):
         """ Starts the server machine """
@@ -350,10 +279,7 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._post(url=uURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=uURL, postdata=params)
     #----------------------------------------------------------------------
     def stopMachine(self):
         """ Stops the server machine """
@@ -361,10 +287,7 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/stop"
-        return self._post(url=uURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=uURL, postdata=params)
     #----------------------------------------------------------------------
     def unregisterMachine(self):
         """
@@ -383,7 +306,4 @@ class Machine(BaseAGSServer):
             "f" : "json"
         }
         uURL = self._url + "/start"
-        return self._post(url=uURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+        return self._con.post(path_or_url=uURL, postdata=params)

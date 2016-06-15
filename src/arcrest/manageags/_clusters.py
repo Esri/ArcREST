@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
+from ...common._base import BaseServer
 import json
 from .parameters import ClusterProtocol
 ########################################################################
-class Clusters(BaseAGSServer):
+class Clusters(BaseServer):
     """
     This resource is a collection of all the clusters created within your
     site. The Create Cluster operation lets you define a new cluster
@@ -12,12 +12,12 @@ class Clusters(BaseAGSServer):
 
     Inputs:
        url - server cluster url
-       securityHandler - AGSSecurityHandler
-       proxy_url - optional proxy url
-       proxy_port - optional proxy port
+       connection - SiteConnection class
        initialize - boolean, false means so not load data, true means load
                     the class' information as creation.
     """
+    _con = None
+    _json_dict = None
     _json = None
     _url = None
     _proxy_url = None
@@ -25,40 +25,18 @@ class Clusters(BaseAGSServer):
     _securityHandler = None
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 securityHandler, proxy_url=None,
-                 proxy_port=None, initialize=False):
+                 connection,
+                 initialize=False):
         """Constructor"""
-        self._securityHandler = securityHandler
+        super(Clusters, self).__init__(url=url, connection=connection, initialize=initialize)
+        self._con = connection
+        self._url = url
         if url.lower().endswith("/clusters"):
             self._url = url
         else:
             self._url = url + "/clusters"
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in Clusters.")
-            del k
-            del v
+            self.init(connection)
     #----------------------------------------------------------------------
     def createCluster(self, clusterName, machineNames="", tcpClusterPort=""):
         """
@@ -92,11 +70,8 @@ class Clusters(BaseAGSServer):
             "machineNames" : machineNames,
             "tcpClusterPort" : tcpClusterPort
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def getAvailableMachines(self):
         """
@@ -109,13 +84,10 @@ class Clusters(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
 ########################################################################
-class Cluster(BaseAGSServer):
+class Cluster(BaseServer):
     """
     A Cluster is a group of server machines that host a collection of GIS
     services. Grouping server machines into a cluster allows you to treat
@@ -129,6 +101,8 @@ class Cluster(BaseAGSServer):
     affecting the already running GIS services. You can also remove
     machines from a cluster and re-assign them to another cluster.
     """
+    _con = None
+    _json_dict = None
     _json = None
     _proxy_url = None
     _proxy_port = None
@@ -141,91 +115,50 @@ class Cluster(BaseAGSServer):
     _configurationState = None
     _clusters = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler, proxy_url=None, proxy_port=None,
-                 initialize=False):
-        """Constructor"""
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
-        self._securityHandler = securityHandler
-        self._url = url
-        if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json",
-            "token" : self._securityHandler.token
-        }
-        json_dict = self._get(url=self._url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in Clusters.")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """Constructor"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
     @property
     def clusters(self):
         """returns the cluster object for each server"""
-        if self._clusters is not None:
-            self.__init()
+        if self._clusters is None:
+            self.init()
             Cs = []
             for c in self._clusters:
                 url = self._url + "/%s" % c['clusterName']
                 Cs.append(Cluster(url=url,
-                                  securityHandler=self._securityHandler,
-                                  proxy_url=self._proxy_url,
-                                  proxy_port=self._proxy_port,
+                                  connection=self._con,
                                   initialize=True))
             self._clusters = Cs
         return self._clusters
     #----------------------------------------------------------------------
     def refresh(self):
         """refreshes the object's properties"""
-        self.__init()
+        self.init()
     #----------------------------------------------------------------------
     @property
     def clusterName(self):
         """returns the cluster name"""
         if self._clusterName is None:
-            self.__init()
+            self.init()
         return self._clusterName
     #----------------------------------------------------------------------
     @property
     def clusterProtocol(self):
         """returns the cluster's protocol parameters"""
         if self._clusterProtocol is None:
-            self.__init()
+            self.init()
         return self._clusterProtocol
     #----------------------------------------------------------------------
     @property
     def configuredState(self):
         """returns the current state of the cluster"""
         if self._configurationState is None:
-            self.__init()
+            self.init()
         return self._configuredState
     #----------------------------------------------------------------------
     @property
     def machineNames(self):
         """returns a list of machines in cluster"""
         if self._machineNames is None:
-            self.__init()
+            self.init()
         return self._machineNames
     #----------------------------------------------------------------------
     def start(self):
@@ -240,11 +173,8 @@ class Cluster(BaseAGSServer):
             "f" : "json"
         }
         url = self._url + "/start"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def stop(self):
         """
@@ -257,11 +187,8 @@ class Cluster(BaseAGSServer):
             "f" : "json"
         }
         url = self._url + "/stop"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def delete(self):
         """
@@ -274,11 +201,8 @@ class Cluster(BaseAGSServer):
             "f" : "json"
         }
         url = self._url + "/delete"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def servicesInCluster(self):
         """
@@ -292,11 +216,8 @@ class Cluster(BaseAGSServer):
             "f" : "json"
         }
         url = self._url + "/services"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def machinesInCluster(self):
         """
@@ -311,11 +232,8 @@ class Cluster(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def addMachinesToCluster(self, machineNames):
         """
@@ -333,11 +251,8 @@ class Cluster(BaseAGSServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        return self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def removeMachinesFromCluster(self,
                                   machineNames):
@@ -354,27 +269,24 @@ class Cluster(BaseAGSServer):
             "f" : "json",
             "machineNames" : machineNames
         }
-        return self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def editProtocol(self, clusterProtocolObj):
         """
         Updates the Cluster Protocol. This will cause the cluster to be
         restarted with updated protocol configuration.
         """
-        if isinstance(clusterProtocolObj, ClusterProtocol): pass
+        if isinstance(clusterProtocolObj, ClusterProtocol):
+            value = str(clusterProtocolObj.value['tcpClusterPort'])
+        elif isinstance(clusterProtocolObj, dict):
+            value = json.dumps(clusterProtocolObj)
         else:
             raise AttributeError("Invalid Input, must be a ClusterProtocal Object")
         url = self._url + "/editProtocol"
         params = {
             "f" : "json",
-            "tcpClusterPort" : str(clusterProtocolObj.value['tcpClusterPort'])
+            "tcpClusterPort" : value
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)

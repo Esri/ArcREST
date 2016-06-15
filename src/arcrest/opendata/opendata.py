@@ -2,12 +2,11 @@
    OpenData Operations
 """
 from __future__ import absolute_import
-from __future__ import print_function
 import json
+import time
 from ._base import BaseOpenData
-from ..web._base import BaseWebOperations
 ########################################################################
-class OpenData(BaseOpenData, BaseWebOperations):
+class OpenData(BaseOpenData):
     """Represents an open data site
     Inputs:
        url - web address of the open data site
@@ -19,15 +18,14 @@ class OpenData(BaseOpenData, BaseWebOperations):
     _api = "v1"
     #----------------------------------------------------------------------
     def __init__(self,
-                 url,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection,
+                 url=None):
         """Constructor"""
+        if url is None:
+            url = "http://opendata.arcgis.com/"
         self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+
+        self._con = connection
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -66,12 +64,8 @@ class OpenData(BaseOpenData, BaseWebOperations):
             param_dict['sort_by'] = sort_by
         if sort_order is not None:
             param_dict['sort_order'] = sort_order
-        ds_data =  self._get(url=url,
-                    param_dict=param_dict,
-                    securityHandler=self._securityHandler,
-                    additional_headers=[],
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+        ds_data =  self._con.get(path_or_url=url,
+                                 params=param_dict)
         return ds_data
     #----------------------------------------------------------------------
     def getDataset(self, itemId):
@@ -81,37 +75,29 @@ class OpenData(BaseOpenData, BaseWebOperations):
         else:
             url = self._url + "/datasets"
         return OpenDataItem(url=url,
-                            itemId=itemId,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+                            connection=self._con,
+                            itemId=itemId)
 ########################################################################
-class OpenDataItem(BaseOpenData, BaseWebOperations):
+class OpenDataItem(BaseOpenData):
     """represents a single data object"""
     _url = None
+    _con = None
     _itemId = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
     _json = None
     _json_dict = None
     _related_items = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
+                 connection,
                  itemId,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None,
                  initialize=False):
         """Constructor"""
         self._url = url
         self._itemId = itemId
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
         if initialize:
-            self.__init()
+            self.__init(connection)
     #----------------------------------------------------------------------
     def __delattr__(self, name):
         raise AttributeError("Attribute '%s' of '%s' object cannot be deleted"%(name,self.__class__.__name__))
@@ -122,14 +108,13 @@ class OpenDataItem(BaseOpenData, BaseWebOperations):
             self.__init()
         return self._json
     #----------------------------------------------------------------------
-    def __init(self):
+    def __init(self, connection=None):
         """gets the properties for the site"""
+        if connection is None:
+            connection = self._con
         url = "%s/%s.json" % (self._url, self._itemId)
         params = {"f": "json"}
-        json_dict = self._get(url, params,
-                         securityHandler=self._securityHandler,
-                         proxy_port=self._proxy_port,
-                         proxy_url=self._proxy_url)
+        json_dict = self._con.get(path_or_url=url, params=params)
         self._json_dict = json_dict
         self._json = json.dumps(self._json_dict)
         setattr(self, "data", json_dict['data'])
@@ -137,16 +122,16 @@ class OpenDataItem(BaseOpenData, BaseWebOperations):
             for k,v in json_dict['data'].items():
                 setattr(self, k, v)
                 del k,v
+        if isinstance(json_dict, dict):
+            self.__dict__.update(json_dict)
     #----------------------------------------------------------------------
-    import time
     def export(self, outFormat="shp", outFolder=None):
         """exports a dataset t"""
         export_formats = {'shp':".zip", 'kml':'.kml', 'geojson':".geojson",'csv': '.csv'}
         url = "%s/%s%s" % (self._url, self._itemId, export_formats[outFormat])
-        results =  self._get(url=url,
-                    securityHandler=self._securityHandler,
-                    out_folder=outFolder)
+        results =  self._con.get(path_or_url=url,
+                                 out_folder=outFolder)
         if 'status' in results:
-            self.time.sleep(7)
+            time.sleep(7)
             results = self.export(outFormat=outFormat, outFolder=outFolder)
         return results

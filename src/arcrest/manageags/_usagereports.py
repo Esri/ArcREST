@@ -1,85 +1,54 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from ..packages import six
-from .._abstract.abstract import BaseAGSServer
+from ...common.packages import six
+from ...common._base import BaseServer
 import json
 ########################################################################
-class UsageReports(BaseAGSServer):
+class UsageReports(BaseServer):
     """
     This resource is a collection of all the usage reports created within
     your site. The Create Usage Report operation lets you define a new
     usage report.
     """
+    _con = None
+    _json_dict = None
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
     _json = None
     _metrics = None
     _reports = None
     #----------------------------------------------------------------------
     def __init__(self, url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
+                 connection,
                  initialize=False):
         """Constructor"""
+        super(UsageReports, self).__init__(url, connection, initialize)
         if url.lower().endswith('/usagereports'):
             self._url = url
         else:
             self._url = url + "/usagereports"
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in UsageReports.")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns the object as a string"""
-        return json.dumps(self._json)
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def metrics(self):
         """gets the metrics values"""
         if self._metrics is None:
-            self.__init()
+            self.init()
         return self._metrics
     #----------------------------------------------------------------------
     @property
     def reports(self):
         """returns a list of reports on the server"""
         if self._metrics is None:
-            self.__init()
+            self.init()
         self._reports = []
-        for r in self._metrics:
-            url = self._url + "/%s" % six.moves.urllib.parse.quote_plus(r['reportname'])
-            self._reports.append(UsageReport(url=url,
-                                             securityHandler=self._securityHandler,
-                                             proxy_url=self._proxy_url,
-                                             proxy_port=self._proxy_port,
-                                             initialize=True))
-            del url
+        if isinstance(self._metrics, list):
+            for r in self._metrics:
+                url = self._url + "/%s" % six.moves.urllib.parse.quote_plus(r['reportname'])
+                self._reports.append(UsageReport(url=url,
+                                                 connection=self._con))
+                del url
         return self._reports
     #----------------------------------------------------------------------
     @property
@@ -101,11 +70,8 @@ class UsageReports(BaseAGSServer):
             "f" : "json"
         }
         url = self._url + "/settings"
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def editUsageReportSettings(self, samplingInterval,
                                 enabled=True, maxHistory=0):
@@ -133,11 +99,8 @@ class UsageReports(BaseAGSServer):
             "samplingInterval"  : samplingInterval
         }
         url = self._url + "/settings/edit"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def createUsageReport(self,
                           reportname,
@@ -249,31 +212,28 @@ class UsageReports(BaseAGSServer):
 
         params = {
             "f" : "json",
-            "usagereport": {
             "reportname" : reportname,
             "since" : since,
-            "metadata" : metadata}
+
+            "metadata" : metadata
         }
         if isinstance(queries, dict):
-            params["usagereport"]["queries"] = [queries]
+            params["queries"] = [queries]
         elif isinstance(queries, list):
-            params["usagereport"]["queries"] = queries
+            params["queries"] = queries
         if aggregationInterval is not None:
-            params["usagereport"]['aggregationInterval'] = aggregationInterval
+            params['aggregationInterval'] = aggregationInterval
         if since.lower() == "custom":
-            params["usagereport"]['to'] = toValue
-            params["usagereport"]['from'] = fromValue
-        res =  self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_port=self._proxy_port,
-                             proxy_url=self._proxy_url)
+            params['to'] = toValue
+            params['from'] = fromValue
+        res =  self._con.post(path_or_url=url,
+                             postdata=params)
         #  Refresh the metrics object
-        self.__init()
+        self.init()
         return res
 
 ########################################################################
-class UsageReport(BaseAGSServer):
+class UsageReport(BaseServer):
     """
     A Usage Report is used to obtain ArcGIS Server usage data for specified
     resources during a given time period. It specifies the parameters for
@@ -282,10 +242,8 @@ class UsageReport(BaseAGSServer):
     gathered for a collection of server resources, such as folders and
     services).
     """
+    _con = None
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
     _json = None
     _reportname = None
     _since = None
@@ -295,60 +253,27 @@ class UsageReport(BaseAGSServer):
     _queries = None
     _metadata = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 proxy_url=None, proxy_port=None,
+    def __init__(self, url, connection,
                  initialize=False):
         """Constructor"""
+        super(UsageReport, self).__init__(url, connection, initialize)
+        self._con = connection
         self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k.lower() == "from":
-                self._from = v
-            elif k.lower() == "to":
-                self._to = v
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print (k, " - attribute not implemented in manageags.UsageReport.")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns the object as a string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+            self.init()
     #----------------------------------------------------------------------
     @property
     def reportname(self):
         """gets the report name"""
         if self._reportname is None:
-            self.__init()
+            self.init()
         return self._reportname
     #----------------------------------------------------------------------
     @property
     def since(self):
         """gets/sets the since value"""
         if self._since is None:
-            self.__init()
+            self.init()
         return self._since
     #----------------------------------------------------------------------
     @since.setter
@@ -360,7 +285,7 @@ class UsageReport(BaseAGSServer):
     def fromValue(self):
         """gets/sets the from value"""
         if self._from is None:
-            self.__init()
+            self.init()
         return self._from
     #----------------------------------------------------------------------
     @fromValue.setter
@@ -372,7 +297,7 @@ class UsageReport(BaseAGSServer):
     def toValue(self):
         """gets/sets the toValue"""
         if self._to is None:
-            self.__init()
+            self.init()
         return self._to
     #----------------------------------------------------------------------
     @toValue.setter
@@ -384,7 +309,7 @@ class UsageReport(BaseAGSServer):
     def aggregationInterval(self):
         """gets/sets the aggregationInterval value"""
         if self._aggregationInterval is None:
-            self.__init()
+            self.init()
         return self._aggregationInterval
     #----------------------------------------------------------------------
     @aggregationInterval.setter
@@ -396,7 +321,7 @@ class UsageReport(BaseAGSServer):
     def queries(self):
         """gets/sets the query values"""
         if self._queries is None:
-            self.__init()
+            self.init()
         return self._queries
     #----------------------------------------------------------------------
     @queries.setter
@@ -408,7 +333,7 @@ class UsageReport(BaseAGSServer):
     def metadata(self):
         """gets/sets the metadata value"""
         if self._metadata is None:
-            self.__init()
+            self.init()
         return self._metadata
     #----------------------------------------------------------------------
     @metadata.setter
@@ -445,11 +370,8 @@ class UsageReport(BaseAGSServer):
             "usagereport" : json.dumps(usagereport_dict)
         }
         url = self._url + "/edit"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def delete(self):
         """deletes the current report"""
@@ -457,11 +379,8 @@ class UsageReport(BaseAGSServer):
         params = {
             "f" : "json",
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def query(self, queryFilter):
         """
@@ -494,8 +413,5 @@ class UsageReport(BaseAGSServer):
             "filter" : queryFilter
         }
         url = self._url + "/data"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)

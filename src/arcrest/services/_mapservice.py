@@ -1,28 +1,29 @@
-from __future__ import absolute_import
-from __future__ import print_function
-import json
+"""
+
+.. module:: _mapservice.py
+   :platform: Windows, Linux
+   :synopsis: Represents functions/classes used to control Map Services
+              and map service layer
+
+.. moduleauthor:: Esri
+
+"""
 import time
 import tempfile
-from .._abstract.abstract import BaseAGSServer, DynamicData, BaseSecurityHandler
-from .layer import FeatureLayer, TableLayer, RasterLayer, GroupLayer, SchematicsLayer
-from ._schematicsservice import SchematicsService
-from ._geoprocessing import GPJob
-from ..security import security
-from ..common import filters, geometry
-from ..common.geometry import Polygon, Envelope, SpatialReference
-from ..common.general import Feature
-from ..packages.six.moves.urllib_parse import urlencode
-########################################################################
-class MapService(BaseAGSServer):
-    """ contains information about a map service """
-    _json = None
+from ..common._base import BaseService
+from ..common.geometry import Polygon, SpatialReference
+from .geoprocessing import GPJob
+from ._featureservice import FeatureLayer, TableLayer, SchematicLayer
+from ._featureservice import GroupLayer, RasterLayer
+from ._schematicservice import SchematicsService
+class MapService(BaseService):
+    """
+    """
+    _con = None
     _json_dict = None
-    _tileInfo = None
+    _json = None
     _url = None
-    _username = None
-    _password = None
-    _token = None
-    _token_url = None
+    _tileInfo = None
     _currentVersion = None
     _serviceDescription = None
     _mapName = None
@@ -50,499 +51,270 @@ class MapService(BaseAGSServer):
     _timeInfo = None
     _maxExportTilesCount = None
     _hasVersionedData = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
     _tileServers = None
-    #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
-                 initialize=False, proxy_url=None,
-                 proxy_port=None):
-        """Constructor"""
-        self._proxy_url= proxy_url
-        self._proxy_port = proxy_port
-        self._url = url
-        if securityHandler is not None and \
-           isinstance(securityHandler, (security.AGSTokenSecurityHandler,
-                                        security.PortalServerSecurityHandler,
-                                        security.ArcGISTokenSecurityHandler)):
-            self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-            self._token = securityHandler.token
-        elif securityHandler is None:
-            pass
-        else:
-            raise AttributeError("Security Handler must type of security.AGSTokenSecurityHandler")
-        if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    @property
-    def itemInfo(self):
-        """gets the item's info"""
-        params = {
-            "f" : "json"
-        }
-        url = self._url + "/info/iteminfo"
-        return self._get(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def downloadThumbnail(self, outPath):
-        """downloads the items's thumbnail"""
-        url = self._url + "/info/thumbnail"
-        params = {
-
-        }
-        return self._get(url=url,
-                            out_folder=outPath,
-                            file_name=None,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def downloadMetadataFile(self, outPath):
-        """downloads the metadata file to a given path"""
-        fileName = "metadata.xml"
-        url = self._url + "/info/metadata"
-        params = {}
-        return self._get(url=url,
-                         out_folder=outPath,
-                         file_name=fileName,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """gets the object as as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    @property
-    def json_dict(self):
-        """returns object as a dictionary"""
-        if self._json_dict is None:
-            self.__init()
-        return self._json_dict
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates all the properties for the map service """
-
-        params = {"f": "json"}
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json = json.dumps(json_dict)
-        self._json_dict = json_dict
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k == "tables":
-                self._tables = []
-                for tbl in v:
-                    url = self._url + "/%s" % tbl['id']
-                    self._tables.append(
-                        TableLayer(url,
-                                   securityHandler=self._securityHandler,
-                                   proxy_port=self._proxy_port,
-                                   proxy_url=self._proxy_url)
-                    )
-            elif k == "layers":
-                self._layers = []
-                for lyr in v:
-                    url = self._url + "/%s" % lyr['id']
-                    layer_type = self._getLayerType(url)
-                    if layer_type == "Feature Layer":
-                        self._layers.append(
-                            FeatureLayer(url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_port=self._proxy_port,
-                                         proxy_url=self._proxy_url)
-                        )
-                    elif layer_type == "Raster Layer":
-                        self._layers.append(
-                            RasterLayer(url,
-                                        securityHandler=self._securityHandler,
-                                        proxy_port=self._proxy_port,
-                                        proxy_url=self._proxy_url)
-                        )
-                    elif layer_type == "Group Layer":
-                        self._layers.append(
-                            GroupLayer(url,
-                                       securityHandler=self._securityHandler,
-                                       proxy_port=self._proxy_port,
-                                       proxy_url=self._proxy_url)
-                        )
-                    elif layer_type == "Schematics Layer":
-                        self._layers.append(
-                            SchematicsLayer(url,
-                                            securityHandler=self._securityHandler,
-                                            proxy_port=self._proxy_port,
-                                            proxy_url=self._proxy_url)
-                        )    
-                    else:
-                        print ('Type %s is not implemented' % layer_type)
-            elif k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-
-            else:
-                print (k, " is not implemented for mapservice.")
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """returns the JSON response in key/value pairs"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
-    #----------------------------------------------------------------------
-    @property
-    def tileServers(self):
-        """ gets the tileServers for the service"""
-        if self._tileServers is None:
-            self.__init()
-        return self._tileServers
-    #----------------------------------------------------------------------
-    @property
-    def securityHandler(self):
-        """ gets the security handler """
-        return self._securityHandler
-    #----------------------------------------------------------------------
-    @securityHandler.setter
-    def securityHandler(self, value):
-        """ sets the security handler """
-        if isinstance(value, BaseSecurityHandler):
-            if isinstance(value, security.AGSTokenSecurityHandler):
-                self._securityHandler = value
-            else:
-                pass
-        elif value is None:
-            self._securityHandler = None
-
-    #----------------------------------------------------------------------
-    @property
-    def maxExportTilesCount(self):
-        """ returns the maximum export tiles count """
-        if self._maxExportTilesCount is None:
-            self.__init()
-        return self._maxExportTilesCount
-    @property
-    def hasVersionedData(self):
-        """ reutrn boolean if has versioned data """
-        if self._hasVersionedData is None:
-            self.__init()
-        return self._hasVersionedData
-    #----------------------------------------------------------------------
-    @property
-    def tileInfo(self):
-        """ Returns tile info for cached services """
-        if self._tileInfo is None:
-            self.__init()
-        return self._tileInfo
-    #----------------------------------------------------------------------
-    @property
-    def currentVersion(self):
-        """ returns the map service current version """
-        if self._currentVersion is None:
-            self.__init()
-        return self._currentVersion
-    #----------------------------------------------------------------------
-    @property
-    def serviceDescription(self):
-        """ returns the serviceDescription of the map service """
-        if self._serviceDescription is None:
-            self.__init()
-        return self._serviceDescription
-    #----------------------------------------------------------------------
-    @property
-    def mapName(self):
-        """ returns the map name value """
-        if self._mapName is None:
-            self.__init()
-        return self._mapName
-    #----------------------------------------------------------------------
-    @property
-    def description(self):
-        """ returns the map service description """
-        if self._description is None:
-            self.__init()
-        return self._description
-    #----------------------------------------------------------------------
-    @property
-    def copyrightText(self):
-        """ returns the copyright text """
-        if self._copyrightText is None:
-            self.__init()
-        return self._copyrightText
+    _supportsDynamicLayers = None
+    _initialExtent = None
+    _documentInfo = None
+    _spatialReference = None
+    _description = None
+    _layers = None
+    _tables = None
+    _supportedImageFormatTypes = None
+    _capabilities = None
+    _mapName = None
+    _currentVersion = None
+    _units = None
+    _supportedQueryFormats = None
+    _maxRecordCount = None
+    _exportTilesAllowed = None
+    _maxImageHeight = None
+    _supportedExtensions = None
+    _fullExtent = None
+    _singleFusedMapCache = None
+    _maxImageWidth = None
+    _maxScale = None
+    _copyrightText = None
+    _minScale = None
+    _serviceDescription = None
     #----------------------------------------------------------------------
     @property
     def supportsDynamicLayers(self):
-        """ returns boolean (True/False) if it support dynamic layers"""
+        """gets the supportsDynamicLayers value"""
         if self._supportsDynamicLayers is None:
-            self.__init()
+            self.init()
         return self._supportsDynamicLayers
     #----------------------------------------------------------------------
     @property
-    def layers(self):
-        """ returns all the layers in the map service """
-        if self._layers is None:
-            self.__init()
-        return self._layers
-    #----------------------------------------------------------------------
-    @property
-    def tables(self):
-        """ returns all tables in the map service """
-        if self._tables is None:
-            self.__init()
-        return self._tables
-    #----------------------------------------------------------------------
-    @property
-    def spatialReference(self):
-        """ returns the spatialreference information for the map service """
-        if self._spatialReference is None:
-            self.__init()
-        return self._spatialReference
-    #----------------------------------------------------------------------
-    @property
-    def singleFusedMapCache(self):
-        """ returns boolean for this property """
-        if self._singleFusedMapCache is None:
-            self.__init()
-        return self._singleFusedMapCache
-    #----------------------------------------------------------------------
-    @property
     def initialExtent(self):
-        """ returns the initial extent of the map service """
+        """gets the initialExtent value"""
         if self._initialExtent is None:
-            self.__init()
+            self.init()
         return self._initialExtent
     #----------------------------------------------------------------------
     @property
-    def fullExtent(self):
-        """ returns the full extent of the map service """
-        if self._fullExtent is None:
-            self.__init()
-        return self._fullExtent
-    #----------------------------------------------------------------------
-    @property
-    def minScale(self):
-        """ returns the map service minimum scale """
-        if self._minScale is None:
-            self.__init()
-        return self._minScale
-    #----------------------------------------------------------------------
-    @property
-    def maxScale(self):
-        """ returns the max scale for a map service """
-        if self._maxScale is None:
-            self.__init()
-        return self._maxScale
-    #----------------------------------------------------------------------
-    @property
-    def units(self):
-        """ returns the map service's measurement units """
-        if self._units is None:
-            self.__init()
-        return self._units
-    #----------------------------------------------------------------------
-    @property
-    def supportedImageFormatTypes(self):
-        """ returns the supported image format types """
-        if self._supportedImageFormatTypes is None:
-            self.__init()
-        return self._supportedImageFormatTypes
-    #----------------------------------------------------------------------
-    @property
-    def timeInfo(self):
-        """ returns the timeInformation for a given service """
-        if self._timeInfo is None:
-            self.__init()
-        return self._timeInfo
-    #----------------------------------------------------------------------
-    @property
     def documentInfo(self):
-        """ returns the document information as a dictionary """
+        """gets the documentInfo value"""
         if self._documentInfo is None:
-            self.__init()
+            self.init()
         return self._documentInfo
     #----------------------------------------------------------------------
     @property
+    def spatialReference(self):
+        """gets the spatialReference value"""
+        if self._spatialReference is None:
+            self.init()
+        return self._spatialReference
+    #----------------------------------------------------------------------
+    @property
+    def description(self):
+        """gets the description value"""
+        if self._description is None:
+            self.init()
+        return self._description
+    #----------------------------------------------------------------------
+    def _get_layer_type(self, layer_id):
+        url = "{url}/{id}".format(url=self._url, id=layer_id)
+        params = {"f": "json"}
+        res = self._con.get(path_or_url=url, params=params)
+        return res['type']
+    #----------------------------------------------------------------------
+    @property
+    def layers(self):
+        """gets the layers value"""
+        lyrs = []
+        if self._layers is None:
+            self.init()
+        for layer in self._layers:
+            if "id" in layer:
+                layer_id = layer['id']
+                url = "{url}/{id}".format(url=self._url, id=layer_id)
+                layer_type = self._get_layer_type(layer_id=layer['id'])
+                if layer_type == "Feature Layer":
+                    lyrs.append(FeatureLayer(url=url,connection=self._con))
+                elif layer_type == "Raster Layer":
+                    lyrs.append(RasterLayer(url=url,connection=self._con))
+                elif layer_type == "Group Layer":
+                    lyrs.append(GroupLayer(url=url,connection=self._con))
+            del layer
+        return lyrs
+    #----------------------------------------------------------------------
+    @property
+    def tables(self):
+        """gets the tables value"""
+        lyrs = []
+        if self._tables is None:
+            self.init()
+        for layer in self._tables:
+            layer_id = layer['id']
+            layer_type = self._get_layer_type(layer_id=layer_id)
+            url = "{url}/{id}".format(url=self._url, id=layer_id)
+            if layer_type == "Table Layer":
+                lyrs.append(TableLayer(url=url, connection=self._con))
+            elif layer_type == "Group Layer":
+                lyrs.append(GroupLayer(url=url, connection=self._con))
+        return lyrs
+    #----------------------------------------------------------------------
+    @property
+    def supportedImageFormatTypes(self):
+        """gets the supportedImageFormatTypes value"""
+        if self._supportedImageFormatTypes is None:
+            self.init()
+        return self._supportedImageFormatTypes
+    #----------------------------------------------------------------------
+    @property
     def capabilities(self):
-        """ returns the service's capabilities """
+        """gets the capabilities value"""
         if self._capabilities is None:
-            self.__init()
+            self.init()
         return self._capabilities
     #----------------------------------------------------------------------
     @property
+    def mapName(self):
+        """gets the mapName value"""
+        if self._mapName is None:
+            self.init()
+        return self._mapName
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        """gets the currentVersion value"""
+        if self._currentVersion is None:
+            self.init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def units(self):
+        """gets the units value"""
+        if self._units is None:
+            self.init()
+        return self._units
+    #----------------------------------------------------------------------
+    @property
     def supportedQueryFormats(self):
-        """ returns the supported query formats """
+        """gets the supportedQueryFormats value"""
         if self._supportedQueryFormats is None:
-            self.__init()
+            self.init()
         return self._supportedQueryFormats
     #----------------------------------------------------------------------
     @property
-    def exportTilesAllowed(self):
-        """ Boolean if export tiles is allowed """
-        if self._exportTilesAllowed is None:
-            self.__init()
-        return self._exportTilesAllowed
-    #----------------------------------------------------------------------
-    @property
     def maxRecordCount(self):
-        """ returns the max number of records returned by a query/display ect. """
+        """gets the maxRecordCount value"""
         if self._maxRecordCount is None:
-            self.__init()
+            self.init()
         return self._maxRecordCount
     #----------------------------------------------------------------------
     @property
+    def exportTilesAllowed(self):
+        """gets the exportTilesAllowed value"""
+        if self._exportTilesAllowed is None:
+            self.init()
+        return self._exportTilesAllowed
+    #----------------------------------------------------------------------
+    @property
     def maxImageHeight(self):
-        """ returns the max image height """
+        """gets the maxImageHeight value"""
         if self._maxImageHeight is None:
-            self.__init()
+            self.init()
         return self._maxImageHeight
     #----------------------------------------------------------------------
     @property
+    def supportedExtensions(self):
+        """gets the supportedExtensions value"""
+        if self._supportedExtensions is None:
+            self.init()
+        return self._supportedExtensions
+    #----------------------------------------------------------------------
+    @property
+    def fullExtent(self):
+        """gets the fullExtent value"""
+        if self._fullExtent is None:
+            self.init()
+        return self._fullExtent
+    #----------------------------------------------------------------------
+    @property
+    def singleFusedMapCache(self):
+        """gets the singleFusedMapCache value"""
+        if self._singleFusedMapCache is None:
+            self.init()
+        return self._singleFusedMapCache
+    #----------------------------------------------------------------------
+    @property
     def maxImageWidth(self):
-        """ returns the max image width """
+        """gets the maxImageWidth value"""
         if self._maxImageWidth is None:
-            self.__init()
+            self.init()
         return self._maxImageWidth
     #----------------------------------------------------------------------
     @property
-    def supportedExtensions(self):
-        """ returns the supported extensions """
-        if self._supportedExtensions is None:
-            self.__init()
-        return self._supportedExtensions
-    #----------------------------------------------------------------------
-    def getExtensions(self):
-        """returns objects for all map service extensions"""
-        extensions = []
-        if isinstance(self.supportedExtensions, list):
-            for ext in self.supportedExtensions:
-                extensionURL = self._url + "/exts/%s" % ext
-                if ext == "SchematicsServer":
-                    extensions.append(SchematicsService(url=extensionURL,
-                                                        securityHandler=self._securityHandler,
-                                                        proxy_url=self._proxy_url,
-                                                        proxy_port=self._proxy_port))
-            return extensions
-        else:
-            extensionURL = self._url + "/exts/%s" % self.supportedExtensions
-            if self.supportedExtensions == "SchematicsServer":
-                extensions.append(SchematicsService(url=extensionURL,
-                                                    securityHandler=self._securityHandler,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port))
-            return extensions
+    def maxScale(self):
+        """gets the maxScale value"""
+        if self._maxScale is None:
+            self.init()
+        return self._maxScale
     #----------------------------------------------------------------------
     @property
-    def allLayers(self):
-        """ returns all layers for the service """
-        url = self._url + "/layers"
-        params = {
-            "f" : "json"
-        }
-        res = self._get(url, param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
-        return_dict = {
-            "layers" : [],
-            "tables" : []
-        }
-        for k, v in res.items():
-            if k == "layers":
-                for val in v:
-                    return_dict['layers'].append(
-                        FeatureLayer(url=self._url + "/%s" % val['id'],
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
-                    )
-            elif k == "tables":
-                for val in v:
-                    return_dict['tables'].append(
-                        TableLayer(url=self._url + "/%s" % val['id'],
-                                   securityHandler=self._securityHandler,
-                                   proxy_url=self._proxy_url,
-                                   proxy_port=self._proxy_port)
-                    )
-            del k,v
-        return return_dict
+    def copyrightText(self):
+        """gets the copyrightText value"""
+        if self._copyrightText is None:
+            self.init()
+        return self._copyrightText
     #----------------------------------------------------------------------
-    def find(self, searchText, layers,
-             contains=True, searchFields="",
-             sr="", layerDefs="",
-             returnGeometry=True, maxAllowableOffset="",
-             geometryPrecision="", dynamicLayers="",
-             returnZ=False, returnM=False, gdbVersion=""):
-        """ performs the map service find operation """
-        url = self._url + "/find"
-        #print url
-        params = {
-            "f" : "json",
-            "searchText" : searchText,
-            "contains" : self._convert_boolean(contains),
-            "searchFields": searchFields,
-            "sr" : sr,
-            "layerDefs" : layerDefs,
-            "returnGeometry" : self._convert_boolean(returnGeometry),
-            "maxAllowableOffset" : maxAllowableOffset,
-            "geometryPrecision" : geometryPrecision,
-            "dynamicLayers" : dynamicLayers,
-            "returnZ" : self._convert_boolean(returnZ),
-            "returnM" : self._convert_boolean(returnM),
-            "gdbVersion" : gdbVersion,
-            "layers" : layers
-        }
-        res = self._get(url, params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
-        qResults = []
-        for r in res['results']:
-            qResults.append(Feature(r))
-        return qResults
+    @property
+    def minScale(self):
+        """gets the minScale value"""
+        if self._minScale is None:
+            self.init()
+        return self._minScale
     #----------------------------------------------------------------------
-    def _getLayerType(self, url):
-        """ returns a layer type """
-        params={
-            "f" : "json"
-        }
-        res = self._get(url=url, param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
-        return res['type']
+    @property
+    def serviceDescription(self):
+        """gets the serviceDescription value"""
+        if self._serviceDescription is None:
+            self.init()
+        return self._serviceDescription
     #----------------------------------------------------------------------
-    def getFeatureDynamicLayer(self, oid, dynamicLayer,
-                               returnZ=False, returnM=False):
-        """ The feature resource represents a single feature in a dynamic
-            layer in a map service
-        """
-        url = self._url + "/dynamicLayer/%s" % oid
-        params = {
-            "f": "json",
-            "returnZ": returnZ,
-            "returnM" : returnM,
-            "layer": {
-                "id": 101,
-                "source" : dynamicLayer.asDictionary
-            }
-        }
-        return Feature(
-            json_string=self._get(url=url,
-                                     param_dict=params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_port=self._proxy_port,
-                                     proxy_url=self._proxy_url)
-        )
+
+    #----------------------------------------------------------------------
+    @property
+    def tileServers(self):
+        """gets the tileServers value"""
+        if self._tileServers is None:
+            self.init()
+        return self._tileServers
+    #----------------------------------------------------------------------
+    @property
+    def kml(self):
+        url = "{url}/kml/mapImage.kmz".format(url=self._url)
+        return self._con.get(path_or_url=url, params={"f" : 'json'},
+                             file_name="mapImage.kmz",
+                             out_folder=tempfile.gettempdir())
+    #----------------------------------------------------------------------
+    @property
+    def itemInfo(self):
+        """returns the service's item's infomation"""
+        url = "{url}/info/iteminfo".format(url=self._url)
+        params = {"f" : "json"}
+        return self._con.get(path_or_url=url, params=params)
+    #----------------------------------------------------------------------
+    @property
+    def metadata(self):
+        """returns the service's XML metadata file"""
+        url = "{url}/info/metadata".format(url=self._url)
+        params = {"f" : "json"}
+        return self._con.get(path_or_url=url, params=params)
+    #----------------------------------------------------------------------
+    def thumbnail(self, out_path=None):
+        """"""
+        if out_path is None:
+            out_path = tempfile.gettempdir()
+        url = "{url}/info/thumbnail".format(url=self._url)
+        params = {"f" : "json"}
+        if out_path is None:
+            out_path = tempfile.gettempdir()
+        return self._con.get(path_or_url=url,
+                             params=params,
+                             out_folder=out_path,
+                             file_name="thumbnail.png")
     #----------------------------------------------------------------------
     def identify(self,
                  geometry,
@@ -552,7 +324,7 @@ class MapService(BaseAGSServer):
                  geometryType="esriGeometryPoint",
                  sr=None,
                  layerDefs=None,
-                 time=None,
+                 time_value=None,
                  layerTimeOptions=None,
                  layers="top",
                  returnGeometry=True,
@@ -604,7 +376,7 @@ class MapService(BaseAGSServer):
                         those layers. Definition expression for a layer that is
                         published with the service will be always honored.
 
-            time - The time instant or the time extent of the features to be
+            time_value - The time instant or the time extent of the features to be
             identified.
 
             layerTimeOptions - The time options per layer. Users can indicate
@@ -680,15 +452,21 @@ class MapService(BaseAGSServer):
                  'mapExtent': mapExtent,
                  'imageDisplay': imageDisplay
                  }
+        if not returnGeometry is None:
+            params['returnGeometry'] = returnGeometry
+        if returnZ:
+            params['returnZ'] = returnZ
 
+        if returnM:
+            params['returnM'] = returnM
         if layerDefs is not None:
             params['layerDefs'] = layerDefs
         if layers is not None:
             params['layers'] = layers
         if sr is not None:
             params['sr'] = sr
-        if time is not None:
-            params['time'] = time
+        if time_value is not None:
+            params['time'] = time_value
         if layerTimeOptions is not None:
             params['layerTimeOptions'] = layerTimeOptions
         if maxAllowableOffset is not None:
@@ -700,19 +478,36 @@ class MapService(BaseAGSServer):
         if gdbVersion is not None:
             params['gdbVersion'] = gdbVersion
 
-        identifyURL = self._url + "/identify"
-        return self._get(url=identifyURL,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        identifyURL = "{url}/identify".format(url=self._url)
+        return self._con.get(path_or_url=identifyURL,
+                         params=params)
     #----------------------------------------------------------------------
-    def _convert_boolean(self, value):
-        """ converts a boolean value to json value """
-        if value == True:
-            return 'true'
-        else:
-            return 'false'
+    def find(self, searchText, layers,
+             contains=True, searchFields="",
+             sr="", layerDefs="",
+             returnGeometry=True, maxAllowableOffset="",
+             geometryPrecision="", dynamicLayers="",
+             returnZ=False, returnM=False, gdbVersion=""):
+        """ performs the map service find operation """
+        url = "{url}/find".format(url=self._url)
+        params = {
+            "f" : "json",
+            "searchText" : searchText,
+            "contains" : contains,
+            "searchFields": searchFields,
+            "sr" : sr,
+            "layerDefs" : layerDefs,
+            "returnGeometry" : returnGeometry,
+            "maxAllowableOffset" : maxAllowableOffset,
+            "geometryPrecision" : geometryPrecision,
+            "dynamicLayers" : dynamicLayers,
+            "returnZ" : returnZ,
+            "returnM" : returnM,
+            "gdbVersion" : gdbVersion,
+            "layers" : layers
+        }
+        res = self._con.get(path_or_url=url, params=params)
+        return res
     #----------------------------------------------------------------------
     def generateKML(self, save_location, docName, layers, layerOptions="composite"):
         """
@@ -745,16 +540,13 @@ class MapService(BaseAGSServer):
             'docName' : docName,
             'layers' : layers,
             'layerOptions': layerOptions}
-        return self._get(url=kmlURL,
-                         out_folder=save_location,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port
-                         )
+        return self._con.get(path_or_url=kmlURL,
+                             out_folder=save_location,
+                             params=params)
     #----------------------------------------------------------------------
     def exportMap(self,
                   bbox,
+                  bboxSR=None,
                   size="600,550",
                   dpi=200,
                   imageSR=None,
@@ -773,7 +565,10 @@ class MapService(BaseAGSServer):
            resource provides information about the exported map image such
            as its URL, its width and height, extent and scale.
            Inputs:
-            bbox - envelope geometry object
+            bbox - (Required) The extent (bounding box) of the exported
+             image. Unless the bboxSR parameter has been specified, the bbox
+             is assumed to be in the spatial reference of the map.
+             Example: bbox="-104,35.6,-94.32,41"
             size - size of image in pixels
             dpi - dots per inch
             imageSR - spatial reference of the output image
@@ -823,52 +618,42 @@ class MapService(BaseAGSServer):
             mapScale - Use this parameter to export a map image at a specific
                        scale, with the map centered around the center of the
                        specified bounding box (bbox).
-
+         Output:
+           Image of the map.
         """
         params = {
             "f" : "json"
         }
+        params['bbox'] = bbox
+        if bboxSR:
+            params['bboxSR'] = bboxSR
+        if dpi is not None:
+            params['dpi'] = dpi
+        if size is not None:
+            params['size'] = size
+        if imageSR is not None and \
+           isinstance(imageSR, SpatialReference):
+            params['imageSR'] = {'wkid': imageSR.wkid}
+        if image_format is not None:
+            params['format'] = image_format
+        if layerDefFilter is not None:
+            params['layerDefs'] = layerDefFilter
+        if layers is not None:
+            params['layers'] = layers
+        if transparent is not None:
+            params['transparent'] = transparent
+        if timeFilter is not None:
+            params['time'] = timeFilter
+        if layerTimeOptions is not None:
+            params['layerTimeOptions'] = layerTimeOptions
+        if dynamicLayers is not None:
+            params['dynamicLayers'] = dynamicLayers
+        if mapScale is not None:
+            params['mapScale'] = mapScale
+        exportURL = self._url + "/export"
+        return self._con.get(path_or_url=exportURL,
+                             params=params)
 
-        if isinstance(bbox, Envelope):
-            vals = bbox.asDictionary
-            params['bbox'] = "%s,%s,%s,%s" % (vals['xmin'], vals['ymin'],
-                                              vals['xmax'], vals['ymax'])
-            params['bboxSR'] = vals['spatialReference']
-            if dpi is not None:
-                params['dpi'] = dpi
-            if size is not None:
-                params['size'] = size
-            if imageSR is not None and \
-               isinstance(imageSR, SpatialReference):
-                params['imageSR'] = {'wkid': imageSR.wkid}
-            if image_format is not None:
-                params['format'] = image_format
-            if layerDefFilter is not None and \
-               isinstance(layerDefFilter,
-                          filters.LayerDefinitionFilter):
-                params['layerDefs'] = layerDefFilter.filter
-            if layers is not None:
-                params['layers'] = layers
-            if transparent is not None:
-                params['transparent'] = transparent
-            if timeFilter is not None and \
-               isinstance(timeFilter, filters.TimeFilter):
-                params['time'] = timeFilter.filter
-            if layerTimeOptions is not None:
-                params['layerTimeOptions'] = layerTimeOptions
-            if dynamicLayers is not None and \
-               isinstance(dynamicLayers, DynamicData):
-                params['dynamicLayers'] = dynamicLayers.asDictionary
-            if mapScale is not None:
-                params['mapScale'] = mapScale
-            exportURL = self._url + "/export"
-            return self._get(url=exportURL,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
-        else:
-            return None
     #----------------------------------------------------------------------
     def estimateExportTilesSize(self,
                                 exportBy,
@@ -901,22 +686,22 @@ class MapService(BaseAGSServer):
          reference, the extent values are assumed to be in the spatial
          reference of the map. The default value is full extent of the
          tiled map service.
-	   Syntax: <xmin>, <ymin>, <xmax>, <ymax>
+        Syntax: <xmin>, <ymin>, <xmax>, <ymax>
            Example 1: -104,35.6,-94.32,41
         exportBy - The criteria that will be used to select the tile
          service levels to export. The values can be Level IDs, cache scales
          or the Resolution (in the case of image services).
-	   Values: LevelID | Resolution | Scale
+        Values: LevelID | Resolution | Scale
         levels - Specify the tiled service levels for which you want to get
          the estimates. The values should correspond to Level IDs, cache
          scales or the Resolution as specified in exportBy parameter. The
          values can be comma separated values or a range.
-	   Example 1: 1,2,3,4,5,6,7,8,9
-	   Example 2: 1-4,7-9
+        Example 1: 1,2,3,4,5,6,7,8,9
+        Example 2: 1-4,7-9
         areaOfInterest - (Optional) The areaOfInterest polygon allows
          exporting tiles within the specified polygon areas. This parameter
          supersedes exportExtent parameter. Also excepts geometry.Polygon.
-	   Example: { "features": [{"geometry":{"rings":[[[-100,35],
+        Example: { "features": [{"geometry":{"rings":[[[-100,35],
              [-100,45],[-90,45],[-90,35],[-100,35]]],
              "spatialReference":{"wkid":4326}}}]}
         async - (optional) the estimate function is run asynchronously
@@ -937,28 +722,17 @@ class MapService(BaseAGSServer):
         }
         params["levels"] = levels
         if not areaOfInterest is None:
-            if isinstance(areaOfInterest, Polygon):
-                template = { "features": [areaOfInterest.asDictionary]}
-                params['areaOfInterest'] = template
-            else:
-                params['areaOfInterest'] = areaOfInterest
+            params['areaOfInterest'] = areaOfInterest
         if async == True:
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url,
+                             params=params)
         else:
-            exportJob = self._get(url=url,
-                                     param_dict=params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
+            exportJob = self._con.get(path_or_url=url,
+                                  params=params)
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
-            gpJob = GPJob(url=jobUrl,
-                          securityHandler=self._securityHandler,
-                          proxy_port=self._proxy_port,
-                          proxy_url=self._proxy_url)
+            gpJob = GPJob(connection=self._con,
+                          url=jobUrl)
+
             status = gpJob.jobStatus
             while status != "esriJobSucceeded":
                 if status in ['esriJobFailed',
@@ -1008,19 +782,19 @@ class MapService(BaseAGSServer):
          exportBy - The criteria that will be used to select the tile
            service levels to export. The values can be Level IDs, cache
            scales. or the resolution (in the case of image services).
-	   Values: LevelID | Resolution | Scale
+        Values: LevelID | Resolution | Scale
         levels - Specifies the tiled service levels to export. The values
           should correspond to Level IDs, cache scales. or the resolution
           as specified in exportBy parameter. The values can be comma
           separated values or a range. Make sure tiles are present at the
           levels where you attempt to export tiles.
-	   Example 1: 1,2,3,4,5,6,7,8,9
-	   Example 2: 1-4,7-9
+        Example 1: 1,2,3,4,5,6,7,8,9
+        Example 2: 1-4,7-9
         tilePackage - Allows exporting either a tile package or a cache
           raster data set. If the value is true, output will be in tile
           package format, and if the value is false, a cache raster data
           set is returned. The default value is false
-	   Values: true | false
+        Values: true | false
         exportExtent - The extent (bounding box) of the tile package or the
           cache dataset to be exported. If extent does not include a
           spatial reference, the extent values are assumed to be in the
@@ -1037,7 +811,7 @@ class MapService(BaseAGSServer):
           slightly compromises the quality of tiles but helps reduce the
           size of the download. Try sample compressions to determine the
           optimal compression before using this feature.
-	   Values: true | false
+        Values: true | false
         compressionQuality - (Optional) When optimizeTilesForSize=true, you
          can specify a compression factor. The value must be between 0 and
          100. The value cannot be greater than the default compression
@@ -1071,25 +845,20 @@ class MapService(BaseAGSServer):
             geom = areaOfInterest.asDictionary()
             template = { "features": [geom]}
             params["areaOfInterest"] = template
+        elif isinstance(areaOfInterest, dict):
+            params["areaOfInterest"] = { "features": [areaOfInterest]}
         if async == True:
-            return self._get(url=url, param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url, params=params)
         else:
-            exportJob = self._get(url=url, param_dict=params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
+            exportJob = self._con.get(path_or_url=url, params=params)
             jobUrl = "%s/jobs/%s" % (url, exportJob['jobId'])
             gpJob = GPJob(url=jobUrl,
-                          securityHandler=self._securityHandler,
-                          proxy_port=self._proxy_port,
-                          proxy_url=self._proxy_url)
+                          connection=self._con)
             status = gpJob.jobStatus
             while status != "esriJobSucceeded":
                 if status in ['esriJobFailed',
-                                       'esriJobCancelling',
-                                       'esriJobCancelled']:
+                              'esriJobCancelling',
+                              'esriJobCancelled']:
                     return None
                 else:
                     time.sleep(5)
@@ -1097,28 +866,22 @@ class MapService(BaseAGSServer):
             allResults = gpJob.results
             for k,v in allResults.items():
                 if k == "out_service_url":
-                    value = v['value']
+                    value = v.value
                     params = {
                         "f" : "json"
                     }
-                    gpRes = self._get(url=v['value'],
-                                         param_dict=params,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port)
+                    gpRes = self._con.get(path_or_url=value,
+                                      params=params)
                     if tilePackage == True:
                         files = []
                         for f in gpRes['files']:
                             name = f['name']
                             dlURL = f['url']
                             files.append(
-                                self._get(url=dlURL,
-                                          out_folder=tempfile.gettempdir(),
-                                          file_name=name,
-                                          param_dict=params,
-                                          securityHandler=self._securityHandler,
-                                          proxy_url=self._proxy_url,
-                                          proxy_port=self._proxy_port))
+                                self._con.get(path_or_url=dlURL,
+                                              out_folder=tempfile.gettempdir(),
+                                              file_name=name,
+                                              params=params))
                         return files
                     else:
                         return gpRes['folders']

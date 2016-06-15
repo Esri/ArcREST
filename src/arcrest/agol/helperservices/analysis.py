@@ -1,8 +1,7 @@
 from __future__ import absolute_import
-from ...ags._geoprocessing import *
-from ..._abstract import abstract
+from ...services.geoprocessing import GPService
 ########################################################################
-class analysis(abstract.BaseAGOLClass):
+class analysis(object):
     """
        ArcGIS Online is a collaborative, cloud-based platform that lets
        members of an organization create, share, and access maps,
@@ -26,18 +25,16 @@ class analysis(abstract.BaseAGOLClass):
           proxy_url - optional proxy IP
           proxy_port - optional proxy port required if proxy_url specified
        Basic Usage:
-        import arcrest
-        import arcrest.agol as agol
 
-        if __name__ == "__main__":
-            username = "username"
-            password = "password"
-            sh = arcrest.AGOLTokenSecurityHandler(username, password)
-            a = agol.analysis(securityHandler=sh)
-            for task in a.tasks:
-                if task.name.lower() == "aggregatepoints":
-                    for params in task.parameters:
-                        print( params)
+        username = "username"
+        password = "password"
+        con = Connection(baseurl="http://www.arcgis.com/sharing/rest",product_type="AGO",
+                         security_method="BUILT-IN", username=username, password=password)
+        a = analysis(connection=con, url=None)
+        for task in a.tasks:
+            if task.name.lower() == "aggregatepoints":
+                for params in task.parameters:
+                    print( params)
     """
     _proxy_url = None
     _proxy_port = None
@@ -47,10 +44,8 @@ class analysis(abstract.BaseAGOLClass):
     _gpService = None
     #----------------------------------------------------------------------
     def __init__(self,
-                 securityHandler,
-                 url=None,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection,
+                 url=None):
         """Constructor"""
         if url is None:
             self._url = "https://www.arcgis.com/sharing/rest"
@@ -58,33 +53,28 @@ class analysis(abstract.BaseAGOLClass):
             if url.find("/sharing/rest") == -1:
                 url = url + "/sharing/rest"
             self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
-        self.__init_url()
+        self._con = connection
+        self.__init_url(connection)
     #----------------------------------------------------------------------
-    def __init_url(self):
+    def __init_url(self, connection=None):
         """loads the information into the class"""
+        if connection is None:
+            self._con = connection
         portals_self_url = "{}/portals/self".format(self._url)
         params = {
             "f" :"json"
         }
-        res = self._get(url=portals_self_url,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port)
+        res = self._con.get(path_or_url=portals_self_url,
+                           params=params)
         if "helperServices" in res:
             helper_services = res.get("helperServices")
             if "analysis" in helper_services:
                 analysis_service = helper_services.get("analysis")
                 if "url" in analysis_service:
                     self._analysis_url = analysis_service.get("url")
-        self._gpService = GPService(url=self._analysis_url,
-                  securityHandler=self._securityHandler,
-                  proxy_url=self._proxy_url,
-                  proxy_port=self._proxy_port,
-                  initialize=False)
+        self._gpService = GPService(connection=self._con,
+                                    url=self._analysis_url,
+                                    initialize=False)
     #----------------------------------------------------------------------
     @property
     def gpService(self):
@@ -96,5 +86,10 @@ class analysis(abstract.BaseAGOLClass):
     @property
     def tasks(self):
         """returns the available analysis tasks"""
-        return self.gpService.tasks
+        if self._gpService is None:
+            self.__init_url()
+        try:
+            return self.gpService.tasks
+        except:
+            return None
 

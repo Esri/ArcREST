@@ -1,4 +1,3 @@
 from __future__ import absolute_import
-from .administration import PortalAdministration, _log, _Security, _System
-
-__version__ = "3.5.6"
+from .administration import PortalAdministration
+__version__ = "5.0.0"

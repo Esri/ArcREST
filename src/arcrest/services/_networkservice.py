@@ -1,10 +1,10 @@
+"""
+"""
 from __future__ import absolute_import
-from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
-import json
+from ..common._base import BaseService
 
 ########################################################################
-class NetworkService(BaseAGSServer):
+class NetworkService(BaseService):
     """
     The network service resource represents a network analysis service
     published with ArcGIS Server. The resource provides information about
@@ -13,9 +13,7 @@ class NetworkService(BaseAGSServer):
     the network analysis service.
     """
     _url = None
-    _proxy_url = None
-    _proxy_port = None
-    _securityHandler = None
+    _con = None
     _json = None
     _json_dict = None
     _routeLayers = None
@@ -26,140 +24,94 @@ class NetworkService(BaseAGSServer):
     _serviceLimits = None
     _defaultTravelMode = None
     _trafficSupport = None
-
-    #----------------------------------------------------------------------
-    def __init__(self, url,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._securityHandler = securityHandler
-        if self._securityHandler is not None:
-            self._referer_url = self._securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
-        if initialize:
-            self.__init()
-
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ initializes the properties """
-        params = {
-            "f" : "json",
-        }
-        json_dict = self._get(self._url, params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json_dict = json_dict
-        self._json = json.dumps(self._json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-
-        for k,v in json_dict.items():
-            if k in attributes:
-                if k == "routeLayers" and json_dict[k]:
-                    self._routeLayers = []
-                    for rl in v:
-                        self._routeLayers.append(
-                            RouteNetworkLayer(url=self._url + "/%s" % rl,
-                                              securityHandler=self._securityHandler,
-                                              proxy_url=self._proxy_url,
-                                              proxy_port=self._proxy_port,
-                                              initialize=False))
-
-                elif k == "serviceAreaLayers" and json_dict[k]:
-                    self._serviceAreaLayers = []
-                    for sal in v:
-                        self._serviceAreaLayers.append(
-                            ServiceAreaNetworkLayer(url=self._url + "/%s" % sal,
-                                                    securityHandler=self._securityHandler,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    initialize=False))
-
-                elif k == "closestFacilityLayers" and json_dict[k]:
-                    self._closestFacilityLayers = []
-                    for cf in v:
-                        self._closestFacilityLayers.append(
-                            ClosestFacilityNetworkLayer(url=self._url + "/%s" % cf,
-                                                    securityHandler=self._securityHandler,
-                                                    proxy_url=self._proxy_url,
-                                                    proxy_port=self._proxy_port,
-                                                    initialize=False))
-                else:
-                    setattr(self, "_"+ k, v)
-            else:
-                print ("attribute %s is not implemented." % k)
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """
-        returns key/value pair
-        """
-        attributes = json.loads(str(self))
-        for att in attributes.keys():
-            yield [att, getattr(self, att)]
-
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def serviceDescription(self):
         if self._serviceDescription is None:
-            self.__init()
+            self.init()
         return self._serviceDescription
+    #----------------------------------------------------------------------
+    def _load_layers(self, connection=None):
+        """loads the various layer types"""
+        self._closestFacilityLayers = []
+        self._routeLayers = []
+        self._serviceAreaLayers = []
+        params = {
+            "f" : "json",
+        }
+        if connection is None:
+            connection = self._con
+        json_dict = connection.get(path_or_url=self._url, params=params)
+        for k,v in json_dict.items():
+            if k == "routeLayers" and json_dict[k]:
+                self._routeLayers = []
+                for rl in v:
+                    self._routeLayers.append(
+                        RouteNetworkLayer(url=self._url + "/%s" % rl,
+                                          connection=connection,
+                                          initialize=True))
+            elif k == "serviceAreaLayers" and json_dict[k]:
+                self._serviceAreaLayers = []
+                for sal in v:
+                    self._serviceAreaLayers.append(
+                        ServiceAreaNetworkLayer(url=self._url + "/%s" % sal,
+                                                connection=connection,
+                                                initialize=False))
+            elif k == "closestFacilityLayers" and json_dict[k]:
+                self._closestFacilityLayers = []
+                for cf in v:
+                    self._closestFacilityLayers.append(
+                        ClosestFacilityNetworkLayer(url=self._url + "/%s" % cf,
+                                                connection=self._con,
+                                                initialize=False))
     #----------------------------------------------------------------------
     @property
     def routeLayers(self):
         if self._routeLayers is None:
-            self.__init()
+            self.init()
+        self._load_layers()
         return self._routeLayers
     #----------------------------------------------------------------------
     @property
     def serviceAreaLayers(self):
         if self._serviceAreaLayers is None:
-            self.__init()
+            self.init()
+        self._load_layers()
         return self._serviceAreaLayers
     #----------------------------------------------------------------------
     @property
     def closestFacilityLayers(self):
         if self._closestFacilityLayers is None:
-            self.__init()
+            self.init()
+        self._load_layers()
         return self._closestFacilityLayers
     #----------------------------------------------------------------------
     @property
     def serviceLimits(self):
         if self._serviceLimits is None:
-            self.__init()
+            self.init()
         return self._serviceLimits
     #----------------------------------------------------------------------
     @property
     def defaultTravelMode(self):
         if self._defaultTravelMode is None:
-            self.__init()
+            self.init()
         return self._defaultTravelMode
     #----------------------------------------------------------------------
     @property
     def trafficSupport(self):
         if self._trafficSupport  is None:
-            self.__init()
+            self.init()
         return self._trafficSupport
 
 ########################################################################
-class NetworkLayer(BaseAGSServer):
+class NetworkLayer(BaseService):
     """
     The network layer resource represents a single network layer in
     a network analysis service published by ArcGIS Server. It provides basic
@@ -171,9 +123,6 @@ class NetworkLayer(BaseAGSServer):
     ClosestFacilityNetworkLayer.
     """
     _url = None
-    _proxy_url = None
-    _proxy_port = None
-    _securityHandler = None
     _json = None
     _json_dict = None
 
@@ -202,186 +151,149 @@ class NetworkLayer(BaseAGSServer):
     _hasZ = None
     _supportedTravelModes = None
     _serviceLimits = None
-
-    #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
-                 proxy_url=None, proxy_port=None,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
-        if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ initializes all the properties """
-        params = {
-            "f" : "json"
-        }
-
-        # TODO handle spaces in the url, 'Service Area' should be 'Service+Area'
-        self._url = self._url.replace(' ','+')
-
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print (k, " - attribute not implemented in NetworkLayer.")
-            del k,v
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
         if self._currentVersion is None:
-            self.__init()
+            self.init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def layerName(self):
         if self._layerName is None:
-            self.__init()
+            self.init()
         return self._layerName
     #----------------------------------------------------------------------
     @property
     def layerType(self):
         if self._layerType is None:
-            self.__init()
+            self.init()
         return self._layerType
     #----------------------------------------------------------------------
     @property
     def impedance(self):
         if self._impedance is None:
-            self.__init()
+            self.init()
         return self._impedance
     #----------------------------------------------------------------------
     @property
     def restrictions(self):
         if self._restrictions is None:
-            self.__init()
+            self.init()
         return self._restrictions
     #----------------------------------------------------------------------
     @property
     def snapTolerance(self):
         if self._snapTolerance is None:
-            self.__init()
+            self.init()
         return self._snapTolerance
     #----------------------------------------------------------------------
     @property
     def maxSnapTolerance(self):
         if self._maxSnapTolerance is None:
-            self.__init()
+            self.init()
         return self._maxSnapTolerance
     #----------------------------------------------------------------------
     @property
     def snapToleranceUnits(self):
         if self._snapToleranceUnits is None:
-            self.__init()
+            self.init()
         return self._snapToleranceUnits
     #----------------------------------------------------------------------
     @property
     def ignoreInvalidLocations(self):
         if self._ignoreInvalidLocations is None:
-            self.__init()
+            self.init()
         return self._ignoreInvalidLocations
     #----------------------------------------------------------------------
     @property
     def restrictUTurns(self):
         if self._restrictUTurns is None:
-            self.__init()
+            self.init()
         return self._restrictUTurns
     #----------------------------------------------------------------------
     @property
     def accumulateAttributeNames(self):
         if self._accumulateAttributeNames is None:
-            self.__init()
+            self.init()
         return self._accumulateAttributeNames
     #----------------------------------------------------------------------
     @property
     def attributeParameterValues(self):
         if self._attributeParameterValues is None:
-            self.__init()
+            self.init()
         return self._attributeParameterValues
     #----------------------------------------------------------------------
     @property
     def outputSpatialReference(self):
         if self._outputSpatialReference is None:
-            self.__init()
+            self.init()
         return self._outputSpatialReference
     #----------------------------------------------------------------------
     @property
     def useHierarchy(self):
         if self._useHierarchy is None:
-            self.__init()
+            self.init()
         return self._useHierarchy
     #----------------------------------------------------------------------
     @property
     def hierarchyAttributeName(self):
         if self._hierarchyAttributeName is None:
-            self.__init()
+            self.init()
         return self._hierarchyAttributeName
     #----------------------------------------------------------------------
     @property
     def hierarchyLevelCount(self):
         if self._hierarchyLevelCount is None:
-            self.__init()
+            self.init()
         return self._hierarchyLevelCount
     #----------------------------------------------------------------------
     @property
     def hierarchyMaxValues(self):
         if self._hierarchyMaxValues is None:
-            self.__init()
+            self.init()
         return self._hierarchyMaxValues
     #----------------------------------------------------------------------
     @property
     def hierarchyNumTransitions(self):
         if self._hierarchyNumTransitions is None:
-            self.__init()
+            self.init()
         return self._hierarchyNumTransitions
     #----------------------------------------------------------------------
     @property
     def networkClasses(self):
         if self._networkClasses is None:
-            self.__init()
+            self.init()
         return self._networkClasses
     #----------------------------------------------------------------------
     @property
     def networkDataset(self):
         if self._networkDataset is None:
-            self.__init()
+            self.init()
         return self._networkDataset
     #----------------------------------------------------------------------
     @property
     def hasM(self):
         if self._hasM is None:
-            self.__init()
+            self.init()
         return self._hasM
     #----------------------------------------------------------------------
     @property
     def hasZ(self):
         if self._hasZ is None:
-            self.__init()
+            self.init()
         return self._hasZ
     #----------------------------------------------------------------------
     @property
     def supportedTravelModes(self):
         if self._supportedTravelModes is None:
-            self.__init()
+            self.init()
         return self._supportedTravelModes
     #----------------------------------------------------------------------
     @property
     def serviceLimits(self):
         if self._serviceLimits is None:
-            self.__init()
+            self.init()
         return self._serviceLimits
     #----------------------------------------------------------------------
     def retrieveTravelModes(self):
@@ -389,11 +301,8 @@ class NetworkLayer(BaseAGSServer):
         network dataset or in the portal if the GIS server is federated"""
         url = self._url + "/retrieveTravelModes"
         params = {"f":"json"}
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                         params=params)
 ########################################################################
 class RouteNetworkLayer(NetworkLayer):
     """
@@ -415,111 +324,83 @@ class RouteNetworkLayer(NetworkLayer):
     _directionsStyleNames = None
     _directionsLengthUnits = None
     _directionsTimeAttribute = None
-
-    #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
-                 proxy_url=None, proxy_port=None,
-                 initialize=False):
-        """ initializes all properties """
-        NetworkLayer.__init__(self,url)
-
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ initializes all the properties """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in RouteNetworkLayer.")
-            del k,v
-
     #----------------------------------------------------------------------
     @property
     def directionsTimeAttribute(self):
         if self._directionsTimeAttribute is None:
-            self.__init()
+            self.init()
         return self._directionsTimeAttribute
     #----------------------------------------------------------------------
     @property
     def directionsLengthUnits(self):
         if self._directionsLengthUnits is None:
-            self.__init()
+            self.init()
         return self._directionsLengthUnits
     #----------------------------------------------------------------------
     @property
     def outputLineType(self):
         if self._outputLineType is None:
-            self.__init()
+            self.init()
         return self._outputLineType
     #----------------------------------------------------------------------
     @property
     def directionsLanguage(self):
         if self._directionsLanguage is None:
-            self.__init()
+            self.init()
         return self._directionsLanguage
     #----------------------------------------------------------------------
     @property
     def directionsSupportedLanguages(self):
         if self._directionsSupportedLanguages is None:
-            self.__init()
+            self.init()
         return self._directionsSupportedLanguages
     #----------------------------------------------------------------------
     @property
     def directionsStyleNames(self):
         if self._directionsStyleNames is None:
-            self.__init()
+            self.init()
         return self._directionsStyleNames
     #----------------------------------------------------------------------
     @property
     def useStartTime(self):
         if self._useStartTime is None:
-            self.__init()
+            self.init()
         return self._useStartTime
     #----------------------------------------------------------------------
     @property
     def startTime(self):
         if self._startTime is None:
-            self.__init()
+            self.init()
         return self._startTime
     #----------------------------------------------------------------------
     @property
     def startTimeIsUTC(self):
         if self._startTimeIsUTC is None:
-            self.__init()
+            self.init()
         return self._startTimeIsUTC
     #----------------------------------------------------------------------
     @property
     def useTimeWindows(self):
         if self._useTimeWindows is None:
-            self.__init()
+            self.init()
         return self._useTimeWindows
     #----------------------------------------------------------------------
     @property
     def preserveFirstStop(self):
         if self._preserveFirstStop is None:
-            self.__init()
+            self.init()
         return self._preserveFirstStop
     #----------------------------------------------------------------------
     @property
     def preserveLastStop(self):
         if self._preserveLastStop is None:
-            self.__init()
+            self.init()
         return self._preserveLastStop
     #----------------------------------------------------------------------
     @property
     def findBestSequence(self):
         if self._findBestSequence is None:
-            self.__init()
+            self.init()
         return self._findBestSequence
     #----------------------------------------------------------------------
     def solve(self,stops,
@@ -773,17 +654,11 @@ class RouteNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                              postdata=params)
         else:
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url,
+                                params=params)
 
 
 ########################################################################
@@ -812,138 +687,107 @@ class ServiceAreaNetworkLayer(NetworkLayer):
     _splitLinesAtBreaks = None
     _timeOfDayUsage = None
     _mergeSimilarPolygonRanges = None
-
-    #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
-                 proxy_url=None, proxy_port=None,
-                 initialize=False):
-        """initializes all properties"""
-        NetworkLayer.__init__(self, url)
-
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ initializes all the properties """
-        params = {
-            "f" : "json"
-        }
-
-        # TODO handle spaces in the url, 'Service Area' should be 'Service+Area'
-        self._url = self._url.replace(' ','+')
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in ServiceAreaNetworkLayer.")
-            del k,v
-
     #----------------------------------------------------------------------
     @property
     def outputLines(self):
         if self._outputLines is None:
-            self.__init()
+            self.init()
         return self._outputLines
     #----------------------------------------------------------------------
     @property
     def timeOfDayIsUTC(self):
         if self._timeOfDayIsUTC is None:
-            self.__init()
+            self.init()
         return self._timeOfDayIsUTC
     #----------------------------------------------------------------------
     @property
     def travelDirection(self):
         if self._travelDirection is None:
-            self.__init()
+            self.init()
         return self._travelDirection
     #----------------------------------------------------------------------
     @property
     def trimOuterPolygon(self):
         if self._trimOuterPolygon is None:
-            self.__init()
+            self.init()
         return self._trimOuterPolygon
     #----------------------------------------------------------------------
     @property
     def trimPolygonDistanceUnits(self):
         if self._trimPolygonDistanceUnits is None:
-            self.__init()
+            self.init()
         return self._trimPolygonDistanceUnits
     #----------------------------------------------------------------------
     @property
     def defaultBreaks(self):
         if self._defaultBreaks is None:
-            self.__init()
+            self.init()
         return self._defaultBreaks
     #----------------------------------------------------------------------
     @property
     def includeSourceInformationOnLines(self):
         if self._includeSourceInformationOnLines is None:
-            self.__init()
+            self.init()
         return self._includeSourceInformationOnLines
     #----------------------------------------------------------------------
     @property
     def overlapPolygons(self):
         if self._overlapPolygons is None:
-            self.__init()
+            self.init()
         return self._overlapPolygons
     #----------------------------------------------------------------------
     @property
     def timeOfDay(self):
         if self._timeOfDay is None:
-            self.__init()
+            self.init()
         return self._timeOfDay
     #----------------------------------------------------------------------
     @property
     def excludeSourcesFromPolygons(self):
         if self._excludeSourcesFromPolygons is None:
-            self.__init()
+            self.init()
         return self._excludeSourcesFromPolygons
     #----------------------------------------------------------------------
     @property
     def splitPolygonsAtBreaks(self):
         if self._splitPolygonsAtBreaks is None:
-            self.__init()
+            self.init()
         return self._splitPolygonsAtBreaks
     #----------------------------------------------------------------------
     @property
     def outputPolygons(self):
         if self._outputPolygons is None:
-            self.__init()
+            self.init()
         return self._outputPolygons
     #----------------------------------------------------------------------
     @property
     def overlapLines(self):
         if self._overlapLines is None:
-            self.__init()
+            self.init()
         return self._overlapLines
     #----------------------------------------------------------------------
     @property
     def trimPolygonDistance(self):
         if self._trimPolygonDistance is None:
-            self.__init()
+            self.init()
         return self._trimPolygonDistance
     #----------------------------------------------------------------------
     @property
     def splitLinesAtBreaks(self):
         if self._splitLinesAtBreaks is None:
-            self.__init()
+            self.init()
         return self._splitLinesAtBreaks
     #----------------------------------------------------------------------
     @property
     def timeOfDayUsage(self):
         if self._timeOfDayUsage is None:
-            self.__init()
+            self.init()
         return self._timeOfDayUsage
     #----------------------------------------------------------------------
     @property
     def mergeSimilarPolygonRanges(self):
         if self._mergeSimilarPolygonRanges is None:
-            self.__init()
+            self.init()
         return self._mergeSimilarPolygonRanges
     #----------------------------------------------------------------------
     def solveServiceArea(self,facilities,method="POST",
@@ -1196,17 +1040,11 @@ class ServiceAreaNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                              postdata=params)
         else:
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url,
+                                params=params)
 
 
 ########################################################################
@@ -1230,108 +1068,77 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
     _directionsSupportedLanguages = None
     _directionsStyleNames = None
     _timeOfDay = None
-
-    #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler=None,
-                 proxy_url=None, proxy_port=None,
-                 initialize=False):
-        """initializes all properties"""
-        NetworkLayer.__init__(self, url)
-
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ initializes all the properties """
-        params = {
-            "f" : "json"
-        }
-
-        # TODO handle spaces in the url, 'Closest Facility' should be 'Closest+Facility'
-        self._url = self._url.replace(' ','+')
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print (k, " - attribute not implemented in ClosestFacilityNetworkLayer.")
-            del k,v
-
     #----------------------------------------------------------------------
     @property
     def directionsLanguage(self):
         if self._directionsLanguage is None:
-            self.__init()
+            self.init()
         return self._directionsLanguage
     #----------------------------------------------------------------------
     @property
     def directionsLengthUnits(self):
         if self._directionsLengthUnits is None:
-            self.__init()
+            self.init()
         return self._directionsLengthUnits
     #----------------------------------------------------------------------
     @property
     def outputLineType(self):
         if self._outputLineType is None:
-            self.__init()
+            self.init()
         return self._outputLineType
     #----------------------------------------------------------------------
     @property
     def timeOfDayIsUTC(self):
         if self._timeOfDayIsUTC is None:
-            self.__init()
+            self.init()
         return self._timeOfDayIsUTC
     #----------------------------------------------------------------------
     @property
     def travelDirection(self):
         if self._travelDirection is None:
-            self.__init()
+            self.init()
         return self._travelDirection
     #----------------------------------------------------------------------
     @property
     def defaultCutoffValue(self):
         if self._defaultCutoffValue is None:
-            self.__init()
+            self.init()
         return self._defaultCutoffValue
     #----------------------------------------------------------------------
     @property
     def facilityCount(self):
         if self._facilityCount is None:
-            self.__init()
+            self.init()
         return self._facilityCount
     #----------------------------------------------------------------------
     @property
     def directionsTimeAttribute(self):
         if self._directionsTimeAttribute is None:
-            self.__init()
+            self.init()
         return self._directionsTimeAttribute
     #----------------------------------------------------------------------
     @property
     def timeOfDayUsage(self):
         if self._timeOfDayUsage is None:
-            self.__init()
+            self.init()
         return self._timeOfDayUsage
     #----------------------------------------------------------------------
     @property
     def directionsSupportedLanguages(self):
         if self._directionsSupportedLanguages is None:
-            self.__init()
+            self.init()
         return self._directionsSupportedLanguages
     #----------------------------------------------------------------------
     @property
     def directionsStyleNames(self):
         if self._directionsStyleNames is None:
-            self.__init()
+            self.init()
         return self._directionsStyleNames
     #----------------------------------------------------------------------
     @property
     def timeOfDay(self):
         if self._timeOfDay is None:
-            self.__init()
+            self.init()
         return self._timeOfDay
     #----------------------------------------------------------------------
     def solveClosestFacility(self,incidents,facilities,method="POST",
@@ -1590,14 +1397,8 @@ class ClosestFacilityNetworkLayer(NetworkLayer):
             params['returnZ'] = returnZ
 
         if method.lower() == "post":
-            return self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                 postdata=params)
         else:
-            return self._get(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.get(path_or_url=url,
+                                params=params)

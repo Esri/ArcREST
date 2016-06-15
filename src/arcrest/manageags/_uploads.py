@@ -1,32 +1,33 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
-import os
+from ...common._base import BaseServer
+from ...common.packages.six.moves.urllib_parse import urlparse
 ########################################################################
-class Uploads(BaseAGSServer):
+class Uploads(BaseServer):
     """
     This resource is a collection of all the items that have been uploaded
     to the server.
     See: http://resources.arcgis.com/en/help/arcgis-rest-api/index.html#/Uploads/02r3000001qr000000/
     """
     _uploads = None
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
+    _json = None
+    _json_dict = None
     _url = None
 
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 proxy_url=None, proxy_port=None,
+    def __init__(self, url, connection,
                  initialize=False):
         """Constructor"""
+        super(Uploads, self).__init__(url=url,
+                                      connection=connection)
         if url.lower().find("uploads") < -1:
             self._url = url + "/uploads"
         else:
             self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
+        self._json_dict = {}
+        self._json = ""
 
     #----------------------------------------------------------------------
     @property
@@ -38,12 +39,8 @@ class Uploads(BaseAGSServer):
         params = {
             "f" :"json"
         }
-        return self._get(url=self._url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-
+        return self._con.get(path_or_url=self._url,
+                            params=params)
     #----------------------------------------------------------------------
     def deleteItem(self, itemId):
         """
@@ -55,10 +52,7 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def item(self, itemId):
         """
@@ -78,31 +72,16 @@ class Uploads(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._get(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url, params=params)
     #----------------------------------------------------------------------
     def uploadItem(self, filePath, description):
-        """
-        This operation uploads an item to the server. Each uploaded item is 
-        identified by a unique itemID. Since this request uploads a file, it 
-        must be a multi-part request as per IETF RFC1867. 
-        
-        Inputs:
-            filePath - the file to be uploaded.
-            description - optional description for the uploaded item.
-        """
-        import urlparse
+        """"""
         url = self._url + "/upload"
         params = {
             "f" : "json"
         }
         files = {}
         files['itemFile'] = filePath
-        return self._post(url=url,
-                          param_dict=params,
-                          files=files,
-                          securityHandler=self._securityHandler,
-                          proxy_url=self._proxy_url,
-                          proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params,
+                              files=files)

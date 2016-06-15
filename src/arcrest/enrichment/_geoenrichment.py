@@ -1,22 +1,16 @@
 from __future__ import absolute_import
-from __future__ import print_function
-from ..common.geometry import Point, Polygon, Envelope, SpatialReference
-from .._abstract.abstract import BaseGeoEnrichment
-from ..manageorg import Administration
+from ...common.geometry import Point, Polygon
 import json
-import csv
 import os
 import numpy as np
 ########################################################################
-class GeoEnrichment(BaseGeoEnrichment):
+class GeoEnrichment(object):
     """
     The GeoEnrichment service provides the ability to get facts about a
     location or area.
     """
     _url = None
-    _proxy_url = None
-    _proxy_port = None
-    _securityHandler = None
+    _con = None
     _countryCodeFile = None
     _dataCollectionNames = None
     _countrycodes = None
@@ -32,20 +26,12 @@ class GeoEnrichment(BaseGeoEnrichment):
     _url_data_collection = "/Geoenrichment/dataCollections"
     #----------------------------------------------------------------------
     def __init__(self,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
+                 connection,
+                 url=None):
         """Constructor"""
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        else:
-            raise Exception("A SecurityHandler object is required for this object.")
-        admin = Administration(securityHandler=securityHandler,
-                               proxy_url=proxy_url,
-                               proxy_port=proxy_port)
-        self._base_url = admin.portals.portalSelf.helperServices['geoenrichment']['url']
-        del admin
-        self._securityHandler = securityHandler
+        if not url is None:
+            self._base_url = url
+        self._con = connection
         self._countryCodeFile = os.path.join(os.path.dirname(__file__),
                                              "__countrycodes.csv")
         self._dataCollectionFile = os.path.join(os.path.dirname(__file__),
@@ -159,11 +145,8 @@ class GeoEnrichment(BaseGeoEnrichment):
         params = {
             "f" : "json",
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def enrich(self,
                studyAreas,
@@ -284,17 +267,14 @@ class GeoEnrichment(BaseGeoEnrichment):
         if analysisVariables is not None:
             params['analysisVariables'] = analysisVariables
         url = self._base_url + self._url_enrich_data
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                             params=params)
     #----------------------------------------------------------------------
     def createReport(self,
                      out_file_path,
                      studyAreas,
                      report=None,
-                     format="PDF",
+                     report_format="PDF",
                      reportFields=None,
                      studyAreasOptions=None,
                      useData=None,
@@ -322,7 +302,8 @@ class GeoEnrichment(BaseGeoEnrichment):
             Adress, or named administrative boundary.  The locations can be
             passed in as a single object or as a list of objects.
           report - Default report to generate.
-          format - specify the generated report. Options are: XLSX or PDF
+          report_format - specify the generated report. Options are: XLSX
+           or PDF
           reportFields - Optional parameter specifies additional choices to
             customize reports.  See the URL above to see all the options.
           studyAreasOptions - Optional parameter to specify enrichment
@@ -359,10 +340,10 @@ class GeoEnrichment(BaseGeoEnrichment):
         }
         if not report is None:
             params['report'] = report
-        if format is None:
-            format = "pdf"
-        elif format.lower() in ['pdf', 'xlsx']:
-            params['format'] = format.lower()
+        if report_format is None:
+            report_format = "pdf"
+        elif report_format.lower() in ['pdf', 'xlsx']:
+            params['format'] = report_format.lower()
         else:
             raise AttributeError("Invalid format value.")
         if not reportFields is None:
@@ -371,11 +352,8 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['studyAreasOptions'] = studyAreasOptions
         if not useData is None:
             params['useData'] = useData
-        result = self._get(url=url,
-                           param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_url=self._proxy_url,
-                           proxy_port=self._proxy_port,
+        result = self._con.get(path_or_url=url,
+                           params=params,
                            out_folder=os.path.dirname(out_file_path))
         return result
     #----------------------------------------------------------------------
@@ -436,11 +414,8 @@ class GeoEnrichment(BaseGeoEnrichment):
                 params['suppressNullValues'] = "true"
             else:
                 params['suppressNullValues'] = "false"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def getVariables(self,
                      sourceCountry,
@@ -539,11 +514,8 @@ class GeoEnrichment(BaseGeoEnrichment):
             params["searchText"] = searchText
         if not optionalCountryDataset is None:
             params['optionalCountryDataset'] = optionalCountryDataset
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def standardGeographyQuery(self,
                                sourceCountry=None,
@@ -705,8 +677,5 @@ class GeoEnrichment(BaseGeoEnrichment):
             params['featureLimit'] = featureLimit
         else:
             params['featureLimit'] = 1000
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)

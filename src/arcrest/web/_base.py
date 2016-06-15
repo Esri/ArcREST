@@ -29,7 +29,7 @@ from ..packages.six.moves import http_cookiejar as cookiejar
 from ..packages.six.moves.urllib_parse import urlencode
 
 ########################################################################
-__version__ = "3.5.6"
+__version__ = "4.0.0"
 ########################################################################
 
 class BaseOperation(object):

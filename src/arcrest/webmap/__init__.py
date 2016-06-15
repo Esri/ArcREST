@@ -3,4 +3,4 @@ import domain
 import renderer
 import symbols
 import operationallayers
-__version__ = "3.5.6"
+__version__ = "4.0.0"

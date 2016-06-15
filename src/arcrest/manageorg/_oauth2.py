@@ -1,29 +1,24 @@
 from __future__ import absolute_import
-from __future__ import print_function
-from .._abstract.abstract import BaseAGOLClass
+from __future__ import division
+from ...common._base import BasePortal
 
 ########################################################################
-class oauth2(BaseAGOLClass):
+class oauth2(BasePortal):
     """
     The root of all OAuth2 resources and operations.
     """
+    _con = None
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
-
+    _json_dict = None
     #----------------------------------------------------------------------
-    def __init__(self, oauth_url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
+    def __init__(self,
+                 connection,
+                 oauth_url):
         """Constructor"""
+        super(oauth2, self).__init__(connection=connection,
+                                     oauth_url=oauth_url)
+        self._con = connection
         self._url = oauth_url
-        self._proxy_port = proxy_port
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_url = proxy_url
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -74,11 +69,8 @@ class oauth2(BaseAGOLClass):
         }
         if redirect_uris is None:
             params['redirect_uris'] = redirect_uris
-        return self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     def registeredApp(self, clientId):
         """
@@ -92,9 +84,5 @@ class oauth2(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
-
+        return self._con.get(path_or_url=url,
+                             params=params)

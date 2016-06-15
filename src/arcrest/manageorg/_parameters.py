@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._abstract.abstract import BaseParameters
-from ..common.geometry import SpatialReference, Envelope
+from ...common.geometry import SpatialReference, Envelope
 import os
 import json
 ########################################################################
@@ -42,7 +41,7 @@ class InvitationList(object):
         """returns object as dictionary"""
         return {"invitations": self._invites}
 ########################################################################
-class AnalyzeParameters(BaseParameters):
+class AnalyzeParameters(object):
     """
     The analyzeParameters JSON object used to analyze a CSV file are
     described below.
@@ -141,7 +140,7 @@ class AnalyzeParameters(BaseParameters):
         if self._sourcecountryhint != value:
             self._sourcecountryhint = value
 ########################################################################
-class CreateServiceParameters(BaseParameters):
+class CreateServiceParameters(object):
     """
     The createParameters JSON object
 
@@ -330,7 +329,7 @@ class CreateServiceParameters(BaseParameters):
         """returns object as string"""
         return json.dumps(self.value)
 ########################################################################
-class PortalParameters(BaseParameters):
+class PortalParameters(object):
     """
     The following parameters represent the properties of a portal
     """
@@ -1231,7 +1230,7 @@ class PortalParameters(BaseParameters):
         if value is not None:
             self._creditAssignments = value
 ########################################################################
-class ItemParameter(BaseParameters):
+class ItemParameter(object):
     """
     Item parameters correspond to properties of an item that are available
     to update on the Add Item and Update Item operations.
@@ -1637,7 +1636,7 @@ class ItemParameter(BaseParameters):
 
 
 ########################################################################
-class PublishCSVParameters(BaseParameters):
+class PublishCSVParameters(object):
     """
     The publishParameters JSON object used to publish a CSV file
 
@@ -1946,7 +1945,7 @@ class PublishCSVParameters(BaseParameters):
         if self._sourceSR != value:
             self._sourceSR = value
 ########################################################################
-class PublishShapefileParameter(BaseParameters):
+class PublishShapefileParameter(object):
     """
     The publishParameters JSON object used to publish shapefiles
     """
@@ -2069,7 +2068,7 @@ class PublishShapefileParameter(BaseParameters):
         """returns the object as string"""
         return json.dumps(self.value)
 ########################################################################
-class PublishFeatureCollectionParameter(BaseParameters):
+class PublishFeatureCollectionParameter(object):
     """
     The publishParameters JSON object used to publish feature collections
     """
@@ -2179,7 +2178,7 @@ class PublishFeatureCollectionParameter(BaseParameters):
         """returns object as a string"""
         return json.dumps(self.value)
 ########################################################################
-class GenerateParameter(BaseParameters):
+class GenerateParameter(object):
     """
     The publishParameters JSON object used to create feature collections
     Mike: This may be the same as PublishFeatureCollectionParameters
@@ -2362,7 +2361,7 @@ class GenerateParameter(BaseParameters):
         """returns object as a string"""
         return json.dumps(self.value)
 ########################################################################
-class PublishGeoJSONParameter(BaseParameters):
+class PublishGeoJSONParameter(object):
     """Allows users to provide the required information to
     publish a geojson file.
     """
@@ -2432,7 +2431,7 @@ class PublishGeoJSONParameter(BaseParameters):
         if self._layerInfo != value:
             self._layerInfo = value
 ########################################################################
-class PublishFGDBParameter(BaseParameters):
+class PublishFGDBParameter(object):
     """
     The publishParameters JSON object used to publish file geodatabase
     """
@@ -2559,7 +2558,7 @@ class PublishFGDBParameter(BaseParameters):
         return json.dumps(self.value)
 
 ########################################################################
-class PublishSDParameters(BaseParameters):
+class PublishSDParameters(object):
     """
     Required parameters to publish SD Parameters
     """

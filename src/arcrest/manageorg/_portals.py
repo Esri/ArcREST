@@ -1,17 +1,15 @@
 from __future__ import absolute_import
-from __future__ import print_function
 from __future__ import division
-from ..security import  PortalServerSecurityHandler
-from ..manageags import AGSAdministration
-from ..hostedservice import Services
-from ..common.general import local_time_to_online
-from .._abstract.abstract import BaseAGOLClass
 import os
-from ..packages.six.moves import urllib_parse as urlparse
-from . import _parameters as parameters
 import json
+#from ..manageags import AGSAdministration
+from ..hostedservice import Services
+from ...common.util import local_time_to_online
+from ...common._base import BasePortal
+from . import _parameters as parameters
+
 ########################################################################
-class Portals(BaseAGOLClass):
+class Portals(BasePortal):
     """
     A multitenant portal contains multiple portals, each one of which is
     owned by and represents an organization. Each user in the multitenant
@@ -21,25 +19,10 @@ class Portals(BaseAGOLClass):
     all the portals contained in the multitenant portal.
     """
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
+    _con = None
+    _json_dict = None
     _culture = None
     _region = None
-    #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None):
-        """Constructor"""
-        if url.lower().endswith("/portals"):
-            self._url = url
-        else:
-            self._url = "%s/portals" % url
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -51,30 +34,24 @@ class Portals(BaseAGOLClass):
         """gets the regions value"""
         url = "%s/regions" % self.root
         params = {"f": "json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def languages(self):
         """returns the site's languages"""
         url = "%s/languages" % self.root
         params = {'f': "json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def info(self):
         """gets the sharing api information"""
         url = "%s/info" % self.root
         params = {"f": "json"}
-        return self._get(url=url,
-                    param_dict=params,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                             params=params)
     #----------------------------------------------------------------------
     @property
     def portalSelf(self):
@@ -82,29 +59,28 @@ class Portals(BaseAGOLClass):
         organizational portal if the user belongs to an organization or the
         default portal if the user does not belong to one"""
         url = "%s/self" % self.root
-        return Portal(url=url,
-                      securityHandler=self._securityHandler,
-                      proxy_url=self._proxy_url,
-                      proxy_port=self._proxy_port,
-                      )
+        return self._con.get(path_or_url=url, params={'f': "json"})
+    #----------------------------------------------------------------------
+    @property
+    def is_portal(self):
+        """determines is the site is AGO or Portal.  True means the site
+        is a portal, False means the site is AGOL"""
+        return self.portalSelf['isPortal']
     #----------------------------------------------------------------------
     def portal(self, portalID=None):
         """returns a specific reference to a portal"""
         if portalID is None:
-            portalID = self.portalSelf.id
+            portalID = self.portalId
         url = "%s/%s" % (self.root, portalID)
         return Portal(url=url,
-                  securityHandler=self._securityHandler,
-                  proxy_url=self._proxy_url,
-                  proxy_port=self._proxy_port,
-                  initalize=True)
+                      connection=self._con)
     #----------------------------------------------------------------------
     @property
     def portalId(self):
         """gets the portal Id"""
-        return self.portalSelf.id
+        return self.portalSelf['id']
 ########################################################################
-class Portal(BaseAGOLClass):
+class Portal(BasePortal):
     """
     Portal returns information on your organization and is accessible to
     administrators. Publishers and information workers can view users and
@@ -113,9 +89,7 @@ class Portal(BaseAGOLClass):
     _bingKey = None
     _authorizedCrossOriginDomains = None
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
+    _con = None
     _json = None
     _json_dict = None
     _canSharePublic = None
@@ -201,48 +175,41 @@ class Portal(BaseAGOLClass):
     _appInfo = None
     _creditAssignments = None
     _updateUserProfileDisabled = None
-    _analysisLayersGroupQuery = None
-    _defaultUserCreditAssignment = None
-    _analysisLayersGroupQuery = None
     #----------------------------------------------------------------------
     def __init__(self,
+                 connection,
                  url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
                  initalize=False):
         """Constructor"""
+        super(Portal, self).__init__(connection, url, initalize)
         self._url = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        self._con = connection
         if initalize:
-            self.__init()
+            self.init(connection=self._con)
     #----------------------------------------------------------------------
-    def __init(self):
-        """loads the property data into the class"""
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self.root,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
+    def __init(self, connection):
+        """loads the properties"""
+        params = {"f" : "json"}
         attributes = [attr for attr in dir(self)
                       if not attr.startswith('__') and \
                       not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                setattr(self, k, v)
-                print( k, " - attribute not implemented in Portal class.")
-    #----------------------------------------------------------------------
+        result = connection.get(path_or_url=self._url, params=params)
+        self._json_dict = result
+        self._json = json.dumps(result)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        if isinstance(result, dict):
+            self._json_dict = result
+            for k,v in result.items():
+                if k in attributes:
+                    setattr(self, "_" + k, v)
+                else:
+                    setattr(self, k, v)
+                del k,v
+        else:
+            raise RuntimeError("Could not connect to the service: %s" % result)
+    ##----------------------------------------------------------------------
     def _findPortalId(self):
         """gets the portal id for a site if not known."""
         if not self.root.lower().endswith("/self"):
@@ -252,73 +219,62 @@ class Portal(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        res = self._get(url=url, param_dict=params,
-                           securityHandler=self._securityHandler,
-                           proxy_port=self._proxy_port,
-                           proxy_url=self._proxy_url)
-        if 'id' in res:
+        res = self._con.get(path_or_url=url, params=params)
+        if res.has_key('id'):
             return res['id']
         return None
-    @property
-    def analysisLayersGroupQuery(self):
-        if self._analysisLayersGroupQuery is None:
-            self.__init()
-        return self._analysisLayersGroupQuery
-    #----------------------------------------------------------------------
-    @property
-    def defaultUserCreditAssignment(self):
-        """gets the property value for defaultUserCreditAssignment"""
-        if self._defaultUserCreditAssignment is None:
-            self.__init()
-        return self._defaultUserCreditAssignment
-    #----------------------------------------------------------------------
-    @property
-    def analysisLayersGroupQueryt(self):
-        """gets the property value for analysisLayersGroupQuery"""
-        if self._analysisLayersGroupQuery is None:
-            self.__init()
-        return self._analysisLayersGroupQuery
+    ##----------------------------------------------------------------------
+    #@property
+    #def hostingServers(self):
+        #"""returns a list of servers that host non-tile based content for a
+        #site."""
+        #return
+    ##----------------------------------------------------------------------
+    #@property
+    #def tileServers(self):
+        #""""""
+        #return
     #----------------------------------------------------------------------
     @property
     def updateUserProfileDisabled(self):
         '''gets the property value for updateUserProfileDisabled'''
         if self._updateUserProfileDisabled is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._updateUserProfileDisabled
     #----------------------------------------------------------------------
     @property
     def bingKey(self):
         '''gets the property value for bingKey'''
         if self._bingKey is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._bingKey
     #----------------------------------------------------------------------
     @property
     def subscriptionInfo(self):
         '''gets the property value for subscriptionInfo'''
         if self._subscriptionInfo is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._subscriptionInfo
     #----------------------------------------------------------------------
     @property
     def authorizedCrossOriginDomains(self):
         """ gets the authorizedCrossOriginDomains property """
         if self._authorizedCrossOriginDomains is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._authorizedCrossOriginDomains
     #----------------------------------------------------------------------
     @property
     def appInfo(self):
         '''gets the property value for appInfo'''
         if self._appInfo is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._appInfo
     #----------------------------------------------------------------------
     @property
     def contacts(self):
         '''gets the property value for contacts'''
         if self._contacts is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._contacts
 
     #----------------------------------------------------------------------
@@ -326,7 +282,7 @@ class Portal(BaseAGOLClass):
     def urlKey(self):
         '''gets the property value for urlKey'''
         if self._urlKey is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._urlKey
 
     #----------------------------------------------------------------------
@@ -334,7 +290,7 @@ class Portal(BaseAGOLClass):
     def metadataEditable(self):
         '''gets the property value for metadataEditable'''
         if self._metadataEditable is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._metadataEditable
 
     #----------------------------------------------------------------------
@@ -342,7 +298,7 @@ class Portal(BaseAGOLClass):
     def portalThumbnail(self):
         '''gets the property value for portalThumbnail'''
         if self._portalThumbnail is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalThumbnail
 
     #----------------------------------------------------------------------
@@ -350,7 +306,7 @@ class Portal(BaseAGOLClass):
     def metadataFormats(self):
         '''gets the property value for metadataFormats'''
         if self._metadataFormats is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._metadataFormats
 
     #----------------------------------------------------------------------
@@ -358,7 +314,7 @@ class Portal(BaseAGOLClass):
     def ipCntryCode(self):
         '''gets the property value for ipCntryCode'''
         if self._ipCntryCode is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._ipCntryCode
 
     #----------------------------------------------------------------------
@@ -366,7 +322,7 @@ class Portal(BaseAGOLClass):
     def livingAtlasGroupQuery(self):
         '''gets the property value for livingAtlasGroupQuery'''
         if self._livingAtlasGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._livingAtlasGroupQuery
 
     #----------------------------------------------------------------------
@@ -374,7 +330,7 @@ class Portal(BaseAGOLClass):
     def region(self):
         '''gets the property value for region'''
         if self._region is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._region
 
     #----------------------------------------------------------------------
@@ -385,19 +341,6 @@ class Portal(BaseAGOLClass):
             self._portalId = self._findPortalId()
         return self._portalId
     #----------------------------------------------------------------------
-    def __str__(self):
-        """returns class as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """iterates through raw JSON"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
-    #----------------------------------------------------------------------
     @property
     def root(self):
         """returns classes URL"""
@@ -407,7 +350,7 @@ class Portal(BaseAGOLClass):
     def canSharePublic(self):
         '''gets the property value for canSharePublic'''
         if self._canSharePublic is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canSharePublic
 
     #----------------------------------------------------------------------
@@ -415,7 +358,7 @@ class Portal(BaseAGOLClass):
     def defaultExtent(self):
         '''gets the property value for defaultExtent'''
         if self._defaultExtent is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._defaultExtent
 
     #----------------------------------------------------------------------
@@ -423,7 +366,7 @@ class Portal(BaseAGOLClass):
     def supportsHostedServices(self):
         '''gets the property value for supportsHostedServices'''
         if self._supportsHostedServices is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._supportsHostedServices
 
     #----------------------------------------------------------------------
@@ -431,7 +374,7 @@ class Portal(BaseAGOLClass):
     def homePageFeaturedContentCount(self):
         '''gets the property value for homePageFeaturedContentCount'''
         if self._homePageFeaturedContentCount is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._homePageFeaturedContentCount
 
     #----------------------------------------------------------------------
@@ -439,7 +382,7 @@ class Portal(BaseAGOLClass):
     def supportsOAuth(self):
         '''gets the property value for supportsOAuth'''
         if self._supportsOAuth is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._supportsOAuth
 
     #----------------------------------------------------------------------
@@ -447,7 +390,7 @@ class Portal(BaseAGOLClass):
     def portalName(self):
         '''gets the property value for portalName'''
         if self._portalName is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalName
 
     #----------------------------------------------------------------------
@@ -455,7 +398,7 @@ class Portal(BaseAGOLClass):
     def databaseUsage(self):
         '''gets the property value for databaseUsage'''
         if self._databaseUsage is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._databaseUsage
 
     #----------------------------------------------------------------------
@@ -463,7 +406,7 @@ class Portal(BaseAGOLClass):
     def culture(self):
         '''gets the property value for culture'''
         if self._culture is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._culture
 
     #----------------------------------------------------------------------
@@ -471,7 +414,7 @@ class Portal(BaseAGOLClass):
     def helpBase(self):
         '''gets the property value for helpBase'''
         if self._helpBase is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._helpBase
 
     #----------------------------------------------------------------------
@@ -479,7 +422,7 @@ class Portal(BaseAGOLClass):
     def galleryTemplatesGroupQuery(self):
         '''gets the property value for galleryTemplatesGroupQuery'''
         if self._galleryTemplatesGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._galleryTemplatesGroupQuery
 
     #----------------------------------------------------------------------
@@ -487,7 +430,7 @@ class Portal(BaseAGOLClass):
     def commentsEnabled(self):
         '''gets the property value for commentsEnabled'''
         if self._commentsEnabled is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._commentsEnabled
 
     #----------------------------------------------------------------------
@@ -495,7 +438,7 @@ class Portal(BaseAGOLClass):
     def databaseQuota(self):
         '''gets the property value for databaseQuota'''
         if self._databaseQuota is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._databaseQuota
 
     #----------------------------------------------------------------------
@@ -503,7 +446,7 @@ class Portal(BaseAGOLClass):
     def id(self):
         '''gets the property value for id'''
         if self._id is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._id
 
     #----------------------------------------------------------------------
@@ -511,7 +454,7 @@ class Portal(BaseAGOLClass):
     def canSearchPublic(self):
         '''gets the property value for canSearchPublic'''
         if self._canSearchPublic is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canSearchPublic
 
     #----------------------------------------------------------------------
@@ -519,7 +462,7 @@ class Portal(BaseAGOLClass):
     def customBaseUrl(self):
         '''gets the property value for customBaseUrl'''
         if self._customBaseUrl is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._customBaseUrl
 
     #----------------------------------------------------------------------
@@ -527,7 +470,7 @@ class Portal(BaseAGOLClass):
     def allSSL(self):
         '''gets the property value for allSSL'''
         if self._allSSL is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._allSSL
 
     #----------------------------------------------------------------------
@@ -535,7 +478,7 @@ class Portal(BaseAGOLClass):
     def httpPort(self):
         '''gets the property value for httpPort'''
         if self._httpPort is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._httpPort
 
     #----------------------------------------------------------------------
@@ -543,7 +486,7 @@ class Portal(BaseAGOLClass):
     def featuredGroupsId(self):
         '''gets the property value for featuredGroupsId'''
         if self._featuredGroupsId is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._featuredGroupsId
 
     #----------------------------------------------------------------------
@@ -551,7 +494,7 @@ class Portal(BaseAGOLClass):
     def defaultBasemap(self):
         '''gets the property value for defaultBasemap'''
         if self._defaultBasemap is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._defaultBasemap
 
     #----------------------------------------------------------------------
@@ -559,7 +502,7 @@ class Portal(BaseAGOLClass):
     def created(self):
         '''gets the property value for created'''
         if self._created is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._created
 
     #----------------------------------------------------------------------
@@ -567,7 +510,7 @@ class Portal(BaseAGOLClass):
     def access(self):
         '''gets the property value for access'''
         if self._access is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._access
 
     #----------------------------------------------------------------------
@@ -575,7 +518,7 @@ class Portal(BaseAGOLClass):
     def platform(self):
         '''gets the property value for platform'''
         if self._platform is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._platform
 
     #----------------------------------------------------------------------
@@ -583,7 +526,7 @@ class Portal(BaseAGOLClass):
     def isPortal(self):
         '''gets the property value for isPortal'''
         if self._isPortal is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._isPortal
 
     #----------------------------------------------------------------------
@@ -591,7 +534,7 @@ class Portal(BaseAGOLClass):
     def canSignInArcGIS(self):
         '''gets the property value for canSignInArcGIS'''
         if self._canSignInArcGIS is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canSignInArcGIS
 
     #----------------------------------------------------------------------
@@ -599,7 +542,7 @@ class Portal(BaseAGOLClass):
     def disableSignup(self):
         '''gets the property value for disableSignup'''
         if self._disableSignup is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._disableSignup
 
     #----------------------------------------------------------------------
@@ -607,7 +550,7 @@ class Portal(BaseAGOLClass):
     def httpsPort(self):
         '''gets the property value for httpsPort'''
         if self._httpsPort is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._httpsPort
 
     #----------------------------------------------------------------------
@@ -615,7 +558,7 @@ class Portal(BaseAGOLClass):
     def units(self):
         '''gets the property value for units'''
         if self._units is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._units
 
     #----------------------------------------------------------------------
@@ -623,7 +566,7 @@ class Portal(BaseAGOLClass):
     def backgroundImage(self):
         '''gets the property value for backgroundImage'''
         if self._backgroundImage is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._backgroundImage
 
     #----------------------------------------------------------------------
@@ -631,7 +574,7 @@ class Portal(BaseAGOLClass):
     def mfaEnabled(self):
         '''gets the property value for mfaEnabled'''
         if self._mfaEnabled is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._mfaEnabled
 
     #----------------------------------------------------------------------
@@ -639,7 +582,7 @@ class Portal(BaseAGOLClass):
     def featuredGroups(self):
         '''gets the property value for featuredGroups'''
         if self._featuredGroups is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._featuredGroups
 
     #----------------------------------------------------------------------
@@ -647,7 +590,7 @@ class Portal(BaseAGOLClass):
     def thumbnail(self):
         '''gets the property value for thumbnail'''
         if self._thumbnail is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._thumbnail
 
     #----------------------------------------------------------------------
@@ -655,7 +598,7 @@ class Portal(BaseAGOLClass):
     def featuredItemsGroupQuery(self):
         '''gets the property value for featuredItemsGroupQuery'''
         if self._featuredItemsGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._featuredItemsGroupQuery
 
     #----------------------------------------------------------------------
@@ -663,7 +606,7 @@ class Portal(BaseAGOLClass):
     def canSignInIDP(self):
         '''gets the property value for canSignInIDP'''
         if self._canSignInIDP is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canSignInIDP
 
     #----------------------------------------------------------------------
@@ -671,7 +614,7 @@ class Portal(BaseAGOLClass):
     def useStandardizedQuery(self):
         '''gets the property value for useStandardizedQuery'''
         if self._useStandardizedQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._useStandardizedQuery
 
     #----------------------------------------------------------------------
@@ -679,7 +622,7 @@ class Portal(BaseAGOLClass):
     def rotatorPanels(self):
         '''gets the property value for rotatorPanels'''
         if self._rotatorPanels is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._rotatorPanels
 
     #----------------------------------------------------------------------
@@ -687,7 +630,7 @@ class Portal(BaseAGOLClass):
     def description(self):
         '''gets the property value for description'''
         if self._description is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._description
 
     #----------------------------------------------------------------------
@@ -695,7 +638,7 @@ class Portal(BaseAGOLClass):
     def homePageFeaturedContent(self):
         '''gets the property value for homePageFeaturedContent'''
         if self._homePageFeaturedContent is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._homePageFeaturedContent
 
     #----------------------------------------------------------------------
@@ -703,7 +646,7 @@ class Portal(BaseAGOLClass):
     def helperServices(self):
         '''gets the property value for helperServices'''
         if self._helperServices is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._helperServices
 
     #----------------------------------------------------------------------
@@ -711,7 +654,7 @@ class Portal(BaseAGOLClass):
     def canProvisionDirectPurchase(self):
         '''gets the property value for canProvisionDirectPurchase'''
         if self._canProvisionDirectPurchase is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canProvisionDirectPurchase
 
     #----------------------------------------------------------------------
@@ -719,7 +662,7 @@ class Portal(BaseAGOLClass):
     def canListData(self):
         '''gets the property value for canListData'''
         if self._canListData is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canListData
 
     #----------------------------------------------------------------------
@@ -727,14 +670,14 @@ class Portal(BaseAGOLClass):
     def user(self):
         '''gets the property value for user'''
         if self._user is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._user
     #----------------------------------------------------------------------
     @property
     def helpMap(self):
         '''gets the property value for helpMap'''
         if self._helpMap is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._helpMap
 
     #----------------------------------------------------------------------
@@ -742,7 +685,7 @@ class Portal(BaseAGOLClass):
     def canListPreProvisionedItems(self):
         '''gets the property value for canListPreProvisionedItems'''
         if self._canListPreProvisionedItems is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canListPreProvisionedItems
 
     #----------------------------------------------------------------------
@@ -750,7 +693,7 @@ class Portal(BaseAGOLClass):
     def colorSetsGroupQuery(self):
         '''gets the property value for colorSetsGroupQuery'''
         if self._colorSetsGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._colorSetsGroupQuery
 
     #----------------------------------------------------------------------
@@ -758,7 +701,7 @@ class Portal(BaseAGOLClass):
     def canListApps(self):
         '''gets the property value for canListApps'''
         if self._canListApps is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canListApps
 
     #----------------------------------------------------------------------
@@ -766,7 +709,7 @@ class Portal(BaseAGOLClass):
     def portalProperties(self):
         '''gets the property value for portalProperties'''
         if self._portalProperties is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalProperties
 
     #----------------------------------------------------------------------
@@ -774,7 +717,7 @@ class Portal(BaseAGOLClass):
     def isWindows(self):
         '''gets the property value for isWindows'''
         if self._isWindows is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._isWindows
 
     #----------------------------------------------------------------------
@@ -782,7 +725,7 @@ class Portal(BaseAGOLClass):
     def name(self):
         '''gets the property value for name'''
         if self._name is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._name
 
     #----------------------------------------------------------------------
@@ -790,7 +733,7 @@ class Portal(BaseAGOLClass):
     def supportsSceneServices(self):
         '''gets the property value for supportsSceneServices'''
         if self._supportsSceneServices is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._supportsSceneServices
 
     #----------------------------------------------------------------------
@@ -798,7 +741,7 @@ class Portal(BaseAGOLClass):
     def stylesGroupQuery(self):
         '''gets the property value for stylesGroupQuery'''
         if self._stylesGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._stylesGroupQuery
 
     #----------------------------------------------------------------------
@@ -806,7 +749,7 @@ class Portal(BaseAGOLClass):
     def samlEnabled(self):
         '''gets the property value for samlEnabled'''
         if self._samlEnabled is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._samlEnabled
 
     #----------------------------------------------------------------------
@@ -814,7 +757,7 @@ class Portal(BaseAGOLClass):
     def symbolSetsGroupQuery(self):
         '''gets the property value for symbolSetsGroupQuery'''
         if self._symbolSetsGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._symbolSetsGroupQuery
 
     #----------------------------------------------------------------------
@@ -822,7 +765,7 @@ class Portal(BaseAGOLClass):
     def portalLocalHttpPort(self):
         '''gets the property value for portalLocalHttpPort'''
         if self._portalLocalHttpPort is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalLocalHttpPort
 
     #----------------------------------------------------------------------
@@ -830,7 +773,7 @@ class Portal(BaseAGOLClass):
     def storageQuota(self):
         '''gets the property value for storageQuota'''
         if self._storageQuota is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._storageQuota
 
     #----------------------------------------------------------------------
@@ -838,7 +781,7 @@ class Portal(BaseAGOLClass):
     def canShareBingPublic(self):
         '''gets the property value for canShareBingPublic'''
         if self._canShareBingPublic is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._canShareBingPublic
 
     #----------------------------------------------------------------------
@@ -846,7 +789,7 @@ class Portal(BaseAGOLClass):
     def maxTokenExpirationMinutes(self):
         '''gets the property value for maxTokenExpirationMinutes'''
         if self._maxTokenExpirationMinutes is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._maxTokenExpirationMinutes
 
     #----------------------------------------------------------------------
@@ -854,7 +797,7 @@ class Portal(BaseAGOLClass):
     def layerTemplatesGroupQuery(self):
         '''gets the property value for layerTemplatesGroupQuery'''
         if self._layerTemplatesGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._layerTemplatesGroupQuery
 
     #----------------------------------------------------------------------
@@ -862,7 +805,7 @@ class Portal(BaseAGOLClass):
     def staticImagesUrl(self):
         '''gets the property value for staticImagesUrl'''
         if self._staticImagesUrl is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._staticImagesUrl
 
     #----------------------------------------------------------------------
@@ -870,7 +813,7 @@ class Portal(BaseAGOLClass):
     def modified(self):
         '''gets the property value for modified'''
         if self._modified is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._modified
 
     #----------------------------------------------------------------------
@@ -878,7 +821,7 @@ class Portal(BaseAGOLClass):
     def portalHostname(self):
         '''gets the property value for portalHostname'''
         if self._portalHostname is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalHostname
 
     #----------------------------------------------------------------------
@@ -886,7 +829,7 @@ class Portal(BaseAGOLClass):
     def showHomePageDescription(self):
         '''gets the property value for showHomePageDescription'''
         if self._showHomePageDescription is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._showHomePageDescription
 
     #----------------------------------------------------------------------
@@ -894,7 +837,7 @@ class Portal(BaseAGOLClass):
     def availableCredits(self):
         '''gets the property value for availableCredits'''
         if self._availableCredits is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._availableCredits
 
     #----------------------------------------------------------------------
@@ -902,7 +845,7 @@ class Portal(BaseAGOLClass):
     def portalMode(self):
         '''gets the property value for portalMode'''
         if self._portalMode is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalMode
 
     #----------------------------------------------------------------------
@@ -910,7 +853,7 @@ class Portal(BaseAGOLClass):
     def portalLocalHttpsPort(self):
         '''gets the property value for portalLocalHttpsPort'''
         if self._portalLocalHttpsPort is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalLocalHttpsPort
 
     #----------------------------------------------------------------------
@@ -918,7 +861,7 @@ class Portal(BaseAGOLClass):
     def hostedServerHostedFolder(self):
         '''gets the property value for hostedServerHostedFolder'''
         if self._hostedServerHostedFolder is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._hostedServerHostedFolder
 
     #----------------------------------------------------------------------
@@ -926,7 +869,7 @@ class Portal(BaseAGOLClass):
     def storageUsage(self):
         '''gets the property value for storageUsage'''
         if self._storageUsage is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._storageUsage
 
     #----------------------------------------------------------------------
@@ -934,7 +877,7 @@ class Portal(BaseAGOLClass):
     def templatesGroupQuery(self):
         '''gets the property value for templatesGroupQuery'''
         if self._templatesGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._templatesGroupQuery
 
     #----------------------------------------------------------------------
@@ -942,7 +885,7 @@ class Portal(BaseAGOLClass):
     def portalLocalHostname(self):
         '''gets the property value for portalLocalHostname'''
         if self._portalLocalHostname is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._portalLocalHostname
 
     #----------------------------------------------------------------------
@@ -950,7 +893,7 @@ class Portal(BaseAGOLClass):
     def basemapGalleryGroupQuery(self):
         '''gets the property value for basemapGalleryGroupQuery'''
         if self._basemapGalleryGroupQuery is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._basemapGalleryGroupQuery
 
     #----------------------------------------------------------------------
@@ -958,14 +901,14 @@ class Portal(BaseAGOLClass):
     def mfaAdmins(self):
         '''gets the property value for mfaAdmins'''
         if self._mfaAdmins is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._mfaAdmins
     #----------------------------------------------------------------------
     @property
     def creditAssignments(self):
         '''gets the property value for creditAssignments'''
         if self._creditAssignments is None:
-            self.__init()
+            self.init(connection=self._con)
         return self._creditAssignments
     #----------------------------------------------------------------------
     @property
@@ -973,106 +916,97 @@ class Portal(BaseAGOLClass):
         """gets the urls for a portal"""
         url = "%s/urls" % self.root
         params = {"f":"json"}
-        return self._get(url=url,
-                     param_dict=params,
-                     securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    @property
-    def featureServers(self):
-        """gets the hosting feature AGS Server"""
-        services = []
-        if self.urls == {}:
-            return {}
-        urls = self.urls
-        if 'https' in urls['urls']['features']:
-            res = urls['urls']['features']['https']
-        else:
-            res = urls['urls']['features']['http']
-        for https in res:
-            if self.isPortal:
-                url = "%s/admin" % https
-                services.append(AGSAdministration(url=url,
-                                                  securityHandler=self._securityHandler,
-                                                  proxy_url=self._proxy_url,
-                                                  proxy_port=self._proxy_port)
-                                )
-            else:
-                url = "https://%s/%s/ArcGIS/admin" % (https, self.portalId)
-                services.append(Services(url=url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port))
-        return services
-    #----------------------------------------------------------------------
-    @property
-    def tileServers(self):
-        """
-          Returns the objects to manage site's tile hosted services/servers. It returns
-          AGSAdministration object if the site is Portal and it returns a
-          hostedservice.Services object if it is AGOL.
-        """
-        services = []
-        ishttps = False
-        if self.urls == {}:
-            return {}
-        urls = self.urls["urls"]['tiles']
-        if 'https' in urls:
-            res = urls['https']
-            ishttps = True
-        else:
-            res = urls['http']
-        for https in res:
-            if ishttps:
-                scheme = "https"
-            else:
-                scheme = "http"
-            if self.isPortal == False:
-                url = "%s://%s/tiles/%s/arcgis/admin/services" % (scheme, https, self.portalId)
-                services.append(Services(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port))
-            else:
-                url = "%s/admin" % https
-                servers = self.servers
-                for server in servers.servers:
-                    url = server.adminUrl
-                    sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
-                                                     serverUrl=url,
-                                                     referer=server.name.split(":")[0]
-                                                     )
-                    services.append(
-                        AGSAdministration(url=url,
-                                          securityHandler=sh,
-                                          proxy_url=self._proxy_url,
-                                          proxy_port=self._proxy_port,
-                                          initialize=True)
-                    )
-        return services
+        return self._con.get(path_or_url=url,
+                     params=params)
+    ##----------------------------------------------------------------------
+    #@property
+    #def featureServers(self):
+        #"""gets the hosting feature AGS Server"""
+        #services = []
+        #if self.urls == {}:
+            #return {}
+        #urls = self.urls
+        #if 'https' in urls['urls']['features']:
+            #res = urls['urls']['features']['https']
+        #else:
+            #res = urls['urls']['features']['http']
+        #for https in res:
+            #if self.isPortal:
+                #url = "%s/admin" % https
+                #services.append(AGSAdministration(url=url,
+                                                  #securityHandler=self._securityHandler,
+                                                  #proxy_url=self._proxy_url,
+                                                  #proxy_port=self._proxy_port)
+                                #)
+            #else:
+                #url = "https://%s/%s/ArcGIS/admin" % (https, self.portalId)
+                #services.append(Services(url=url,
+                                         #securityHandler=self._securityHandler,
+                                         #proxy_url=self._proxy_url,
+                                         #proxy_port=self._proxy_port))
+        #return services
+    ##----------------------------------------------------------------------
+    #@property
+    #def tileServers(self):
+        #"""
+          #Returns the objects to manage site's tile hosted services/servers. It returns
+          #AGSAdministration object if the site is Portal and it returns a
+          #hostedservice.Services object if it is AGOL.
+        #"""
+        #services = []
+        #ishttps = False
+        #if self.urls == {}:
+            #return {}
+        #urls = self.urls["urls"]['tiles']
+        #if 'https' in urls:
+            #res = urls['https']
+            #ishttps = True
+        #else:
+            #res = urls['http']
+        #for https in res:
+            #if ishttps:
+                #scheme = "https"
+            #else:
+                #scheme = "http"
+            #if self.isPortal == False:
+                #url = "%s://%s/tiles/%s/arcgis/admin/services" % (scheme, https, self.portalId)
+                #services.append(Services(url=url,
+                    #securityHandler=self._securityHandler,
+                    #proxy_url=self._proxy_url,
+                    #proxy_port=self._proxy_port))
+            #else:
+                #url = "%s/admin" % https
+                #servers = self.servers
+                #for server in servers.servers:
+                    #url = server.adminUrl
+                    #sh = PortalServerSecurityHandler(tokenHandler=self._securityHandler,
+                                                     #serverUrl=url,
+                                                     #referer=server.name.split(":")[0]
+                                                     #)
+                    #services.append(
+                        #AGSAdministration(url=url,
+                                          #securityHandler=sh,
+                                          #proxy_url=self._proxy_url,
+                                          #proxy_port=self._proxy_port,
+                                          #initialize=True)
+                    #)
+        #return services
     #----------------------------------------------------------------------
     @property
     def purchases(self):
         """gets the portal's purchases"""
         url = "%s/purchases" % self.root
         params = {"f":"json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def customers(self):
         """gets the site's customers"""
         url = "%s/customers" % self.root
         params = {"f":"json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def exportCustomers(self, outPath):
         """exports customer list to a csv file
@@ -1086,10 +1020,8 @@ class Portal(BaseAGOLClass):
         if outPath is not None:
             dirPath = os.path.dirname(outPath)
             fileName = os.path.basename(outPath)
-        return self._get(url=url,
-                         param_dict=params,
-                         securityHandler=self._securityHandler, proxy_url=self._proxy_url,
-                        proxy_port=self._proxy_port,
+        return self._con.get(path_or_url=url,
+                         params=params,
                         out_folder=dirPath,
                         file_name=fileName)
     #----------------------------------------------------------------------
@@ -1112,16 +1044,10 @@ class Portal(BaseAGOLClass):
         }
         if isinstance(updatePortalParameters, parameters.PortalParameters):
             params.update(updatePortalParameters.value)
-        elif isinstance(updatePortalParameters, dict):
-            for k,v in updatePortalParameters.items():
-                params[k] = v
         else:
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def updateUserRole(self,
                        user,
@@ -1151,11 +1077,8 @@ class Portal(BaseAGOLClass):
             "user" : user,
             "role" : role
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def removeUser(self, users):
         """
@@ -1171,10 +1094,7 @@ class Portal(BaseAGOLClass):
             "f" : "json",
             "users" : users
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def isServiceNameAvailable(self,
                                name,
@@ -1197,20 +1117,15 @@ class Portal(BaseAGOLClass):
             "name" : name,
             "type" : serviceType
         }
-        return self._get(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                             params=params)
     #----------------------------------------------------------------------
     @property
     def servers(self):
         """gets the federated or registered servers for Portal"""
         url = "%s/servers" % self.root
         return Servers(url=url,
-                       securityHandler=self._securityHandler,
-                       proxy_url=self._proxy_url,
-                       proxy_port=self._proxy_port)
+                       connection=self._con)
 
 
     #----------------------------------------------------------------------
@@ -1236,11 +1151,8 @@ class Portal(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/assignUserCredits"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def users(self,
               start=1,
@@ -1284,26 +1196,14 @@ class Portal(BaseAGOLClass):
         if not sortOrder is None:
             params['sortOrder'] = sortOrder
         from ._community import Community
-        res = self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        res = self._con.post(path_or_url=url,
+                            postdata=params)
 
         if "users" in res:
             if len(res['users']) > 0:
-                parsed = urlparse.urlparse(self._url)
-                if parsed.netloc.lower().find('arcgis.com') == -1:
-                    cURL = "%s://%s/%s/sharing/rest/community" % (parsed.scheme,
-                                                                  parsed.netloc,
-                                                                  parsed.path[1:].split('/')[0])
-                else:
-                    cURL = "%s://%s/sharing/rest/community" % (parsed.scheme,
-                                                               parsed.netloc)
+                cURL = "https://%s/sharing/rest/community" % self.portalHostname
                 com = Community(url=cURL,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+                                connection=self._con)
                 for r in res['users']:
                     users.append(
                         com.users.user(r["username"])
@@ -1327,20 +1227,15 @@ class Portal(BaseAGOLClass):
             "f" : "json"
         }
         url = self.root + "/createRole"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     @property
     def roles(self):
         """gets the roles class that allows admins to manage custom roles
         on portal"""
         return Roles(url="%s/roles" % self.root,
-                     securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port)
+                     connection=self._con)
     #----------------------------------------------------------------------
     def cost(self,
              tileStorage=0,
@@ -1379,11 +1274,8 @@ class Portal(BaseAGOLClass):
             "geocodeCount" : geocodeCount
         }
         url = self._url + "/cost"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def resources(self,
                   start=1,
@@ -1403,11 +1295,8 @@ class Portal(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     def addResource(self, key, filePath, text):
         """
@@ -1426,19 +1315,15 @@ class Portal(BaseAGOLClass):
         url = self.root + "/addresource"
         params = {
         "f": "json",
-        "token" : self._securityHandler.token,
         "key" : key,
         "text" : text
         }
 
         files = {}
         files['file'] = filePath
-        res = self._post(url=url,
-                         param_dict=params,
-                         files=files,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        res = self._con.post(path_or_url=url,
+                             postdata=params,
+                             files=files)
         return res
     #----------------------------------------------------------------------
     def removeResource(self, key):
@@ -1454,32 +1339,23 @@ class Portal(BaseAGOLClass):
             "key" : key,
             "f" : "json"
         }
-        return self._post(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     @property
     def securityPolicy(self):
         """gets the object to manage the portal's security policy"""
         url = "%s/securityPolicy" % self.root
         params = {'f': 'json'}
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def resetSecurityPolicy(self):
         """resets the security policy to default install"""
         params = {"f" : "json"}
         url = "%s/securityPolicy/reset" % self.root
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def updateSecurityPolicy(self,
                              minLength=8,
@@ -1503,22 +1379,19 @@ class Portal(BaseAGOLClass):
             "historySize": historySize
         }
         url = "%s/securityPolicy/update" % self.root
-        return self._post(url=url,
-                     param_dict=params,
-                     securityHandler=self._securityHandler,
-                     proxy_url=self._proxy_url,
-                     proxy_port=self._proxy_port)
-
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     @property
     def portalAdmin(self):
         """gets a reference to a portal administration class"""
-        from ..manageportal import PortalAdministration
-        return PortalAdministration(admin_url="https://%s/portaladmin" % self.portalHostname,
-                                    securityHandler=self._securityHandler,
-                                    proxy_url=self._proxy_url,
-                                    proxy_port=self._proxy_port,
-                                    initalize=False)
+        return
+        #from ..manageportal import PortalAdministration
+        #return PortalAdministration(admin_url="https://%s/portaladmin" % self.portalHostname,
+                                    #securityHandler=self._securityHandler,
+                                    #proxy_url=self._proxy_url,
+                                    #proxy_port=self._proxy_port,
+                                    #initalize=False)
     #----------------------------------------------------------------------
     def addUser(self, invitationList,
                 subject, html):
@@ -1537,11 +1410,8 @@ class Portal(BaseAGOLClass):
             params['invitationList'] = invitationList.value()
         params['html'] = html
         params['subject'] = subject
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def inviteByEmail(self,
                    emails,
@@ -1574,71 +1444,51 @@ class Portal(BaseAGOLClass):
             "mustApprove": mustApprove,
             "expiration" : expiration
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     @property
     def invitations(self):
         """gets all the invitations to the current portal"""
         params = {"f": "json"}
         url = "%s/invitations" % self.root
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
-    def usage(self, startTime, endTime, vars=None, period=None,
-              groupby=None, name=None, stype=None, etype=None,
-              appId=None, deviceId=None, username=None, appOrgId=None,
-              userOrgId=None, hostOrgId=None):
+    def usage(self,
+              startTime,
+              endTime,
+              vars,
+              period="1d",
+              groupby=None
+              ):
         """
         returns the usage statistics value
         """
-
         url = self.root + "/usage"
-        startTime = str(int(local_time_to_online(dt=startTime)))
-        endTime = str(int(local_time_to_online(dt=endTime)))
-
+        startTime = int(local_time_to_online(dt=startTime)/ 1000)
+        endTime = int(local_time_to_online(dt=endTime) /1000)
         params = {
-                    'f' : 'json',
-                    'startTime' : startTime,
-                    'endTime' : endTime,
-                    'vars' : vars,
-                    'period' : period,
-                    'groupby' : groupby,
-                    'name' : name,
-                    'stype' : stype,
-                    'etype' : etype,
-                    'appId' : appId,
-                    'deviceId' : deviceId,
-                    'username' : username,
-                    'appOrgId' : appOrgId,
-                    'userOrgId' : userOrgId,
-                    'hostOrgId' : hostOrgId,
-                 }
-
-        params = {key:item for key,item in params.items() if item is not None}
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+            "f" : "json",
+            "vars" : vars,
+            "startTime" : "%s000" % startTime,
+            "endTime" : "%s000" % endTime,
+            "period" : period
+        }
+        if not groupby is None:
+            params['groupby'] = groupby
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     @property
     def IDP(self):
         """gets the IDP information for the portal/agol"""
         url = "%s/idp" % self.root
         params = {"f": "json"}
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                             params=params)
 ########################################################################
-class Servers(BaseAGOLClass):
+class Servers(BasePortal):
     """This resource lists the ArcGIS Server sites that have been federated
     with the portal.This resource is not applicable to ArcGIS Online; it is
     only applicable to Portal for ArcGIS.
@@ -1646,13 +1496,11 @@ class Servers(BaseAGOLClass):
     _servers = None
     _surl = None
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
+    _con = None
     _json = None
     _json_dict = None
     ########################################################################
-    class Server(BaseAGOLClass):
+    class Server(BasePortal):
         _surl = None
         _url = None
         _id = None
@@ -1664,62 +1512,9 @@ class Servers(BaseAGOLClass):
         _serverType = None
         _surl = None
         _url = None
-        _securityHandler = None
-        _proxy_url = None
-        _proxy_port = None
         _json = None
         _json_dict = None
         """represents a single server instance registers with portal"""
-        #----------------------------------------------------------------------
-        def __init__(self,
-                     url,
-                     securityHandler,
-                     proxy_url=None,
-                     proxy_port=None,
-                     initalize=False):
-            """Constructor"""
-            self._surl = url
-            self._securityHandler = securityHandler
-            if not securityHandler is None:
-                self._referer_url = securityHandler.referer_url
-            self._proxy_port = proxy_port
-            self._proxy_url = proxy_url
-            if initalize:
-                self.__init()
-        #----------------------------------------------------------------------
-        def __init(self):
-            """loads the property data into the class"""
-            params = {
-                "f" : "pjson"
-            }
-            json_dict = self._get(url=self._surl,
-                                     param_dict=params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_port=self._proxy_port,
-                                     proxy_url=self._proxy_url)
-            self._json_dict = json_dict
-            self._json = json.dumps(json_dict)
-            attributes = [attr for attr in dir(self)
-              if not attr.startswith('__') and \
-              not attr.startswith('_')]
-            for k,v in json_dict.items():
-                if k in attributes:
-                    setattr(self, "_"+ k, json_dict[k])
-                else:
-                    print( k, " - attribute not implemented in Servers.Server class.")
-        #----------------------------------------------------------------------
-        def __str__(self):
-            """returns class as string"""
-            if self._json is None:
-                self.__init()
-            return self._json
-        #----------------------------------------------------------------------
-        def __iter__(self):
-            """iterates through raw JSON"""
-            if self._json_dict is None:
-                self.__init()
-            for k,v in self._json_dict.items():
-                yield [k,v]
         #----------------------------------------------------------------------
         @property
         def root(self):
@@ -1730,49 +1525,49 @@ class Servers(BaseAGOLClass):
         def id(self):
             """gets the server id"""
             if self._id is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._id
         #----------------------------------------------------------------------
         @property
         def name(self):
             """gets the server name"""
             if self._name is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._name
         #----------------------------------------------------------------------
         @property
         def adminUrl(self):
             """gets the adminURL for the server"""
             if self._adminUrl is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._adminUrl
         #----------------------------------------------------------------------
         @property
         def url(self):
             """gets the url for the server"""
             if self._url is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._url
         #----------------------------------------------------------------------
         @property
         def isHosted(self):
             """gets the isHosted value"""
             if self._isHosted is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._isHosted
         #----------------------------------------------------------------------
         @property
         def serverKey(self):
             """gets the server key"""
             if self._serverKey is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._serverKey
         #----------------------------------------------------------------------
         @property
         def serverType(self):
             """gets the server type"""
             if self._serverType is None:
-                self.__init()
+                self.init(connection=self._con)
             return self._serverType
         #----------------------------------------------------------------------
         def unregister(self):
@@ -1791,11 +1586,8 @@ class Servers(BaseAGOLClass):
             params = {
                 "f" : "json"
             }
-            return self._post(url=url,
-                                param_dict=params,
-                                securityHandler=self._securityHandler,
-                                proxy_url=self._proxy_url,
-                                proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                postdata=params)
         #----------------------------------------------------------------------
         def update(self,
                    name,
@@ -1831,63 +1623,8 @@ class Servers(BaseAGOLClass):
                 "isHosted" : isHosted,
                 "serverType" : serverType
             }
-            return self._post(url=url,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None,
-                 initalize=False):
-        """Constructor"""
-        if url.lower().endswith('/servers') == False:
-            url = url + "/servers"
-        self._surl = url
-        self._securityHandler = securityHandler
-        if not securityHandler is None:
-            self._referer_url = securityHandler.referer_url
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
-        if initalize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """loads the property data into the class"""
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._surl,
-                                 param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_port=self._proxy_port,
-                                 proxy_url=self._proxy_url)
-        self._json_dict = json_dict
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in Servers class.")
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns class as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """iterates through raw JSON"""
-        if self._json_dict is None:
-            self.__init()
-        for k,v in self._json_dict.items():
-            yield [k,v]
+            return self._con.post(path_or_url=url,
+                                 postdata=params)
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -1944,51 +1681,47 @@ class Servers(BaseAGOLClass):
             "name" : name,
             "serverType" : serverType
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def servers(self):
         """gets all the server resources"""
-        self.__init()
-        items = []
-        for k,v in self._json_dict.items():
-            if k == "servers":
-                for s in v:
-                    if 'id' in s:
-                        url = "%s/%s" % (self.root, s['id'])
-                        items.append(
-                            self.Server(url=url,
-                                        securityHandler=self._securityHandler,
-                                        proxy_url=self._proxy_url,
-                                        proxy_port=self._proxy_port))
-            del k,v
-        return items
+        self.init(connection=self._con)
+        #items = []
+        #for k,v in self._json_dict.items():
+            #if k == "servers":
+                #for s in v:
+                    #if 'id' in s:
+                        #url = "%s/%s" % (self.root, s['id'])
+                        #items.append(
+                            #self.Server(url=url,
+                                        #securityHandler=self._securityHandler,
+                                        #proxy_url=self._proxy_url,
+                                        #proxy_port=self._proxy_port))
+            #del k,v
+        return self._json_dict['servers']
 ########################################################################
-class Roles(BaseAGOLClass):
+class Roles(BasePortal):
     """Handles the searching, creation, deletion and updating of roles on
     AGOL or Portal.
     """
     _url = None
-    _securityHandler = None
-    _proxy_url = None
-    _proxy_port = None
-    #----------------------------------------------------------------------
-    def __init__(self,
-                 url,
-                 securityHandler,
-                 proxy_url=None,
-                 proxy_port=None):
-        """Constructor"""
-        if url.find('/roles') < 0:
-            url = url + "/roles"
-        self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+    _con = None
+    _json_dict = None
+    ##----------------------------------------------------------------------
+    #def __init__(self,
+                 #url,
+                 #securityHandler,
+                 #proxy_url=None,
+                 #proxy_port=None):
+        #"""Constructor"""
+        #if url.find('/roles') < 0:
+            #url = url + "/roles"
+        #self._url = url
+        #self._securityHandler = securityHandler
+        #self._proxy_url = proxy_url
+        #self._proxy_port = proxy_port
     #----------------------------------------------------------------------
     def __str__(self):
         """returns the roles as a string"""
@@ -2028,11 +1761,8 @@ class Roles(BaseAGOLClass):
             "start" : start,
             "num" : num
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             postdata=params)
     #----------------------------------------------------------------------
     def deleteRole(self, roleID):
         """
@@ -2043,10 +1773,8 @@ class Roles(BaseAGOLClass):
         params = {
             "f" : "json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             param_dict=params)
     #----------------------------------------------------------------------
     def updateRole(self, roleID, name, description):
         """allows for the role name or description to be modified"""
@@ -2056,20 +1784,15 @@ class Roles(BaseAGOLClass):
             "f" : "json"
         }
         url = self._url + "/%s/update"
-        return self._post(url=url,
-                             param_dict=params,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             param_dict=params)
     #----------------------------------------------------------------------
     def info(self, roleID):
         """"""
         url = self._url + "/%s" % roleID
         params = {"f" : "json"}
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             param_dict=params)
     #----------------------------------------------------------------------
     def findRoleID(self, name):
         """searches the roles by name and returns the role's ID"""
@@ -2083,11 +1806,8 @@ class Roles(BaseAGOLClass):
         """returns the assigned priveleges for a given custom role"""
         url = self._url + "/%s/privileges" % roleID
         params = {"f" : "json"}
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             param_dict=params)
     #----------------------------------------------------------------------
     def setPrivileges(self, roleID, privileges):
         """
@@ -2105,8 +1825,5 @@ class Roles(BaseAGOLClass):
 
         }
         url = self._url + "/%s/setPrivileges" % roleID
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                             param_dict=params)

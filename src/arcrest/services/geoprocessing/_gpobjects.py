@@ -4,10 +4,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import json
-from ..common.general import local_time_to_online
-from .._abstract.abstract import BaseGPObject
 ########################################################################
-class GPMultiValue(BaseGPObject):
+class GPMultiValue(object):
     """
     The fully qualified data type for a GPMultiValue parameter is
     GPMultiValue:<memberDataType>, where memberDataType is one of the data
@@ -18,6 +16,8 @@ class GPMultiValue(BaseGPObject):
     memberDataType suffix of the fully qualified GPMultiValue data type
     name.
     """
+    _value = None
+    _paramName = None
     _type = None
     #----------------------------------------------------------------------
     def __init__(self, gptype):
@@ -79,7 +79,7 @@ class GPMultiValue(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPRecordSet(BaseGPObject):
+class GPRecordSet(object):
     """
     The parameter value for GPRecordSet is a JSON structure with the field
     features.
@@ -88,6 +88,9 @@ class GPRecordSet(BaseGPObject):
     key-value pairs where the key is a field name in the list of fields of
     the record set and the value is the value of the corresponding field.
     """
+    _value = None
+    _paramName = None
+    _type = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -146,21 +149,8 @@ class GPRecordSet(BaseGPObject):
         elif 'name' in j:
             v.paramName = j['name']
         return v
-    @staticmethod
-    def fromTable(table, paramName):
-        """
-        Converts a table to GPRecordSet object
-        Inputs:
-           table - path to the table
-           paramName - name of the parameter
-        """
-        from ..common.spatial import recordset_to_json
-        g = GPRecordSet()
-        g.paramName = paramName
-        g.value = json.loads(recordset_to_json(table))
-        return g
 ########################################################################
-class GPFeatureRecordSetLayer(BaseGPObject):
+class GPFeatureRecordSetLayer(object):
     """
     If the GP service is associated with a result map service, the default
     output for the GPFeatureRecordSetLayer parameter is a map image.
@@ -185,6 +175,8 @@ class GPFeatureRecordSetLayer(BaseGPObject):
         fields containing name,alias, and fieldType properties for the
         fields returned in the response.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -212,14 +204,6 @@ class GPFeatureRecordSetLayer(BaseGPObject):
         """gets/sets the object as a dictionary"""
         if isinstance(value, dict):
             self._value = value
-    #----------------------------------------------------------------------
-    def loadFeatures(self, path_to_fc):
-        """
-        loads a feature class features to the object
-        """
-        from ..common.spatial import featureclass_to_json
-        v = json.loads(featureclass_to_json(path_to_fc))
-        self.value = v
     #----------------------------------------------------------------------
     @property
     def dataType(self):
@@ -251,23 +235,8 @@ class GPFeatureRecordSetLayer(BaseGPObject):
         elif 'name' in j:
             v.paramName = j['name']
         return v
-    @staticmethod
-    def fromFeatureClass(fc, paramName):
-        """
-        returns a GPFeatureRecordSetLayer object from a feature class
-
-        Input:
-           fc - path to a feature class
-           paramName - name of the parameter
-        """
-        from ..common.spatial import featureclass_to_json
-        val = json.loads(featureclass_to_json(fc))
-        v = GPFeatureRecordSetLayer()
-        v.value = val
-        v.paramName = paramName
-        return v
 ########################################################################
-class GPRasterDataLayer(BaseGPObject):
+class GPRasterDataLayer(object):
     """
     If the GP service is associated with a result map service, the default
     output for the GPRasterDataLayer parameter is a map image. However, you
@@ -279,6 +248,8 @@ class GPRasterDataLayer(BaseGPObject):
      url - A URL to the location of the raw raster data.
      format - A string representing the format of the raster.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -339,13 +310,15 @@ class GPRasterDataLayer(BaseGPObject):
         return v
 
 ########################################################################
-class GPRasterData(BaseGPObject):
+class GPRasterData(object):
     """
     The parameter value for GPRasterData is a JSON structure with the
     following fields:
      url - A URL to the location of the raster data file.
      format - A string representing the format of the raster.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -405,12 +378,14 @@ class GPRasterData(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPDataFile(BaseGPObject):
+class GPDataFile(object):
     """
     The parameter value for GPDataFile is a JSON structure with a url
     field. The value of the url field is a URL to the location of the data
     file.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -470,13 +445,15 @@ class GPDataFile(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPLinearUnit(BaseGPObject):
+class GPLinearUnit(object):
     """
     The parameter value for GPLinearUnit is a JSON structure with the
     following fields:
      distance - A double value.
      units - A string whose values can be "esriMeters", "esriMiles", and so on.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -536,11 +513,13 @@ class GPLinearUnit(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPDate(BaseGPObject):
+class GPDate(object):
     """
     The value for GPDate data type is a number that represents the number
     of milliseconds since epoch (January 1, 1970) in UTC.
     """
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -598,18 +577,14 @@ class GPDate(BaseGPObject):
             v.paramName = j['paramName']
         elif 'name' in j:
             v.paramName = j['name']
-        #from datetime import datetime
-        #if isinstance(value, datetime):
-            #v.value = local_time_to_online(value)
-        #else:
-            #v.value = value
-        #v.paramName = j['paramName']
         return v
 ########################################################################
-class GPBoolean(BaseGPObject):
+class GPBoolean(object):
     """
     represents the GP boolean object
     """
+    _value = None
+    _paramName = None
     _dataType = "GPBoolean"
 
     #----------------------------------------------------------------------
@@ -670,12 +645,13 @@ class GPBoolean(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPLong(BaseGPObject):
+class GPLong(object):
     """
     represents the GP long object
     """
     _dataType = "GPLong"
-
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -734,12 +710,13 @@ class GPLong(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPString(BaseGPObject):
+class GPString(object):
     """
     represents the GP string object
     """
     _dataType = "GPString"
-
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -799,12 +776,13 @@ class GPString(BaseGPObject):
             v.paramName = j['name']
         return v
 ########################################################################
-class GPDouble(BaseGPObject):
+class GPDouble(object):
     """
     represents the GP double object
     """
     _dataType = "GPString"
-
+    _value = None
+    _paramName = None
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""

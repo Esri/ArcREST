@@ -1,8 +1,7 @@
 from __future__ import absolute_import
-from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
+from ...common._base import BaseServer
 ########################################################################
-class Data(BaseAGSServer):
+class Data(BaseServer):
     """
        This resource provides information about the data holdings of the
        server. This information is used by ArcGIS for Desktop and other
@@ -14,22 +13,27 @@ class Data(BaseAGSServer):
        specific data item. This operation helps you determine if a
        particular data item can be safely deleted or refreshed.
     """
-    _securityHandler = None
-    _proxy_port = None
-    _proxy_url = None
+    _con = None
+    _json_dict = None
+    _url = None
     _json = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 initialize=False, proxy_url=None, proxy_port=None):
+    def __init__(self,
+                 url,
+                 connection,
+                 initialize=False):
         """Constructor
             Inputs:
                url - admin url
-               securityHandler - handles site security
         """
-        self._securityHandler = securityHandler
-        self._proxy_url = proxy_url
-        self._proxy_port = proxy_port
+        super(Data, self).__init__(url=url, connection=connection,
+                                   initialize=initialize)
+        self._con = connection
         self._url = url
+    #----------------------------------------------------------------------
+    def init(self, connection=None):
+        self._json_dict = {}
+        self._json = ""
     #----------------------------------------------------------------------
     @property
     def datastoreConfiguration(self):
@@ -48,12 +52,9 @@ class Data(BaseAGSServer):
             "f" : "json"
         }
         dURL = self._url + "/config"
-        return self._get(url=dURL, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=dURL, params=params)
     #----------------------------------------------------------------------
-    def updateDatastoreConfiguration(self, datastoreConfig={}):
+    def updateDatastoreConfiguration(self, datastoreConfig=None):
         """
            This operation allows you to update the data store configuration
            You can use this to allow or block the automatic copying of data
@@ -64,15 +65,14 @@ class Data(BaseAGSServer):
            Output:
               JSON message as dictionary
         """
+        if datastoreConfig is None:
+            datastoreConfig = {}
         params = {
             "f" : "json",
             "datastoreConfig" : datastoreConfig
         }
         url = self._url + "/config/update"
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def computeTotalRefCount(self, path):
         """
@@ -85,16 +85,12 @@ class Data(BaseAGSServer):
            Output:
               JSON message as dictionary
         """
-        cURL = self._url + "/computeTotalRefCount"
+        url = self._url + "/computeTotalRefCount"
         params = {
             "f" : "json",
             "path" : path
         }
-        return self._post(url=cURL,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def findDataItems(self, parentPath=None, ancestorPath=None,
                       type=None, id=None):
@@ -121,11 +117,8 @@ class Data(BaseAGSServer):
             params['type'] = type
         if id is not None:
             params['id'] = id
-        fURL = self._url + "/findItems"
-        return self._post(url=fURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        url = self._url + "/findItems"
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def registerDataItem(self, item):
         """
@@ -140,11 +133,8 @@ class Data(BaseAGSServer):
             "item" : item,
             "f" : "json"
         }
-        rURL = self._url + "/registerItem"
-        return self._post(url=rURL, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        url = self._url + "/registerItem"
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     @property
     def rootDataItems(self):
@@ -155,11 +145,8 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=url,
+                            params=params)
     #----------------------------------------------------------------------
     @property
     def validateAllDataItems(self):
@@ -167,10 +154,7 @@ class Data(BaseAGSServer):
         params = {
         "f" : "json"}
         url = self._url + "/validateAllDataItems"
-        return self._post(url=url, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def validateDataItem(self, item):
         """
@@ -193,11 +177,7 @@ class Data(BaseAGSServer):
             "item" : item
         }
         url = self._url + "/validateDataItem"
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def makePrimary(self, dataStoreName, machineName):
         """
@@ -209,11 +189,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def removeDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -228,10 +204,7 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def startDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -245,10 +218,7 @@ class Data(BaseAGSServer):
         params = {
             "f": "json"
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def stopDataStoreMachine(self, dataStoreItemName, machineName):
         """
@@ -262,10 +232,7 @@ class Data(BaseAGSServer):
         params = {
             "f": "json"
         }
-        return self._post(url=url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def unregisterDataItem(self, path):
         """
@@ -282,13 +249,9 @@ class Data(BaseAGSServer):
         url = self._url + "/unregisterItem"
         params = {
             "f" : "json",
-            "itempath" : path,
-            "force":"true"
+            "itempath" : path
         }
-        return self._post(url, param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)
     #----------------------------------------------------------------------
     def validateDataStore(self, dataStoreName, machineName):
         """
@@ -303,8 +266,4 @@ class Data(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        return self._post(url=url,
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                             proxy_url=self._proxy_url,
-                             proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url, postdata=params)

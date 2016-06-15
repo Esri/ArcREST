@@ -1,75 +1,45 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
+from ...common._base import BaseServer
 from datetime import datetime
-import csv, json
+import csv
 ########################################################################
-class Log(BaseAGSServer):
+class Log(BaseServer):
     """ Log of a server """
     _url = None
-    _securityHandler = None
+    _con = None
+    _json_dict = None
     _operations = None
     _resources = None
-    _proxy_port = None
-    _proxy_url = None
     _json = None
     #----------------------------------------------------------------------
-    def __init__(self, url, securityHandler,
-                 proxy_url=None, proxy_port=None,
+    def __init__(self, url, connection,
                  initialize=False):
         """Constructor
             Inputs:
                url - admin url
-               securityHandler - Handler that handles site security
-               username - admin username
-               password - admin password
+               connection - SiteConnection class
         """
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
+        super(Log, self).__init__(url=url,
+                                  connection=connection,
+                                  initialize=initialize)
         self._url = url
-        self._securityHandler = securityHandler
+        self._con = connection
         if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ populates server admin information """
-        params = {
-            "f" : "json"
-        }
-        json_dict = self._get(url=self._url, param_dict=params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
-        self._json = json.dumps(json_dict)
-        attributes = [attr for attr in dir(self)
-                    if not attr.startswith('__') and \
-                    not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, json_dict[k])
-            else:
-                print( k, " - attribute not implemented in Logs.")
-            del k
-            del v
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns the object as a string"""
-        if self._json is None:
-            self.__init()
-        return self._json
+            self.init(connection)
     #----------------------------------------------------------------------
     @property
     def operations(self):
         """ returns the operations """
         if self._operations is None:
-            self.__init()
+            self.init()
         return self._operations
     #----------------------------------------------------------------------
     @property
     def resources(self):
         """ returns the log resources """
         if self._resources is None:
-            self.__init()
+            self.init()
         return self._resources
     #----------------------------------------------------------------------
     def countErrorReports(self, machine="*"):
@@ -85,22 +55,18 @@ class Log(BaseAGSServer):
             "f": "json",
             "machine" : machine
         }
-        return self._post(url=self._url + "/countErrorReports",
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        url = self._url + "/countErrorReports"
+        return self._con.post(path_or_url=url,
+                            postdata=params)
     #----------------------------------------------------------------------
     def clean(self):
         """ Deletes all the log files on all server machines in the site.  """
         params = {
             "f" : "json",
         }
-        return self._post(url=self._url + "/clean",
-                             param_dict=params,
-                             securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        url = "{}/clean".format(self._url)
+        return self._con.post(path_or_url=url,
+                              postdata=params)
     #----------------------------------------------------------------------
     @property
     def logSettings(self):
@@ -108,11 +74,12 @@ class Log(BaseAGSServer):
         params = {
             "f" : "json"
         }
-        sURL = self._url + "/settings"
-        return self._get(url=sURL, param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)['settings']
+        url = self._url + "/settings"
+        try:
+            return self._con.post(path_or_url=url,
+                                  postdata=params)['settings']
+        except:
+            return ""
     #----------------------------------------------------------------------
     def editLogSettings(self,
                         logLevel="WARNING",
@@ -130,7 +97,7 @@ class Log(BaseAGSServer):
              maxErrorReportsCount - maximum number of error report files
                                     per machine
         """
-        lURL = self._url + "/settings/edit"
+        url = self._url + "/settings/edit"
         allowed_levels =  ("OFF", "SEVERE", "WARNING", "INFO", "FINE", "VERBOSE", "DEBUG")
         currentSettings= self.logSettings
         currentSettings["f"] ="json"
@@ -146,10 +113,8 @@ class Log(BaseAGSServer):
            isinstance(maxErrorReportsCount, int) and\
            maxErrorReportsCount > 0:
             currentSettings['maxErrorReportsCount'] = maxErrorReportsCount
-        return self._post(url=lURL, param_dict=currentSettings,
-                             securityHandler=self._securityHandler,
-                            proxy_url=self._proxy_url,
-                            proxy_port=self._proxy_port)
+        return self._con.post(path_or_url=url,
+                              postdata=currentSettings)
     #----------------------------------------------------------------------
     def query(self,
               startTime=None,
@@ -159,8 +124,8 @@ class Log(BaseAGSServer):
               services="*",
               machines="*",
               server="*",
-              codes=[],
-              processIds=[],
+              codes=None,
+              processIds=None,
               export=False,
               exportType="CSV", #CSV or TAB
               out_path=None
@@ -171,6 +136,10 @@ class Log(BaseAGSServer):
            Inputs:
 
         """
+        if codes is None:
+            codes = []
+        if processIds is None:
+            processIds = []
         allowed_levels = ("SEVERE", "WARNING", "INFO",
                           "FINE", "VERBOSE", "DEBUG")
         qFilter = {
@@ -187,6 +156,7 @@ class Log(BaseAGSServer):
             "sinceServerStart" : sinceServerStart,
             "pageSize" : 10000
         }
+        url = "{url}/query".format(url=self._url)
         if startTime is not None and \
            isinstance(startTime, datetime):
             params['startTime'] = startTime.strftime("%Y-%m-%dT%H:%M:%S")
@@ -204,11 +174,9 @@ class Log(BaseAGSServer):
         params['filter'] = qFilter
         if export == True and \
            out_path is not None:
-            messages = self._post(self._url + "/query", params,
-                                     securityHandler=self._securityHandler,
-                                     proxy_url=self._proxy_url,
-                                     proxy_port=self._proxy_port)
 
+            messages = self._con.post(path_or_url=url,
+                                      postdata=params)
             with open(name=out_path, mode='wb') as f:
                 hasKeys = False
                 if exportType == "TAB":
@@ -224,7 +192,5 @@ class Log(BaseAGSServer):
             del messages
             return out_path
         else:
-            return self._post(self._url + "/query", params,
-                                 securityHandler=self._securityHandler,
-                                 proxy_url=self._proxy_url,
-                                 proxy_port=self._proxy_port)
+            return self._con.post(path_or_url=url,
+                                  postdata=params)

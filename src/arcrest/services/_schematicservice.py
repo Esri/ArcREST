@@ -1,10 +1,11 @@
+"""
+"""
 from __future__ import absolute_import
-from __future__ import print_function
-from .._abstract.abstract import BaseAGSServer
-import json
+from ..common._base import BaseService
+
 
 ########################################################################
-class SchematicsService(BaseAGSServer):
+class SchematicsService(BaseService):
     """
     The Schematic Service resource represents a Schematics service
     published with ArcGIS Server. The resource provides information about
@@ -13,9 +14,7 @@ class SchematicsService(BaseAGSServer):
     templates.
     """
     _url = None
-    _proxy_url = None
-    _proxy_port = None
-    _securityHandler = None
+    _con = None
     _json = None
     _json_dict = None
     _nbSchematicLayers = None
@@ -24,81 +23,34 @@ class SchematicsService(BaseAGSServer):
     _name = None
     _nbEstimatedDiagrams = None
     #----------------------------------------------------------------------
-    def __init__(self, url,
-                 securityHandler=None,
-                 proxy_url=None,
-                 proxy_port=None,
-                 initialize=False):
-        """Constructor"""
-        self._url = url
-        self._securityHandler = securityHandler
-        self._proxy_port = proxy_port
-        self._proxy_url = proxy_url
-        if initialize:
-            self.__init()
-    #----------------------------------------------------------------------
-    def __init(self):
-        """ inializes the properties """
-        params = {
-            "f" : "json",
-        }
-        json_dict = self._get(self._url, params,
-                              securityHandler=self._securityHandler,
-                              proxy_url=self._proxy_url,
-                              proxy_port=self._proxy_port)
-        self._json_dict = json_dict
-        self._json = json.dumps(self._json_dict)
-        attributes = [attr for attr in dir(self)
-                      if not attr.startswith('__') and \
-                      not attr.startswith('_')]
-        for k,v in json_dict.items():
-            if k in attributes:
-                setattr(self, "_"+ k, v)
-            else:
-                print (k, " - attribute not implemented for Schematics Service")
-    #----------------------------------------------------------------------
-    def __str__(self):
-        """returns object as string"""
-        if self._json is None:
-            self.__init()
-        return self._json
-    #----------------------------------------------------------------------
-    def __iter__(self):
-        """
-        returns key/value pair
-        """
-        attributes = json.loads(str(self))
-        for att in attributes.keys():
-            yield [att, getattr(self, att)]
-    #----------------------------------------------------------------------
     @property
     def nbSchematicLayers(self):
         if self._nbSchematicLayers is None:
-            self.__init()
+            self.init()
         return self._nbSchematicLayers
     #----------------------------------------------------------------------
     @property
     def nbTemplates (self):
         if self._nbTemplates  is None:
-            self.__init()
+            self.init()
         return self._nbTemplates
     #----------------------------------------------------------------------
     @property
     def type(self):
         if self._type  is None:
-            self.__init()
+            self.init()
         return self._type
     #----------------------------------------------------------------------
     @property
     def name(self):
         if self._name is None:
-            self.__init()
+            self.init()
         return self._name
     #----------------------------------------------------------------------
     @property
     def nbEstimatedDiagrams(self):
         if self._nbEstimatedDiagrams is None:
-            self.__init()
+            self.init()
         return self._nbEstimatedDiagrams
     #----------------------------------------------------------------------
     @property
@@ -110,11 +62,8 @@ class SchematicsService(BaseAGSServer):
         """
         params = {"f" : "json"}
         exportURL = self._url + "/diagrams"
-        return self._get(url=exportURL,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=exportURL,
+                             params=params)
     #----------------------------------------------------------------------
     @property
     def folders(self):
@@ -126,11 +75,8 @@ class SchematicsService(BaseAGSServer):
         """
         params = {"f" : "json"}
         exportURL = self._url + "/folders"
-        return self._get(url=exportURL,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=exportURL,
+                         params=params)
     #----------------------------------------------------------------------
     @property
     def schematicLayers(self):
@@ -141,11 +87,8 @@ class SchematicsService(BaseAGSServer):
         """
         params = {"f" : "json"}
         exportURL = self._url + "/schematicLayers"
-        return self._get(url=exportURL,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=exportURL,
+                         params=params)
     #----------------------------------------------------------------------
     @property
     def templates(self):
@@ -157,11 +100,8 @@ class SchematicsService(BaseAGSServer):
         """
         params = {"f" : "json"}
         exportURL = self._url + "/templates"
-        return self._get(url=exportURL,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=exportURL,
+                                 params=params)
     #----------------------------------------------------------------------
     def searchDiagrams(self,whereClause=None,relatedObjects=None,
                        relatedSchematicObjects=None):
@@ -209,8 +149,5 @@ class SchematicsService(BaseAGSServer):
             params["relatedSchematicObjects"] = relatedSchematicObjects
 
         exportURL = self._url + "/searchDiagrams"
-        return self._get(url=exportURL,
-                         param_dict=params,
-                         securityHandler=self._securityHandler,
-                         proxy_url=self._proxy_url,
-                         proxy_port=self._proxy_port)
+        return self._con.get(path_or_url=exportURL,
+                             params=params)
