@@ -6,4 +6,4 @@ from .server import Catalog
 from .manage import AGSAdministration
 
 __all__ = ['AGSAdministration', 'Catalog']
-__version__ = "5.0.0"
+__version__ = "4.0.0"

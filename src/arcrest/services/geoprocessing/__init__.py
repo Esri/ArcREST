@@ -5,7 +5,7 @@ from ._gpobjects import GPDouble, GPFeatureRecordSetLayer, GPLinearUnit
 from ._gpobjects import GPLong, GPMultiValue, GPRasterData
 from ._gpobjects import GPRasterDataLayer, GPRecordSet, GPString
 
-__version__ = "5.0.0"
+__version__ = "4.0.0"
 
 __all__ = ['GPJob', 'GPService', 'GPTask',
            'GPBoolean', 'GPDataFile', 'GPDate',

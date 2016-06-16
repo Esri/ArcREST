@@ -17,7 +17,7 @@ from ._featureservice import TableLayer, TiledService
 from ._featureservice import RasterLayer, SchematicLayer
 from . import geoprocessing
 
-__version__ = "5.0.0"
+__version__ = "4.0.0"
 __all__ = ['GeometryService', 'MapService',
            'FeatureService', 'FeatureLayer',
            'VectorTileService', 'ImageService',

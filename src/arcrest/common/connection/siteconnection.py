@@ -17,7 +17,7 @@ from ..packages.six.moves.urllib.error import HTTPError
 from collections import OrderedDict
 import logging
 _log = logging.getLogger(__name__)
-__version__ = "5.0.0"
+__version__ = "4.0.0"
 class SiteConnection(object):
     """The SiteConnection object is the class that holds all the login
     information about the user, security method and holds the entry point

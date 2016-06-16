@@ -27,7 +27,7 @@ from ...packages.six.moves.urllib import request
 from ...packages.six.moves import http_cookiejar as cookiejar
 from ...packages.six.moves.urllib_parse import urlencode
 
-__version__ = "5.0.0"
+__version__ = "4.0.0"
 __all__ = ['_connection']
 ########################################################################
 class MultiPartForm(object):
