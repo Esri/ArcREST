@@ -31,8 +31,8 @@ class _log(BaseAGOLClass):
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
-        if url.lower().endswith("/log") == False:
-            url = url + "/log"
+        if url.lower().endswith("/logs") == False:
+            url = url + "/logs"
         self._url = url
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
@@ -882,6 +882,7 @@ class PortalAdministration(BaseAGOLClass):
     operation. Once initialized, the portal environment is available
     through System and Security resources.
     """
+    _siteKey = None
     _securityHandler = None
     _url = None
     _proxy_url = None
@@ -897,6 +898,8 @@ class PortalAdministration(BaseAGOLClass):
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
+        if admin_url.endswith("/portaladmin") == False:
+            admin_url = admin_url + "/portaladmin"
         if securityHandler is not None:
             self._securityHandler = securityHandler
             self._referer_url = securityHandler.referer_url
@@ -926,6 +929,7 @@ class PortalAdministration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
+                setattr(self, k, v)
                 print( k, " - attribute not implemented in manageportal.administration class.")
     #----------------------------------------------------------------------
     def __str__(self):
@@ -940,7 +944,13 @@ class PortalAdministration(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.items():
             yield [k,v]
-
+    #----------------------------------------------------------------------
+    @property
+    def siteKey(self):
+        """gets the portal siteKey property"""
+        if self._siteKey is None:
+            self.__init()
+        return self._siteKey
     #----------------------------------------------------------------------
     @property
     def resources(self):
