@@ -11,7 +11,6 @@
 from __future__ import print_function
 import gc
 import os
-import sys
 import arcpy
 import re
 import random
@@ -25,7 +24,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())
