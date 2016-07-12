@@ -33,7 +33,7 @@ def _unicode_convert(obj):
     elif isinstance(obj, list):
         return [_unicode_convert(element) for element in obj]
     elif isinstance(obj, str):
-        return obj 
+        return obj
     elif isinstance(obj, six.text_type):
         return obj.encode('utf-8')
     elif isinstance(obj, six.integer_types):
@@ -150,8 +150,8 @@ class Feature(object):
                 self._dict['geometry'] = value.asDictionary
             elif arcpyFound:
                 if isinstance(value, arcpy.Geometry) and \
-                    value.type == self.geometryType:
-                   self._dict['geometry']=json.loads(value.JSON)
+                   value.type == self.geometryType:
+                    self._dict['geometry']=json.loads(value.JSON)
             self._geom = None
             self._geom = self.geometry
         else:
@@ -218,11 +218,11 @@ class Feature(object):
             if value.type == self.geometryType:
                 self._geom = value
         elif arcpyFound:
-           if isinstance(value, arcpy.Geometry):
-               if value.type == self.geometryType:
-                   self._dict['geometry']=json.loads(value.JSON)
-                   self._geom = None
-                   self._geom = self.geometry
+            if isinstance(value, arcpy.Geometry):
+                if value.type == self.geometryType:
+                    self._dict['geometry']=json.loads(value.JSON)
+                    self._geom = None
+                    self._geom = self.geometry
     #----------------------------------------------------------------------
     @property
     def fields(self):
@@ -613,7 +613,7 @@ class FeatureSet(object):
         if 'fields' in jd:
             fields = jd['fields']
         else:
-            fields = {'fields':[]} 
+            fields = {'fields':[]}
         if 'features' in jd:
             for feat in jd['features']:
                 wkid = None
@@ -659,10 +659,10 @@ class FeatureSet(object):
             wkid = None
             wkt = None
             if 'wkid' in value and \
-                 str(value['wkid']).isdigit():
+               str(value['wkid']).isdigit():
                 wkid = int(value['wkid'])
             if 'latestWkid' in value and \
-                 str(value['latestWkid']).isdigit():
+               str(value['latestWkid']).isdigit():
                 wkid = int(value['latestWkid'])
             if 'wkt' in value:
                 wkt = value['wkt']
@@ -731,19 +731,19 @@ class FeatureSet(object):
         """gets/sets the displayFieldName"""
         self._displayFieldName = value
     #----------------------------------------------------------------------
-   
+
     def save(self, saveLocation, outName):
         """
         Saves a featureset object to a feature class
         Input:
            saveLocation - output location of the data
            outName - name of the table the data will be saved to
-                Types: 
+                Types:
                     *.csv - CSV file returned
                     *.json - text file with json
-                    * If no extension, a shapefile if the path is a 
+                    * If no extension, a shapefile if the path is a
                         folder, a featureclass if the path is a GDB
-                    
+
         """
         filename, file_extension = os.path.splitext(outName)
         if (file_extension == ".csv"):
@@ -763,7 +763,7 @@ class FeatureSet(object):
                 for field in self.fields:
                     fields.append(field['name'])
                 f.writerow(fields)
-        
+
                 newRow = []
                 #Loop through the results and save each to a row
                 for feature in self:
@@ -776,12 +776,12 @@ class FeatureSet(object):
         elif (file_extension == ".json"):
             res = os.path.join(saveLocation,outName)
             with open(res, 'wb') as writer:
-                
+
                 json.dump(self.value, writer, sort_keys = True, indent = 4, ensure_ascii=False)
                 writer.flush()
                 writer.close()
             del writer
-            
+
         else:
             tempDir =  tempfile.gettempdir()
             tempFile = os.path.join(tempDir, "%s.json" % uuid.uuid4().hex)

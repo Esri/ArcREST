@@ -1019,6 +1019,108 @@ class PortalAdministration(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def createSite(self, username, password, fullname,
+                   email, description, securityQuestionIdx,
+                   secuirtyQuestionAns, contentDir
+                   ):
+        """
+        The create site operation initializes and configures Portal for
+        ArcGIS for use. It must be the first operation invoked after
+        installation. Creating a new site involves:
+
+        Creating the initial administrator account
+        Creating a new database administrator account (which is same as the
+         initial administrator account)
+        Creating token shared keys
+        Registering directories
+
+        This operation is time consuming, as the database is initialized
+        and populated with default templates and content. If the database
+        directory is not empty, this operation attempts to migrate the
+        database to the current version while keeping its data intact. At
+        the end of this operation, the web server that hosts the API is
+        restarted.
+
+        Inputs:
+        username - The initial administrator account name
+        password - The password for the initial administrator account
+        fullname - The full name for the initial administrator account
+        email	- The account email address
+        description - An optional description for the account
+        securityQuestionIdx - The index of the secret question to retrieve
+         a forgotten password
+        securityQuestionAns - The answer to the secret question
+        contentDir - The path to the location of the site's content
+        """
+        params = {
+            "username" : username,
+            "password" : password,
+            "fullname" : fullname,
+            "email" : email,
+            "description" : description,
+            "secuirtyQuestionAns" :  secuirtyQuestionAns,
+            "securityQuestionIdx" : securityQuestionIdx,
+            "contentDir" : contentDir
+        }
+        url = self._url + "/createNewSite"
+        return self._get(url=url,
+                          param_dict=params)
+    #----------------------------------------------------------------------
+    def exportSite(self, location):
+        """
+        This operation exports the portal site configuration to a location
+        you specify.
+        """
+        params = {
+            "location" : location,
+            "f" : "json"
+        }
+        url = self._url + "/exportSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def importSite(self, location):
+        """
+        This operation imports the portal site configuration to a location
+        you specify.
+        """
+        params = {
+            "location" : location,
+            "f" : "json"
+        }
+        url = self._url + "/importSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def joinSite(self, machineAdminUrl,
+                 username, password):
+        """
+        The joinSite operation connects a portal machine to an existing
+        site. You must provide an account with administrative privileges to
+        the site for the operation to be successful.
+        """
+        params = {
+            "machineAdminUrl" : machineAdminUrl,
+            "username" : username,
+            "password" : password,
+            "f" : "json"
+        }
+        url = self._url + "/joinSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def unregisterMachine(self, machineName):
+        """
+        This operation unregisters a portal machine from a portal site. The
+        operation can only performed when there are two machines
+        participating in a portal site.
+        """
+        url = self._url + "/machines/unregister"
+        params = {
+            "f" : "json",
+            "machineName" : machineName
+        }
+        return self._post(url=url,
+                          param_dict=params)
+
+    #----------------------------------------------------------------------
     @property
     def system(self):
         """
