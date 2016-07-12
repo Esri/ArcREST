@@ -11,7 +11,7 @@ import arcrest
 from arcrest.security import AGOLTokenSecurityHandler
 from arcrest.security import PortalTokenSecurityHandler
 
-import sys, os, datetime
+import os, datetime
 import csv
 import arcresthelper
 from arcresthelper import featureservicetools
@@ -25,7 +25,7 @@ def trace():
         and error message and returns it
         to the user
     """
-    import traceback, inspect
+    import traceback, inspect, sys
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
     filename = inspect.getfile(inspect.currentframe())

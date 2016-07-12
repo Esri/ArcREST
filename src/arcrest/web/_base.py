@@ -684,7 +684,7 @@ class BaseWebOperations(BaseOperation):
         contentLength = resp.headers.get('content-length')
         if maintype.lower() in ('image',
                                 'application/x-zip-compressed') or \
-           contentType == 'application/x-zip-compressed' or \
+           contentType in ('application/x-zip-compressed', 'application/octet-stream') or \
            contentMD5 is not None or\
            (contentDisposition is not None and \
             contentDisposition.lower().find('attachment;') > -1):
