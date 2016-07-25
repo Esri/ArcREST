@@ -1285,7 +1285,7 @@ class User(BaseAGOLClass):
     _privacy = None
     _defaultGroupId = None
     _organization = None
-    _roleid = None
+    _roleId = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1343,7 +1343,6 @@ class User(BaseAGOLClass):
         for k,v in self._json_dict.items():
             yield [k,v]
     #----------------------------------------------------------------------
-
     @property
     def userContent(self):
         """allows access into the individual user's content to get at the
@@ -1357,12 +1356,14 @@ class User(BaseAGOLClass):
                            securityHandler=self._securityHandler,
                            proxy_url=self._proxy_url,
                            proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     @property
     def lastName(self):
         '''gets the property value for username'''
         if self._lastName is None:
             self.__init()
         return self._lastName
+    #----------------------------------------------------------------------
     @property
     def firstName(self):
         '''gets the property value for username'''
@@ -1530,12 +1531,13 @@ class User(BaseAGOLClass):
         if self._region is None:
             self.__init()
         return self._region
+    #----------------------------------------------------------------------
     @property
-    def roleid(self):
-        '''gets the roleid value'''
-        if self._roleid is None:
+    def roleId(self):
+        '''gets the roleId value'''
+        if self._roleId is None:
             self.__init()
-        return self._roleid
+        return self._roleId
     #----------------------------------------------------------------------
     @property
     def modified(self):
