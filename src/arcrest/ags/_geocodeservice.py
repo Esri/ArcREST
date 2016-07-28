@@ -49,7 +49,7 @@ class GeocodeService(BaseAGSServer):
             self.__init()
     #----------------------------------------------------------------------
     def __init(self):
-        """ inializes the properties """
+        """initializes the properties"""
         params = {
             "f" : "json",
         }
@@ -75,9 +75,7 @@ class GeocodeService(BaseAGSServer):
         return self._json
     #----------------------------------------------------------------------
     def __iter__(self):
-        """
-        returns key/value pair
-        """
+        """returns key/value pair"""
         attributes = json.loads(str(self))
         for att in attributes.keys():
             yield [att, getattr(self, att)]
