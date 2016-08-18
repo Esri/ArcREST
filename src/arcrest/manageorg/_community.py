@@ -1233,8 +1233,9 @@ class Users(BaseAGOLClass):
     def user(self, username=None):
         """A user resource that represents a registered user in the portal."""
         if username is None:
-            username = self.__getUsername()
-        url = self.root + "/%s" % username
+            username = self.__getUsername() 
+        parsedUsername = urlparse.quote(username)
+        url = self.root + "/%s" % parsedUsername
         return User(url=url,
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
