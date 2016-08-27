@@ -107,7 +107,7 @@ class securityhandlerhelper(object):
     _supported_types = ['LDAP', 'NTLM', 'OAuth', 'Portal', 'PKI', "ArcGIS", "AGS"]
     _valid = None
     _message = None
-    
+
     #----------------------------------------------------------------------
     def __init__(self, securityinfo):
         """Constructor"""
@@ -261,7 +261,7 @@ class securityhandlerhelper(object):
                                                                             proxy_port=self._proxy_port,
                                                                             referer_url=self._referer_url)
                         self._message = "PKI security handler created"
-                elif str(securityinfo['security_type']).upper() == 'OAUTH'.upper():
+                elif str(self._security_type).upper() == 'OAUTH'.upper():
                     if self._secret_id is None or self._secret_id == '' or \
                         self._client_id is None or self._client_id == '':
                         self._message = "client_id and secret_id required for OAUTH"
@@ -274,7 +274,7 @@ class securityhandlerhelper(object):
                                                                              proxy_port=self._proxy_port)
 
                         self._message = "OAuth security handler created"
-                elif str(securityinfo['security_type']).upper() == 'AGS'.upper():
+                elif str(self._security_type).upper() == 'AGS'.upper():
                     if self._username is None or self._username == '' or \
                        self._password is None or self._password == '':
                         self._message = "Username and password required for ArcGIS"
@@ -289,7 +289,7 @@ class securityhandlerhelper(object):
                 else:
                     print ("No valid security type set")
                     self._message = "No valid security type set"
-                if self._securityHandler is not None and str(securityinfo['security_type']).upper() != 'AGS'.upper():
+                if self._securityHandler is not None and str(self._security_type).upper() != 'AGS'.upper():
                     admin = Administration(url=self._org_url,
                                            securityHandler=self._securityHandler)
 
