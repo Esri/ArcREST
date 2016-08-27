@@ -978,34 +978,40 @@ class Portal(BaseAGOLClass):
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+
     @property
     def featureServers(self):
         """gets the hosting feature AGS Server"""
-        services = []
         if self.urls == {}:
             return {}
-        urls = self.urls
-        if 'https' in urls['urls']['features']:
-            res = urls['urls']['features']['https']
+
+        featuresUrls = self.urls['urls']['features']
+        if 'https' in featuresUrls:
+            res = featuresUrls['https']
+        elif 'http' in featuresUrls:
+            res = featuresUrls['http']
         else:
-            res = urls['urls']['features']['http']
-        for https in res:
+            return None
+
+        services = []
+        for urlHost in res:
             if self.isPortal:
-                url = "%s/admin" % https
-                services.append(AGSAdministration(url=url,
-                                                  securityHandler=self._securityHandler,
-                                                  proxy_url=self._proxy_url,
-                                                  proxy_port=self._proxy_port)
-                                )
+                services.append(AGSAdministration(
+                    url='%s/admin' % urlHost,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port))
             else:
-                url = "https://%s/%s/ArcGIS/admin" % (https, self.portalId)
-                services.append(Services(url=url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port))
+                services.append(Services(
+                    url='https://%s/%s/ArcGIS/admin' % (urlHost, self.portalId),
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port))
+
         return services
-    #----------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+
     @property
     def tileServers(self):
         """
