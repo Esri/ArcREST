@@ -1,5 +1,5 @@
 """
-   This sample shows how to update tan item
+   This sample shows how to update an item
 
    Python 2.x
    ArcREST 3.0.1
