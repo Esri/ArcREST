@@ -1832,7 +1832,7 @@ class User(BaseAGOLClass):
         if securityAnswer is not None:
             params['securityAnswer'] = securityAnswer
         if userType is not None and \
-           userType.lower() in ['both', 'arcgisorg']:
+           userType.lower() in ['both', 'arcgisorg','arcgisonly']:
             params['userType'] = userType.lower()
         files = {}
 
