@@ -5,6 +5,7 @@ import calendar
 import glob
 import mimetypes
 import os
+from ..packages import six
 from ..packages.six.moves import http_client as httplib
 from ..web._base import BaseWebOperations
 
@@ -147,8 +148,12 @@ class BaseAGSServer(BaseWebOperations):
             return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [self._unicode_convert(element) for element in obj]
-        elif isinstance(obj, unicode):
+        elif isinstance(obj, str):
+            return obj 
+        elif isinstance(obj, six.text_type):
             return obj.encode('utf-8')
+        elif isinstance(obj, six.integer_types):
+            return obj
         else:
             return obj
 # This function is a workaround to deal with what's typically described as a
@@ -267,7 +272,11 @@ class BaseAGOLClass(BaseWebOperations):
             return {self._unicode_convert(key): self._unicode_convert(value) for key, value in obj.items()}
         elif isinstance(obj, list):
             return [self._unicode_convert(element) for element in obj]
-        elif isinstance(obj, unicode):
+        elif isinstance(obj, str):
+            return obj 
+        elif isinstance(obj, six.text_type):
             return obj.encode('utf-8')
+        elif isinstance(obj, six.integer_types):
+            return obj
         else:
             return obj

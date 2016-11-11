@@ -782,7 +782,7 @@ class Item(BaseAGOLClass):
                              proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
     def deleteRating(self):
-        """Removes the rating the calling user added for the specified item 
+        """Removes the rating the calling user added for the specified item
         (POST only)."""
         url = "%s/deleteRating" % self.root
         params = {
@@ -940,9 +940,10 @@ class Item(BaseAGOLClass):
         exports metadata to the various supported formats
         Inputs:
           exportFormats - export metadata to the following formats: fgdc,
-           inspire, iso19139, iso19139-3.2, iso19115, and default.
-           default means the value will be the default ArcGIS metadata
-           format.
+           inspire, iso19139, iso19139-3.2, iso19115, arcgis, and default.
+           default means the value will be ISO 19139 Metadata
+           Implementation Specification GML3.2 or the default format set
+           for your ArcGIS online organizational account.
           output - html or none.  Html returns values as html text.
           saveFolder - Default is None. If provided the metadata file will
            be saved to that location.
@@ -953,9 +954,17 @@ class Item(BaseAGOLClass):
         """
         url = "%s/info/metadata/metadata.xml" % self.root
         allowedFormats = ["fgdc", "inspire", "iso19139",
-                          "iso19139-3.2", "iso19115", "default"]
+                          "iso19139-3.2", "iso19115", "arcgis", "default"]
         if not exportFormat.lower() in allowedFormats:
             raise Exception("Invalid exportFormat")
+        if exportFormat.lower() == "arcgis":
+            params = {}
+        else:
+            params = {
+                "format" : exportFormat
+            }
+        if exportFormat.lower() == "default":
+            exportFormat = ""
         params = {
             "format" : exportFormat
         }
@@ -973,6 +982,13 @@ class Item(BaseAGOLClass):
                                proxy_port=self._proxy_port,
                                out_folder=saveFolder,
                                file_name=fileName)
+            if os.path.isfile(result) == False:
+                with open(os.path.join(saveFolder, fileName), 'wb') as writer:
+                    writer.write(result)
+                    writer.flush()
+                    writer.close()
+                return os.path.join(saveFolder, fileName)
+
             return result
         else:
             return self._post(url=url,
@@ -1016,6 +1032,8 @@ class Item(BaseAGOLClass):
 ########################################################################
 class UserItem(BaseAGOLClass):
     """represents a single item on the site for a given user"""
+    _appProxies = None
+    _serviceProxyParams = None
     _url = None
     _itemType = None
     _uploaded = None
@@ -1067,6 +1085,7 @@ class UserItem(BaseAGOLClass):
     __curl = None
     _privateUrl = None
     _itemControl = None
+    _origin = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1141,6 +1160,13 @@ class UserItem(BaseAGOLClass):
         if self._itemControl is None:
             self.__init()
         return self._itemControl
+    #----------------------------------------------------------------------
+    @property
+    def origin(self):
+        '''gets the property value for origin'''
+        if self._origin is None:
+            self.__init()
+        return self._origin
     #----------------------------------------------------------------------
     @property
     def extent(self):
@@ -1409,6 +1435,18 @@ class UserItem(BaseAGOLClass):
         return self._sourceUrl
     #----------------------------------------------------------------------
     @property
+    def appProxies(self):
+        if self._appProxies is None:
+            self.__init()
+        return self._appProxies
+    #----------------------------------------------------------------------
+    @property
+    def serviceProxyParams(self):
+        if self._serviceProxyParams is None:
+            self.__init()
+        return self._serviceProxyParams
+    #----------------------------------------------------------------------
+    @property
     def item(self):
         """returns the Item class of an Item"""
         url = self._contentURL
@@ -1657,13 +1695,13 @@ class UserItem(BaseAGOLClass):
             elif key == "metadata":
                 metadata = dictItem['metadata']
                 if os.path.basename(metadata) != 'metadata.xml':
-                    tempfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
-                    if os.path.isfile(tempfile) == True:
-                        os.remove(path=tempfile)
+                    tempxmlfile = os.path.join(tempfile.gettempdir(), "metadata.xml")
+                    if os.path.isfile(tempxmlfile) == True:
+                        os.remove(tempxmlfile)
                     import shutil
-                    shutil.copy(metadata, tempfile)
+                    shutil.copy(metadata, tempxmlfile)
 
-                    metadata = tempfile
+                    metadata = tempxmlfile
                 files['metadata'] = dictItem['metadata']
             else:
                 params[key] = dictItem[key]
@@ -1930,6 +1968,10 @@ class User(BaseAGOLClass):
         self._json = ""
         while nextStart > -1:
             res = self.search(start=nextStart, num=100)
+            if self._location.find(res['username'].lower()) > -1:
+                self._location = self._location.replace(res['username'].lower(), res['username'])
+                self._url = self._url.replace(res['username'].lower(), res['username'])
+
             nextStart = int(res['nextStart'])
             result_template['username'] = res['username']
             result_template["total"] = res["total"]
@@ -2388,7 +2430,8 @@ class User(BaseAGOLClass):
            title - name of export item
            itemId - id of the item to export
            exportFormat - out format. Values: Shapefile, CSV or File
-                          Geodatabase, feature collection, GeoJson
+                          Geodatabase, feature collection, GeoJson,
+                          or Scene Package
            tags - comma seperated list of quick descriptors, the default is
             export.
            snippet - short explination of the exported item
@@ -2993,7 +3036,10 @@ class Group(BaseAGOLClass):
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
-        self._url = "%s/%s" % (contentURL, groupId)
+        if contentURL.find(groupId) < 0:
+            self._url = "%s/%s" % (contentURL, groupId)
+        else:
+            self._url = contentURL
         self._groupId = groupId
         self._contentURL = contentURL
         self._securityHandler = securityHandler
@@ -3023,7 +3069,7 @@ class Group(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
-                print(k, " - attribute not implemented in Content.Groups class.")
+                setattr(self, k, v)
     #----------------------------------------------------------------------
     @property
     def root(self):
@@ -3074,7 +3120,10 @@ class Group(BaseAGOLClass):
     @property
     def group(self):
         """returns the community.Group class for the current group"""
-        gURL = self.__assembleURL(self._contentURL, self._groupId)
+        split_count = self._url.lower().find("/content/")
+        len_count = len('/content/')
+        gURL = self._url[:self._url.lower().find("/content/")] + \
+            "/community/" + self._url[split_count+ len_count:]#self.__assembleURL(self._contentURL, self._groupId)
 
         return CommunityGroup(url=gURL,
                               securityHandler=self._securityHandler,

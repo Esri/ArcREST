@@ -229,8 +229,8 @@ class orgtools(securityhandlerhelper):
 
             groups = admin.community.groups
             q = groupName
-            if onlyInOrg is True:
-                q += " orgid: %s" % admin.portals.portalSelf.id
+            #if onlyInOrg is True:
+                #q += " orgid: %s" % admin.portals.portalSelf.id
             if onlyInUser is True:
                 q += " owner: %s" % self._securityHandler.username
             results = groups.search(q = q)

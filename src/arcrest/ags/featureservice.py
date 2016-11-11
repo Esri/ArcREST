@@ -15,6 +15,8 @@ from ..common.filters import LayerDefinitionFilter, GeometryFilter, TimeFilter
 class FeatureService(BaseAGSServer):
     """ contains information about a feature service """
     _url = None
+    _serviceItemId = None
+    _supportsApplyEditsWithGlobalIds = None
     _currentVersion = None
     _serviceDescription = None
     _hasVersionedData = None
@@ -313,7 +315,18 @@ class FeatureService(BaseAGSServer):
         if self._hasStaticData is None:
             self.__init()
         return self._hasStaticData
-
+    @property
+    def supportsApplyEditsWithGlobalIds(self):
+        """returns the supportsApplyEditsWithGlobalIds value"""
+        if self._supportsApplyEditsWithGlobalIds is None:
+            self.__init()
+        return self._supportsApplyEditsWithGlobalIds
+    @property
+    def serviceItemId(self):
+        """returns the serviceItemId value"""
+        if self._serviceItemId is None:
+            self.__init()
+        return self._serviceItemId
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):

@@ -5,6 +5,12 @@ ArcREST Setup Code
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import re
+
+with open('arcrest/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
 
 
 here = path.abspath(path.dirname(__file__))
@@ -25,12 +31,12 @@ except:
     long_decription = "ArcREST Python Package"
 
 setup(
-    name='ArcREST',
+    name='ArcREST_Package',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.5.4',
+    version=version,
 
     description='ArcREST is a Python Wrapper for the Esri REST Framework',
     long_description=long_decription,
@@ -40,30 +46,26 @@ setup(
     author='Andrew Chapkowski, Mike Miller',
     author_email='achapkowski@esri.com, mmiller@esri.com',
     # Choose your license
-    license='Apache',
+    license='Apache 2.0',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-
         # Indicate who your project is intended for
-        'Intended Audience :: Developers/GIS Users',
-        'Topic :: Software Development :: Esri REST API',
-
-        # Pick your license as you wish (should match "license" above)
-        'License :: Apache License',
-
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
+        'Intended Audience :: Developers',
+        'Natural Language :: English',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: Implementation :: PyPy'
     ],
     keywords='REST, Esri, ArcGIS, Python, ArcPy',
     packages=packages,
-    package_dir={'requests': 'requests'},
     include_package_data=True,
-    zip_safe=False,
+    zip_safe=True,
     install_requires=['numpy>=1.7.1'],
     extras_require={},
     package_data={'arcrest/enrichment' : ['__countrycodes.csv', '__datacollectionnames.csv']},

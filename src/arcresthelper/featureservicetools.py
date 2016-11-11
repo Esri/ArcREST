@@ -647,38 +647,66 @@ class featureservicetools(securityhandlerhelper):
             del fl
             gc.collect()
     #----------------------------------------------------------------------
-    def QueryAllFeatures(self, url, sql, out_fields="*", chunksize=1000, savePath=None,printIndent=""):
-        """Performs an SQL query against a hosted feature service layer.
+    def QueryAllFeatures(self, url=None,
+                         where="1=1",
+                        out_fields="*",
+                        timeFilter=None,
+                        geometryFilter=None,
+                        returnFeatureClass=False,
+                        out_fc=None,
+                        outSR=None,
+                        chunksize=1000, 
+                        printIndent=""):
+          
+        """Performs an SQL query against a hosted feature service layer 
+        and returns all features regardless of service limit.
 
         Args:
             url (str): The URL of the feature service layer.
-            sql (str): The SQL query to apply against the feature service.
-                Those features that satisfy the query will be returned.
-            out_fields (str): A comma delimited list of field names to return.
-                Defaults to ``"*"``, i.e., return all fields
+            where - the selection sql statement
+            out_fields - the attribute fields to return
+            timeFilter - a TimeFilter object where either the start time
+                         or start and end time are defined to limit the
+                         search results for a given time.  The values in
+                         the timeFilter should be as UTC timestampes in
+                         milliseconds.  No checking occurs to see if they
+                         are in the right format.
+            geometryFilter - a GeometryFilter object to parse down a given
+                            query by another spatial dataset.
+            returnFeatureClass - Default False. If true, query will be
+                                 returned as feature class
             chunksize (int): The maximum amount of features to query at a time. Defaults to 1000.
-            savePath (str): The full path on disk where the features will be saved. Defaults to ``None``.
-        Returns:
-            When ``savePath`` is not provided (``None``), the result from
-                :py:func:`arcrest.agol.services.FeatureLayer.query`.
-
-            When ``savePath`` is provided, the result from
-                :py:func:`arcrest.common.general.FeatureSet.save`.
+            out_fc - only valid if returnFeatureClass is set to True.
+                        Output location of query.
+              
+            Output:
+               A list of Feature Objects (default) or a path to the output featureclass if
+               returnFeatureClass is set to True.
 
         """
+        if (url is None):
+            return
         fl = None
         try:
             fl = FeatureLayer(url=url, securityHandler=self._securityHandler)
-            qRes = fl.query(where=sql, returnIDsOnly=True)
+            qRes = fl.query(where=where, 
+                            returnIDsOnly=True,
+                            timeFilter=timeFilter,
+                            geometryFilter=geometryFilter)
 
             if 'error' in qRes:
-                print (qRes)
-                return qRes
+                print (printIndent + qRes)
+                return []
             elif 'objectIds' in qRes:
                 oids = qRes['objectIds']
                 total = len(oids)
                 if total == 0:
-                    return  {'success':True, 'message':"No features matched the query"}
+                    return fl.query(where=where, 
+                                    returnGeometry=True,
+                                    out_fields=out_fields,
+                                    timeFilter=timeFilter,
+                                    geometryFilter=geometryFilter,
+                                    outSR=outSR)
 
                 print (printIndent + "%s features to be downloaded" % total)
                 chunksize = min(chunksize, fl.maxRecordCount)
@@ -691,7 +719,10 @@ class featureservicetools(securityhandlerhelper):
                     else:
                         results = fl.query(objectIds=oidsQuery,
                                            returnGeometry=True,
-                                           out_fields=out_fields)
+                                           out_fields=out_fields,
+                                           timeFilter=timeFilter,
+                                            geometryFilter=geometryFilter,
+                                            outSR=outSR)
                         if isinstance(results,FeatureSet):
                             if combinedResults is None:
                                 combinedResults = results
@@ -703,13 +734,13 @@ class featureservicetools(securityhandlerhelper):
                             print(printIndent + "{:.0%} Completed: {}/{}".format(totalQueried / float(total), totalQueried, total))
 
                         else:
-                            print (results)
-                if savePath is None or savePath == '':
-                    return combinedResults
+                            print (printIndent + results)
+                if returnFeatureClass == True:
+                    return combinedResults.save(*os.path.split(out_fc))
                 else:
-                    return combinedResults.save(*os.path.split(savePath))
+                    return combinedResults
             else:
-                print (qRes)
+                print (printIndent + qRes)
         except:
             line, filename, synerror = trace()
             raise common.ArcRestHelperError({

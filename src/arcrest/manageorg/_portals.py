@@ -201,6 +201,9 @@ class Portal(BaseAGOLClass):
     _appInfo = None
     _creditAssignments = None
     _updateUserProfileDisabled = None
+    _analysisLayersGroupQuery = None
+    _defaultUserCreditAssignment = None
+    _analysisLayersGroupQuery = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -237,6 +240,7 @@ class Portal(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
+                setattr(self, k, v)
                 print( k, " - attribute not implemented in Portal class.")
     #----------------------------------------------------------------------
     def _findPortalId(self):
@@ -255,17 +259,25 @@ class Portal(BaseAGOLClass):
         if 'id' in res:
             return res['id']
         return None
-    ##----------------------------------------------------------------------
-    #@property
-    #def hostingServers(self):
-        #"""returns a list of servers that host non-tile based content for a
-        #site."""
-        #return
-    ##----------------------------------------------------------------------
-    #@property
-    #def tileServers(self):
-        #""""""
-        #return
+    @property
+    def analysisLayersGroupQuery(self):
+        if self._analysisLayersGroupQuery is None:
+            self.__init()
+        return self._analysisLayersGroupQuery
+    #----------------------------------------------------------------------
+    @property
+    def defaultUserCreditAssignment(self):
+        """gets the property value for defaultUserCreditAssignment"""
+        if self._defaultUserCreditAssignment is None:
+            self.__init()
+        return self._defaultUserCreditAssignment
+    #----------------------------------------------------------------------
+    @property
+    def analysisLayersGroupQueryt(self):
+        """gets the property value for analysisLayersGroupQuery"""
+        if self._analysisLayersGroupQuery is None:
+            self.__init()
+        return self._analysisLayersGroupQuery
     #----------------------------------------------------------------------
     @property
     def updateUserProfileDisabled(self):
@@ -966,34 +978,40 @@ class Portal(BaseAGOLClass):
                      securityHandler=self._securityHandler,
                      proxy_url=self._proxy_url,
                      proxy_port=self._proxy_port)
-    #----------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+
     @property
     def featureServers(self):
         """gets the hosting feature AGS Server"""
-        services = []
         if self.urls == {}:
             return {}
-        urls = self.urls
-        if 'https' in urls['urls']['features']:
-            res = urls['urls']['features']['https']
+
+        featuresUrls = self.urls['urls']['features']
+        if 'https' in featuresUrls:
+            res = featuresUrls['https']
+        elif 'http' in featuresUrls:
+            res = featuresUrls['http']
         else:
-            res = urls['urls']['features']['http']
-        for https in res:
+            return None
+
+        services = []
+        for urlHost in res:
             if self.isPortal:
-                url = "%s/admin" % https
-                services.append(AGSAdministration(url=url,
-                                                  securityHandler=self._securityHandler,
-                                                  proxy_url=self._proxy_url,
-                                                  proxy_port=self._proxy_port)
-                                )
+                services.append(AGSAdministration(
+                    url='%s/admin' % urlHost,
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port))
             else:
-                url = "https://%s/%s/ArcGIS/admin" % (https, self.portalId)
-                services.append(Services(url=url,
-                                         securityHandler=self._securityHandler,
-                                         proxy_url=self._proxy_url,
-                                         proxy_port=self._proxy_port))
+                services.append(Services(
+                    url='https://%s/%s/ArcGIS/admin' % (urlHost, self.portalId),
+                    securityHandler=self._securityHandler,
+                    proxy_url=self._proxy_url,
+                    proxy_port=self._proxy_port))
+
         return services
-    #----------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+
     @property
     def tileServers(self):
         """
@@ -1100,6 +1118,9 @@ class Portal(BaseAGOLClass):
         }
         if isinstance(updatePortalParameters, parameters.PortalParameters):
             params.update(updatePortalParameters.value)
+        elif isinstance(updatePortalParameters, dict):
+            for k,v in updatePortalParameters.items():
+                params[k] = v
         else:
             raise AttributeError("updatePortalParameters must be of type parameter.PortalParameters")
         return self._post(url=url,
@@ -1277,7 +1298,14 @@ class Portal(BaseAGOLClass):
 
         if "users" in res:
             if len(res['users']) > 0:
-                cURL = "https://%s/sharing/rest/community" % self.portalHostname
+                parsed = urlparse.urlparse(self._url)
+                if parsed.netloc.lower().find('arcgis.com') == -1:
+                    cURL = "%s://%s/%s/sharing/rest/community" % (parsed.scheme,
+                                                                  parsed.netloc,
+                                                                  parsed.path[1:].split('/')[0])
+                else:
+                    cURL = "%s://%s/sharing/rest/community" % (parsed.scheme,
+                                                               parsed.netloc)
                 com = Community(url=cURL,
                                 securityHandler=self._securityHandler,
                                 proxy_url=self._proxy_url,

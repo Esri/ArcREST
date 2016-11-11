@@ -1233,13 +1233,14 @@ class Users(BaseAGOLClass):
     def user(self, username=None):
         """A user resource that represents a registered user in the portal."""
         if username is None:
-            username = self.__getUsername()
-        url = self.root + "/%s" % username
+            username = self.__getUsername() 
+        parsedUsername = urlparse.quote(username)
+        url = self.root + "/%s" % parsedUsername
         return User(url=url,
                     securityHandler=self._securityHandler,
                     proxy_url=self._proxy_url,
                     proxy_port=self._proxy_port,
-                    initialize=True)
+                    initialize=False)
 ########################################################################
 class User(BaseAGOLClass):
     """
@@ -1285,6 +1286,7 @@ class User(BaseAGOLClass):
     _privacy = None
     _defaultGroupId = None
     _organization = None
+    _roleId = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1346,18 +1348,23 @@ class User(BaseAGOLClass):
     def userContent(self):
         """allows access into the individual user's content to get at the
         items owned by the current user"""
-        url = self._url.lower().replace('/community/', '/content/')
+        replace_start = self._url.lower().find("/community/")
+        len_replace = len("/community/")
+        url = self._url.replace(self._url[replace_start:replace_start+len_replace],
+                                '/content/')
         from ._content import User as UserContent
         return UserContent(url=url,
-                    securityHandler=self._securityHandler,
-                    proxy_url=self._proxy_url,
-                    proxy_port=self._proxy_port)
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     @property
     def lastName(self):
         '''gets the property value for username'''
         if self._lastName is None:
             self.__init()
         return self._lastName
+    #----------------------------------------------------------------------
     @property
     def firstName(self):
         '''gets the property value for username'''
@@ -1525,6 +1532,13 @@ class User(BaseAGOLClass):
         if self._region is None:
             self.__init()
         return self._region
+    #----------------------------------------------------------------------
+    @property
+    def roleId(self):
+        '''gets the roleId value'''
+        if self._roleId is None:
+            self.__init()
+        return self._roleId
     #----------------------------------------------------------------------
     @property
     def modified(self):
@@ -1818,7 +1832,7 @@ class User(BaseAGOLClass):
         if securityAnswer is not None:
             params['securityAnswer'] = securityAnswer
         if userType is not None and \
-           userType.lower() in ['both', 'arcgisorg']:
+           userType.lower() in ['both', 'arcgisorg','arcgisonly']:
             params['userType'] = userType.lower()
         files = {}
 

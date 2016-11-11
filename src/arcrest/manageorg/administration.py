@@ -56,7 +56,7 @@ class Administration(BaseAGOLClass):
             urlInfo=urlInfo._replace(netloc= "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl))
             self._url = urlunparse(urlInfo)
             self._securityHandler.referer_url = "%s.%s" % (portalSelf.urlKey, portalSelf.customBaseUrl)
-            self._url = "https://%s.%s/sharing" % (portalSelf.urlKey, portalSelf.customBaseUrl)
+            self._url = "https://%s.%s%s" % (portalSelf.urlKey, portalSelf.customBaseUrl, urlInfo.path)
             del portalSelf
 
         if initialize:
@@ -240,7 +240,8 @@ class Administration(BaseAGOLClass):
             "q" : q,
             "sortOrder" : sortOrder,
             "num" : num,
-            "start" : start
+            "start" : start,
+            'restrict' : useSecurity
         }
         if not focus is None:
             params['focus'] = focus
@@ -262,6 +263,7 @@ class Administration(BaseAGOLClass):
                         proxy_port=self._proxy_port)
 
     #----------------------------------------------------------------------
+    @property
     def hostingServers(self):
         """
           Returns the objects to manage site's hosted services. It returns

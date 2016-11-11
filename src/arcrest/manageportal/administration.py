@@ -9,9 +9,128 @@ are hierarchical and have unique universal resource locators (URLs).
 from __future__ import absolute_import
 from __future__ import print_function
 import json
+import tempfile
 from datetime import datetime
 from .._abstract.abstract import BaseAGOLClass
 from ..security import PortalTokenSecurityHandler,ArcGISTokenSecurityHandler,OAuthSecurityHandler
+########################################################################
+class _Federation(BaseAGOLClass):
+    """
+    """
+    _resources = None
+    #----------------------------------------------------------------------
+    def __init__(self, url,
+                 securityHandler,
+                 proxy_url=None,
+                 proxy_port=None,
+                 initialize=False):
+        """Constructor"""
+        if url.lower().endswith("/federation") == False:
+            url = url + "/federation"
+        self._url = url
+        self._securityHandler = securityHandler
+        self._proxy_url = proxy_url
+        self._proxy_port = proxy_port
+        if initialize:
+            self.__init()
+    #----------------------------------------------------------------------
+    def __init(self):
+        """ initializes the site properties """
+        params = {
+            "f" : "json",
+        }
+        json_dict = self._get(self._url, params,
+                                 securityHandler=self._securityHandler,
+                                 proxy_port=self._proxy_port,
+                                 proxy_url=self._proxy_url)
+        self._json_dict = json_dict
+        self._json = json.dumps(json_dict)
+        attributes = [attr for attr in dir(self)
+                      if not attr.startswith('__') and \
+                      not attr.startswith('_')]
+        for k,v in json_dict.items():
+            if k in attributes:
+                setattr(self, "_"+ k, json_dict[k])
+            else:
+                print( k, " - attribute not implemented in manageportal.administration._Federation class.")
+    #----------------------------------------------------------------------
+    @property
+    def servers(self):
+        """
+        This resource returns detailed information about the ArcGIS Servers
+        registered with Portal for ArcGIS, such as the ID of the server,
+        name of the server, ArcGIS Web Adaptor URL, administration URL, and
+        if the server is set as a hosting server.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/servers"
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def unfederate(self, serverId):
+        """
+        This operation unfederates an ArcGIS Server from Portal for ArcGIS
+        """
+        url = self._url + "/servers/{serverid}/unfederate".format(
+            serverid=serverId)
+        params = {"f" : "json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_ur)
+    #----------------------------------------------------------------------
+    def updateServer(self, serverId, serverRole):
+        """
+        This operation unfederates an ArcGIS Server from Portal for ArcGIS
+
+        Parameters:
+           serverRole - Whether the server is a hosting server for the
+            portal, a federated server, or a server with restricted access
+            to publishing. The allowed values are FEDERATED_SERVER,
+            FEDERATED_SERVER_WITH_RESTRICTED_PUBLISHING, or HOSTING_SERVER.
+           serverId - unique id of the server
+        """
+        url = self._url + "/servers/{serverid}/update".format(
+            serverid=serverId)
+        params = {"f" : "json",
+                  "serverRole" : serverRole}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_ur)
+    #----------------------------------------------------------------------
+    def validateServer(self, serverId):
+        """
+        This operation provides status information about a specific ArcGIS
+        Server federated with Portal for ArcGIS.
+
+        Parameters:
+           serverId - unique id of the server
+        """
+        url = self._url + "/servers/{serverid}/validate".format(
+            serverid=serverId)
+        params = {"f" : "json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_ur)
+    #----------------------------------------------------------------------
+    def validateAllServers(self):
+        """
+        This operation provides status information about a specific ArcGIS
+        Server federated with Portal for ArcGIS.
+
+        Parameters:
+           serverId - unique id of the server
+        """
+        url = self._url + "/servers/validate"
+        params = {"f" : "json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_ur)
 ########################################################################
 class _log(BaseAGOLClass):
     """handles the portal log information at 10.3.1+"""
@@ -31,8 +150,8 @@ class _log(BaseAGOLClass):
                  proxy_port=None,
                  initialize=False):
         """Constructor"""
-        if url.lower().endswith("/log") == False:
-            url = url + "/log"
+        if url.lower().endswith("/logs") == False:
+            url = url + "/logs"
         self._url = url
         self._securityHandler = securityHandler
         self._proxy_url = proxy_url
@@ -298,7 +417,433 @@ class _Security(BaseAGOLClass):
                           securityHandler=self._securityHandler,
                           proxy_port=self._proxy_port,
                           proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def deleteCertificate(self, certName):
+        """
+        This operation deletes an SSL certificate from the key store. Once
+        a certificate is deleted, it cannot be retrieved or used to enable
+        SSL.
 
+        Inputs:
+          certName - name of the cert to delete
+
+        """
+
+        params = {"f" : "json"}
+        url = self._url + "/sslCertificates/{cert}/delete".format(
+            cert=certName)
+        return self._post(url=url, param_dict=params,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def exportCertificate(self, certName, outFolder=None):
+        """
+        This operation downloads an SSL certificate. The file returned by
+        the server is an X.509 certificate. The downloaded certificate can
+        be imported into a client that is making HTTP requests.
+
+        Inputs:
+          certName - name of the cert to export
+          outFolder - folder on disk to save the certificate.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/sslCertificates/{cert}/export".format(
+            cert=certName)
+        if outFolder is None:
+            outFolder = tempfile.gettempdir()
+        return self._post(url=url, param_dict=params,
+                          out_folder=outFolder,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def generateCertificate(self, alias,
+                            commonName, organizationalUnit,
+                            city, state, country,
+                            keyalg="RSA", keysize=1024,
+                            sigalg="SHA256withRSA",
+                            validity=90
+                            ):
+        """
+        Use this operation to create a self-signed certificate or as a
+        starting point for getting a production-ready CA-signed
+        certificate. The portal will generate a certificate for you and
+        store it in its keystore.
+        """
+        params = {"f" : "json",
+                  "alias" : alias,
+                  "commonName" : commonName,
+                  "organizationalUnit" : organizationalUnit,
+                  "city" : city,
+                  "state" : state,
+                  "country" : country,
+                  "keyalg" : keyalg,
+                  "keysize" : keysize,
+                  "sigalg" : sigalg,
+                  "validity" : validity
+                  }
+        url = self._url + "/SSLCertificate/ generateCertificate"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def generateCSR(self, certName):
+        """
+        """
+        url = self._url + "/sslCertificates/{cert}/generateCsr".format(cert=certName)
+        params = {"f" : "json"}
+        return self._post(url=url, param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getAppInfo(self, appId):
+        """
+        Every application registered with Portal for ArcGIS has a unique
+        client ID and a list of redirect URIs that are used for OAuth. This
+        operation returns these OAuth-specific properties of an application.
+        You can use this information to update the redirect URIs by using
+        the Update App Info operation.
+
+        Input:
+           appId - unique id of the application to get the information
+            about.
+        """
+        params = {
+            "f" : "json",
+            "appID" : appId
+        }
+        url = self._url + "/oauth/getAppInfo"
+        return self._get(url=url, param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getUsersEnterpriseGroups(self, username, searchFilter, maxCount=100):
+        """
+        This operation lists the groups assigned to a user account in the
+        configured enterprise group store. You can use the filter parameter
+        to narrow down the search results.
+
+        Inputs:
+           username - name of the user to find
+           searchFilter - helps narrow down results
+           maxCount - maximum number of results to return
+        """
+        params = {
+            "f" : "json",
+            "username" : username,
+            "filter" : searchFilter,
+            "maxCount" : maxCount
+        }
+        url = self._url + "/Groups/getEnterpriseGroupsForUser"
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getEnterpriseUser(self, username):
+        """"""
+        url = self._url + "/users/getEnterpriseUser"
+        params = {
+            "f" : "json",
+            "username" : username
+        }
+        return self._get(url=url, param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getUsersWithinEnterpriseGroup(self,
+                                      groupName,
+                                      searchFilter=None,
+                                      maxCount=10):
+        """
+        This operation returns the users that are currently assigned to the
+        enterprise group within the enterprise user/group store. You can
+        use the filter parameter to narrow down the user search.
+
+        Inputs:
+          groupName - name of the group
+          searchFilter - string used to narrow down the search
+          maxCount - maximum number of users to return
+        """
+        params = {
+            "f" : "json",
+            "groupName" : groupName,
+            "maxCount" : maxCount
+        }
+        if searchFilter:
+            params['filters'] = searchFilter
+        url = self._url + "/groups/getUsersWithinEnterpriseGroup"
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def importExistingServerCertificate(self, alias, certPassword,
+                                        certFile):
+        """
+        This operation imports an existing server certificate, stored in
+        the PKCS #12 format, into the keystore. If the certificate is a CA
+        signed certificate, you must first import the CA Root or
+        Intermediate certificate using the Import Root or Intermediate
+        Certificate operation.
+
+        Parameters
+          alias - certificate name
+          certPassword - password to unlock the certificate
+          certFile - certificate file
+        """
+        url = self._url + "/sslCertificates/importExistingServerCertificate"
+        files = {}
+        files['certFile'] = certFile
+        params = {
+            "f" : "json",
+            "alias" : alias,
+            "certPassword" : certPassword
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          files=files,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def importRootOrIntermediate(self, alias, rootCSCertificate):
+        """"""
+        params = {
+            "alias" : alias,
+            "f" : "json"
+        }
+        files = {
+            "rootCSCertificate" : rootCSCertificate
+        }
+        url = self._url + "/sslCertificates/importRootOrIntermediate"
+        return self._post(url=url,
+                          param_dict=params,
+                          files=files,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def importSignedCertificate(self, alias, certFile):
+        """
+        This operation imports a certificate authority (CA) signed SSL
+        certificate into the key store.
+        """
+        params = { "f" : "json" }
+        files = {"file" : certFile}
+        url = self._url + \
+            "/sslCertificates/{cert}/importSignedCertificate".format(cert=alias)
+        return self._post(url=url,
+                          files=files,
+                          param_dict=params,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    @property
+    def oauth(self):
+        """
+        The OAuth resource contains a set of operations that update the
+        OAuth2-specific properties of registered applications in Portal for
+        ArcGIS.
+        """
+        url = self._url + "/oauth"
+        params = {"f" : "json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def refreshGroupMembership(self, groups):
+        """
+        This operation iterates over every enterprise account configured in
+        the portal and determines if the user account is a part of the
+        input enterprise group. If there are any change in memberships, the
+        database and the indexes are updated for each group.
+        While portal automatically refreshes the memberships during a user
+        login and during a periodic refresh configured through the Update
+        Identity Store operation, this operation allows an administrator to
+        force a refresh.
+
+        Parameters:
+           groups - comma seperated list of group names
+        """
+        params = {
+            "f" : "json",
+            "groups" : groups
+        }
+        url = self._url + "/groups/refreshMembership"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def refreshUserMembership(self, users):
+        """
+        This operation iterates over every enterprise group configured in
+        the portal and determines if the input user accounts belong to any
+        of the configured enterprise groups. If there is any change in
+        membership, the database and the indexes are updated for each user
+        account. While portal automatically refreshes the memberships
+        during a user login and during a periodic refresh (configured
+        through the Update Identity Store operation), this operation allows
+        an administrator to force a refresh.
+
+        Parameters:
+          users - comma seperated list of user names
+        """
+        params = {
+            "f" : "json",
+            "users" : users
+        }
+        url = self._url + "/users/refreshMembership"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_port=self._proxy_port,
+                          proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def searchEnterpriseGroups(self, searchFilter="", maxCount=100):
+        """
+        This operation searches groups in the configured enterprise group
+        store. You can narrow down the search using the search filter
+        parameter.
+
+        Parameters:
+           searchFilter - text value to narrow the search down
+           maxCount - maximum number of records to return
+        """
+        params = {
+            "f" : "json",
+            "filter" : searchFilter,
+            "maxCount" : maxCount
+        }
+        url = self._url + "/groups/searchEnterpriseGroups"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def searchEnterpriseUsers(self, searchFilter="", maxCount=100):
+        """
+        This operation searches users in the configured enterprise user
+        store. You can narrow down the search using the search filter
+        parameter.
+
+        Parameters:
+           searchFilter - text value to narrow the search down
+           maxCount - maximum number of records to return
+        """
+        params = {
+            "f" : "json",
+            "filter" : searchFilter,
+            "maxCount" : maxCount
+        }
+        url = self._url + "/users/searchEnterpriseUsers"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def SSLCertificates(self):
+        """
+        Lists certificates.
+        """
+        url = self._url + "/SSLCertificate"
+        params = {"f" : "json"}
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getSSLCertificate(self, alias):
+        """"""
+        url = self._url + "/sslCertificates/{cert}".format(cert=alias)
+        params = {"f": "json"}
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def testIdentityStore(self):
+        """
+        This operation can be used to test the connection to a user or
+        group store.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/config/testIdentityStore"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def user_count(self):
+        """
+        The users resource is an umbrella for operations to manage members
+        within Portal for ArcGIS. The resource returns the total number of
+        members in the system.
+        As an administrator, you can register enterprise accounts in your
+        portal instance by using the Create User operation. When automatic
+        sign-in for users is disabled in the security configuration,
+        registered enterprise accounts can sign in as members of the
+        portal. This gives you full control on all the accounts within a
+        portal instance.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/users"
+        return self._get(url=url, param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateAppInfo(self, appInfo):
+        """
+        This operation allows you to update the OAuth-specific properties
+        associated with an application. Use the Get App Info operation to
+        obtain the existing OAuth properties that can be edited.
+        """
+        params = {"f" : "json",
+                  "appInfo" : appInfo}
+        url = self._url + "/oauth/updateAppInfo"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateEnterpriseUser(self, username, idpUsername):
+        """
+        This operation allows an administrator to update the idpUsername
+        for an enterprise user in the portal. This is used when migrating
+        from accounts used with web-tier authentication to SAML
+        authentication.
+
+        Parameters:
+           username - username of the enterprise account
+           idpUsername - username used by the SAML identity provider
+        """
+        params = {
+            "f" : "json",
+            "username" : username,
+            "idpUsername" : idpUsername
+        }
+        url = self._url + "/users/updateEnterpriseUser"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateWebServerCertificate(self, webServerCertificateAlias,
+                                   sslProtocols,
+                                   cipherSuites):
+        """"""
+        params = {
+            "f" : "json",
+            "webServerCertificateAlias": webServerCertificateAlias,
+            "sslProtocols" : sslProtocols,
+            "cipherSuites" : cipherSuites
+        }
+        url = self._url + "/sslcertificates/update"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def updateSecurityConfiguration(self,
                                     enableAutomaticAccountCreation=False,
@@ -711,6 +1256,167 @@ class _System(BaseAGOLClass):
                             proxy_port=self._proxy_port,
                             proxy_url=self._proxy_url)
     #----------------------------------------------------------------------
+    def getEntitlements(self, appId):
+        """
+        This operation returns the currently queued entitlements for a
+        product, such as ArcGIS Pro or Navigator for ArcGIS, and applies
+        them when their start dates become effective. It's possible that
+        all entitlements imported using the Import Entitlements operation
+        are effective immediately and no entitlements are added to the
+        queue. In this case, the operation returns an empty result.
+        """
+        params = {
+            "f" : "json",
+            "appId" : appId
+        }
+        url = self._url + "/licenses/getEntitlements"
+        return self._get(url=url, param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def importEntitlements(self, entitlementFile, appId):
+        """"""
+        params = {
+                    "f" : "json",
+                    "appId" : appId
+                }
+        url = self._url + "/licenses/importEntitlements"
+        files = {"file" : entitlementFile}
+        return self._post(url=url, param_dict=params,
+                          files=files,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def languages(self):
+        """
+        This resource lists which languages will appear in portal content
+        search results.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/languages"
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def releaseLicense(self, username):
+        """
+        If a user checks out an ArcGIS Pro license for offline or
+        disconnected use, this operation releases the license for the
+        specified account. A license can only be used with a single device
+        running ArcGIS Pro. To check in the license, a valid access token
+        and refresh token is required. If the refresh token for the device
+        is lost, damaged, corrupted, or formatted, the user will not be
+        able to check in the license. This prevents the user from logging
+        in to ArcGIS Pro from any other device. As an administrator, you
+        can release the license. This frees the outstanding license and
+        allows the user to check out a new license or use ArcGIS Pro in a
+        connected environment.
+
+        Parameters:
+           username - username of  the account
+        """
+        url = self._url + "/licenses/releaseLicense"
+        params = {
+            "username" : username,
+            "f" : "json"
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def removeAllEntitlements(self, appId):
+        """
+        This operation removes all entitlements from the portal for ArcGIS
+        Pro or additional products such as Navigator for ArcGIS and revokes
+        all entitlements assigned to users for the specified product. The
+        portal is no longer a licensing portal for that product.
+        License assignments are retained on disk. Therefore, if you decide
+        to configure this portal as a licensing portal for the product
+        again in the future, all licensing assignments will be available in
+        the website.
+
+        Parameters:
+           appId - The identifier for the application for which the
+            entitlements are being removed.
+        """
+        params = {
+            "f" : "json",
+            "appId" : appId
+        }
+        url = self._url + "/licenses/removeAllEntitlements"
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def system_properties(self):
+        """
+        This resource lists system properties that have been modified to
+        control the portal's environment.
+        """
+        params = {"f" : "json"}
+        url = self._url + "/properties"
+        return self._get(url=url,
+                         param_dict=params,
+                         proxy_port=self._proxy_port,
+                         proxy_url=self._proxy_url)
+    #----------------------------------------------------------------------
+    def updateLanguages(self, languages):
+        """
+        You can use this operation to change which languages will have
+        content displayed in portal search results.
+
+        Parameters:
+           languages - The JSON object containing all of the possible
+             portal languages and their corresponding status (true or
+             false).
+        """
+        url = self._url = "/languages/update"
+        params = {
+            "f" : "json",
+            "languages" : languages
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def updateLicenseManager(self, licenseManagerInfo):
+        """
+        ArcGIS License Server Administrator works with your portal and
+        enforces licenses for ArcGIS Pro. This operation allows you to
+        change the license server connection information for your portal.
+        When you import entitlements into portal using the Import
+        Entitlements operation, a license server is automatically configured
+        for you. If your license server changes after the entitlements have
+        been imported, you only need to change the license server
+        connection information.
+        You can register a backup license manager for high availability of
+        your licensing portal. When configuring a backup license manager,
+        you need to make sure that the backup license manager has been
+        authorized with the same organizational entitlements. After
+        configuring the backup license manager, Portal for ArcGIS is
+        restarted automatically. When the restart completes, the portal is
+        configured with the backup license server you specified.
+
+        Parameters:
+           licenseManagerInfo - The JSON representation of the license
+             server connection information.
+        """
+        url = self._url + "/licenses/updateLicenseManager"
+        params = {
+            "f" : "json",
+            "licenseManagerInfo" : licenseManagerInfo
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     @property
     def database(self):
         """
@@ -882,6 +1588,7 @@ class PortalAdministration(BaseAGOLClass):
     operation. Once initialized, the portal environment is available
     through System and Security resources.
     """
+    _siteKey = None
     _securityHandler = None
     _url = None
     _proxy_url = None
@@ -897,6 +1604,8 @@ class PortalAdministration(BaseAGOLClass):
                  proxy_port=None,
                  initalize=False):
         """Constructor"""
+        if admin_url.endswith("/portaladmin") == False:
+            admin_url = admin_url + "/portaladmin"
         if securityHandler is not None:
             self._securityHandler = securityHandler
             self._referer_url = securityHandler.referer_url
@@ -926,6 +1635,7 @@ class PortalAdministration(BaseAGOLClass):
             if k in attributes:
                 setattr(self, "_"+ k, json_dict[k])
             else:
+                setattr(self, k, v)
                 print( k, " - attribute not implemented in manageportal.administration class.")
     #----------------------------------------------------------------------
     def __str__(self):
@@ -940,7 +1650,13 @@ class PortalAdministration(BaseAGOLClass):
             self.__init()
         for k,v in self._json_dict.items():
             yield [k,v]
-
+    #----------------------------------------------------------------------
+    @property
+    def siteKey(self):
+        """gets the portal siteKey property"""
+        if self._siteKey is None:
+            self.__init()
+        return self._siteKey
     #----------------------------------------------------------------------
     @property
     def resources(self):
@@ -956,25 +1672,21 @@ class PortalAdministration(BaseAGOLClass):
             self.__init()
         return self._version
     #----------------------------------------------------------------------
-    def createSite(self,
-                   username,
-                   password,
-                   fullname,
-                   email,
-                   securityQuerstionIdx,
-                   securityQuestionAns,
-                   description=""
+    def createSite(self, username, password, fullname,
+                   email, description, securityQuestionIdx,
+                   secuirtyQuestionAns, contentDir
                    ):
         """
         The create site operation initializes and configures Portal for
         ArcGIS for use. It must be the first operation invoked after
-        installation.
-        Creating a new site involves:
-           Creating the initial administrator account
-           Creating a new database administrator account (which is same as
-           the initial administrator account)
-           Creating token shared keys
-           Registering directories
+        installation. Creating a new site involves:
+
+        Creating the initial administrator account
+        Creating a new database administrator account (which is same as the
+         initial administrator account)
+        Creating token shared keys
+        Registering directories
+
         This operation is time consuming, as the database is initialized
         and populated with default templates and content. If the database
         directory is not empty, this operation attempts to migrate the
@@ -983,31 +1695,94 @@ class PortalAdministration(BaseAGOLClass):
         restarted.
 
         Inputs:
-           username - The initial administrator account name
-           password - The password for the initial administrator account
-           fullname - The full name for the initial administrator account
-           email - The account email address
-           description - An optional description for the account
-           securityQuestionIdx - The index of the secret question to retrieve a forgotten password
-           securityQuestionAns - The answer to the secret question
-
+        username - The initial administrator account name
+        password - The password for the initial administrator account
+        fullname - The full name for the initial administrator account
+        email	- The account email address
+        description - An optional description for the account
+        securityQuestionIdx - The index of the secret question to retrieve
+         a forgotten password
+        securityQuestionAns - The answer to the secret question
+        contentDir - The path to the location of the site's content
         """
-        url = self._url + "/createNewSite"
         params = {
-            "f" : "json",
             "username" : username,
             "password" : password,
             "fullname" : fullname,
             "email" : email,
             "description" : description,
-            "securityQuerstionIdx" : securityQuerstionIdx,
-            "securityQuestionAns" : securityQuestionAns
+            "secuirtyQuestionAns" :  secuirtyQuestionAns,
+            "securityQuestionIdx" : securityQuestionIdx,
+            "contentDir" : contentDir
         }
+        url = self._url + "/createNewSite"
         return self._get(url=url,
-                            param_dict=params,
-                            securityHandler=self._securityHandler,
-                            proxy_port=self._proxy_port,
-                            proxy_url=self._proxy_url)
+                          param_dict=params)
+    #----------------------------------------------------------------------
+    def exportSite(self, location):
+        """
+        This operation exports the portal site configuration to a location
+        you specify.
+        """
+        params = {
+            "location" : location,
+            "f" : "json"
+        }
+        url = self._url + "/exportSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def importSite(self, location):
+        """
+        This operation imports the portal site configuration to a location
+        you specify.
+        """
+        params = {
+            "location" : location,
+            "f" : "json"
+        }
+        url = self._url + "/importSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def joinSite(self, machineAdminUrl,
+                 username, password):
+        """
+        The joinSite operation connects a portal machine to an existing
+        site. You must provide an account with administrative privileges to
+        the site for the operation to be successful.
+        """
+        params = {
+            "machineAdminUrl" : machineAdminUrl,
+            "username" : username,
+            "password" : password,
+            "f" : "json"
+        }
+        url = self._url + "/joinSite"
+        return self._post(url=url, param_dict=params)
+    #----------------------------------------------------------------------
+    def unregisterMachine(self, machineName):
+        """
+        This operation unregisters a portal machine from a portal site. The
+        operation can only performed when there are two machines
+        participating in a portal site.
+        """
+        url = self._url + "/machines/unregister"
+        params = {
+            "f" : "json",
+            "machineName" : machineName
+        }
+        return self._post(url=url,
+                          param_dict=params,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    @property
+    def federation(self):
+        """returns the class that controls federation"""
+        url = self._url + "/federation"
+        return _Federation(url=url,
+                           securityHandler=self._securityHandler,
+                           proxy_url=self._proxy_url,
+                           proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     @property
     def system(self):

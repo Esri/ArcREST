@@ -30,7 +30,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.5.4',
+    version='3.5.6',
 
     description='ArcREST is a Python Wrapper for the Esri REST Framework',
     long_description=long_decription,
@@ -43,7 +43,6 @@ setup(
     license='Apache',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-
         # Indicate who your project is intended for
         'Intended Audience :: Developers/GIS Users',
         'Topic :: Software Development :: Esri REST API',
@@ -57,11 +56,11 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5'
     ],
     keywords='REST, Esri, ArcGIS, Python, ArcPy',
     packages=packages,
-    package_dir={'requests': 'requests'},
     include_package_data=True,
     zip_safe=False,
     install_requires=['numpy>=1.7.1'],
