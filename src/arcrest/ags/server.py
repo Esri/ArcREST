@@ -19,6 +19,7 @@ from ._geocodeservice import GeocodeService
 from ._geodataservice import GeoDataService
 from ._networkservice import NetworkService
 from ._globeservice import GlobeService
+from ._streamservice import StreamService
 __all__ = ['Server']
 ########################################################################
 class Server(BaseAGSServer):
@@ -218,6 +219,11 @@ class Server(BaseAGSServer):
                                                securityHandler=self._securityHandler,
                                                proxy_port=self._proxy_port,
                                                proxy_url=self._proxy_url))
+            elif service['type'] == "StreamServer":
+                services.append(StreamService(url=url,
+                                             securityHandler=self._securityHandler,
+                                             proxy_port=self._proxy_port,
+                                             proxy_url=self._proxy_url))                
             elif service['type'] in ("IndexGenerator", "IndexingLauncher", "SearchServer"):
                 pass
             else:
