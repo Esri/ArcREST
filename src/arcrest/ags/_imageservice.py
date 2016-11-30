@@ -1029,6 +1029,63 @@ class ImageService(BaseAGSServer):
                          proxy_url=self._proxy_url,
                          proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def computeHistograms(self,geometry,geometryType,mosaicRule=None,
+                          renderingRule=None,pixelSize=None):
+        """
+        The computeHistograms operation is performed on an image service resource.
+        This operation is supported by any image service published with mosaic
+        datasets or a raster dataset. The result of this operation is an array of
+        histograms for all raster bands computed from the given extent.
+
+        Inputs:
+
+        geometry - A geometry that defines the geometry within which the histogram
+         is computed. The geometry can be an envelope or a polygon. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be an envelope or polygon.
+         Values: esriGeometryEnvelope | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested
+         image should be rendered.
+
+        pixelSize - The pixel level being used (or the resolution being looked at).
+         If pixel size is not specified, then pixelSize will default to the base
+         resolution of the dataset. The raster at the specified pixel size in the
+         mosaic dataset will be used for histogram calculation.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated syntax.
+        """
+
+        url = self._url + "/computeHistograms"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+            }
+
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def colormap(self):
         """
         The colormap resource returns RGB color representation of pixel
