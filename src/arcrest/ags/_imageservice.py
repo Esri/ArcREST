@@ -75,6 +75,7 @@ class ImageService(BaseAGSServer):
     _hasMultidimensions = None
     _json = None
     _json_dict = None
+    _advancedQueryCapabilities = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -425,6 +426,11 @@ class ImageService(BaseAGSServer):
         if self._supportsAdvancedQueries is None:
             self.__init()
         return self._supportsAdvancedQueries
+    @property
+    def advancedQueryCapabilities(self):
+        if self._advancedQueryCapabilities is None:
+            self.__init()
+        return self._advancedQueryCapabilities
     #----------------------------------------------------------------------
     def exportImage(self,
                     bbox,
@@ -808,6 +814,220 @@ class ImageService(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def identify(self,geometry,geometryType="esriGeometryPoint",mosaicRule=None,
+                 renderingRule=None,renderingRules=None,pixelSize=None,time=None,
+                 returnGeometry="false",returnCatalogItems="false"):
+        """
+        The identify operation is performed on an image service resource.
+        It identifies the content of an image service for a given location
+        and a given mosaic rule. The location can be a point or a polygon.
+        The identify operation is supported by both mosaic dataset and raster
+        dataset image services.
+        The result of this operation includes the pixel value of the mosaic
+        for a given mosaic rule, a resolution (pixel size), and a set of
+        catalog items that overlap the given geometry. The single pixel value
+        is that of the mosaic at the centroid of the specified location. If
+        there are multiple rasters overlapping the location, the visibility
+        of a raster is determined by the order of the rasters defined in the
+        mosaic rule. It also contains a set of catalog items that overlap the
+        given geometry. The catalog items are ordered based on the mosaic rule.
+        A list of catalog item visibilities gives the percentage contribution
+        of the item to overall mosaic.
+
+        Inputs:
+
+        geometry - A geometry that defines the location to be identified.
+         The location can be a point or polygon. The structure of the geometry
+         is the same as the structure of the JSON geometry objects returned by
+         the ArcGIS REST API. In addition to the JSON structures, for points,
+         you can specify the geometry with a simple comma-separated syntax.
+
+         This is a required parameter. The default geometry type is a point.
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be a point or polygon. Values:
+         esriGeometryPoint | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual images
+         should be mosaicked. When a mosaic rule is not specified, the default
+         mosaic rule of the image service will be used (as advertised in the root
+         resource: defaultMosaicMethod, mosaicOperator, sortField, sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested image
+         should be rendered.
+
+        renderingRules - Specifies an array of rendering rules. Use this parameter
+         to get multiple processed values from different raster functions in one
+         single request.
+
+        pixelSize - The pixel level being identified (or the resolution being
+         looked at). If pixel size is not specified, then pixelSize will default to
+         the base resolution of the dataset. The raster at the specified pixel size
+         in the mosaic dataset will be used for identify.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated
+         syntax.
+
+        time - The time instant or time extent of the raster to be identified.
+         This parameter is only valid if the image service supports time.
+
+        returnGeometry - Indicates whether or not to return the raster catalog
+         item's footprint. Set it to false when the catalog item's footprint is
+         not needed to improve the identify operation's response time.
+
+        returnCatalogItems - Indicates whether or not to return raster catalog
+         items. Set it to false when catalog items are not needed to improve the
+         identify operation's performance significantly. When set to false, neither
+         the geometry nor attributes of catalog items will be returned.
+        """
+
+        url = self._url + "/identify"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not renderingRules is None:
+            params["renderingRules"] = renderingRules
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not time is None:
+            params["time"] = time
+        if not returnGeometry is None:
+            params["returnGeometry"] = returnGeometry
+        if not returnCatalogItems is None:
+            params["returnCatalogItems"] = returnCatalogItems
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def measure(self,fromGeometry,toGeometry,measureOperation,
+                geometryType="esriGeometryPoint",pixelSize=None,mosaicRule=None,
+                linearUnit=None,angularUnit=None,areaUnit=None):
+        """
+        The measure operation is performed on an image service resource. It
+        lets a user measure distance, direction, area, perimeter, and height
+        from an image service. The result of this operation includes the name
+        of the raster dataset being used, sensor name, and measured values.
+
+        The measure operation can be supported by image services from raster
+        datasets and mosaic datasets. Spatial reference is required to perform
+        basic measurement (distance, area, and so on). Sensor metadata (geodata
+        transformation) needs to be present in the data source used by an image
+        service to enable height measurement (for example, imagery with RPCs).
+        The mosaic dataset or service needs to include DEM to perform 3D measure.
+
+        Users can provide arguments to the measure operation as query parameters.
+
+        Inputs:
+
+        fromGeometry - A geometry that defines the "from" location of the
+         measurement. The structure of the geometry is the same as the structure
+         of the JSON geometry objects returned by the ArcGIS REST API. In addition
+         to the JSON structures, for points, you can specify the geometry with a
+         simple comma-separated syntax.
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+         toGeometry - A geometry that defines the "to" location of the measurement.
+         The type of geometry must be the same as fromGeometry. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API. In addition to the JSON structures, for
+         points, you can specify the geometry with a simple comma-separated syntax.
+
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+        geometryType - The type of geometry specified by the fromGeometry and
+         toGeometry parameters. The geometry type can be a point, polygon, or
+         envelope. The default geometry type is point.
+         Values: esriGeometryPoint | esriGeometryPolygon | esriGeometryEnvelope
+
+        measureOperation - Specifies the type of measure being performed.
+         Values: esriMensurationPoint | esriMensurationDistanceAndAngle |
+         esriMensurationAreaAndPerimeter | esriMensurationHeightFromBaseAndTop |
+         esriMensurationHeightFromBaseAndTopShadow |
+         esriMensurationHeightFromTopAndTopShadow | esriMensurationCentroid |
+         esriMensurationPoint3D | esriMensurationDistanceAndAngle3D |
+         esriMensurationAreaAndPerimeter3D | esriMensurationCentroid3D
+
+        pixelSize - The pixel level (resolution) being measured. If pixel size
+         is not specified, pixelSize will default to the base resolution of the
+         image service. The raster at the specified pixel size in the mosaic
+         dataset will be used for measurement.
+         The structure of the pixelSize parameter is the same as the structure
+         of the point object returned by the ArcGIS REST API. In addition to the
+         JSON structure, you can specify the pixel size with a simple
+         comma-separated syntax.
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue). The first visible image is used by measure.
+
+        linearUnit - The linear unit in which height, length, or perimeters
+         will be calculated. It can be any of the following esriUnits constant.
+         If the unit is not specified, the default is esriMeters. The list of
+         valid esriUnits constants include:
+         esriInches | esriFeet | esriYards | esriMiles | esriNauticalMiles |
+         esriMillimeters | esriCentimeters | esriDecimeters | esriMeters |
+         esriKilometers
+
+        angularUnit - The angular unit in which directions of line segments
+         will be calculated. It can be one of the following esriDirectionUnits
+         constants: esriDURadians | esriDUDecimalDegrees
+         If the unit is not specified, the default is esriDUDecimalDegrees.
+
+        areaUnit - The area unit in which areas of polygons will be calculated.
+         It can be any esriAreaUnits constant. If the unit is not specified, the
+         default is esriSquareMeters. The list of valid esriAreaUnits constants
+         include:
+         esriSquareInches | esriSquareFeet | esriSquareYards | esriAcres |
+         esriSquareMiles | esriSquareMillimeters | esriSquareCentimeters |
+         esriSquareDecimeters | esriSquareMeters | esriAres | esriHectares |
+         esriSquareKilometers
+        """
+
+        url = self._url + "/measure"
+        params = {
+            "f" : "json",
+            "fromGeometry" : fromGeometry,
+            "toGeometry": toGeometry,
+            "geometryType": geometryType,
+            "measureOperation": measureOperation
+            }
+
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not linearUnit is None:
+            params["linearUnit"] = linearUnit
+        if not angularUnit is None:
+            params["angularUnit"] = angularUnit
+        if not areaUnit is None:
+            params["areaUnit"] = areaUnit
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def colormap(self):
         """
