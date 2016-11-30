@@ -1086,6 +1086,159 @@ class ImageService(BaseAGSServer):
                          proxy_url=self._proxy_url,
                          proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
+    def computeStatisticsHistograms(self,geometry,geometryType,mosaicRule=None,
+                                    renderingRule=None,pixelSize=None):
+        """
+        The computeStatisticsHistograms operation is performed on an image service
+        resource. This operation is supported by any image service published with
+        mosaic datasets or a raster dataset. The result of this operation contains
+        both statistics and histograms computed from the given extent.
+
+        Inputs:
+
+        geometry - A geometry that defines the geometry within which the histogram
+         is computed. The geometry can be an envelope or a polygon. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be an envelope or polygon.
+         Values: esriGeometryEnvelope | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested
+         image should be rendered.
+
+        pixelSize - The pixel level being used (or the resolution being looked at).
+         If pixel size is not specified, then pixelSize will default to the base
+         resolution of the dataset. The raster at the specified pixel size in the
+         mosaic dataset will be used for histogram calculation.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated syntax.
+        """
+
+        url = self._url + "/computeStatisticsHistograms"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getSamples(self,geometry,geometryType="esriGeometryPoint",
+                   sampleDistance=None,sampleCount=None,mosaicRule=None,
+                   pixelSize=None,returnFirstValueOnly=None,interpolation=None,
+                   outFields=None):
+        """
+        The getSamples operation is performed on an image service resource.
+        The getSamples operation is supported by both mosaic dataset and raster
+        dataset image services.
+        The result of this operation includes sample point locations, pixel
+        values, and corresponding spatial resolutions of the source data for a
+        given geometry. When the input geometry is a polyline, envelope, or
+        polygon, sampling is based on sampleCount or sampleDistance; when the
+        input geometry is a point or multipoint, the point or points are used
+        directly.
+        The number of sample locations in the response is based on the
+        sampleDistance or sampleCount parameter and cannot exceed the limit of
+        the image service (the default is 1000, which is an approximate limit).
+
+        Inputs:
+
+        geometry - A geometry that defines the location(s) to be sampled. The
+         structure of the geometry is the same as the structure of the JSON
+         geometry objects returned by the ArcGIS REST API. Applicable geometry
+         types are point, multipoint, polyline, polygon, and envelope. When
+         spatialReference is omitted in the input geometry, it will be assumed
+         to be the spatial reference of the image service.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be point, multipoint, polyline, polygon, or envelope.
+         Values: esriGeometryPoint | esriGeometryMultipoint | esriGeometryPolyline |
+         esriGeometryPolygon | esriGeometryEnvelope
+
+        sampleDistance - The distance interval used to sample points from the
+         provided path. The unit is the same as the input geometry. If neither
+         sampleCount nor sampleDistance is provided, no densification can be done
+         for paths (polylines), and a default sampleCount (100) is used for areas
+         (polygons or envelopes).
+
+        sampleCount - The approximate number of sample locations from the provided
+         path. If neither sampleCount nor sampleDistance is provided, no
+         densification can be done for paths (polylines), and a default
+         sampleCount (100) is used for areas (polygons or envelopes).
+
+        mosaicRule - Specifies the mosaic rule defining the image sort order.
+         Additional filtering can be applied to the where clause and FIDs of a
+         mosaic rule.
+
+        pixelSize - The raster that is visible at the specified pixel size in the
+         mosaic dataset will be used for sampling. If pixelSize is not specified,
+         the service's pixel size is used.
+         The structure of the esri_codephpixelSize parameter is the same as the
+         structure of the point object returned by the ArcGIS REST API. In addition
+         to the JSON structure, you can specify the pixel size with a simple
+         comma-separated syntax.
+
+        returnFirstValueOnly - Indicates whether to return all values at a point,
+         or return the first non-NoData value based on the current mosaic rule.
+         The default is true.
+
+        interpolation - This parameter was added at 10.3. The resampling method.
+         Default is nearest neighbor.
+
+        outFields - This parameter was added at 10.3. The list of fields to be
+         included in the response. This list is a comma-delimited list of field
+         names. You can also specify the wildcard character (*) as the value of
+         this parameter to include all the field values in the results.
+        """
+
+        url = self._url + "/getSamples"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+
+        if not sampleDistance is None:
+            params["sampleDistance"] = sampleDistance
+        if not sampleCount is None:
+            params["sampleCount"] = sampleCount
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not returnFirstValueOnly is None:
+            params["returnFirstValueOnly"] = returnFirstValueOnly
+        if not interpolation is None:
+            params["interpolation"] = interpolation
+        if not outFields is None:
+            params["outFields"] = outFields
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
     def colormap(self):
         """
         The colormap resource returns RGB color representation of pixel
