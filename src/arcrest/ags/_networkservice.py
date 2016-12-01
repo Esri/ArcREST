@@ -202,7 +202,8 @@ class NetworkLayer(BaseAGSServer):
     _hasZ = None
     _supportedTravelModes = None
     _serviceLimits = None
-
+    _defaultTravelMode = None
+    _trafficSupport = None
     #----------------------------------------------------------------------
     def __init__(self, url, securityHandler=None,
                  proxy_url=None, proxy_port=None,
@@ -383,6 +384,18 @@ class NetworkLayer(BaseAGSServer):
         if self._serviceLimits is None:
             self.__init()
         return self._serviceLimits
+    #----------------------------------------------------------------------
+    @property
+    def defaultTravelMode(self):
+        if self._defaultTravelMode is None:
+            self.__init()
+        return self._defaultTravelMode
+    #----------------------------------------------------------------------
+    @property
+    def trafficSupport(self):
+        if self._trafficSupport is None:
+            self.__init()
+        return self._trafficSupport
     #----------------------------------------------------------------------
     def retrieveTravelModes(self):
         """identify all the valid travel modes that have been defined on the
