@@ -75,6 +75,7 @@ class ImageService(BaseAGSServer):
     _hasMultidimensions = None
     _json = None
     _json_dict = None
+    _advancedQueryCapabilities = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -425,6 +426,11 @@ class ImageService(BaseAGSServer):
         if self._supportsAdvancedQueries is None:
             self.__init()
         return self._supportsAdvancedQueries
+    @property
+    def advancedQueryCapabilities(self):
+        if self._advancedQueryCapabilities is None:
+            self.__init()
+        return self._advancedQueryCapabilities
     #----------------------------------------------------------------------
     def exportImage(self,
                     bbox,
@@ -808,6 +814,430 @@ class ImageService(BaseAGSServer):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def identify(self,geometry,geometryType="esriGeometryPoint",mosaicRule=None,
+                 renderingRule=None,renderingRules=None,pixelSize=None,time=None,
+                 returnGeometry="false",returnCatalogItems="false"):
+        """
+        The identify operation is performed on an image service resource.
+        It identifies the content of an image service for a given location
+        and a given mosaic rule. The location can be a point or a polygon.
+        The identify operation is supported by both mosaic dataset and raster
+        dataset image services.
+        The result of this operation includes the pixel value of the mosaic
+        for a given mosaic rule, a resolution (pixel size), and a set of
+        catalog items that overlap the given geometry. The single pixel value
+        is that of the mosaic at the centroid of the specified location. If
+        there are multiple rasters overlapping the location, the visibility
+        of a raster is determined by the order of the rasters defined in the
+        mosaic rule. It also contains a set of catalog items that overlap the
+        given geometry. The catalog items are ordered based on the mosaic rule.
+        A list of catalog item visibilities gives the percentage contribution
+        of the item to overall mosaic.
+
+        Inputs:
+
+        geometry - A geometry that defines the location to be identified.
+         The location can be a point or polygon. The structure of the geometry
+         is the same as the structure of the JSON geometry objects returned by
+         the ArcGIS REST API. In addition to the JSON structures, for points,
+         you can specify the geometry with a simple comma-separated syntax.
+
+         This is a required parameter. The default geometry type is a point.
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be a point or polygon. Values:
+         esriGeometryPoint | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual images
+         should be mosaicked. When a mosaic rule is not specified, the default
+         mosaic rule of the image service will be used (as advertised in the root
+         resource: defaultMosaicMethod, mosaicOperator, sortField, sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested image
+         should be rendered.
+
+        renderingRules - Specifies an array of rendering rules. Use this parameter
+         to get multiple processed values from different raster functions in one
+         single request.
+
+        pixelSize - The pixel level being identified (or the resolution being
+         looked at). If pixel size is not specified, then pixelSize will default to
+         the base resolution of the dataset. The raster at the specified pixel size
+         in the mosaic dataset will be used for identify.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated
+         syntax.
+
+        time - The time instant or time extent of the raster to be identified.
+         This parameter is only valid if the image service supports time.
+
+        returnGeometry - Indicates whether or not to return the raster catalog
+         item's footprint. Set it to false when the catalog item's footprint is
+         not needed to improve the identify operation's response time.
+
+        returnCatalogItems - Indicates whether or not to return raster catalog
+         items. Set it to false when catalog items are not needed to improve the
+         identify operation's performance significantly. When set to false, neither
+         the geometry nor attributes of catalog items will be returned.
+        """
+
+        url = self._url + "/identify"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not renderingRules is None:
+            params["renderingRules"] = renderingRules
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not time is None:
+            params["time"] = time
+        if not returnGeometry is None:
+            params["returnGeometry"] = returnGeometry
+        if not returnCatalogItems is None:
+            params["returnCatalogItems"] = returnCatalogItems
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def measure(self,fromGeometry,toGeometry,measureOperation,
+                geometryType="esriGeometryPoint",pixelSize=None,mosaicRule=None,
+                linearUnit=None,angularUnit=None,areaUnit=None):
+        """
+        The measure operation is performed on an image service resource. It
+        lets a user measure distance, direction, area, perimeter, and height
+        from an image service. The result of this operation includes the name
+        of the raster dataset being used, sensor name, and measured values.
+
+        The measure operation can be supported by image services from raster
+        datasets and mosaic datasets. Spatial reference is required to perform
+        basic measurement (distance, area, and so on). Sensor metadata (geodata
+        transformation) needs to be present in the data source used by an image
+        service to enable height measurement (for example, imagery with RPCs).
+        The mosaic dataset or service needs to include DEM to perform 3D measure.
+
+        Users can provide arguments to the measure operation as query parameters.
+
+        Inputs:
+
+        fromGeometry - A geometry that defines the "from" location of the
+         measurement. The structure of the geometry is the same as the structure
+         of the JSON geometry objects returned by the ArcGIS REST API. In addition
+         to the JSON structures, for points, you can specify the geometry with a
+         simple comma-separated syntax.
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+         toGeometry - A geometry that defines the "to" location of the measurement.
+         The type of geometry must be the same as fromGeometry. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API. In addition to the JSON structures, for
+         points, you can specify the geometry with a simple comma-separated syntax.
+
+         By default, the geometry is assumed to be in the spatial reference of
+         the image service. You can specify a different spatial reference by
+         using the JSON structure syntax for geometries.
+
+        geometryType - The type of geometry specified by the fromGeometry and
+         toGeometry parameters. The geometry type can be a point, polygon, or
+         envelope. The default geometry type is point.
+         Values: esriGeometryPoint | esriGeometryPolygon | esriGeometryEnvelope
+
+        measureOperation - Specifies the type of measure being performed.
+         Values: esriMensurationPoint | esriMensurationDistanceAndAngle |
+         esriMensurationAreaAndPerimeter | esriMensurationHeightFromBaseAndTop |
+         esriMensurationHeightFromBaseAndTopShadow |
+         esriMensurationHeightFromTopAndTopShadow | esriMensurationCentroid |
+         esriMensurationPoint3D | esriMensurationDistanceAndAngle3D |
+         esriMensurationAreaAndPerimeter3D | esriMensurationCentroid3D
+
+        pixelSize - The pixel level (resolution) being measured. If pixel size
+         is not specified, pixelSize will default to the base resolution of the
+         image service. The raster at the specified pixel size in the mosaic
+         dataset will be used for measurement.
+         The structure of the pixelSize parameter is the same as the structure
+         of the point object returned by the ArcGIS REST API. In addition to the
+         JSON structure, you can specify the pixel size with a simple
+         comma-separated syntax.
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue). The first visible image is used by measure.
+
+        linearUnit - The linear unit in which height, length, or perimeters
+         will be calculated. It can be any of the following esriUnits constant.
+         If the unit is not specified, the default is esriMeters. The list of
+         valid esriUnits constants include:
+         esriInches | esriFeet | esriYards | esriMiles | esriNauticalMiles |
+         esriMillimeters | esriCentimeters | esriDecimeters | esriMeters |
+         esriKilometers
+
+        angularUnit - The angular unit in which directions of line segments
+         will be calculated. It can be one of the following esriDirectionUnits
+         constants: esriDURadians | esriDUDecimalDegrees
+         If the unit is not specified, the default is esriDUDecimalDegrees.
+
+        areaUnit - The area unit in which areas of polygons will be calculated.
+         It can be any esriAreaUnits constant. If the unit is not specified, the
+         default is esriSquareMeters. The list of valid esriAreaUnits constants
+         include:
+         esriSquareInches | esriSquareFeet | esriSquareYards | esriAcres |
+         esriSquareMiles | esriSquareMillimeters | esriSquareCentimeters |
+         esriSquareDecimeters | esriSquareMeters | esriAres | esriHectares |
+         esriSquareKilometers
+        """
+
+        url = self._url + "/measure"
+        params = {
+            "f" : "json",
+            "fromGeometry" : fromGeometry,
+            "toGeometry": toGeometry,
+            "geometryType": geometryType,
+            "measureOperation": measureOperation
+            }
+
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not linearUnit is None:
+            params["linearUnit"] = linearUnit
+        if not angularUnit is None:
+            params["angularUnit"] = angularUnit
+        if not areaUnit is None:
+            params["areaUnit"] = areaUnit
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def computeHistograms(self,geometry,geometryType,mosaicRule=None,
+                          renderingRule=None,pixelSize=None):
+        """
+        The computeHistograms operation is performed on an image service resource.
+        This operation is supported by any image service published with mosaic
+        datasets or a raster dataset. The result of this operation is an array of
+        histograms for all raster bands computed from the given extent.
+
+        Inputs:
+
+        geometry - A geometry that defines the geometry within which the histogram
+         is computed. The geometry can be an envelope or a polygon. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be an envelope or polygon.
+         Values: esriGeometryEnvelope | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested
+         image should be rendered.
+
+        pixelSize - The pixel level being used (or the resolution being looked at).
+         If pixel size is not specified, then pixelSize will default to the base
+         resolution of the dataset. The raster at the specified pixel size in the
+         mosaic dataset will be used for histogram calculation.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated syntax.
+        """
+
+        url = self._url + "/computeHistograms"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+            }
+
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def computeStatisticsHistograms(self,geometry,geometryType,mosaicRule=None,
+                                    renderingRule=None,pixelSize=None):
+        """
+        The computeStatisticsHistograms operation is performed on an image service
+        resource. This operation is supported by any image service published with
+        mosaic datasets or a raster dataset. The result of this operation contains
+        both statistics and histograms computed from the given extent.
+
+        Inputs:
+
+        geometry - A geometry that defines the geometry within which the histogram
+         is computed. The geometry can be an envelope or a polygon. The structure of
+         the geometry is the same as the structure of the JSON geometry objects
+         returned by the ArcGIS REST API.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be an envelope or polygon.
+         Values: esriGeometryEnvelope | esriGeometryPolygon
+
+        mosaicRule - Specifies the mosaic rule when defining how individual
+         images should be mosaicked. When a mosaic rule is not specified, the
+         default mosaic rule of the image service will be used (as advertised
+         in the root resource: defaultMosaicMethod, mosaicOperator, sortField,
+         sortValue).
+
+        renderingRule - Specifies the rendering rule for how the requested
+         image should be rendered.
+
+        pixelSize - The pixel level being used (or the resolution being looked at).
+         If pixel size is not specified, then pixelSize will default to the base
+         resolution of the dataset. The raster at the specified pixel size in the
+         mosaic dataset will be used for histogram calculation.
+         The structure of the pixelSize parameter is the same as the structure of
+         the point object returned by the ArcGIS REST API. In addition to the JSON
+         structure, you can specify the pixel size with a simple comma-separated syntax.
+        """
+
+        url = self._url + "/computeStatisticsHistograms"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not renderingRule is None:
+            params["renderingRule"] = renderingRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def getSamples(self,geometry,geometryType="esriGeometryPoint",
+                   sampleDistance=None,sampleCount=None,mosaicRule=None,
+                   pixelSize=None,returnFirstValueOnly=None,interpolation=None,
+                   outFields=None):
+        """
+        The getSamples operation is performed on an image service resource.
+        The getSamples operation is supported by both mosaic dataset and raster
+        dataset image services.
+        The result of this operation includes sample point locations, pixel
+        values, and corresponding spatial resolutions of the source data for a
+        given geometry. When the input geometry is a polyline, envelope, or
+        polygon, sampling is based on sampleCount or sampleDistance; when the
+        input geometry is a point or multipoint, the point or points are used
+        directly.
+        The number of sample locations in the response is based on the
+        sampleDistance or sampleCount parameter and cannot exceed the limit of
+        the image service (the default is 1000, which is an approximate limit).
+
+        Inputs:
+
+        geometry - A geometry that defines the location(s) to be sampled. The
+         structure of the geometry is the same as the structure of the JSON
+         geometry objects returned by the ArcGIS REST API. Applicable geometry
+         types are point, multipoint, polyline, polygon, and envelope. When
+         spatialReference is omitted in the input geometry, it will be assumed
+         to be the spatial reference of the image service.
+
+        geometryType - The type of geometry specified by the geometry parameter.
+         The geometry type can be point, multipoint, polyline, polygon, or envelope.
+         Values: esriGeometryPoint | esriGeometryMultipoint | esriGeometryPolyline |
+         esriGeometryPolygon | esriGeometryEnvelope
+
+        sampleDistance - The distance interval used to sample points from the
+         provided path. The unit is the same as the input geometry. If neither
+         sampleCount nor sampleDistance is provided, no densification can be done
+         for paths (polylines), and a default sampleCount (100) is used for areas
+         (polygons or envelopes).
+
+        sampleCount - The approximate number of sample locations from the provided
+         path. If neither sampleCount nor sampleDistance is provided, no
+         densification can be done for paths (polylines), and a default
+         sampleCount (100) is used for areas (polygons or envelopes).
+
+        mosaicRule - Specifies the mosaic rule defining the image sort order.
+         Additional filtering can be applied to the where clause and FIDs of a
+         mosaic rule.
+
+        pixelSize - The raster that is visible at the specified pixel size in the
+         mosaic dataset will be used for sampling. If pixelSize is not specified,
+         the service's pixel size is used.
+         The structure of the esri_codephpixelSize parameter is the same as the
+         structure of the point object returned by the ArcGIS REST API. In addition
+         to the JSON structure, you can specify the pixel size with a simple
+         comma-separated syntax.
+
+        returnFirstValueOnly - Indicates whether to return all values at a point,
+         or return the first non-NoData value based on the current mosaic rule.
+         The default is true.
+
+        interpolation - This parameter was added at 10.3. The resampling method.
+         Default is nearest neighbor.
+
+        outFields - This parameter was added at 10.3. The list of fields to be
+         included in the response. This list is a comma-delimited list of field
+         names. You can also specify the wildcard character (*) as the value of
+         this parameter to include all the field values in the results.
+        """
+
+        url = self._url + "/getSamples"
+        params = {
+            "f" : "json",
+            "geometry" : geometry,
+            "geometryType": geometryType
+        }
+
+        if not sampleDistance is None:
+            params["sampleDistance"] = sampleDistance
+        if not sampleCount is None:
+            params["sampleCount"] = sampleCount
+        if not mosaicRule is None:
+            params["mosaicRule"] = mosaicRule
+        if not pixelSize is None:
+            params["pixelSize"] = pixelSize
+        if not returnFirstValueOnly is None:
+            params["returnFirstValueOnly"] = returnFirstValueOnly
+        if not interpolation is None:
+            params["interpolation"] = interpolation
+        if not outFields is None:
+            params["outFields"] = outFields
+
+        return self._get(url=url,
+                         param_dict=params,
+                         securityHandler=self._securityHandler,
+                         proxy_url=self._proxy_url,
+                         proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def colormap(self):
         """
