@@ -1233,7 +1233,7 @@ class Users(BaseAGOLClass):
     def user(self, username=None):
         """A user resource that represents a registered user in the portal."""
         if username is None:
-            username = self.__getUsername() 
+            username = self.__getUsername()
         parsedUsername = urlparse.quote(username)
         url = self.root + "/%s" % parsedUsername
         return User(url=url,
@@ -1665,6 +1665,29 @@ class User(BaseAGOLClass):
                              securityHandler=self._securityHandler,
                              proxy_url=self._proxy_url,
                              proxy_port=self._proxy_port)
+    #----------------------------------------------------------------------
+    def reset(self, old_password, new_password,
+              securityAnswer=None,
+              newSecurityQuestionIdx=None,
+              newSecurityAnswer=None):
+        url = self.root + "/reset"
+        params = {
+            "f" : "json",
+            "password" : old_password,
+            "newPassword" : new_password,
+        }
+        if securityAnswer:
+            params["securityAnswer"] = securityAnswer
+        if newSecurityQuestionIdx:
+            params["newSecurityQuestionIdx"] = newSecurityQuestionIdx
+        if newSecurityAnswer:
+            params['newSecurityAnswer'] = newSecurityAnswer
+
+        return self._post(url=url,
+                          param_dict=params,
+                          securityHandler=self._securityHandler,
+                          proxy_url=self._proxy_url,
+                          proxy_port=self._proxy_port)
     #----------------------------------------------------------------------
     def resetPassword(self, email=True):
         """
