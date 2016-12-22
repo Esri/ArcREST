@@ -907,6 +907,10 @@ class FeatureLayer(abstract.BaseAGOLClass):
     _standardMaxRecordCount = None
     _tileMaxRecordCount = None
     _maxRecordCountFactor = None
+    _geometryProperties = None
+    _hasGeometryProperties = None
+    _supportsTruncate = None
+    _supportsMultiScaleGeometry = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler=None,
@@ -1421,6 +1425,34 @@ class FeatureLayer(abstract.BaseAGOLClass):
     def securityHandler(self):
         """ gets the security handler """
         return self._securityHandler
+    #----------------------------------------------------------------------
+    @property
+    def geometryProperties(self):
+        """ gets the property value for geometryProperties """
+        if self._geometryProperties is None:
+            self.__init()
+        return self._geometryProperties
+    #----------------------------------------------------------------------
+    @property
+    def supportsMultiScaleGeometry(self):
+        """ gets the property value for supportsMultiScaleGeometry """
+        if self._supportsMultiScaleGeometry is None:
+            self.__init()
+        return self._supportsMultiScaleGeometry
+    #----------------------------------------------------------------------
+    @property
+    def supportsTruncate(self):
+        """ gets the property value for supportsTruncate """
+        if self._supportsTruncate is None:
+            self.__init()
+        return self._supportsTruncate
+    #----------------------------------------------------------------------
+    @property
+    def hasGeometryProperties(self):
+        """ gets the property value for hasGeometryProperties """
+        if self._hasGeometryProperties is None:
+            self.__init()
+        return self._hasGeometryProperties      
     #----------------------------------------------------------------------
     @securityHandler.setter
     def securityHandler(self, value):
