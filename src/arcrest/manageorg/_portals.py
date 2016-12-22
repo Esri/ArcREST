@@ -972,14 +972,14 @@ class Portal(BaseAGOLClass):
     #----------------------------------------------------------------------
     @property
     def currentVersion(self):
-        '''gets the property value for creditAssignments'''
+        '''gets the property value for currentVersion'''
         if self._currentVersion is None:
             self.__init()
         return self._currentVersion
     #----------------------------------------------------------------------
     @property
     def hasCategorySchema(self):
-        '''gets the property value for creditAssignments'''
+        '''gets the property value for hasCategorySchema'''
         if self._hasCategorySchema is None:
             self.__init()
         return self._hasCategorySchema
