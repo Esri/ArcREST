@@ -1283,6 +1283,9 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
     _standardMaxRecordCount = None
     _tileMaxRecordCount = None
     _maxRecordCountFactor = None
+    _geometryProperties = None
+    _hasGeometryProperties = None
+    _supportsTruncate = None
     #----------------------------------------------------------------------
     def __init__(self, url,
                  securityHandler,
@@ -1817,7 +1820,27 @@ class AdminFeatureServiceLayer(BaseAGOLClass):
         if self.zDefault is None:
             self.__init()
         return self.zDefault
-
+    #----------------------------------------------------------------------
+    @property
+    def geometryProperties(self):
+        """ gets the property value for geometryProperties """
+        if self._geometryProperties is None:
+            self.__init()
+        return self._geometryProperties
+    #----------------------------------------------------------------------
+    @property
+    def supportsTruncate(self):
+        """ gets the property value for supportsTruncate """
+        if self._supportsTruncate is None:
+            self.__init()
+        return self._supportsTruncate
+    #----------------------------------------------------------------------
+    @property
+    def hasGeometryProperties(self):
+        """ gets the property value for hasGeometryProperties """
+        if self._hasGeometryProperties is None:
+            self.__init()
+        return self._hasGeometryProperties
     #----------------------------------------------------------------------
     def addToDefinition(self, json_dict):
         """
