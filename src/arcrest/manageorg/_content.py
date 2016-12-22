@@ -1086,6 +1086,8 @@ class UserItem(BaseAGOLClass):
     _privateUrl = None
     _itemControl = None
     _origin = None
+    _proxyFilter = None
+    _categories = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -1445,6 +1447,18 @@ class UserItem(BaseAGOLClass):
         if self._serviceProxyParams is None:
             self.__init()
         return self._serviceProxyParams
+    #----------------------------------------------------------------------
+    @property
+    def categories(self):
+        if self._categories is None:
+            self.__init()
+        return self._categories
+    #----------------------------------------------------------------------
+    @property
+    def proxyFilter(self):
+        if self._proxyFilter is None:
+            self.__init()
+        return self._proxyFilter
     #----------------------------------------------------------------------
     @property
     def item(self):
