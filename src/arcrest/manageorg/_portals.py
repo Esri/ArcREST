@@ -204,6 +204,8 @@ class Portal(BaseAGOLClass):
     _analysisLayersGroupQuery = None
     _defaultUserCreditAssignment = None
     _analysisLayersGroupQuery = None
+    _currentVersion = None
+    _hasCategorySchema = None
     #----------------------------------------------------------------------
     def __init__(self,
                  url,
@@ -967,6 +969,20 @@ class Portal(BaseAGOLClass):
         if self._creditAssignments is None:
             self.__init()
         return self._creditAssignments
+    #----------------------------------------------------------------------
+    @property
+    def currentVersion(self):
+        '''gets the property value for currentVersion'''
+        if self._currentVersion is None:
+            self.__init()
+        return self._currentVersion
+    #----------------------------------------------------------------------
+    @property
+    def hasCategorySchema(self):
+        '''gets the property value for hasCategorySchema'''
+        if self._hasCategorySchema is None:
+            self.__init()
+        return self._hasCategorySchema
     #----------------------------------------------------------------------
     @property
     def urls(self):
