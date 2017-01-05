@@ -1452,7 +1452,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
         """ gets the property value for hasGeometryProperties """
         if self._hasGeometryProperties is None:
             self.__init()
-        return self._hasGeometryProperties      
+        return self._hasGeometryProperties
     #----------------------------------------------------------------------
     @securityHandler.setter
     def securityHandler(self, value):
@@ -2058,6 +2058,8 @@ class FeatureLayer(abstract.BaseAGOLClass):
             for feature in features:
                 if isinstance(feature, Feature):
                     vals.append(feature.asDictionary)
+                elif isinstance(feature, dict):
+                    vals.append(feature)
             params['features'] = json.dumps(vals,
                                             default=_date_handler
                                             )
