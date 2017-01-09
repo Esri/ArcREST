@@ -27,11 +27,11 @@ def trace():
         ...     1/0
         ... except:
         ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
-        ...        
+        ...
         Error on 'line 1234'
         in file 'C:\\foo\\baz.py'
         with error 'ZeroDivisionError: integer division or modulo by zero'
-        
+
     """
     import traceback, inspect, sys
     tb = sys.exc_info()[2]
@@ -47,11 +47,11 @@ def trace():
 class securityhandlerhelper(object):
     """A number of different security handlers are suppoted by ArcGIS; this
     function simplifies the creation of the handlers.
-        
+
     Args:
         securityinfo (dict): A ``dict`` with the type of handler and
-            information to be created.  
-            
+            information to be created.
+
     +-----------------+-------------------------------+-------------------------+
     |       Key       |          Description          |       Required?         |
     +-----------------+-------------------------------+-------------------------+
@@ -81,13 +81,13 @@ class securityhandlerhelper(object):
     +-----------------+-------------------------------+-------------------------+
     | \*\* Also required for ``ArcGIS|Portal`` unless using anonymous logins    |
     +-----------------+-------------------------------+-------------------------+
-    
+
     Examples:
         >>> securityinfo = {'username' : 'secret', 'password' : 'really_secret'}
         >>> shh = arcresthelper.securityhandlerhelper.securityhandlerhelper(securityinfo)
         >>> print(shh._org_url)
         http://myorg.maps.arcgis.com
-        
+
     """
     _org_url = None
     _username = None
@@ -349,6 +349,12 @@ class securityhandlerhelper(object):
                 self._valid = True
         except ValueError as e:
             raise e
+        except six.moves.urllib.error.URLError as e:
+            line, filename, synerror = trace()
+            errorMessage = "Error making the connection to the ArcGIS Organization, this is likely due to a password or user name issue.  \
+                User names in ArcRest, unlike using a browser, are case sensitive.\n\t{}".format(synerror)
+            raise ValueError(errorMessage)
+
         except Exception as e:
 
             line, filename, synerror = trace()
