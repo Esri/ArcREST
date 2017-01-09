@@ -39,11 +39,11 @@ def trace():
         ...     1/0
         ... except:
         ...     print("Error on '{}'\\nin file '{}'\\nwith error '{}'".format(*trace()))
-        ...        
+        ...
         Error on 'line 1234'
         in file 'C:\\foo\\baz.py'
         with error 'ZeroDivisionError: integer division or modulo by zero'
-        
+
     """
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
@@ -124,7 +124,7 @@ class featureservicetools(securityhandlerhelper):
                 if len(idlist) > 0:
                     allidlist.append(idlist)
                 for idlist in allidlist:
-                    idstring = ' in (' + ','.join(idlist) + ')'
+                    idstring = ' in (' + ','.join(map(str,idlist)) + ')'
                     sql = id_field + idstring
                     sqlLocalFC = id_field_local + idstring
                     results = fl.deleteFeatures(where=sql,
@@ -201,10 +201,10 @@ class featureservicetools(securityhandlerhelper):
             url (str): The URL of the feature service.
             definition (dict): A dictionary containing valid definition values. Defaults to ``None``.
         Returns:
-            dict: The existing feature service definition capabilities.            
-        
-        When ``definition`` is not provided (``None``), the following values are used by default: 
-        
+            dict: The existing feature service definition capabilities.
+
+        When ``definition`` is not provided (``None``), the following values are used by default:
+
         +------------------------------+------------------------------------------+
         |              Key             |                   Value                  |
         +------------------------------+------------------------------------------+
@@ -222,7 +222,7 @@ class featureservicetools(securityhandlerhelper):
         +------------------------------+------------------------------------------+
         | capabilities                 | ``"Query,Editing,Create,Update,Delete"`` |
         +------------------------------+------------------------------------------+
-                
+
         """
         adminFS = AdminFeatureService(url=url, securityHandler=self._securityHandler)
 
@@ -655,10 +655,10 @@ class featureservicetools(securityhandlerhelper):
                         returnFeatureClass=False,
                         out_fc=None,
                         outSR=None,
-                        chunksize=1000, 
+                        chunksize=1000,
                         printIndent=""):
-          
-        """Performs an SQL query against a hosted feature service layer 
+
+        """Performs an SQL query against a hosted feature service layer
         and returns all features regardless of service limit.
 
         Args:
@@ -678,7 +678,7 @@ class featureservicetools(securityhandlerhelper):
             chunksize (int): The maximum amount of features to query at a time. Defaults to 1000.
             out_fc - only valid if returnFeatureClass is set to True.
                         Output location of query.
-              
+
             Output:
                A list of Feature Objects (default) or a path to the output featureclass if
                returnFeatureClass is set to True.
@@ -689,7 +689,7 @@ class featureservicetools(securityhandlerhelper):
         fl = None
         try:
             fl = FeatureLayer(url=url, securityHandler=self._securityHandler)
-            qRes = fl.query(where=where, 
+            qRes = fl.query(where=where,
                             returnIDsOnly=True,
                             timeFilter=timeFilter,
                             geometryFilter=geometryFilter)
@@ -701,7 +701,7 @@ class featureservicetools(securityhandlerhelper):
                 oids = qRes['objectIds']
                 total = len(oids)
                 if total == 0:
-                    return fl.query(where=where, 
+                    return fl.query(where=where,
                                     returnGeometry=True,
                                     out_fields=out_fields,
                                     timeFilter=timeFilter,
