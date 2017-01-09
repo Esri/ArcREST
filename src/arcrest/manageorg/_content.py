@@ -249,7 +249,8 @@ class Item(BaseAGOLClass):
     _lastModified = None
     _item = None
     _privateUrl = None
-
+    _proxyFilter = None
+    _categories = None
     #----------------------------------------------------------------------
     def __init__(self,url,
                  securityHandler,
@@ -290,7 +291,20 @@ class Item(BaseAGOLClass):
         if self._orgId is None:
             self.__init()
         return self._orgId
-
+    #----------------------------------------------------------------------
+    @property
+    def categories(self):
+        """returns information about the proxy filter"""
+        if self._categories is None:
+            self.__init()
+        return self._categories
+    #----------------------------------------------------------------------
+    @property
+    def proxyFilter(self):
+        """returns information about the proxy filter"""
+        if self._proxyFilter is None:
+            self.__init()
+        return self._proxyFilter
     #----------------------------------------------------------------------
     @property
     def itemType(self):
