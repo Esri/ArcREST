@@ -1,6 +1,6 @@
 # ArcREST Version 3.5.x
 
-A latest release(v3.5.3) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.3
+A latest release(v3.5.6) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.6
 * If you are using an older version(v3.0.1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/releases/tag/v3.0.1
 * If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
 * If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
@@ -36,7 +36,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 ## Recommended Installation
 
 * ArcPy (optional)
-* ArcGIS Desktop 10.2.x, 10.3.x (optional)
+* ArcGIS Desktop 10.2, 10.3, 10.4, 10.5 (optional)
   - If ArcPy is not installed, there will be limited functionality.
 
 ## Installation
