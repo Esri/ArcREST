@@ -155,7 +155,7 @@ def main(*argv):
         outputPrinter(message="with error message: %s" % synerror,typeOfMessage='error')
         outputPrinter(message="ArcPy Error Message: %s" % arcpy.GetMessages(2),typeOfMessage='error')
         arcpy.SetParameterAsText(7, "false")
-    except (common.ArcRestHelperError),e:
+    except (common.ArcRestHelperError) as e:
         outputPrinter(message=e,typeOfMessage='error')
         arcpy.SetParameterAsText(7, "false")
     except:
@@ -190,6 +190,6 @@ def main(*argv):
         gc.collect()
 if __name__ == "__main__":
     argv = tuple(arcpy.GetParameterAsText(i)
-        for i in xrange(arcpy.GetArgumentCount()))
+        for i in range(arcpy.GetArgumentCount()))
     main(*argv)
 
