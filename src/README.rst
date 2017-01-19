@@ -1,8 +1,8 @@
 ArcREST Version 3.5.x
 =====================
 
-A latest release(v3.5.8) of ArcREST can be downloaded here:
-https://github.com/Esri/ArcREST/releases/tag/3.5.8 \* If you are using
+A latest release(v3.5.9) of ArcREST can be downloaded here:
+https://github.com/Esri/ArcREST/releases/tag/3.5.9 \* If you are using
 an older version(v3.0.1) of ArcRest, you can find it here:
 https://github.com/Esri/ArcREST/releases/tag/v3.0.1 \* If you are using
 an older version(v2) of ArcRest, you can find it here:
@@ -25,20 +25,6 @@ Features
 -  Allows users to control, migrate and update online content
 -  Manage users on Portal, ArcGIS Server, and ArcGIS Online sites
 -  Plus additional information not even listed here!
-
-Documentation
--------------
-
-The API reference is `hosted
-here <http://esri.github.io/ArcREST/index.html>`__. The Esri portal API
-reference is `hosted
-here <http://resources.arcgis.com/en/help/arcgis-rest-api>`__
-
-General Help
-~~~~~~~~~~~~
-
-`New to Github? Get started
-here. <http://htmlpreview.github.com/?https://github.com/Esri/esri.github.com/blob/master/help/esri-getting-to-know-github.html>`__
 
 Requirements
 ------------
