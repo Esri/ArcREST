@@ -1,6 +1,6 @@
 # ArcREST Version 3.5.x
 
-A latest release(v3.5.6) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.6
+A latest release(v3.5.8) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.8
 * If you are using an older version(v3.0.1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/releases/tag/v3.0.1
 * If you are using an older version(v2) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/FinalV2
 * If you are using an older version(v1) of ArcRest, you can find it here: https://github.com/Esri/ArcREST/tree/October2014v1.0Final
@@ -99,6 +99,8 @@ Please see our [guidelines for contributing](https://github.com/esri/contributin
 ## PyPi
 
 Please see our [PyPi page](https://pypi.python.org/pypi/ArcREST_Package).
+
+To build the wheel - python setup_wheel.py bdist_wheel
 
 ## Licensing
 
