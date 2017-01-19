@@ -12,4 +12,4 @@ from ._geodataservice import GeoDataService
 from ._geocodeservice import GeocodeService
 from ._vectortile import VectorTileService
 from .server import Server as AGSServer
-__version__ = "3.5.8"
+__version__ = "3.5.9"
