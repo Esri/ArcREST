@@ -776,10 +776,11 @@ class FeatureService(abstract.BaseAGOLClass):
            os.path.isdir(out_path):
             dlURL = None
             if 'resultUrl' in res:
-
                 dlURL = res["resultUrl"]
             elif 'responseUrl' in res:
                 dlURL = res["responseUrl"]
+            elif 'URL' in res:
+                dlURL = res["URL"]
             if dlURL is not None:
                 return self._get(url=dlURL,
                                  securityHandler=self._securityHandler,
