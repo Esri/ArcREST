@@ -493,7 +493,7 @@ class featureservicetools(securityhandlerhelper):
             if chunksize > 0:
                 fc = os.path.basename(pathToFeatureClass)
                 inDesc = arcpy.Describe(pathToFeatureClass)
-                oidName = arcpy.AddFieldDelimiters(pathToFeatureClass,inDesc.oidFieldName)
+                oidName = inDesc.oidFieldName
 
                 arr = arcpy.da.FeatureClassToNumPyArray(pathToFeatureClass, (oidName))
                 syncSoFar = 0
