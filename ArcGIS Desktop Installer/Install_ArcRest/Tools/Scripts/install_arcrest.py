@@ -34,12 +34,15 @@ def zipws(path, zip, keep):
                 except Exception as e:
                     pass#arcpy.AddWarning("    Error adding %s: %s" % (file, e.message))
 def download_arcrest():
+
     """downloads arcrest to disk"""
+    arcrest_name = "arcrest.zip"
+    arcresthelper_name = "arcresthelper.zip"
     url = "https://github.com/Esri/ArcREST/archive/master.zip"
     file_name = os.path.join(arcpy.env.scratchFolder, os.path.basename(url))
     scratch_folder = os.path.join(arcpy.env.scratchFolder, "temp34asdf3d")
-    arcrest_zip = os.path.join(scratch_folder, g_ESRI_variable_1)
-    arcresthelper_zip = os.path.join(scratch_folder, g_ESRI_variable_2)
+    arcrest_zip = os.path.join(scratch_folder, arcrest_name )
+    arcresthelper_zip = os.path.join(scratch_folder, arcresthelper_name)
     if sys.version_info.major == 3:
         import urllib.request
         urllib.request.urlretrieve(url, file_name)
