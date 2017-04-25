@@ -64,6 +64,9 @@ class Server(BaseAGSServer):
             if any(i in parts for i in url_types):
                 while parts.pop() not in url_types:
                     next
+            elif "services" in parts:
+                while parts.pop() not in "services":
+                    next
             path = "/".join(parts)
         else:
             path = "arcgis"
