@@ -111,6 +111,7 @@ def installPackages(arcrest_zip, arcresthelper_zip, site_package):
         zip_ref.extractall(site_package)
         zip_ref.close()
         del zip_ref
+        initFile = os.path.join(arcrestPath,'__init__.py')
         if os.path.isfile(initFile):
             with open(initFile, "r") as ins:
                 for line in ins:
