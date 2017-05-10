@@ -47,7 +47,7 @@ This is not a full implementation of the Esri REST API, but we would like to mak
 
 ### Download a geoprocessing package to install ArcREST!
 	Download the GeoProcessing Package here: https://github.com/Esri/ArcREST/blob/master/ArcGIS%20Desktop%20Installer/installing_arcrest.gpk
-	* Note: ArcMap/Catalog/Pro is required to use the gpk format.
+	* Note: ArcMap/Catalog is required to use the gpk format.
 	* Note: this tools can be used to update ArcREST as well
     1. Open the GPK in the ArcGIS Desktop Product of your choosing.
 	2. Run the tool by double clicking on the tool icon.
