@@ -57,13 +57,21 @@ class Server(BaseAGSServer):
     def _validateurl(self, url):
         """assembles the server url"""
         parsed = urlparse(url)
-        parts = parsed.path[1:].split('/')
-        if len(parts) == 0:
-            self._adminUrl = "%s://%s/arcgis/admin" % (parsed.scheme, parsed.netloc)
-            return "%s://%s/arcgis/rest/services" % (parsed.scheme, parsed.netloc)
-        elif len(parts) > 0:
-            self._adminUrl = "%s://%s/%s/admin" % (parsed.scheme, parsed.netloc, parts[0])
-            return "%s://%s/%s/rest/services" % (parsed.scheme, parsed.netloc, parts[0])
+        path = parsed.path.strip("/")
+        if path:
+            parts = path.split("/")
+            url_types = ("admin", "manager", "rest")
+            if any(i in parts for i in url_types):
+                while parts.pop() not in url_types:
+                    next
+            elif "services" in parts:
+                while parts.pop() not in "services":
+                    next
+            path = "/".join(parts)
+        else:
+            path = "arcgis"
+        self._adminUrl = "%s://%s/%s/admin" % (parsed.scheme, parsed.netloc, path)
+        return "%s://%s/%s/rest/services" % (parsed.scheme, parsed.netloc, path)
     #----------------------------------------------------------------------
     def __init(self, folder='root'):
         """loads the property data into the class"""
