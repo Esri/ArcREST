@@ -34,7 +34,7 @@ def main():
     securityinfo['security_type'] = 'Portal'#LDAP, NTLM, OAuth, Portal, PKI
     securityinfo['username'] = ""#<UserName>
     securityinfo['password'] = ""#<Password>
-    securityinfo['org_url'] = "http://www.arcgis.com"
+    securityinfo['org_url'] = "http://www.arcgis.com"#Specify your organization's arcgis.com url
     securityinfo['proxy_url'] = proxy_url
     securityinfo['proxy_port'] = proxy_port
     securityinfo['referer_url'] = None
@@ -46,7 +46,6 @@ def main():
 
 
     itemId = ""#<Item ID>
-    sql = "1=1"
     layerNames = "" #layer1, layer2
     try:
 
@@ -62,10 +61,9 @@ def main():
                     fs_url = fst.GetLayerFromFeatureService(fs=fs,layerName=layerName,returnURLOnly=True)
                     if not fs_url is None:
                         print fst.QueryAllFeatures(url=fs_url,
-                                                    sql=sql,
-                                                    chunksize=300,
-                                                    saveLocation=r"c:\temp",
-                                                    outName="test.shp")
+                                                   chunksize=300,
+                                                   returnFeatureClass=True,
+                                                   out_fc="C:/temp/test.shp")
     except (common.ArcRestHelperError),e:
         print "error in function: %s" % e[0]['function']
         print "error on line: %s" % e[0]['line']
