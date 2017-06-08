@@ -421,7 +421,8 @@ class BaseWebOperations(BaseOperation):
         if custom_handlers is None:
             custom_handlers = []
         if self._verify == False and \
-           sys.version_info[0:3] >= (2, 7, 9):
+           sys.version_info[0:3] >= (2, 7, 9) and \
+            hasattr(ssl,'create_default_context'):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -461,7 +462,8 @@ class BaseWebOperations(BaseOperation):
             del k,v
         hasContext = 'context' in self._has_context(request.urlopen)
         if self._verify == False and \
-           sys.version_info[0:3] >= (2, 7, 9):
+           sys.version_info[0:3] >= (2, 7, 9) and \
+            hasattr(ssl,'create_default_context'):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -594,7 +596,8 @@ class BaseWebOperations(BaseOperation):
             handlers.append(handler)
         handlers.append(RedirectHandler())
         if self._verify == False and \
-           sys.version_info[0:3] >= (2, 7, 9):
+           sys.version_info[0:3] >= (2, 7, 9) and \
+            hasattr(ssl,'create_default_context'):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
@@ -616,7 +619,8 @@ class BaseWebOperations(BaseOperation):
         hasContext = False
         if self._verify == False and \
            'context' in self._has_context(request.urlopen) and \
-            sys.version_info[0:3] >= (2, 7, 9):
+            sys.version_info[0:3] >= (2, 7, 9) and \
+            hasattr(ssl,'create_default_context'):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
