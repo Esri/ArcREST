@@ -1601,7 +1601,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
               where="1=1",
               out_fields="*",
               timeFilter=None,
-              geomtryFilter=None,
+              geometryFilter=None,
               returnGeometry=True,
               returnCountOnly=False,
               returnIDsOnly=False,
@@ -1808,13 +1808,13 @@ class FeatureLayer(abstract.BaseAGOLClass):
         elif isinstance(timeFilter, dict):
             for k,v in timeFilter.items():
                 params[k] = v
-        if geomtryFilter and \
-           isinstance(geomtryFilter, GeometryFilter):
-            for k,v in geomtryFilter.filter.items():
+        if geometryFilter and \
+           isinstance(geometryFilter, GeometryFilter):
+            for k,v in geometryFilter.filter.items():
                 params[k] = v
-        elif geomtryFilter and \
-             isinstance(geomtryFilter, dict):
-            for k,v in geomtryFilter.items():
+        elif geometryFilter and \
+             isinstance(geometryFilter, dict):
+            for k,v in geometryFilter.items():
                 params[k] = v
         if len(kwargs) > 0:
             for k,v in kwargs.items():
