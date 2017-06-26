@@ -1986,7 +1986,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                path to exported feature class or fgdb (as list)
         """
         if self.hasAttachments and \
-           self.parentLayer.syncEnabled:
+           self.parentLayer != None and self.parentLayer.syncEnabled:
             return self.parentLayer.createReplica(replicaName="fgdb_dump",
                                                   layers="%s" % self.id,
                                                   attachmentsSyncDirection="upload",
@@ -1995,7 +1995,7 @@ class FeatureLayer(abstract.BaseAGOLClass):
                                                   returnAttachments=includeAttachments,
                                                   out_path=out_path)[0]
         elif self.hasAttachments == False and \
-             self.parentLayer.syncEnabled:
+             self.parentLayer != None and self.parentLayer.syncEnabled:
             return self.parentLayer.createReplica(replicaName="fgdb_dump",
                                                   layers="%s" % self.id,
                                                   attachmentsSyncDirection="upload",
@@ -2020,14 +2020,15 @@ class FeatureLayer(abstract.BaseAGOLClass):
             chunks = self._chunks(OIDS, bins)
             for chunk in chunks:
                 chunk.sort()
-                sql = "%s >= %s and %s <= %s" % (OIDField, chunk[0],
-                                                 OIDField, chunk[len(chunk) -1])
-                temp_base = "a" + uuid.uuid4().get_hex()[:6] + "a"
-                temp_fc = r"%s\%s" % (scratchGDB(), temp_base)
-                temp_fc = self.query(where=sql,
-                                     returnFeatureClass=True,
-                                     out_fc=temp_fc)
-                result_features.append(temp_fc)
+                if len(chunk) > 0:
+                    sql = "%s >= %s and %s <= %s" % (OIDField, chunk[0],
+                                                     OIDField, chunk[len(chunk) -1])
+                    temp_base = "a" + uuid.uuid4().get_hex()[:6] + "a"
+                    temp_fc = r"%s\%s" % (scratchGDB(), temp_base)
+                    temp_fc = self.query(where=sql,
+                                         returnFeatureClass=True,
+                                         out_fc=temp_fc)
+                    result_features.append(temp_fc)
             return merge_feature_class(merges=result_features,
                                        out_fc=out_path)
     #----------------------------------------------------------------------
