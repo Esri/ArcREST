@@ -314,7 +314,7 @@ class featureservicetools(securityhandlerhelper):
         """Obtains a feature service by item ID.
 
         Args:
-            itemId (int): The feature service's item ID.
+            itemId (str): The feature service's item ID.
             returnURLOnly (bool): A boolean value to return the URL of the feature service. Defaults to ``False``.
         Returns:
             When ``returnURLOnly`` is ``True``, the URL of the feature service is returned.
