@@ -42,6 +42,22 @@ class BaseGPObject(object):
     _value = None
     _paramName = None
     _dataType = None
+    # ----------------------------------------------------------------------
+    @property
+    def dataType(self):
+        """returns the data type"""
+        return self._dataType
+    # ----------------------------------------------------------------------
+    @property
+    def paramName(self):
+        """gets/set the parameter name"""
+        return self._paramName
+    # ----------------------------------------------------------------------
+    @paramName.setter
+    def paramName(self, value):
+        """gets/set the parameter name"""
+        if isinstance(value, basestring):
+            self._paramName = value
 ########################################################################
 class BaseDomain(object):
     """ all domain values inherit this class """
