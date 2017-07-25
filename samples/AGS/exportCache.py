@@ -23,10 +23,10 @@ def print_message(message):
 
 
 if __name__ == '__main__':
-    username = "siteadmin"
-    password = "geo2014!"
+    username = "<user>"
+    password = "<password>"
 
-    ags_url = "http://192.168.20.21:6080/arcgis"
+    ags_url = "http://<hostname>:6080/arcgis"
     map_service = "ImageBaseMap:Mapserver"
 
     # get service information
