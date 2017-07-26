@@ -412,6 +412,10 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary or string depending on web operation.
         """
+
+        # ensure that no spaces are in the url
+        url = url.replace(" ", "%20")
+
         if param_dict is None:
             param_dict = {}
         if files is None:
@@ -562,6 +566,9 @@ class BaseWebOperations(BaseOperation):
         Output:
            returns dictionary, string or None
         """
+        # ensure that no spaces are in the url
+        url = url.replace(" ", "%20")
+
         pass_headers = {}
         if custom_handlers is None:
             custom_handlers = []

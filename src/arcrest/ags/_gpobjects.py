@@ -48,22 +48,6 @@ class GPMultiValue(BaseGPObject):
         #if isinstance(value, bool):
         self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -115,22 +99,6 @@ class GPRecordSet(BaseGPObject):
         """gets/sets the object as a dictionary"""
         if isinstance(value, dict):
             self._value = value
-    #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
     #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
@@ -221,22 +189,6 @@ class GPFeatureRecordSetLayer(BaseGPObject):
         v = json.loads(featureclass_to_json(path_to_fc))
         self.value = v
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -307,22 +259,6 @@ class GPRasterDataLayer(BaseGPObject):
         if isinstance(value, dict):
             self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -374,22 +310,6 @@ class GPRasterData(BaseGPObject):
         if isinstance(value, dict):
             self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -438,22 +358,6 @@ class GPDataFile(BaseGPObject):
         """gets/sets the object as a dictionary"""
         if isinstance(value, dict):
             self._value = value
-    #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
     #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
@@ -505,22 +409,6 @@ class GPLinearUnit(BaseGPObject):
         if isinstance(value, dict):
             self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -569,22 +457,6 @@ class GPDate(BaseGPObject):
         if isinstance(value, dict):
             self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -610,8 +482,6 @@ class GPBoolean(BaseGPObject):
     """
     represents the GP boolean object
     """
-    _dataType = "GPBoolean"
-
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -639,22 +509,6 @@ class GPBoolean(BaseGPObject):
         """gets/sets the object as a dictionary"""
         self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -674,7 +528,6 @@ class GPLong(BaseGPObject):
     """
     represents the GP long object
     """
-    _dataType = "GPLong"
 
     #----------------------------------------------------------------------
     def __init__(self):
@@ -703,22 +556,6 @@ class GPLong(BaseGPObject):
         """gets/sets the object as a dictionary"""
         self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -738,8 +575,6 @@ class GPString(BaseGPObject):
     """
     represents the GP string object
     """
-    _dataType = "GPString"
-
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -768,22 +603,6 @@ class GPString(BaseGPObject):
         #if isinstance(value, str):
         self._value = value
     #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
-    #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
         """loads the GP object from a JSON string """
@@ -803,8 +622,6 @@ class GPDouble(BaseGPObject):
     """
     represents the GP double object
     """
-    _dataType = "GPString"
-
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
@@ -832,22 +649,6 @@ class GPDouble(BaseGPObject):
         """gets/sets the object as a dictionary"""
         #if isinstance(value, float):
         self._value = value
-    #----------------------------------------------------------------------
-    @property
-    def dataType(self):
-        """returns the data type"""
-        return self._dataType
-    #----------------------------------------------------------------------
-    @property
-    def paramName(self):
-        """gets/set the parameter name"""
-        return self._paramName
-    #----------------------------------------------------------------------
-    @paramName.setter
-    def paramName(self, value):
-        """gets/set the parameter name"""
-        if isinstance(value, str):
-            self._paramName = value
     #----------------------------------------------------------------------
     @staticmethod
     def fromJSON(value):
