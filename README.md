@@ -1,3 +1,6 @@
+# This repository is no longer being maintained.  Please use the ArcGIS Python API.
+# Site: https://github.com/Esri/arcgis-python-api
+
 # ArcREST Version 3.5.x
 
 A latest release(v3.5.9) of ArcREST can be downloaded here: https://github.com/Esri/ArcREST/releases/tag/3.5.9
